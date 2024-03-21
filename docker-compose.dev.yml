@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+    postgres:
+        image: postgres:15.3-bullseye
+        container_name: postgres_db_dev
+        environment:
+            - PGDATA=var/lib/postgresql/data/pgdata
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_USER=${DB_USER}
+        networks:
+            - perform-app_network
+        restart: always
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    postgres_admin:
+        image: dpage/pgadmin4:latest
+        container_name: postgres_admin_dev
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=${PG_USER}
+            - PGADMIN_DEFAULT_PASSWORD=${PG_PASSWORD}
+        depends_on:
+            - postgres
+        networks:
+            - perform-app_network
+        ports:
+            - '${PG_PORT}:80'
+
+    django:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile.dev
+        container_name: django_dev
+        environment:
+            - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+            - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+            - API_URL=${API_URL}
+            - DEBUG=${DEBUG}
+            - GUNICORN_BIND_HOST=${GUNICORN_BIND_HOST}
+            - PORT=${PORT}
+            - SECRET_KEY=${SECRET_KEY}
+            - DB_NAME=${DB_NAME}
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+        depends_on:
+            - postgres
+        networks:
+            - perform-app_network
+        ports:
+            - '${PORT}:8000'
+        restart: always
+        volumes:
+            - ./backend:/srv/app
+
+networks:
+    perform-app_network:
+
+volumes:
+    postgres_data:
+    static:
+    media:
