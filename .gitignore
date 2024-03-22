@@ -131,3 +131,6 @@ dist
 .vscode
 .local
 .logs
+venv
+.venv
+__pycache__

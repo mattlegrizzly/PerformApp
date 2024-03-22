@@ -66,6 +66,13 @@ docker system prune -a
 docker compose -f docker-compose.production.yml -p grizzlee-recipes --env-file config/.env.production up -d --build
 ```
 
+## Lunch python env
+
+When you're currently developping use 
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
 ## Conventional commit
 
 Start all your commits by "[theme/project] : off the commit".

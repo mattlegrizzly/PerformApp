@@ -25,7 +25,9 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from viewer.views import UserViewSet, SportViewSet, MaterialViewSet, ExerciseViewSet, ExerciseStepViewSet, ExerciseMaterialViewSet, ExerciseSportViewSet, ExerciseZoneViewSet, WorkZoneViewSet, UsersFavExercisesViewSet
+from users2.views import UserViewSet, UsersFavExercisesViewSet
+from sport.views import ( SportViewSet, AdminSportViewSet, SportsUserViewSet, AdminSportsUserViewSet)
+from exercise.views import MaterialViewSet, AdminMaterialViewSet, ExerciseViewSet, ExerciseStepViewSet, ExerciseMaterialViewSet, ExerciseSportViewSet, ExerciseZoneViewSet, WorkZoneViewSet
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -41,16 +43,29 @@ schema_view = get_schema_view(
 )
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'sports', SportViewSet)
-router.register(r'materials', MaterialViewSet)
-router.register(r'exercises', ExerciseViewSet)
-router.register(r'exercisesteps', ExerciseStepViewSet)
-router.register(r'exercisematerials', ExerciseMaterialViewSet)
-router.register(r'exercisesports', ExerciseSportViewSet)
-router.register(r'exercisezones', ExerciseZoneViewSet)
-router.register(r'workzones', WorkZoneViewSet)
-router.register(r'userfavexercises', UsersFavExercisesViewSet)
+router.register('users', UserViewSet)
+
+router.register('sports', SportViewSet, basename="sports")
+router.register('admin/sports', AdminSportViewSet, basename="admin_sports")
+router.register('sports_user', SportsUserViewSet, basename="sportsUser" )
+router.register('admin/sports_user', AdminSportsUserViewSet, basename="admin_sportsUser" )
+
+router.register('materials', MaterialViewSet, basename="materials")
+router.register('admin/materials', AdminMaterialViewSet ,basename="admin_materials")
+
+router.register('exercises', ExerciseViewSet)
+
+router.register('exercisesteps', ExerciseStepViewSet)
+
+router.register('exercisematerials', ExerciseMaterialViewSet)
+
+router.register('exercisesports', ExerciseSportViewSet)
+
+router.register('exercisezones', ExerciseZoneViewSet)
+
+router.register('workzones', WorkZoneViewSet)
+
+router.register('userfavexercises', UsersFavExercisesViewSet)
 
 urlpatterns = [
     path("api/", include(router.urls)),
@@ -59,4 +74,9 @@ urlpatterns = [
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
+    path('admin/', admin.site.urls),
+    # url(r'^rest-auth/', include('rest_auth.urls')),
+    # url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
+    # url(r'^account/', include('allauth.urls')),
+    # url(r'^accounts-rest/registration/account-confirm-email/(?P<key>.+)/$', confirm_email, name='account_confirm_email'),
 ]
