@@ -1,0 +1,6 @@
+{
+    "dockerComposeFile": "../docker-compose.dev.yml",
+    "service": "django",
+    "workspaceFolder": "/",
+    "shutdownAction": "stopCompose"
+}
