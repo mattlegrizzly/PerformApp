@@ -26,8 +26,26 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from users2.views import UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet
-from sport.views import ( SportViewSet, AdminSportViewSet, AdminSportsUserViewSet)
-from exercise.views import MaterialViewSet, AdminMaterialViewSet, ExerciseViewSet, ExerciseStepViewSet, ExerciseMaterialViewSet, ExerciseSportViewSet, ExerciseZoneViewSet, WorkZoneViewSet
+from sport.views import ( SportViewSet, SportsUserViewSet)
+from sport.admin_views import ( AdminSportViewSet, AdminSportsUserViewSet)
+from exercise.views import (
+    MaterialViewSet, 
+    ExerciseViewSet, 
+    ExerciseStepViewSet, 
+    ExerciseMaterialViewSet, 
+    ExerciseSportViewSet, 
+    ExerciseZoneViewSet, 
+    WorkZoneViewSet
+    )
+from exercise.adminviews import(
+    AdminMaterialViewSet,
+    AdminExerciseMaterialViewSet,
+    AdminExerciseViewSet,
+    AdminExerciseStepViewSet,
+    AdminExerciseSportViewSet,
+    AdminExerciseZoneViewSet,
+    AdminWorkZoneViewSet
+    )
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -44,32 +62,38 @@ schema_view = get_schema_view(
 
 router = routers.DefaultRouter()
 router.register('users', UserViewSet)
+router.register('injuries', InjurieViewSet, basename="injuries") 
+router.register('wellness', WellnessViewSet, basename="wellness") 
+router.register('userfavexercises', UsersFavExercisesViewSet, basename='user_fav_exercices')
 
 router.register('sports', SportViewSet, basename="sports")
 router.register('admin/sports', AdminSportViewSet, basename="admin_sports")
 
+router.register('sports_user', SportsUserViewSet, basename="sports_user")
 router.register('admin/sports_user', AdminSportsUserViewSet, basename="admin_sportsUser" )
 
 router.register('materials', MaterialViewSet, basename="materials")
 router.register('admin/materials', AdminMaterialViewSet ,basename="admin_materials")
 
-router.register('exercises', ExerciseViewSet)
+router.register('exercises', ExerciseViewSet, basename='exercices')
+router.register('admin/excercies', AdminExerciseViewSet, basename='admin_exercices')
 
-router.register('injuries', InjurieViewSet, basename="injuries") 
 
-router.register('wellness', WellnessViewSet, basename="wellness") 
+router.register('exercisesteps', ExerciseStepViewSet, basename='steps')
+router.register('admin/exercices_steps', AdminExerciseStepViewSet, basename='admin_steps')
 
-router.register('exercisesteps', ExerciseStepViewSet)
+router.register('exercisematerials', ExerciseMaterialViewSet, basename='exercices_material')
+router.register('admin/exercisematerials', AdminExerciseMaterialViewSet, basename='admin_exercices_material')
 
-router.register('exercisematerials', ExerciseMaterialViewSet)
+router.register('exercisesports', ExerciseSportViewSet, basename='exercices_sports')
+router.register('admin/exercisesports', AdminExerciseSportViewSet, basename='admin_exercices_sports')
 
-router.register('exercisesports', ExerciseSportViewSet)
+router.register('exercisezones', ExerciseZoneViewSet, basename='exercices_zone')
+router.register('admin/exercisezones', AdminExerciseZoneViewSet, basename='admin_exercices_zone')
 
-router.register('exercisezones', ExerciseZoneViewSet)
+router.register('workzones', WorkZoneViewSet, basename='work_zone')
+router.register('admin/workzones', AdminWorkZoneViewSet, basename='admin_work_zone')
 
-router.register('workzones', WorkZoneViewSet)
-
-router.register('userfavexercises', UsersFavExercisesViewSet)
 
 urlpatterns = [
     path("api/", include(router.urls)),

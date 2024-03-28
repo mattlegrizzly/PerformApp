@@ -1,35 +1,47 @@
 from rest_framework import viewsets
-from .models import Material,Exercise,ExerciseStep,ExerciseMaterial,ExerciseSport,ExerciseZone,WorkZone
-from .serializers import MaterialSerializer,ExerciseSerializer,ExerciseStepSerializer,ExerciseMaterialSerializer,ExerciseSportSerializer,ExerciseZoneSerializer,WorkZoneSerializer
+from .models import Material, Exercise, ExerciseStep, ExerciseMaterial, ExerciseSport, ExerciseZone, WorkZone
+from .serializers import MaterialSerializer, ExerciseSerializer, ExerciseStepSerializer, ExerciseMaterialSerializer, ExerciseSportSerializer, ExerciseZoneSerializer, WorkZoneSerializer
+from drf_yasg.utils import swagger_auto_schema
 
+#------------------MATERIAL------------------
+# List/Get ViewSet
 class MaterialViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
 
-class AdminMaterialViewSet(viewsets.ModelViewSet):
-    queryset = Material.objects.all()
-    serializer_class = MaterialSerializer
-
-class ExerciseViewSet(viewsets.ModelViewSet):
+#------------------EXERCISE------------------
+# List/Get ViewSet
+class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
 
-class ExerciseStepViewSet(viewsets.ModelViewSet):
+#------------------EXERCISE_STEPS------------------
+# List/Get ViewSet
+class ExerciseStepViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ExerciseStep.objects.all()
     serializer_class = ExerciseStepSerializer
 
-class ExerciseMaterialViewSet(viewsets.ModelViewSet):
+#------------------EXERCISE_MATERIAL------------------
+# List/Get ViewSet
+class ExerciseMaterialViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ExerciseMaterial.objects.all()
     serializer_class = ExerciseMaterialSerializer
 
-class ExerciseSportViewSet(viewsets.ModelViewSet):
+#------------------EXERCISE_SPORTS------------------
+# List/Get ViewSet
+class ExerciseSportViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ExerciseSport.objects.all()
     serializer_class = ExerciseSportSerializer
 
-class ExerciseZoneViewSet(viewsets.ModelViewSet):
+#------------------EXERCISE_Zone------------------
+# List/Get ViewSet
+class ExerciseZoneViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ExerciseZone.objects.all()
     serializer_class = ExerciseZoneSerializer
 
-class WorkZoneViewSet(viewsets.ModelViewSet):
+#------------------WORKZONE------------------
+# List/Get ViewSet
+class WorkZoneViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WorkZone.objects.all()
     serializer_class = WorkZoneSerializer
+
