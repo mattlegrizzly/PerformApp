@@ -15,16 +15,23 @@ import {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <RouterLink to="/" custom v-slot="{isActive, href, navigate}">
+            <RouterLink to="/home" custom v-slot="{isActive, href, navigate}">
               <NavigationMenuLink as-child :active="isActive">
-                <a :href="href" @click="navigate">home</a>
+                <a :href="href" @click="navigate">Accueil</a>
               </NavigationMenuLink>
             </RouterLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <RouterLink to="/second" custom v-slot="{isActive, href, navigate}">
+            <RouterLink to="/exercices" custom v-slot="{isActive, href, navigate}">
               <NavigationMenuLink as-child :active="isActive">
-                <a :href="href" @click="navigate">second</a>
+                <a :href="href" @click="navigate">Exercices</a>
+              </NavigationMenuLink>
+            </RouterLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <RouterLink to="/users" custom v-slot="{isActive, href, navigate}">
+              <NavigationMenuLink as-child :active="isActive">
+                <a :href="href" @click="navigate">Utilisateurs</a>
               </NavigationMenuLink>
             </RouterLink>
           </NavigationMenuItem>
