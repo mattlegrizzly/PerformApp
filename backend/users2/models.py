@@ -21,12 +21,8 @@ class User(AbstractUser):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     profile_picture = models.ImageField(upload_to=upload_to, blank=True, null=True)
-
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
-
-
-
 
 class State(models.TextChoices):
     TREATED = 'TR', "Soignée"
@@ -40,7 +36,16 @@ class UsersFavExercises(models.Model):
 
 class Injurie(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=256)
+    description = models.CharField(max_length=256, default="Rien à signaler")
     state = models.CharField(choices=State.choices , default=State.not_treated, max_length=2)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_injuries")
     zone = models.ForeignKey(WorkZone, on_delete=models.CASCADE)
+
+class Wellness(models.Model):
+    hydratation = models.IntegerField(null=False, default=0, blank=True)
+    sleep = models.IntegerField(null=False, default=0, blank=True)
+    stress = models.IntegerField(null=False, default=0, blank=True)
+    fatigue = models.IntegerField(null=False, default=0, blank=True)
+    pain = models.IntegerField(null=False, default=0, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_wellness')
+    date = models.DateField(null=False)

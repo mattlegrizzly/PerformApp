@@ -1,10 +1,6 @@
 from rest_framework import serializers
 from .models import Sport, Material, Exercise, ExerciseStep, ExerciseSport, ExerciseZone, WorkZone, ExerciseMaterial
-
-class SportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Sport
-        fields = '__all__'
+from sport.serializers import SportSerializer
 
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:

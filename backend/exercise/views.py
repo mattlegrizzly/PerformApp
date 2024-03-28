@@ -1,8 +1,6 @@
 from rest_framework import viewsets
 from .models import Material,Exercise,ExerciseStep,ExerciseMaterial,ExerciseSport,ExerciseZone,WorkZone
 from .serializers import MaterialSerializer,ExerciseSerializer,ExerciseStepSerializer,ExerciseMaterialSerializer,ExerciseSportSerializer,ExerciseZoneSerializer,WorkZoneSerializer
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 
 class MaterialViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Material.objects.all()

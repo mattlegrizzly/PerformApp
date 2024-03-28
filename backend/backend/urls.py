@@ -25,8 +25,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from users2.views import UserViewSet, UsersFavExercisesViewSet
-from sport.views import ( SportViewSet, AdminSportViewSet, SportsUserViewSet, AdminSportsUserViewSet)
+from users2.views import UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet
+from sport.views import ( SportViewSet, AdminSportViewSet, AdminSportsUserViewSet)
 from exercise.views import MaterialViewSet, AdminMaterialViewSet, ExerciseViewSet, ExerciseStepViewSet, ExerciseMaterialViewSet, ExerciseSportViewSet, ExerciseZoneViewSet, WorkZoneViewSet
 
 schema_view = get_schema_view(
@@ -47,13 +47,17 @@ router.register('users', UserViewSet)
 
 router.register('sports', SportViewSet, basename="sports")
 router.register('admin/sports', AdminSportViewSet, basename="admin_sports")
-router.register('sports_user', SportsUserViewSet, basename="sportsUser" )
+
 router.register('admin/sports_user', AdminSportsUserViewSet, basename="admin_sportsUser" )
 
 router.register('materials', MaterialViewSet, basename="materials")
 router.register('admin/materials', AdminMaterialViewSet ,basename="admin_materials")
 
 router.register('exercises', ExerciseViewSet)
+
+router.register('injuries', InjurieViewSet, basename="injuries") 
+
+router.register('wellness', WellnessViewSet, basename="wellness") 
 
 router.register('exercisesteps', ExerciseStepViewSet)
 
