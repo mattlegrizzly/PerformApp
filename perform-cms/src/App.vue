@@ -1,44 +1,21 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from '@/components/ui/navigation-menu'
+import { IonButtons, IonContent, IonHeader, IonMenu, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { defineComponent } from 'vue';
+
 </script>
 
 <template>
   <header>
 
-    <div class="wrapper">
-      <NavigationMenu>
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <RouterLink to="/home" custom v-slot="{isActive, href, navigate}">
-              <NavigationMenuLink as-child :active="isActive">
-                <a :href="href" @click="navigate">Accueil</a>
-              </NavigationMenuLink>
-            </RouterLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <RouterLink to="/exercices" custom v-slot="{isActive, href, navigate}">
-              <NavigationMenuLink as-child :active="isActive">
-                <a :href="href" @click="navigate">Exercices</a>
-              </NavigationMenuLink>
-            </RouterLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <RouterLink to="/users" custom v-slot="{isActive, href, navigate}">
-              <NavigationMenuLink as-child :active="isActive">
-                <a :href="href" @click="navigate">Utilisateurs</a>
-              </NavigationMenuLink>
-            </RouterLink>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+    <template>
+      <a href="/home">Home</a>
+      <a href="/users">Users</a>
+      <a href="/exercices">Exercices</a>
+      <a href="/materials">Materials</a>
+    </template>
 
-    </div>
+
   </header>
 
   <RouterView />

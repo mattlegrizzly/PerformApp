@@ -12,11 +12,5 @@
     }
   ],
   "compilerOptions": {
-    // ...
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-    // ...
   }
 }

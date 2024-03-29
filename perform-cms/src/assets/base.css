@@ -42,8 +42,10 @@
 :root {
   --primary-blue : #203864;
   --primary-blue20 : #20386433;
+  --primary-blue50 : #20386483;
   --secondary-blue : #2E57BF;
   --primary-red : #BE0000;
+  --primary-red50 : #be000084;
   --light-red : #EEA6A6;
   --primary-green : #27BC3F;
   --gold : #BC9227;

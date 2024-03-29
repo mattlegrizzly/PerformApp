@@ -134,3 +134,20 @@ dist
 venv
 .venv
 __pycache__
+
+# Capacitor
+perform-cms/.capacitor/
+perform-cms/ios/App/App.xcworkspace/
+perform-cms/ios/App/Pods/
+perform-cms/ios/App/build/
+perform-cms/android/capacitor/
+perform-cms/android/app/build/
+perform-cms/android/build/
+
+# Vue
+perform-cms/dist/
+perform-cms/node_modules/
+
+# Ionic
+perform-cms/www/
+perform-cms/capacitor.config.json

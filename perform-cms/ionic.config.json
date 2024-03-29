@@ -1,0 +1,7 @@
+{
+  "name": "performapp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}
