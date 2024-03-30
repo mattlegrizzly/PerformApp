@@ -5,6 +5,11 @@
   height: 100vh;
   width: 100vw;
   font-weight: normal;
+  display: flex;
+}
+
+.mainWrapper {
+  padding-left: 20px;
 }
 
 a,
