@@ -26,6 +26,8 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from users2.views import UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet
+from users2.login_view import  UserLoginAPIView
+from users2.register_view import UserCreateAPIView
 from sport.views import ( SportViewSet, SportsUserViewSet)
 from sport.admin_views import ( AdminSportViewSet, AdminSportsUserViewSet)
 from exercise.views import (
@@ -94,7 +96,6 @@ router.register('admin/exercisezones', AdminExerciseZoneViewSet, basename='admin
 router.register('workzones', WorkZoneViewSet, basename='work_zone')
 router.register('admin/workzones', AdminWorkZoneViewSet, basename='admin_work_zone')
 
-
 urlpatterns = [
     path("api/", include(router.urls)),
     path(
@@ -103,6 +104,8 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
     path('admin/', admin.site.urls),
+    path('register/', UserCreateAPIView.as_view(), name='user-register'),
+    path('login/', UserLoginAPIView.as_view(), name='user-login'),
     # url(r'^rest-auth/', include('rest_auth.urls')),
     # url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
     # url(r'^account/', include('allauth.urls')),
