@@ -1,12 +1,49 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import validate_email, MinLengthValidator, EmailValidator
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from exercise.models import Exercise, WorkZone
 
 from .managers import CustomUserManager
 
 def upload_to(instance, filename):
     return 'images/{filename}'.format(filename=filename)
+
+class Manager(BaseUserManager):
+    def create_user(self, first_name, last_name, email, password=None):
+        if not first_name:
+            raise ValueError("User must have a first name")
+        if not last_name:
+            raise ValueError("User must have a last name")
+        if not email:
+            raise ValueError("User must have an email address")
+        if not password:
+            raise ValueError("User must have a password")
+
+        email = self.normalize_email(email)
+        validate_email(email)
+        user = self.model(
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
+
+    def create_superuser(self, first_name, last_name, email, password):
+        user = self.create_user(
+            password=password,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+        )
+        user.is_superuser = True
+        user.save(using=self._db)
+
+        return user
 
 class User(AbstractUser):
     GENDER_CHOICES = [
@@ -23,6 +60,29 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to=upload_to, blank=True, null=True)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
+    
+    objects = Manager()
+    
+    def __repr__(self):
+        return str(self)
+
+    def get_obj(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "is_superuser": self.is_superuser,
+            "is_active": self.is_active,
+            "last_login": self.last_login,
+        }
+
+    def get_str(self):
+        return (
+            f"User(id={self.id}, email={self.email},"
+            f"first_name={self.first_name}, last_name={self.last_name}, "
+            f"is_superuser={self.is_superuser}, is_active={self.is_active}, last_login={self.last_login})"
+        )
 
 class State(models.TextChoices):
     TREATED = 'TR', "Soignée"

@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import User, UsersFavExercises, Injurie, Wellness
 from sport.serializers import SportsUserSerializer
 from exercise.serializers import ExerciseSerializer, WorkZoneSerializer
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class UsersFavExercisesSerializer(serializers.ModelSerializer):
     exercices = ExerciseSerializer(many=True, read_only=False)
@@ -29,43 +31,69 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'users_wellness']
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate(self, data):
-        email = data.get('email')
-        username = data.get('username')
-        
-        # Vérifier si l'utilisateur existe déjà avec l'email
-        if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("Cet email est déjà utilisé.")
-        
-        # Vérifier si l'utilisateur existe déjà avec le nom d'utilisateur
-        if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError("Ce nom d'utilisateur est déjà utilisé.")
-        
+    def check_email_exists(self, email, new_email):
+        if User.objects.exclude(email=email).filter(email=new_email).exists():
+            return True
+        else:
+            return False
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+
+
+
+class LoginSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(min_length=8, max_length=255, allow_blank=False)
+
+    class Meta:
+        model = User
+        fields = ["email", "password"]
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+
+class RefreshTokensSerializer(TokenRefreshSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        refresh = RefreshToken(attrs["refresh"])
+
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
+
         return data
 
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(min_length=8, max_length=255, allow_blank=False)
+
+    class Meta:
+        model = User
+        fields = ["email", "password", "username", "gender", "age", "size"]
+
+    def save(self):
+        user = User(
+            email=self.validated_data["email"],
+            gender=self.validated_data["gender"],
+            age=self.validated_data["age"],
+            size=self.validated_data["size"],
+            username=self.validated_data["username"],
+        )
+        password = self.validated_data["password"]
+        user.set_password(password)
+        user.save()
+
         return user
 
-class UserRegisterSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150)
-    email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
-    date_of_birth = serializers.DateField(required=False, allow_null=True)
-    size = serializers.IntegerField(required=False, allow_null=True)
-    age = serializers.IntegerField(required=False, allow_null=True)
-    gender = serializers.ChoiceField(choices=User.GENDER_CHOICES)
 
-    def validate_username(self, value):
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Ce nom d'utilisateur est déjà utilisé.")
-        return value
+class SetPasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        min_length=8, max_length=255, allow_blank=False, required=True
+    )
 
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Cet email est déjà utilisé.")
-        return value
-
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
+    class Meta:
+        model = User
+        fields = ["password"]
