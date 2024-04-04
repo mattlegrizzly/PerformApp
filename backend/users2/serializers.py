@@ -47,7 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
     users_wellness = WellnessSerializer(many=True, read_only=False)
     class Meta:
         model = User
-        fields = [ 'email', 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'users_wellness']
+        fields = [ 'email', 'first_name', 'last_name' , 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'users_wellness']
         extra_kwargs = {'password': {'write_only': True}}
 
     def check_email_exists(self, email, new_email):

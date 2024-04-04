@@ -28,8 +28,25 @@ SECRET_KEY = 'django-insecure-2nyzquon+fe1$y($h6(gzjc1e7hjfb35lbo6rmtkpbgxursh%*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ADMIN_ENABLED = False
+ALLOWED_HOSTS=['127.0.0.1']
+API_URL = os.getenv("API_URL")
+AUTH_USER_MODEL = "cms.User"
+CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:5173']
+DEBUG = bool(os.getenv("DEBUG"))
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+LANGUAGE_CODE = "en-us"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+ROOT_URLCONF = "api.urls"
+SECRET_KEY = os.getenv("SECRET_KEY")
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'staticfiles'),)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+TIME_ZONE = "UTC"
+USE_I18N = True
+USE_TZ = True
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
@@ -60,6 +77,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "corsheaders",
     'rest_framework',
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -76,6 +94,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

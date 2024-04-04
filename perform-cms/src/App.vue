@@ -4,22 +4,7 @@ import image from '@/assets/logo_perform.png'
 </script>
 
 <template>
-  <header>
-    <div class="navApp">
-      <div class="logoWrapper">
-        <img class="logo" :src="image" />
-      </div>
-      <nav>
-        <a href="/home">Home</a>
-        <a href="/users">Users</a>
-        <a href="/exercices">Exercices</a>
-        <a href="/materials">Materials</a>
-      </nav>
-      <div class="buttonWrapper">
-        <button>Disconnect</button>
-      </div>
-    </div>
-  </header>
+  
 
   <RouterView />
 </template>

@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import HomeView from '@/views/HomeView.vue'
-import SecondPage from '@/views/SecondView.vue';
-import NewView from '@/views/NewView.vue';
+import MaterialsView from '@/views/MaterialsView.vue';
+import UsersView from '@/views/UsersView.vue';
+import ExercicesView from '@/views/ExercicesView.vue';
 import PageNotFoundView from '@/views/PageNotFoundView.vue';
+import LoginView from '@/views/LoginView.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -12,19 +14,24 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/exercices',
-      name: 'exercices',
-      component: SecondPage
+      path: '/exercises',
+      name: 'exercises',
+      component: ExercicesView
     },
     {
       path: '/users',
       name: 'users',
-      component: SecondPage
+      component: UsersView
     }, 
     {
-      path: '/new',
-      name: 'new',
-      component: NewView
+      path: '/materials',
+      name: 'materials',
+      component: MaterialsView
+    }, 
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView
     }, 
     {
       path: '/*',
@@ -32,6 +39,18 @@ const router = createRouter({
       component: PageNotFoundView
     },
   ]
+})
+
+router.beforeEach(async (to, from) => {
+  if (
+    // make sure the user is authenticated
+    !localStorage.getItem('user') &&
+    // ❗️ Avoid an infinite redirect
+    to.name !== 'login'
+  ) {
+    // redirect the user to the login page
+    return { name: 'login' }
+  }
 })
 
 export default router
