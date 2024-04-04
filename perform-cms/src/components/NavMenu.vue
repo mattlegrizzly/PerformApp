@@ -27,13 +27,13 @@ const deconnectUser = () => {
 </script>
 <style>
 .navApp {
-  height: 100%;
-  width: 300px;
-  padding-top: 10px;
-  box-shadow: 0px 0px 10px rgb(219, 219, 219);
-  position: absolute;
-  left: 0px;
-  top: 0px;
+  height: 100vh;
+    width: 300px;
+    padding-top: 10px;
+    box-shadow: 0px 0px 10px rgb(219, 219, 219);
+    position: absolute;
+    left: 0px;
+    top: 0px;
 }
 
 .navApp nav {

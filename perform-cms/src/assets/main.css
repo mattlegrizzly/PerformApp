@@ -8,6 +8,10 @@
 
 .mainWrapper {
   padding-left: 20px;
+  left: 300px !important;
+  position: absolute;
+  height: 100vh;
+  width: calc(100vw - 300px);
 }
 
 a,
