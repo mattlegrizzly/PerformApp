@@ -22,13 +22,32 @@ class WellnessSerializer(serializers.ModelSerializer):
         model = Wellness
         fields = ['sleep', 'hydratation', 'fatigue', 'pain', 'stress', 'date', 'user']
 
+class UserDetailedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "is_active",
+            "last_login",
+            "is_superuser",
+        ]
+
+    def check_email_exists(self, email, new_email):
+        if User.objects.exclude(email=email).filter(email=new_email).exists():
+            return True
+        else:
+            return False
+
 class UserSerializer(serializers.ModelSerializer):
     sports_user = SportsUserSerializer(many=True, read_only=False)
     user_injuries = InjurieSerializer(many=True, read_only=False)
     users_wellness = WellnessSerializer(many=True, read_only=False)
     class Meta:
         model = User
-        fields = ['username', 'email', 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'users_wellness']
+        fields = [ 'email', 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'users_wellness']
         extra_kwargs = {'password': {'write_only': True}}
 
     def check_email_exists(self, email, new_email):
@@ -40,8 +59,6 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
-
-
 
 class LoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, max_length=255, allow_blank=False)
@@ -72,7 +89,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["email", "password", "username", "gender", "age", "size"]
+        fields = ["email", "password","last_name", "first_name", "gender", "age", "size"]
 
     def save(self):
         user = User(
@@ -80,7 +97,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             gender=self.validated_data["gender"],
             age=self.validated_data["age"],
             size=self.validated_data["size"],
-            username=self.validated_data["username"],
+            last_name=self.validated_data["last_name"],
+            first_name=self.validated_data["first_name"],
         )
         password = self.validated_data["password"]
         user.set_password(password)

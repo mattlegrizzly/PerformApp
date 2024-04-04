@@ -18,6 +18,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from .serializers import (
     UserSerializer,     
+    UserDetailedSerializer,
     UsersFavExercisesSerializer, 
     InjurieSerializer, 
     WellnessSerializer, 
@@ -167,8 +168,187 @@ class AdminUserViewSet(viewsets.ModelViewSet):
             raise NotFound
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_schema_fields(self, path, method):
+        fields = super().get_schema_fields(path, method)
+
+        if method.lower() == "get" and path.endswith("authenticated_infos"):
+            # Remove the 'page' field for the custom endpoint
+            fields = [field for field in fields if field.name != "page"]
+
+            # Add custom fields, if needed
+            fields.append(
+                coreapi.Field(
+                    name="custom_field",
+                    required=True,
+                    location="query",
+                    schema=coreschema.String(),
+                )
+            )
+
+        return fields
+
+    @method_decorator(csrf_exempt)
+    def get_queryset(self):
+        authenticated_user = self.request.user
+        queryset = User.objects.filter(email=authenticated_user)
+
+        return queryset
+
+    @swagger_auto_schema(
+        tags=["Users"],
+        manual_parameters=[
+            openapi.Parameter(
+                "page",
+                openapi.IN_QUERY,
+                description="This parameter is not needed",
+                type=openapi.TYPE_STRING,
+                required=False,
+            )
+        ],
+        operation_description="""
+        This endpoint returns user information if the user is authenticated.
+
+        Note: The 'page' query parameter is not applicable to this endpoint and should not be used.
+        """,
+    )
+    @method_decorator(csrf_exempt)
+    def retrieve(self, request, pk):
+        try:
+            user = self.get_queryset().get(pk=pk)
+            serializer = UserDetailedSerializer(user)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except ObjectDoesNotExist:
+            raise PermissionDenied
+
+    @swagger_auto_schema(tags=["Users"])
+    def update(self, request, pk):
+        try:
+            user = self.get_queryset().get(pk=pk)
+            serializer = UserSerializer(user, data=request.data)
+
+            if serializer.is_valid(raise_exception=True):
+                if self.request.data.get("password") != None:
+                    raise ParseError(
+                        "password: This field is read-only and cannot be edited.",
+                        code="validation_error",
+                    )
+                elif self.request.data.get("is_superuser") != None:
+                    raise ParseError(
+                        "is_superuser: This field is read-only and cannot be edited.",
+                        code="validation_error",
+                    )
+                elif self.request.data.get("is_active") != None:
+                    raise ParseError(
+                        "is_active: This field is read-only and cannot be edited.",
+                        code="validation_error",
+                    )
+                elif self.request.data.get("last_login") != None:
+                    raise ParseError(
+                        "last_login: This field is read-only and cannot be edited.",
+                        code="validation_error",
+                    )
+                else:
+                    email_exists = serializer.check_email_exists(
+                        User.get_obj(user)["email"], request.data["email"]
+                    )
+                    if email_exists:
+                        raise ValidationError(
+                            "Email already exists", code="validation_error"
+                        )
+                    else:
+                        serializer.save()
+
+                        return Response(
+                            serializer.data, status=status.HTTP_202_ACCEPTED
+                        )
+            else:
+                raise ValidationError(serializer.errors, code="validation_error")
+
+        except ObjectDoesNotExist:
+            raise NotFound
+
+    @swagger_auto_schema(tags=["Users"])
+    def partial_update(self, request, pk):
+        try:
+            user = self.get_queryset().get(pk=pk)
+            serializer = UserSerializer(user, data=request.data, partial=True)
+
+            if serializer.is_valid(raise_exception=True):
+                if self.request.data.get("password") != None:
+                    raise ParseError(
+                        "password: This field is read-only and cannot be edited.",
+                        code="validation_error",
+                    )
+                elif self.request.data.get("is_superuser") != None:
+                    raise ParseError(
+                        "is_superuser: This field is read-only and cannot be edited.",
+                        code="validation_error",
+                    )
+                elif self.request.data.get("is_active") != None:
+                    raise ParseError(
+                        "is_active: This field is read-only and cannot be edited.",
+                        code="validation_error",
+                    )
+                elif self.request.data.get("last_login") != None:
+                    raise ParseError(
+                        "last_login: This field is read-only and cannot be edited.",
+                        code="validation_error",
+                    )
+                else:
+                    if request.data.get("email") != None:
+                        email_exists = serializer.check_email_exists(
+                            User.get_obj(user)["email"], request.data["email"]
+                        )
+                        if email_exists:
+                            raise ValidationError(
+                                "Email already exists", code="validation_error"
+                            )
+                        else:
+                            serializer.save()
+                            return Response(serializer.data, status=status.HTTP_200_OK)
+                    else:
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                raise ValidationError(serializer.errors, code="validation_error")
+
+        except ObjectDoesNotExist:
+            raise NotFound
+
+    @swagger_auto_schema(tags=["Users"])
+    @method_decorator(csrf_exempt)
+    @action(detail=True, methods=["patch"])
+    def set_password(self, request, pk):
+        try:
+            user = self.get_queryset().get(pk=pk)
+
+            if request.user.is_authenticated:
+                serializer = SetPasswordSerializer(data=request.data)
+
+                if serializer.is_valid():
+                    user.set_password(request.data.get("password"))
+                    user.save()
+
+                    return Response(
+                        {"password": "This field was successfully updated"},
+                        status=status.HTTP_202_ACCEPTED,
+                    )
+
+                else:
+                    raise ValidationError(serializer.errors, code="validation_error")
+            else:
+                raise NotAuthenticated(
+                    "Authentication credentials were not provided.",
+                    code="not_authenticated",
+                )
+
+        except ObjectDoesNotExist:
+            raise NotFound
 
 class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     permission_classes = [UserViewSetPermissions]

@@ -10,14 +10,20 @@ RUN apt-get update \
   # psycopg2 dependencies
   && apt-get install -y libpq-dev \
   # postgres client
-  && apt-get install -y postgresql-client
+  && apt-get install -y postgresql-client \
+  # install pipx  
+  && apt-get install -y  pip \ 
+  # install poetry
+  && pip install poetry 
 
 WORKDIR /srv/app
 
 # Requirements are installed here to ensure they will be cached.
-COPY requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+COPY pyproject.toml . 
+COPY poetry.lock .
+
+RUN poetry config virtualenvs.create false
+RUN poetry install
 
 COPY entrypoint.dev.sh /entrypoint.dev.sh
 

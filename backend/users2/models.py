@@ -5,8 +5,6 @@ from django.core.validators import validate_email, MinLengthValidator, EmailVali
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from exercise.models import Exercise, WorkZone
 
-from .managers import CustomUserManager
-
 def upload_to(instance, filename):
     return 'images/{filename}'.format(filename=filename)
 
@@ -55,11 +53,13 @@ class User(AbstractUser):
     date_of_birth = models.DateField(blank=True, null=True)
     size = models.IntegerField(null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
+    last_name = models.CharField(max_length=100, null=True, blank=True)
+    first_name = models.CharField(max_length=100, null=True, blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     profile_picture = models.ImageField(upload_to=upload_to, blank=True, null=True)
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["first_name", "last_name"]
     
     objects = Manager()
     
