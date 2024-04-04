@@ -23,7 +23,7 @@ class UserViewSetPermissions(permissions.BasePermission):
             return True
         
         user_is_same = obj.id == request.user.id
-        user_is_admin_or_staff = request.user.is_superuser or request.user.is_staff
+        user_is_admin_or_staff = request.user.is_superuser or request.user.is_coach
         
         return user_is_same or user_is_admin_or_staff
         

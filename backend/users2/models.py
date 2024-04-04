@@ -38,6 +38,8 @@ class Manager(BaseUserManager):
             last_name=last_name,
         )
         user.is_superuser = True
+        user.is_staff = True
+        user.is_coach = True
         user.save(using=self._db)
 
         return user
@@ -59,7 +61,8 @@ class User(AbstractBaseUser):
     profile_picture = models.ImageField(upload_to=upload_to, blank=True, null=True)
     is_superuser = models.BooleanField(default=False, blank=False, null=False)
     is_active = models.BooleanField(default=True, blank=False, null=False)
-    is_coach = models.BooleanField(default=True, blank=False, null=False)
+    is_coach = models.BooleanField(default=False, blank=False, null=False)
+    is_staff = models.BooleanField(default=False, blank=False, null=False)
     last_login = models.DateTimeField(default=None, null=True, blank=True)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]

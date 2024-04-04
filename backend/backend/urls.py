@@ -27,7 +27,7 @@ from drf_yasg import openapi
 
 
 from users2.views import LoginViewset, LogoutViewset, RefreshTokensViewset, RegisterViewset
-from users2.views import AdminUserViewSet, UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet
+from users2.views import AdminUserViewSet, UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet, AdminUsersAllViewSet
 
 from sport.views import ( SportViewSet, SportsUserViewSet)
 from sport.admin_views import ( AdminSportViewSet, AdminSportsUserViewSet)
@@ -62,6 +62,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 router = routers.DefaultRouter()
 #router.register('admin/users', AdminUserViewSet, basename='user_admin')
+router.register('admin/users_all', AdminUsersAllViewSet, basename='user_all')
 router.register('users', UserViewSet, basename='user')
 router.register('injuries', InjurieViewSet, basename="injuries") 
 router.register('wellness', WellnessViewSet, basename="wellness") 

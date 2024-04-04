@@ -336,8 +336,57 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         except ObjectDoesNotExist:
             raise NotFound
 
+#------------------SPORT------------------
+# Admin ViewSet
+class AdminUsersAllViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={200: "OK"}
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={200: "OK"}
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={201: "Created"}
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={200: "OK"}
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={200: "OK"}
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={204: "No Content"}
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
 class UsersFavExercisesViewSet(viewsets.ModelViewSet):
-    permission_classes = [UserViewSetPermissions]
+    permission_classes = [UserViewSetPermissions, permissions.IsAdminUser]
     queryset = UsersFavExercises.objects.all()
     serializer_class = UsersFavExercisesSerializer
 
@@ -347,6 +396,6 @@ class InjurieViewSet(viewsets.ModelViewSet):
     serializer_class = InjurieSerializer
 
 class WellnessViewSet(viewsets.ModelViewSet):
-    permission_classes = [UserViewSetPermissions]
+    permission_classes = [UserViewSetPermissions, permissions.IsAdminUser]
     queryset = Wellness.objects.all()
     serializer_class = WellnessSerializer

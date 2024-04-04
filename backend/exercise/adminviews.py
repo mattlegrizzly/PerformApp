@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from .models import Material, Exercise, ExerciseStep, ExerciseMaterial, ExerciseSport, ExerciseZone, WorkZone
 from .serializers import MaterialSerializer, ExerciseSerializer, ExerciseStepSerializer, ExerciseMaterialSerializer, ExerciseSportSerializer, ExerciseZoneSerializer, WorkZoneSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
@@ -6,6 +6,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 #------------------MATERIAL------------------
 # Admin ViewSet
 class AdminMaterialViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAdminUser]
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
 
@@ -54,6 +55,7 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
 #------------------EXERCISE------------------
 # Admin ViewSet
 class AdminExerciseViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAdminUser]
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
 
@@ -102,6 +104,7 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
 #------------------EXERCISE_STEPS------------------
 # Admin ViewSet
 class AdminExerciseStepViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAdminUser]
     queryset = ExerciseStep.objects.all()
     serializer_class = ExerciseStepSerializer
 
@@ -150,6 +153,7 @@ class AdminExerciseStepViewSet(viewsets.ModelViewSet):
 #------------------EXERCISE_MATERIAL------------------
 # Admin ViewSet
 class AdminExerciseMaterialViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAdminUser]
     queryset = ExerciseMaterial.objects.all()
     serializer_class = ExerciseMaterialSerializer
 
@@ -198,6 +202,7 @@ class AdminExerciseMaterialViewSet(viewsets.ModelViewSet):
 #------------------EXERCISE_SPORTS------------------
 # Admin ViewSet
 class AdminExerciseSportViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAdminUser]
     queryset = ExerciseSport.objects.all()
     serializer_class = ExerciseSportSerializer
 
@@ -246,6 +251,7 @@ class AdminExerciseSportViewSet(viewsets.ModelViewSet):
 #------------------EXERCISE_Zone------------------
 # Admin ViewSet
 class AdminExerciseZoneViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAdminUser]
     queryset = ExerciseZone.objects.all()
     serializer_class = ExerciseZoneSerializer
 
@@ -294,6 +300,7 @@ class AdminExerciseZoneViewSet(viewsets.ModelViewSet):
 #------------------WORKZONE------------------
 # Admin ViewSet
 class AdminWorkZoneViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAdminUser]
     queryset = WorkZone.objects.all()
     serializer_class = WorkZoneSerializer
 
