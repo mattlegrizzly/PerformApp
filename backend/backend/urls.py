@@ -25,11 +25,17 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+
 from users2.views import LoginViewset, LogoutViewset, RefreshTokensViewset, RegisterViewset
 from users2.views import AdminUserViewSet, UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet
 
 from sport.views import ( SportViewSet, SportsUserViewSet)
 from sport.admin_views import ( AdminSportViewSet, AdminSportsUserViewSet)
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 from exercise.views import (
     MaterialViewSet, 
@@ -51,21 +57,11 @@ from exercise.adminviews import(
     AdminWorkZoneViewSet
     )
 
-schema_view = get_schema_view(
-   openapi.Info(
-      title="Snippets API",
-      default_version='v1',
-      description="Test description",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
-)
+
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 router = routers.DefaultRouter()
-router.register('admin/users', AdminUserViewSet, basename='user_admin')
+#router.register('admin/users', AdminUserViewSet, basename='user_admin')
 router.register('users', UserViewSet, basename='user')
 router.register('injuries', InjurieViewSet, basename="injuries") 
 router.register('wellness', WellnessViewSet, basename="wellness") 
@@ -106,11 +102,12 @@ router.register("refresh_tokens", RefreshTokensViewset, basename="refresh_tokens
 
 urlpatterns = [
     path("api/", include(router.urls)),
-    path(
-        "api/docs",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
-    ),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # url(r'^rest-auth/', include('rest_auth.urls')),
     # url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
     # url(r'^account/', include('allauth.urls')),

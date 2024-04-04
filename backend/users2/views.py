@@ -1,10 +1,10 @@
 from django.contrib.auth import authenticate, login
 from django.utils.decorators import method_decorator
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 import coreschema
 from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, mixins, viewsets
 from rest_framework import permissions, viewsets
 from .models import User, UsersFavExercises, Wellness, Injurie
@@ -50,7 +50,7 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
     queryset = User.objects.all()
 
     @method_decorator(csrf_exempt)
-    @swagger_auto_schema(
+    @extend_schema(
         responses={status.HTTP_201_CREATED: UserSerializer()},
         tags=["Authentication"],
     )
@@ -69,7 +69,7 @@ class LoginViewset(mixins.CreateModelMixin, GenericViewSet):
     serializer_class = LoginSerializer
     queryset = User.objects.all()
 
-    @swagger_auto_schema(
+    @extend_schema(
         responses={status.HTTP_202_ACCEPTED: UserSerializer()},
         tags=["Authentication"],
     )
@@ -103,7 +103,7 @@ class LogoutViewset(mixins.CreateModelMixin, GenericViewSet):
     serializer_class = LogoutSerializer
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(
+    @extend_schema(
         responses={status.HTTP_205_RESET_CONTENT: LogoutSerializer()},
         tags=["Authentication"],
     )
@@ -125,7 +125,7 @@ class LogoutViewset(mixins.CreateModelMixin, GenericViewSet):
 class RefreshTokensViewset(viewsets.ViewSet, TokenRefreshView):
     serializer_class = RefreshTokensSerializer
 
-    @swagger_auto_schema(
+    @extend_schema(
         responses={status.HTTP_200_OK: RefreshTokensSerializer},
         tags=["Authentication"],
     )
@@ -137,7 +137,7 @@ class AdminUserViewSet(viewsets.ModelViewSet):
     permission_classes = [UserViewSetPermissions]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    @swagger_auto_schema(tags=["Users"])
+    @extend_schema(tags=["Users"])
     @method_decorator(csrf_exempt)
     @action(detail=True, methods=["patch"])
     def set_password(self, request, pk):
@@ -169,7 +169,6 @@ class AdminUserViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_schema_fields(self, path, method):
         fields = super().get_schema_fields(path, method)
@@ -197,26 +196,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
         return queryset
 
-    @swagger_auto_schema(
+    @extend_schema(
         tags=["Users"],
-        manual_parameters=[
-            openapi.Parameter(
-                "page",
-                openapi.IN_QUERY,
-                description="This parameter is not needed",
-                type=openapi.TYPE_STRING,
-                required=False,
-            )
-        ],
-        operation_description="""
-        This endpoint returns user information if the user is authenticated.
-
-        Note: The 'page' query parameter is not applicable to this endpoint and should not be used.
-        """,
     )
     @method_decorator(csrf_exempt)
     def retrieve(self, request, pk):
         try:
+            print(self.request.user) 
             user = self.get_queryset().get(pk=pk)
             serializer = UserDetailedSerializer(user)
 
@@ -225,7 +211,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         except ObjectDoesNotExist:
             raise PermissionDenied
 
-    @swagger_auto_schema(tags=["Users"])
+    @extend_schema(tags=["Users"])
     def update(self, request, pk):
         try:
             user = self.get_queryset().get(pk=pk)
@@ -272,7 +258,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         except ObjectDoesNotExist:
             raise NotFound
 
-    @swagger_auto_schema(tags=["Users"])
+    @extend_schema(tags=["Users"])
     def partial_update(self, request, pk):
         try:
             user = self.get_queryset().get(pk=pk)
@@ -320,7 +306,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         except ObjectDoesNotExist:
             raise NotFound
 
-    @swagger_auto_schema(tags=["Users"])
+    @extend_schema(tags=["Users"])
     @method_decorator(csrf_exempt)
     @action(detail=True, methods=["patch"])
     def set_password(self, request, pk):

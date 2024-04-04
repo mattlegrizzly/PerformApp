@@ -22,7 +22,7 @@ class ExerciseSportSerializer(serializers.ModelSerializer):
     sport = SportSerializer(many=False, read_only=False)
     class Meta:
         model = ExerciseSport
-        fields = '__all__'
+        fields = ['exercise', 'sport']
 
 class WorkZoneSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,13 +37,9 @@ class ExerciseZoneSerializer(serializers.ModelSerializer):
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
-    exercice_steps = ExerciseStepSerializer(many=True, read_only=False)
-    exercise_material = ExerciseMaterialSerializer(many=True, read_only=False)
-    exercise_sports = ExerciseSportSerializer(many=True)
-    exercise_zone= ExerciseZoneSerializer(many=True)
     class Meta:
         model = Exercise
-        fields = ['name', 'description', 'video', 'exercice_steps', 'exercise_material', 'exercise_sports', 'exercise_zone']
+        fields = ['name', 'description', 'video']
 
 
 

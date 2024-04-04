@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import Sport, SportsUser
+from users2.permissions import UserViewSetPermissions
 
 class SportSerializer(serializers.ModelSerializer):
+    permission_classes = [UserViewSetPermissions]
     class Meta:
         model = Sport
         fields = ['id', 'name']

@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import validate_email, MinLengthValidator, EmailValidator
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
@@ -43,7 +42,7 @@ class Manager(BaseUserManager):
 
         return user
 
-class User(AbstractUser):
+class User(AbstractBaseUser):
     GENDER_CHOICES = [
         ('male', 'Male'),
         ('female', 'Female'),
@@ -58,6 +57,10 @@ class User(AbstractUser):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     profile_picture = models.ImageField(upload_to=upload_to, blank=True, null=True)
+    is_superuser = models.BooleanField(default=False, blank=False, null=False)
+    is_active = models.BooleanField(default=True, blank=False, null=False)
+    is_coach = models.BooleanField(default=True, blank=False, null=False)
+    last_login = models.DateTimeField(default=None, null=True, blank=True)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
     

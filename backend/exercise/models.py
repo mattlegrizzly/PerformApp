@@ -27,16 +27,16 @@ class Exercise(models.Model):
 
 class ExerciseStep(models.Model):
     text = models.CharField(max_length=255)
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="exercice_steps")
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="steps")
 
 class ExerciseMaterial(models.Model):
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="exercise_material")
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="materials")
     material = models.ForeignKey(Material, on_delete=models.CASCADE)
 
 class ExerciseSport(models.Model):
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name='exercise_sports')
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name='sports')
     sport = models.ForeignKey(Sport, on_delete=models.CASCADE)
 
 class ExerciseZone(models.Model):
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="exercise_zone")
     zone = models.ForeignKey(WorkZone, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="zones")
