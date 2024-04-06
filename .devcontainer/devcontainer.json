@@ -2,5 +2,8 @@
     "dockerComposeFile": "../docker-compose.dev.yml",
     "service": "django",
     "workspaceFolder": "/srv/app",
-    "shutdownAction": "stopCompose"
+    "shutdownAction": "stopCompose",
+    "extensions" : [
+        "ms-python.python"
+    ]
 }

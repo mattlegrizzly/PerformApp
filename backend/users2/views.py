@@ -347,7 +347,25 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
         tags=['Admin - Users(all)'],
         responses={200: "OK"}
     )
+    def get_queryset(self):
+        queryset = Recipe.objects.all()
+        return queryset
+        
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={200: "OK"}
+    )
+    def get_latest(self):
+        queryset = Recipe.objects.all().order_by("created_at")[:5]
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={200: "OK"}
+    )
     def list(self, request, *args, **kwargs):
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
         return super().list(request, *args, **kwargs)
 
     @extend_schema(

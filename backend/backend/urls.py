@@ -66,7 +66,7 @@ router.register('admin/users_all', AdminUsersAllViewSet, basename='user_all')
 router.register('users', UserViewSet, basename='user')
 router.register('injuries', InjurieViewSet, basename="injuries") 
 router.register('wellness', WellnessViewSet, basename="wellness") 
-router.register('userfavexercises', UsersFavExercisesViewSet, basename='user_fav_exercices')
+router.register('userfavexercises', UsersFavExercisesViewSet, basename='user_fav_exercises')
 
 router.register('sports', SportViewSet, basename="sports")
 router.register('admin/sports', AdminSportViewSet, basename="admin_sports")
@@ -77,21 +77,21 @@ router.register('admin/sports_user', AdminSportsUserViewSet, basename="admin_spo
 router.register('materials', MaterialViewSet, basename="materials")
 router.register('admin/materials', AdminMaterialViewSet ,basename="admin_materials")
 
-router.register('exercises', ExerciseViewSet, basename='exercices')
-router.register('admin/excercies', AdminExerciseViewSet, basename='admin_exercices')
+router.register('exercises', ExerciseViewSet, basename='exercises')
+router.register('admin/exercises', AdminExerciseViewSet, basename='admin_exercises')
 
 
 router.register('exercisesteps', ExerciseStepViewSet, basename='steps')
-router.register('admin/exercices_steps', AdminExerciseStepViewSet, basename='admin_steps')
+router.register('admin/²_steps', AdminExerciseStepViewSet, basename='admin_steps')
 
-router.register('exercisematerials', ExerciseMaterialViewSet, basename='exercices_material')
-router.register('admin/exercisematerials', AdminExerciseMaterialViewSet, basename='admin_exercices_material')
+router.register('exercisematerials', ExerciseMaterialViewSet, basename='exercises_material')
+router.register('admin/exercisematerials', AdminExerciseMaterialViewSet, basename='admin_exercises_material')
 
-router.register('exercisesports', ExerciseSportViewSet, basename='exercices_sports')
-router.register('admin/exercisesports', AdminExerciseSportViewSet, basename='admin_exercices_sports')
+router.register('exercisesports', ExerciseSportViewSet, basename='exercises_sports')
+router.register('admin/exercisesports', AdminExerciseSportViewSet, basename='admin_exercises_sports')
 
-router.register('exercisezones', ExerciseZoneViewSet, basename='exercices_zone')
-router.register('admin/exercisezones', AdminExerciseZoneViewSet, basename='admin_exercices_zone')
+router.register('exercisezones', ExerciseZoneViewSet, basename='exercises_zone')
+router.register('admin/exercisezones', AdminExerciseZoneViewSet, basename='admin_exercises_zone')
 
 router.register('workzones', WorkZoneViewSet, basename='work_zone')
 router.register('admin/workzones', AdminWorkZoneViewSet, basename='admin_work_zone')

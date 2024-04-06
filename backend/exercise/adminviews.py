@@ -1,4 +1,8 @@
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from rest_framework import filters, mixins, status, viewsets, pagination
+from rest_framework.response import Response
+
 from .models import Material, Exercise, ExerciseStep, ExerciseMaterial, ExerciseSport, ExerciseZone, WorkZone
 from .serializers import MaterialSerializer, ExerciseSerializer, ExerciseStepSerializer, ExerciseMaterialSerializer, ExerciseSportSerializer, ExerciseZoneSerializer, WorkZoneSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
@@ -14,9 +18,37 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
         tags=['Admin - Material'],
         responses={200: "OK"}
     )
+    def get_queryset(self):
+        queryset = Material.objects.all()
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Material'],
+        responses={200: "OK"}
+    )
+    def get_latest(self):
+        queryset = Material.objects.all().order_by("created_at")[:5]
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Material'],
+        responses={200: "OK"}
+    )
     def list(self, request, *args, **kwargs):
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
         return super().list(request, *args, **kwargs)
 
+    @extend_schema(
+        tags=['Admin - Exercise Step'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_materials = self.get_latest()
+        serializer = self.serializer_class(latest_materials, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     @extend_schema(
         tags=['Admin - Material'],
         responses={200: "OK"}
@@ -63,15 +95,48 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         tags=['Admin - Exercise'],
         responses={200: "OK"}
     )
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+    def get_queryset(self):
+        queryset = Exercise.objects.all()
+        return queryset
 
     @extend_schema(
         tags=['Admin - Exercise'],
         responses={200: "OK"}
     )
+    def get_latest(self):
+        queryset = Exercise.objects.all().order_by("created_at")[:5]
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Exercise'],
+        responses={200: "OK"}
+    )
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
+        
+        queryset = self.filter_queryset(self.get_queryset())  # Filtrer le queryset si nécessaire
+        serializer = self.serializer_class(queryset, many=True)  # Créer une instance du sérialiseur
+        return Response(serializer.data)
+
+    @extend_schema(
+        tags=['Admin - Exercise Step'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_exercises = self.get_latest()
+        serializer = self.serializer_class(latest_exercises, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @extend_schema(
+        tags=['Admin - Exercise'],
+        responses={200: "OK"}
+    )
     def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+        instance = self.get_object()
+        serializer = self.serializer_class(instance)
+        return Response(serializer.data)
 
     @extend_schema(
         tags=['Admin - Exercise'],
@@ -112,8 +177,36 @@ class AdminExerciseStepViewSet(viewsets.ModelViewSet):
         tags=['Admin - Exercise Step'],
         responses={200: "OK"}
     )
+    def get_queryset(self):
+        queryset = ExerciseStep.objects.all()
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Exercise Step'],
+        responses={200: "OK"}
+    )
+    def get_latest(self):
+        queryset = ExerciseStep.objects.all().order_by("created_at")[:5]
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Exercise Step'],
+        responses={200: "OK"}
+    )
     def list(self, request, *args, **kwargs):
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
         return super().list(request, *args, **kwargs)
+    
+    @extend_schema(
+        tags=['Admin - Exercise Step'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_exercise_step = self.get_latest()
+        serializer = self.serializer_class(latest_exercise_step, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         tags=['Admin - Exercise Step'],
@@ -161,8 +254,36 @@ class AdminExerciseMaterialViewSet(viewsets.ModelViewSet):
         tags=['Admin - Exercise Material'],
         responses={200: "OK"}
     )
+    def get_queryset(self):
+        queryset = ExerciseMaterial.objects.all()
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Exercise Material'],
+        responses={200: "OK"}
+    )
+    def get_latest(self):
+        queryset = ExerciseMaterial.objects.all().order_by("created_at")[:5]
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Exercise Material'],
+        responses={200: "OK"}
+    )
     def list(self, request, *args, **kwargs):
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
         return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Admin - Exercise Material'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_exercise_material = self.get_latest()
+        serializer = self.serializer_class(latest_exercise_material, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         tags=['Admin - Exercise Material'],
@@ -210,9 +331,37 @@ class AdminExerciseSportViewSet(viewsets.ModelViewSet):
         tags=['Admin - Exercise Sport'],
         responses={200: "OK"}
     )
+    def get_queryset(self):
+        queryset = ExerciseSport.objects.all()
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Exercise Sport'],
+        responses={200: "OK"}
+    )
+    def get_latest(self):
+        queryset = ExerciseSport.objects.all().order_by("created_at")[:5]
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Exercise Sport'],
+        responses={200: "OK"}
+    )
     def list(self, request, *args, **kwargs):
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
         return super().list(request, *args, **kwargs)
 
+    @extend_schema(
+        tags=['Admin - Exercise Sport'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_exercise_sport = self.get_latest()
+        serializer = self.serializer_class(latest_exercise_sport, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     @extend_schema(
         tags=['Admin - Exercise Sport'],
         responses={200: "OK"}
@@ -259,9 +408,37 @@ class AdminExerciseZoneViewSet(viewsets.ModelViewSet):
         tags=['Admin - Exercise Zone'],
         responses={200: "OK"}
     )
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+    def get_queryset(self):
+        queryset = ExerciseZone.objects.all()
+        return queryset
 
+    @extend_schema(
+        tags=['Admin - Exercise Zone'],
+        responses={200: "OK"}
+    )
+    def get_latest(self):
+        queryset = ExerciseZone.objects.all().order_by("created_at")[:5]
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Exercise Zone'],
+        responses={200: "OK"}
+    )
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
+        return super().list(request, *args, **kwargs)
+    
+    @extend_schema(
+        tags=['Admin - Exercise Zone'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_exercises_zone = self.get_latest()
+        serializer = self.serializer_class(latest_exercises_zone, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     @extend_schema(
         tags=['Admin - Exercise Zone'],
         responses={200: "OK"}
@@ -308,8 +485,36 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
         tags=['Admin - Work Zone'],
         responses={200: "OK"}
     )
+    def get_queryset(self):
+        queryset = WorkZone.objects.all()
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Work Zone'],
+        responses={200: "OK"}
+    )
+    def get_latest(self):
+        queryset = WorkZone.objects.all().order_by("created_at")[:5]
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Work Zone'],
+        responses={200: "OK"}
+    )
     def list(self, request, *args, **kwargs):
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
         return super().list(request, *args, **kwargs)
+    
+    @extend_schema(
+        tags=['Admin - Work Zone'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_workzone = self.get_latest()
+        serializer = self.serializer_class(latest_workzone, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK) 
 
     @extend_schema(
         tags=['Admin - Work Zone'],

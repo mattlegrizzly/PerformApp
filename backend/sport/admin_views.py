@@ -14,7 +14,25 @@ class AdminSportViewSet(viewsets.ModelViewSet):
         tags=['Admin - Sport'],
         responses={200: "OK"}
     )
+    def get_queryset(self):
+        queryset = Sport.objects.all()
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Sport'],
+        responses={200: "OK"}
+    )
+    def get_latest(self):
+        queryset = Sport.objects.all().order_by("created_at")[:5]
+        return queryset
+
+    @extend_schema(
+        tags=['Admin - Sport'],
+        responses={200: "OK"}
+    )
     def list(self, request, *args, **kwargs):
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
         return super().list(request, *args, **kwargs)
 
     @extend_schema(
