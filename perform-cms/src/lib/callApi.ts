@@ -1,4 +1,5 @@
 import type IERequestOptions from "@/types/request"
+import type {IEUser, IEUserData} from '@/types/types'
 
 const baseUrl = 'http://127.0.0.1:8000/'
 
@@ -24,14 +25,17 @@ const handleParams = (url : URL, options : IERequestOptions) => {
 
 const handleResponse = (response : Response, tryRefresh : boolean) => {
     if(tryRefresh === false) {
-        return response.json().then((data) => {
+        response.json().then((data) => {
             console.log(' la res ',  data)
             if (data['code'] === "token_not_valid" ) {
-                /* refresh().then(() => 
-                ) */
+                refresh().then((data) => {
+                    console.log('data ' , data)
+                })
             } else if(!response.ok){
+                console.log('error')
                 throw 'Error'
             } else {
+                console.log('data')
                 return data
             }
         })
@@ -40,15 +44,24 @@ const handleResponse = (response : Response, tryRefresh : boolean) => {
     }
 }
 
-const refresh = async () => {
-    const relativeUrlString = "/api/refresh_tokens"
+const refresh = async () : Promise<any> => {
+    const relativeUrlString = "/api/refresh_tokens/"
     const url = new URL(relativeUrlString, baseUrl);
+    const user = JSON.parse(localStorage.getItem('user') as string) as IEUser;
+    const body = {
+        refresh : user.refresh
+    };
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
     const request = new Request(url, {
-        method: "GET",
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
     })
 
     const response = await fetch(request);
-    return handleResponse(response, true);
+    handleResponse(response, true);
 }
 
 /**
@@ -58,7 +71,7 @@ const refresh = async () => {
  * @param {*} authorization
  * @returns
  */
-const get = async (urlChunk : string , options = {} as IERequestOptions, authorization = true) => {
+const get = async (urlChunk : string , options = {} as IERequestOptions, authorization = true) : Promise<any> => {
     const relativeUrlString = "/api" + urlChunk
     const url = new URL(relativeUrlString, baseUrl)
 

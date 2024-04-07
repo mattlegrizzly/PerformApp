@@ -5,7 +5,7 @@ interface IEUser {
 }
 
 interface IEUserData {
-    email: string
+  email: string
   last_name: string, 
   first_name : string,
   size: number
@@ -17,4 +17,4 @@ interface IEUserData {
   users_wellness: Array<String>
 }
 
-export default IEUser
+export {IEUser, IEUserData}
