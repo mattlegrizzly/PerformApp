@@ -19,6 +19,7 @@ const sendData = () => {
   }
   fetch('http://127.0.0.1:8000/api/login/', requestOptions)
     .then((response) => {
+      console.log(response)
       if (response.status >= 300) {
         throw Error()
       } else {
