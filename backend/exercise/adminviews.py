@@ -40,7 +40,7 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
     @extend_schema(
-        tags=['Admin - Exercise Step'],
+        tags=['Admin - Material'],
         responses={200: "OK"}
     )
     @action(detail=False, methods=['get'], url_path="latest")
@@ -120,7 +120,7 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @extend_schema(
-        tags=['Admin - Exercise Step'],
+        tags=['Admin - Exercise'],
         responses={200: "OK"}
     )
     @action(detail=False, methods=['get'], url_path="latest")

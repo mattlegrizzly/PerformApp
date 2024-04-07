@@ -336,7 +336,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         except ObjectDoesNotExist:
             raise NotFound
 
-#------------------SPORT------------------
+#------------------ADMIN USERS------------------
 # Admin ViewSet
 class AdminUsersAllViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -348,7 +348,7 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def get_queryset(self):
-        queryset = Recipe.objects.all()
+        queryset = User.objects.all()
         return queryset
         
     @extend_schema(
@@ -356,7 +356,7 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def get_latest(self):
-        queryset = Recipe.objects.all().order_by("created_at")[:5]
+        queryset = User.objects.all().order_by("created_at")[:5]
         return queryset
 
     @extend_schema(
@@ -367,6 +367,16 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
         if request.query_params.get("itemsPerPage"):
             self.pagination_class.page_size = request.query_params.get("itemsPerPage")
         return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_users = self.get_latest()
+        serializer = self.serializer_class(latest_users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         tags=['Admin - Users(all)'],
@@ -403,16 +413,74 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 
+#------------------USERS FAV EXERCISES------------------
+# Users fav exercises ViewSet
 class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     permission_classes = [UserViewSetPermissions, permissions.IsAdminUser]
     queryset = UsersFavExercises.objects.all()
     serializer_class = UsersFavExercisesSerializer
 
+    @extend_schema(
+        tags=['Users Fav Exercises'],
+        responses={200: "OK"}
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+    
+    @extend_schema(
+        tags=['Users Fav Exercises'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_sports_user = self.get_latest()
+        serializer = self.serializer_class(latest_sports_user, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        tags=['Users Fav Exercises'],
+        responses={200: "OK"}
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users Fav Exercises'],
+        responses={201: "Created"}
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users Fav Exercises'],
+        responses={200: "OK"}
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users Fav Exercises'],
+        responses={200: "OK"}
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users Fav Exercises'],
+        responses={204: "No Content"}
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+#------------------USERS INJURIES------------------
+# Users Injuries ViewSet
 class InjurieViewSet(viewsets.ModelViewSet):
     permission_classes = [UserViewSetPermissions]
     queryset = Injurie.objects.all()
     serializer_class = InjurieSerializer
 
+#------------------USERS WELLNESS------------------
+# Users Wellness ViewSet
 class WellnessViewSet(viewsets.ModelViewSet):
     permission_classes = [UserViewSetPermissions, permissions.IsAdminUser]
     queryset = Wellness.objects.all()

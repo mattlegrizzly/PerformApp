@@ -82,7 +82,7 @@ router.register('admin/exercises', AdminExerciseViewSet, basename='admin_exercis
 
 
 router.register('exercisesteps', ExerciseStepViewSet, basename='steps')
-router.register('admin/²_steps', AdminExerciseStepViewSet, basename='admin_steps')
+router.register('admin/steps', AdminExerciseStepViewSet, basename='admin_steps')
 
 router.register('exercisematerials', ExerciseMaterialViewSet, basename='exercises_material')
 router.register('admin/exercisematerials', AdminExerciseMaterialViewSet, basename='admin_exercises_material')

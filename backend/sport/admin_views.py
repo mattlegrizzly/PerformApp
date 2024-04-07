@@ -2,6 +2,9 @@ from rest_framework import permissions, viewsets
 from .models import Sport, SportsUser
 from .serializers import SportSerializer, SportsUserSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from rest_framework import filters, mixins, status, viewsets, pagination
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 #------------------SPORT------------------
 # Admin ViewSet
@@ -35,6 +38,16 @@ class AdminSportViewSet(viewsets.ModelViewSet):
             self.pagination_class.page_size = request.query_params.get("itemsPerPage")
         return super().list(request, *args, **kwargs)
 
+    @extend_schema(
+        tags=['Admin - Sport'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_sports = self.get_latest()
+        serializer = self.serializer_class(latest_sports, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     @extend_schema(
         tags=['Admin - Sport'],
         responses={200: "OK"}
@@ -83,6 +96,16 @@ class AdminSportsUserViewSet(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+    
+    @extend_schema(
+        tags=['Admin - Sports User'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_sports_user = self.get_latest()
+        serializer = self.serializer_class(latest_sports_user, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         tags=['Admin - Sports User'],
