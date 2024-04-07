@@ -23,33 +23,43 @@ const handleParams = (url : URL, options : IERequestOptions) => {
     }
 }
 
-const handleResponse = (response : Response, tryRefresh : boolean) => {
-    if(tryRefresh === false) {
-        response.json().then((data) => {
-            console.log(' la res ',  data)
-            if (data['code'] === "token_not_valid" ) {
-                refresh().then((data) => {
-                    console.log('data ' , data)
-                })
-            } else if(!response.ok){
-                console.log('error')
-                throw 'Error'
-            } else {
-                console.log('data')
-                return data
-            }
-        })
-    } else {
-        throw Error('error credentials')
-    }
-}
+const handleResponse = async (response: Response, tryRefresh: boolean): Promise<any> => {
 
-const refresh = async () : Promise<any> => {
-    const relativeUrlString = "/api/refresh_tokens/"
+    const data = await response.json();
+
+    if (data['code'] === "token_not_valid") {
+        if (tryRefresh) {
+            try {
+                const storedObject = localStorage.getItem('user') as string;
+                const parseUser = JSON.parse(storedObject) as IEUser; 
+                const refreshedData = await refresh(); // Actualisation du token
+                const user = {
+                    user : parseUser.user,
+                    refresh : refreshedData.refresh,
+                    access : refreshedData.access
+                }
+                const userParse = JSON.stringify(user);
+                localStorage.setItem('user', userParse);
+                handleResponse(response, false)
+
+            } catch (error) {
+                throw new Error('Impossible de rafraîchir le token');
+            }
+        } else {
+            throw new Error('Token non valide');
+        }
+    } else {
+        return data; // Retourne les données normalement si le token est valide
+    }
+};
+
+
+const refresh = async () => {
+    const relativeUrlString = "/api/refresh_tokens/";
     const url = new URL(relativeUrlString, baseUrl);
     const user = JSON.parse(localStorage.getItem('user') as string) as IEUser;
     const body = {
-        refresh : user.refresh
+        refresh: user.refresh
     };
 
     const headers = new Headers();
@@ -58,11 +68,23 @@ const refresh = async () : Promise<any> => {
         method: "POST",
         headers,
         body: JSON.stringify(body),
-    })
+    });
 
-    const response = await fetch(request);
-    handleResponse(response, true);
-}
+    try {
+        const response = await fetch(request);
+        if (!response.ok) {
+            throw new Error('La requête a échoué');
+        }
+        const data = await response.json();
+        // Mettez à jour le token dans le localStorage ou sessionStorage si nécessaire
+        // localStorage.setItem('user', JSON.stringify({ access: data.access, refresh: user.refresh }));
+        // sessionStorage.setItem('user', JSON.stringify({ access: data.access, refresh: user.refresh }));
+        return data;
+    } catch (error) {
+        throw new Error('Impossible de rafraîchir le token');
+    }
+};
+
 
 /**
  * This function permits to do some get request with React Query
@@ -90,10 +112,8 @@ const get = async (urlChunk : string , options = {} as IERequestOptions, authori
         headers: headers,
     })
 
-    fetch(request).then((response) => {
-        console.log('response ' , response)
-        handleResponse(response, false)
-    })
+    const response = await fetch(request);
+    return handleResponse(response, true)
 
 }
 

@@ -11,7 +11,8 @@
   left: 300px !important;
   position: absolute;
   height: 100vh;
-  width: calc(100vw - 300px);
+  width : calc(100vw - 300px - 20px);
+  overflow: scroll;
 }
 
 a,
