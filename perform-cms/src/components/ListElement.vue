@@ -34,8 +34,19 @@ onMounted(() => {
 }
 
 .item-table:hover {
-  box-shadow: 0px 0px 3px gray;
   transition: 0.3s;
-  font-size: 15px;
+  background-color: rgb(246, 246, 246);
 }
+
+
+.item-table td{ 
+  transition: 0.3s;
+}
+
+.item-table:hover td{ 
+  font-weight: 600 !important;
+  transition: 0.3s;
+}
+
+
 </style>

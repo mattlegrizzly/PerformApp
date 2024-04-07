@@ -1,8 +1,14 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router'
 import HomeView from '@/views/HomeView.vue'
-import MaterialsView from '@/views/MaterialsView.vue'
+
+import ListMaterials from '@/views/Materials/ListView.vue'
+import AddMaterial from '@/views/Materials/AddView.vue';
+
 import UsersView from '@/views/UsersView.vue'
-import ExercicesView from '@/views/ExercicesView.vue'
+
+import ListExercises from '@/views/Exercises/ListView.vue';
+import AddExercise from '@/views/Exercises/AddView.vue';
+
 import PageNotFoundView from '@/views/PageNotFoundView.vue'
 import LoginView from '@/views/LoginView.vue'
 const router = createRouter({
@@ -16,7 +22,12 @@ const router = createRouter({
     {
       path: '/exercises',
       name: 'exercises',
-      component: ExercicesView
+      component: ListExercises,
+    },
+    {
+      path: '/exercises/add',
+      name:'addExercise',
+      component : AddExercise
     },
     {
       path: '/users',
@@ -26,7 +37,12 @@ const router = createRouter({
     {
       path: '/materials',
       name: 'materials',
-      component: MaterialsView
+      component: ListMaterials
+    },
+    {
+      path: '/materials/add',
+      name:'addMaterials',
+      component : AddMaterial
     },
     {
       path: '/login',
