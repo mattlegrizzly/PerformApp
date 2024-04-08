@@ -4,8 +4,9 @@ import type {IEUser, IEUserData} from '@/types/types'
 const baseUrl = 'http://127.0.0.1:8000/'
 
 const handleParams = (url : URL, options : IERequestOptions) => {
-    if (typeof options.search !== "undefined") {
+    if (typeof options.search !== "undefined" && options && options.search) {
         Object.keys(options.search).map((searchProperty : any) => {
+            //@ts-expect-error
             const searchValues = options.search[searchProperty]
 
             if (Array.isArray(searchValues)) {
@@ -39,6 +40,7 @@ const handleResponse = async (response: Response, tryRefresh: boolean): Promise<
                     access : refreshedData.access
                 }
                 const userParse = JSON.stringify(user);
+                console.log('je refresh le token')
                 localStorage.setItem('user', userParse);
                 handleResponse(response, false)
 
@@ -49,7 +51,14 @@ const handleResponse = async (response: Response, tryRefresh: boolean): Promise<
             throw new Error('Token non valide');
         }
     } else {
-        return data; // Retourne les données normalement si le token est valide
+        if(response.status > 300){
+            return {
+                status : response.status,
+                data : data
+            };
+        } else {
+            return data; // Retourne les données normalement si le token est valide
+        }
     }
 };
 

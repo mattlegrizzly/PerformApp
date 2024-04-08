@@ -114,6 +114,16 @@ input {
   background-color: var(--primary-blue);
   border-radius: 20px;
   color: white;
+  transition: 0.3s;
+}
+
+.buttonWrapper button:hover {
+  margin-top: 20px;
+  background-color: white;
+  border-radius: 20px;
+  color: var(--primary-blue);
+  border: solid 1px var(--primary-blue);
+  transition: 0.3s;
 }
 </style>
 <template lang="">

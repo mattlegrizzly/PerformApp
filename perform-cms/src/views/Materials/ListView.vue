@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import NavMenu from '@/components/NavMenu.vue'
 import ListElement from '@/components/ListElement.vue'
+import NavButton from '@/components/NavButton.vue'
 import { ref, onMounted } from 'vue'
 import { get } from '@/lib/callApi'
 import router from '@/router'
@@ -11,10 +12,6 @@ const getMaterials = async () => {
   const res = await get('/admin/materials');
   materials.value = await res.results;
   console.log(res)
-}
-
-const nav = () => {
-  router.push('/materials/add');
 }
 
 onMounted(() => {
@@ -30,13 +27,7 @@ onMounted(() => {
   <div class="mainWrapper">
     <h1>Materials</h1>
     <div>
-      <v-btn prepend-icon="mdi-add" @click='nav'>
-        <template v-slot:prepend>
-          <v-icon color="success"></v-icon>
-        </template>
-
-        Ajouter
-      </v-btn>
+      <NavButton url="/materials/add" text="Ajouter" />
     </div>
     <div>
       <ListElement :headerTable="['Id', 'Nom']" :contentTable="materials" :limitData="2" />
