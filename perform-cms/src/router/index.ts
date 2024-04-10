@@ -3,11 +3,15 @@ import HomeView from '@/views/HomeView.vue'
 
 import ListMaterials from '@/views/Materials/ListView.vue'
 import AddMaterial from '@/views/Materials/AddView.vue';
+import ShowMaterial from '@/views/Materials/ShowView.vue'
 
 import UsersView from '@/views/UsersView.vue'
 
 import ListExercises from '@/views/Exercises/ListView.vue';
 import AddExercise from '@/views/Exercises/AddView.vue';
+
+import ListSports from '@/views/Sports/ListView.vue';
+import AddSport from '@/views/Sports/AddView.vue';
 
 import PageNotFoundView from '@/views/PageNotFoundView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -30,6 +34,16 @@ const router = createRouter({
       component : AddExercise
     },
     {
+      path: '/sports',
+      name: 'sport',
+      component: ListSports,
+    },
+    {
+      path: '/sports/add',
+      name:'addSport',
+      component : AddSport
+    },
+    {
       path: '/users',
       name: 'users',
       component: UsersView
@@ -43,6 +57,11 @@ const router = createRouter({
       path: '/materials/add',
       name:'addMaterials',
       component : AddMaterial
+    },
+    {
+      path: '/materials/show/:material_id',
+      name:'showMaterial',
+      component : ShowMaterial
     },
     {
       path: '/login',

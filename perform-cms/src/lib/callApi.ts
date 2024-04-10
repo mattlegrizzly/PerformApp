@@ -126,20 +126,18 @@ const get = async (urlChunk : string , options = {} as IERequestOptions, authori
 
 }
 
-const post = async (urlChunk : String, options = {} as IERequestOptions, authorization = false) => {
+const post = async (urlChunk : String, options = {} as IERequestOptions, authorization = false, image : boolean) => {
     const relativeUrlString = "/api" + urlChunk
     const url = new URL(relativeUrlString, baseUrl)
 
+    const headers = new Headers()
+    if(!image) {
+        headers.append("Content-Type", "application/json")
+    } else {
+        headers.append('Accept', "application/json")
+    }
     handleParams(url, options)
 
-    const headers = new Headers()
-
-    if (urlChunk.includes("recipes")) {
-        // For FormData, we don't set Content-Type header,
-        // it will be set automatically along with boundary
-    } else {
-        headers.append("Content-Type", "application/json")
-    }
 
     if (authorization) {
         let token = ""
@@ -154,14 +152,17 @@ const post = async (urlChunk : String, options = {} as IERequestOptions, authori
     }
 
     let body
-    if (urlChunk.includes("recipes")) {
+    if (image) {
         const formData = new FormData()
+        
+        for (const key in options.body) {
+            formData.append(key as string, options.body[key] as string);
+          }
 
-        Object.entries(options.body).forEach((field) => {
-            formData.append(field[0], field[1])
-        })
-
-        body = formData
+          for (var key of formData.entries()) {
+            console.log(key[0] + ', ' + key[1]);
+        }
+        body = formData;
     } else {
         body = JSON.stringify(options.body)
     }

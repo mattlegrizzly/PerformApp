@@ -1,4 +1,5 @@
 <script setup>
+import router from '@/router';
 import { defineProps } from 'vue';
 import { onMounted } from 'vue';
 
@@ -7,6 +8,10 @@ const props = defineProps(['headerTable', 'contentTable', 'limitData'])
 onMounted(() => {
   console.log(props.contentTable);
 })
+
+const navigate = (index) => {
+  router.push('/materials/show/' + index)
+}
 </script>
 
 <template>
@@ -19,7 +24,7 @@ onMounted(() => {
         </tr>
         </thead>
         <tbody>
-            <tr class="item-table" v-for="(row, index) in props.contentTable" :key="index">
+            <tr class="item-table" v-for="(row, index) in props.contentTable" :key="index" @click="navigate(index+1)">
               <template v-for="(value, key, i) in row">
                     <td v-if="i < props.limitData" :key="key">{{ value }}</td>
                 </template>
