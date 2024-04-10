@@ -3,6 +3,7 @@ from .models import Sport, Material, Exercise, ExerciseStep, ExerciseSport, Exer
 from sport.serializers import SportSerializer
 
 class MaterialSerializer(serializers.ModelSerializer):
+    pictures = serializers.ImageField(required=False)
     class Meta:
         model = Material
         fields = ['id', 'name', 'description', 'pictures']

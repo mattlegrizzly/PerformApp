@@ -25,6 +25,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from django.conf import settings
+from django.conf.urls.static import static
 
 from users2.views import LoginViewset, LogoutViewset, RefreshTokensViewset, RegisterViewset
 from users2.views import AdminUserViewSet, UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet, AdminUsersAllViewSet
@@ -113,4 +115,4 @@ urlpatterns = [
     # url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
     # url(r'^account/', include('allauth.urls')),
     # url(r'^accounts-rest/registration/account-confirm-email/(?P<key>.+)/$', confirm_email, name='account_confirm_email'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
