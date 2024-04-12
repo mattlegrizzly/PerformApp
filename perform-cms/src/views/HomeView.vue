@@ -89,13 +89,13 @@ onMounted(() => {
 
 <template>
   <NavMenu />
-  <AlertComponents
-    :title="'Erreur de récupération des données'"
-    :type="'error'"
-    :alertValue="alert"
-    :message_alert="alertMessage"
-  />
   <div class="mainWrapper">
+    <AlertComponents
+      :title="'Erreur de récupération des données'"
+      :type="'error'"
+      :alertValue="alert"
+      :message_alert="alertMessage"
+    />
     <h1>
       Bienvenue
       {{ user?.user?.email === '' ? '' : user.user.last_name + ' ' + user.user.first_name }}

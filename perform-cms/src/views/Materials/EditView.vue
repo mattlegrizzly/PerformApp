@@ -6,8 +6,9 @@ import '@/assets/base.css'
 import { get, put } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
 import NavButton from '@/components/NavButton.vue'
-
-const router = useRoute()
+import AlertComponents from '@/components/AlertComponents.vue'
+import router from '@/router'
+const routerNav = useRoute()
 
 const name = ref('')
 const description = ref('')
@@ -15,14 +16,7 @@ const image_url = ref(new File([], '', undefined))
 const image_src = ref('')
 
 const alertErr = ref(false)
-const alertSuc = ref(false)
 const error_message = ref('')
-const success_message = ref('error')
-
-const closePopup = () => {
-  alertErr.value = false
-  alertSuc.value = false
-}
 
 const onChangeInput = (e: any) => {
   const file = e.target.files[0]
@@ -38,7 +32,7 @@ const onChangeInput = (e: any) => {
 }
 
 const sendData = async () => {
-  const id = router.params.material_id;
+  const id = routerNav.params.material_id;
   const option = {
     body: {
       name: name.value,
@@ -46,12 +40,22 @@ const sendData = async () => {
       pictures: image_url.value
     }
   } as IERequestOptions
-  const res = await put('/admin/materials/' + id + '/', option, true, true);
-  console.log(res);
+  put('/admin/materials/' + id + '/', option, true, true).then((res) => {
+    console.log(res)
+    if(res.status > 300) {
+      const keys = Object.keys(res.data)
+        for (let i = 0; i < keys.length; i++) {
+          error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
+        }
+        alertErr.value = true;
+    } else {
+      router.push('/materials/show/' + id+ '/')
+    }
+  })
 }
 
 const getMaterial = async () => {
-    const id = router.params.material_id
+    const id = routerNav.params.material_id
     const res = await get('/admin/materials/' + id + '/')
     console.log(res)
     name.value = await res.name
@@ -102,29 +106,8 @@ onMounted(() => {
 
 <template lang="">
   <NavMenu />
-  <v-alert
-    :model-value="alertErr"
-    border="start"
-    close-label="Close Alert"
-    color="error"
-    title="Erreur de connexion"
-    closable
-    @click:close="closePopup"
-  >
-    {{ error_message }}
-  </v-alert>
-  <v-alert
-    :model-value="alertSuc"
-    border="start"
-    close-label="Close Alert"
-    color="success"
-    title="Matériel ajouté"
-    closable
-    @click:close="closePopup"
-  >
-    {{ success_message }}
-  </v-alert>
   <div class="mainWrapper">
+    <AlertComponents :message_alert='error_message' :type='"error"' :title='"Error de modification"' :alertValue="alertErr"/>
     <NavButton class="returnBack" :text="'Retour'" :url="'/materials'" />
     <h1>Ajouter un Matériel</h1>
     <form @submit.prevent="submit">

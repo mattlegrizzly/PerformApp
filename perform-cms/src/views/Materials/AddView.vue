@@ -57,6 +57,7 @@ const sendData = (quitForm: boolean) => {
         name.value = ''
         description.value = ''
         image_url.value = ''
+        image_src.value = '';
         if (quitForm) {
           router.push('/materials')
         } else {
@@ -91,7 +92,9 @@ const sendData = (quitForm: boolean) => {
 
 <template lang="">
   <NavMenu />
-  <v-alert
+ 
+  <div class="mainWrapper">
+    <v-alert
     :model-value="alertErr"
     border="start"
     close-label="Close Alert"
@@ -113,7 +116,6 @@ const sendData = (quitForm: boolean) => {
   >
     {{ success_message }}
   </v-alert>
-  <div class="mainWrapper">
     <NavButton class='returnBack' :text="'Retour'" :url="'/materials'"/>
     <h1>Ajouter un Matériel</h1>
     <form @submit.prevent="submit">
