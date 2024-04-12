@@ -3,91 +3,125 @@ import { RouterView } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import NavMenu from '@/components/NavMenu.vue'
 import type { IEUser, IEUserData } from '@/types/types'
-import { get } from '@/lib/callApi'
+import { get, verifyToken } from '@/lib/callApi'
 import ListElement from '@/components/ListElement.vue'
+import AlertComponents from '@/components/AlertComponents.vue'
+import { useUserStore } from '@/stores/store';
 
 const users = ref([{}])
 const materials = ref([{}])
 const sports = ref([{}])
 const exercises = ref([{}])
 
+const alert = ref(false)
+const alertMessage = ref('')
+
+const userStore = useUserStore();
 const user = ref({
   user: {} as IEUserData
-} as IEUser);
-const alert = ref(false)
-const error_message = ref('error')
-const loadObjectFromLocalStorage = () => {
-  const storedObject = localStorage.getItem('user') // Remplacez 'yourObjectName' par la clé utilisée pour stocker votre objet
-  console.log('storedObject ', storedObject)
-  if (storedObject) {
-    user.value = JSON.parse(storedObject)
-  }
-}
+} as IEUser)
+
 
 const getUsers = async () => {
-  const res = await get('/admin/users_all/latest');
-  users.value = await res;
+  await get('/admin/users_all/latest')
+  .then((res) => {
+      users.value = res;
+    })
+    .catch((error: Error) => {
+      alert.value = true
+      alertMessage.value += error.message + ' users \n'
+    })
 }
 
 const getMaterials = async () => {
-  const res = await get('/admin/materials/latest');
-  materials.value = await res;
+  get('/admin/materials/latest')
+    .then((res) => {
+      materials.value = res;
+    })
+    .catch((error: Error) => {
+      alert.value = true
+      alertMessage.value += error.message + ' materials \n'
+    })
 }
 
 const getExercises = async () => {
-  const res = await get('/admin/exercises/latest');
-  exercises.value = await res;
+  get('/admin/exercises/latest')
+    .then((res) => {
+      exercises.value = res;
+    })
+    .catch((error: Error) => {
+      alert.value = true
+      alertMessage.value += error.message + ' exercises \n'
+    })
 }
 
 const getSports = async () => {
-  const res = await get('/admin/sports/latest');
-  sports.value = await res;
+  get('/admin/sports/latest')
+    .then((res) => {
+      sports.value = res
+    })
+    .catch((error: Error) => {
+      alert.value = true
+      alertMessage.value += error.message + ' sports \n'
+    })
 }
 
 onMounted(() => {
-  loadObjectFromLocalStorage() // Appel de la fonction lors du montage du composant
-  getUsers();
-  getExercises();
-  getSports();
-  getMaterials();
+  verifyToken().then((res) => {
+    if(res.status > 300){
+      if(res.status == 401){
+        throw Error('Token not valid')
+      } else {
+        throw Error()
+      }
+    }
+    getUsers()
+    getExercises()
+    getSports()
+    getMaterials()
+  }).catch((error) => {
+    console.log('error ', error)
+  })
+  
 })
-
-const closePopup = () => {
-  alert.value = false
-}
 </script>
 
 <template>
   <NavMenu />
-    <div class="mainWrapper">
-      <h1>Bienvenue {{ user?.user?.email === '' ? '' : user.user.last_name + ' ' + user.user.first_name }}</h1>
-      <div class="home-card">
-        <div class="five-recents">
-          <h2>
-            Les 5 derniers utilisateurs inscrits
-          </h2>
-          <ListElement :headerTable="['Email', 'Nom', 'Prénom' , 'Taille', 'Age', 'Genre']" :contentTable="users" :limitData="6" />
-        </div>
-        <div class="five-recents">
-          <h2>
-            Les 5 derniers matériels inscrits
-          </h2>
-          <ListElement :headerTable="['Id', 'Nom']" :contentTable="materials" :limitData="2" />
-        </div>
-        <div class="five-recents">
-          <h2>
-            Les 5 derniers exercises inscrits
-          </h2>
-          <ListElement :headerTable="['Nom']" :contentTable="exercises" :limitData="1" />
-        </div>
-        <div class="five-recents">
-          <h2>
-            Les 5 derniers sports inscrits
-          </h2>
-          <ListElement :headerTable="['Id', 'Nom']" :contentTable="sports" :limitData="2" />
-        </div>
+  <AlertComponents
+    :title="'Erreur de récupération des données'"
+    :type="'error'"
+    :alertValue="alert"
+    :message_alert="alertMessage"
+  />
+  <div class="mainWrapper">
+    <h1>
+      Bienvenue
+      {{ user?.user?.email === '' ? '' : user.user.last_name + ' ' + user.user.first_name }}
+    </h1>
+    <div class="home-card">
+      <div class="five-recents">
+        <h2>Les 5 derniers utilisateurs inscrits</h2>
+        <ListElement
+          :headerTable="['Email', 'Nom', 'Prénom', 'Taille', 'Age', 'Genre']"
+          :contentTable="users"
+          :limitData="6"
+        />
+      </div>
+      <div class="five-recents">
+        <h2>Les 5 derniers matériels inscrits</h2>
+        <ListElement :headerTable="['Id', 'Nom']" :contentTable="materials" :limitData="2" />
+      </div>
+      <div class="five-recents">
+        <h2>Les 5 derniers exercises inscrits</h2>
+        <ListElement :headerTable="['Nom']" :contentTable="exercises" :limitData="1" />
+      </div>
+      <div class="five-recents">
+        <h2>Les 5 derniers sports inscrits</h2>
+        <ListElement :headerTable="['Id', 'Nom']" :contentTable="sports" :limitData="2" />
       </div>
     </div>
+  </div>
   <RouterView />
 </template>
 
@@ -95,12 +129,12 @@ const closePopup = () => {
 .home-card {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap
+  flex-wrap: wrap;
 }
 
 .five-recents {
-  margin : 10px;
-  width : 48%;
+  margin: 10px;
+  width: 48%;
   border: 1px black solid;
   padding: 10px;
   border-radius: 10px;

@@ -31,6 +31,8 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
+// default options config: { expires: '1d', path: '/', domain: '', secure: '', sameSite: 'Lax' , partitioned: false}
+
 const vuetify = createVuetify({
   components,
   directives,
@@ -43,11 +45,12 @@ const vuetify = createVuetify({
   },
 })
 
+
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(IonicVue);
+app.use(IonicVue)
 app.use(vuetify)
 
 router.isReady().then(() => {

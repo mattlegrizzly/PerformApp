@@ -1,7 +1,44 @@
 import type IERequestOptions from "@/types/request"
 import type {IEUser, IEUserData} from '@/types/types'
+import { useUserStore } from '@/stores/store';
+import { useCookies } from '@vueuse/integrations/useCookies'
+
+const cookies = useCookies(['locale'])
 
 const baseUrl = 'http://127.0.0.1:8000/'
+
+const verifyToken = async () => {
+    const access = cookies.get('access');
+    const relativeUrlString = "/api/token/verify/";
+    const url = new URL(relativeUrlString, baseUrl);
+
+    const body = JSON.stringify({
+        token: access
+    })
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    const request = new Request(url, {
+        method: "POST",
+        headers,
+        body: body,
+    })
+
+    const response = await fetch(request)
+    if(response.status == 401) {
+        const resRefresh = await response.json();
+        if(response.status > 300){
+            return {
+                status : response.status,
+                data : resRefresh
+            };
+        } else {
+            return resRefresh; // Retourne les données normalement si le token est valide
+        }
+    } else {
+        return response;
+    }
+}
 
 const handleParams = (url : URL, options : IERequestOptions) => {
     if (typeof options.search !== "undefined" && options && options.search) {
@@ -24,33 +61,9 @@ const handleParams = (url : URL, options : IERequestOptions) => {
     }
 }
 
-const handleResponse = async (response: Response, tryRefresh: boolean): Promise<any> => {
+const handleResponse = async (response: Response): Promise<any> => {
 
     const data = await response.json();
-
-    if (data['code'] === "token_not_valid") {
-        if (tryRefresh) {
-            try {
-                const storedObject = localStorage.getItem('user') as string;
-                const parseUser = JSON.parse(storedObject) as IEUser; 
-                const refreshedData = await refresh(); // Actualisation du token
-                const user = {
-                    user : parseUser.user,
-                    refresh : refreshedData.refresh,
-                    access : refreshedData.access
-                }
-                const userParse = JSON.stringify(user);
-                console.log('je refresh le token')
-                localStorage.setItem('user', userParse);
-                handleResponse(response, false)
-
-            } catch (error) {
-                throw new Error('Impossible de rafraîchir le token');
-            }
-        } else {
-            throw new Error('Token non valide');
-        }
-    } else {
         if(response.status > 300){
             return {
                 status : response.status,
@@ -59,16 +72,16 @@ const handleResponse = async (response: Response, tryRefresh: boolean): Promise<
         } else {
             return data; // Retourne les données normalement si le token est valide
         }
-    }
 };
 
 
 const refresh = async () => {
+    const userStore = useUserStore();
     const relativeUrlString = "/api/refresh_tokens/";
     const url = new URL(relativeUrlString, baseUrl);
-    const user = JSON.parse(localStorage.getItem('user') as string) as IEUser;
+    const refresh = userStore.refresh;
     const body = {
-        refresh: user.refresh
+        refresh: refresh
     };
 
     const headers = new Headers();
@@ -85,9 +98,6 @@ const refresh = async () => {
             throw new Error('La requête a échoué');
         }
         const data = await response.json();
-        // Mettez à jour le token dans le localStorage ou sessionStorage si nécessaire
-        // localStorage.setItem('user', JSON.stringify({ access: data.access, refresh: user.refresh }));
-        // sessionStorage.setItem('user', JSON.stringify({ access: data.access, refresh: user.refresh }));
         return data;
     } catch (error) {
         throw new Error('Impossible de rafraîchir le token');
@@ -111,8 +121,7 @@ const get = async (urlChunk : string , options = {} as IERequestOptions, authori
     const headers = new Headers()
 
     if (authorization) {
-        let token = sessionStorage.getItem("user") || localStorage.getItem("user") || ""
-        token = JSON.parse(token)["access"]
+        const token = cookies.get('access');
         headers.append("Authorization", `Bearer ${token}`)
     }
 
@@ -122,7 +131,7 @@ const get = async (urlChunk : string , options = {} as IERequestOptions, authori
     })
 
     const response = await fetch(request);
-    return handleResponse(response, true)
+    return handleResponse(response)
 
 }
 
@@ -140,14 +149,7 @@ const post = async (urlChunk : String, options = {} as IERequestOptions, authori
 
 
     if (authorization) {
-        let token = ""
-        if (localStorage.getItem("user")) {
-            token = localStorage.getItem("user") as string
-        }
-        if (sessionStorage.getItem("user")) {
-            token = sessionStorage.getItem("user") as string
-        }
-        token = JSON.parse(token)["access"]
+        const token = cookies.get('access')
         headers.append("Authorization", `Bearer ${token}`)
     }
 
@@ -175,7 +177,7 @@ const post = async (urlChunk : String, options = {} as IERequestOptions, authori
 
     const response = await fetch(request)
 
-    return handleResponse(response, false)
+    return handleResponse(response)
 }
 
 /**
@@ -192,8 +194,7 @@ const put = async (urlChunk : string, options = {} as IERequestOptions, authoriz
     handleParams(url, options)
 
     const headers = new Headers()
-    let token = sessionStorage.getItem("user") || localStorage.getItem("user") || ""
-    token = JSON.parse(token)["access"]
+    const token = cookies.get('access');
 
     headers.append("Content-Type", "application/json")
     if (authorization) {
@@ -207,7 +208,7 @@ const put = async (urlChunk : string, options = {} as IERequestOptions, authoriz
     })
 
     const response = await fetch(request)
-    return handleResponse(response, false)
+    return handleResponse(response)
 }
 
 /**
@@ -233,14 +234,7 @@ const patch = async (urlChunk : string, options = {} as IERequestOptions, author
     }
 
     if (authorization) {
-        let token = ""
-        if (localStorage.getItem("user")) {
-            token = localStorage.getItem("user") as string
-        }
-        if (sessionStorage.getItem("user")) {
-            token = sessionStorage.getItem("user") as string
-        }
-        token = JSON.parse(token)["access"]
+        const token = cookies.get('access')
         headers.append("Authorization", `Bearer ${token}`)
     }
 
@@ -265,7 +259,7 @@ const patch = async (urlChunk : string, options = {} as IERequestOptions, author
 
     const response = await fetch(request)
 
-    return handleResponse(response, false)
+    return handleResponse(response)
 }
 
 /**
@@ -278,8 +272,7 @@ const del = async (urlChunk : any, authorization = true) => {
 
     const headers = new Headers()
 
-    let token : string = sessionStorage.getItem("user") || localStorage.getItem("user") || ""
-    token = JSON.parse(token)["access"]
+    const token = cookies.get('access')
 
     headers.append("Content-Type", "application/json")
     if (authorization) {
@@ -296,4 +289,4 @@ const del = async (urlChunk : any, authorization = true) => {
     await fetch(request)
 }
 
-export { get, post, put, del, patch, refresh }
+export { get, post, put, del, patch, refresh, verifyToken }

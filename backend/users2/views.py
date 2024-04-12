@@ -15,7 +15,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
+from rest_framework.permissions import AllowAny
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.viewsets import ViewSet
+import jwt
+from backend.settings import SIMPLE_JWT
+
 from .serializers import (
     UserSerializer,     
     UserDetailedSerializer,
@@ -36,6 +42,7 @@ from rest_framework.exceptions import (
     PermissionDenied,
     ValidationError,
 )
+
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)

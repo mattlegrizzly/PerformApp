@@ -3,12 +3,18 @@ import { ref } from 'vue'
 import router from '@/router'
 import image from '@/assets/logo_perform.png'
 import '@/assets/base.css'
+import { useCookies } from '@vueuse/integrations/useCookies'
+import { useUserStore } from '@/stores/store';
+
+const cookies = useCookies(['locale'])
 
 const email = ref('')
 const password = ref('')
 
 const alert = ref(false)
 const error_message = ref('error')
+
+const userStore = useUserStore();
 
 const sendData = () => {
   console.log(password.value, ' ', email.value)
@@ -28,7 +34,9 @@ const sendData = () => {
     })
     .then((data) => {
       console.log(data)
-      localStorage.setItem('user', JSON.stringify(data))
+      userStore.setUser(data);
+      cookies.set('access', data.access);
+      
       router.push('/')
       password.value = ''
       email.value = ''

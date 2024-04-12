@@ -62,6 +62,8 @@ AUTH_USER_MODEL = "cms.User"
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=180),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    'ALGORITHM': 'HS512',
+    'SIGNING_KEY': SECRET_KEY,
 }
 
 
