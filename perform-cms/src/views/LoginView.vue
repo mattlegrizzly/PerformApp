@@ -17,7 +17,6 @@ const error_message = ref('error')
 const userStore = useUserStore();
 
 const sendData = () => {
-  console.log(password.value, ' ', email.value)
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -25,7 +24,6 @@ const sendData = () => {
   }
   fetch('http://127.0.0.1:8000/api/login/', requestOptions)
     .then((response) => {
-      console.log(response)
       if (response.status >= 300) {
         throw Error()
       } else {
@@ -33,10 +31,10 @@ const sendData = () => {
       }
     })
     .then((data) => {
-      console.log(data)
       userStore.setUser(data);
-      cookies.set('access', data.access);
-      
+      var date = new Date();
+      date.setDate(date.getDate() + 7);
+      cookies.set('access', data.access, {expires: date});
       router.push('/')
       password.value = ''
       email.value = ''

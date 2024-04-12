@@ -75,6 +75,7 @@ onMounted(() => {
         throw Error()
       }
     }
+    user.value = userStore.getUser;
     getUsers()
     getExercises()
     getSports()

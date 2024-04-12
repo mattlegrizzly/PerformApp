@@ -5,15 +5,14 @@ import type { IEUser, IEUserData } from '@/types/types'
 export const useUserStore = defineStore({
   id: 'user',
   state: () => ({
-    userData: {
-    } as IEUserData,
+    userData: {},
     access: '',
     refresh: ''
   }),
   getters: {
     getUser(state): IEUser {
       return {
-        user: state.userData,
+        user: state.userData as IEUserData,
         access: state.access,
         refresh: state.refresh
       }
@@ -24,6 +23,11 @@ export const useUserStore = defineStore({
       this.userData = payload.user
       this.access = payload.access
       this.refresh = payload.refresh
+    },
+    removeUser() {
+      this.userData = {} as IEUserData,
+      this.access = ''
+      this.refresh = ''
     },
     setTokens(payload : any) {
       this.access = payload.access

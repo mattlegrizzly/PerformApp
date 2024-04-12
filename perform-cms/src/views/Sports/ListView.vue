@@ -11,7 +11,6 @@ const sports = ref({})
 const getSports = async () => {
   const res = await get('/admin/sports');
   sports.value = await res.results;
-  console.log(res)
 }
 
 onMounted(() => {

@@ -20,8 +20,7 @@ const material = ref('')
 const getMaterial = async () => {
  const id = router.params.material_id;
   const res = await get('/admin/materials/'+id+'/')
-  material.value = await res
-  console.log(material)
+  material.value = await res;
 }
 
 onMounted(() => {

@@ -26,13 +26,12 @@ const sendData = (quitForm : boolean) => {
       name: name.value, 
   }
   } as IERequestOptions;
-  post('/admin/sport/', option, true).then((res) => {
+  post('/admin/sport/', option).then((res) => {
     error_message.value = ""
     success_message.value = ""
     if(res.status){
       const keys = Object.keys(res.data);
        for(let i = 0; i < keys.length; i ++){
-        console.log(keys[i] , ' : ' , res.data[keys[i]])
         error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n';  
       } 
       throw Error();
@@ -48,7 +47,6 @@ const sendData = (quitForm : boolean) => {
     }
   }).catch((error) => {
     alertErr.value = true;
-    console.log(error)
   });
 };
 </script>

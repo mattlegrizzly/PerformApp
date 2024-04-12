@@ -11,7 +11,6 @@ const materials = ref({})
 const getMaterials = async () => {
   const res = await get('/admin/materials');
   materials.value = await res.results;
-  console.log(res)
 }
 
 onMounted(() => {

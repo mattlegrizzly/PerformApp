@@ -52,6 +52,7 @@ def get_tokens_for_user(user):
         "access": str(refresh.access_token),
     }
 
+
 class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
     serializer_class = RegisterSerializer
     queryset = User.objects.all()
@@ -91,7 +92,6 @@ class LoginViewset(mixins.CreateModelMixin, GenericViewSet):
         password = request.data.get("password")
 
         user = authenticate(email=email, password=password)
-        print("User ", user)
 
         if user is not None and user.is_authenticated:
             login(request, user)
@@ -419,6 +419,20 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
     )
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Admin - Users(all)'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="me")
+    def get_me(self, request):
+        serializer = self.serializer_class(request.user)
+        auth_data = get_tokens_for_user(request.user)
+
+        return Response(
+            {"user": serializer.data, **auth_data},
+            status=status.HTTP_202_ACCEPTED,
+        )
 
 #------------------USERS FAV EXERCISES------------------
 # Users fav exercises ViewSet

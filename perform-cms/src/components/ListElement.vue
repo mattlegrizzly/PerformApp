@@ -5,10 +5,6 @@ import { onMounted } from 'vue';
 
 const props = defineProps(['headerTable', 'contentTable', 'limitData'])
 
-onMounted(() => {
-  console.log(props.contentTable);
-})
-
 const navigate = (index) => {
   router.push('/materials/show/' + index)
 }

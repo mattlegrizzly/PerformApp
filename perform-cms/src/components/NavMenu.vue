@@ -19,10 +19,17 @@
 <script setup lang="ts">
 import image from '@/assets/logo_perform.png'
 import router from '@/router'
+import {useCookies} from '@vueuse/integrations/useCookies'
+import { useUserStore } from '@/stores/store';
+
+const userStore = useUserStore();
+const cookies = useCookies(['locale'])
 
 const deconnectUser = () => {
-  localStorage.removeItem('user')
-  router.push('/login')
+  cookies.remove('access');
+  userStore.removeUser();
+  console.log(userStore.getUser)
+  router.push('/login');
 }
 </script>
 <style>

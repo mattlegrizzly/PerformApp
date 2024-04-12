@@ -22,10 +22,6 @@ import { ref } from 'vue';
 
 const props = defineProps(['message_alert', 'type', 'title', 'alertValue'])
 
-onMounted(() => {
-  console.log(props)
-})
-
 const closePopup = () => {
   alert.value = false
 }
