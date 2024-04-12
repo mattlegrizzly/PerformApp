@@ -4,6 +4,7 @@ import HomeView from '@/views/HomeView.vue'
 import ListMaterials from '@/views/Materials/ListView.vue'
 import AddMaterial from '@/views/Materials/AddView.vue'
 import ShowMaterial from '@/views/Materials/ShowView.vue'
+import EditMaterial from '@/views/Materials/EditView.vue'
 
 import UsersView from '@/views/UsersView.vue'
 
@@ -102,6 +103,7 @@ const router = createRouter({
       name: 'users',
       component: UsersView
     },
+    //Materials
     {
       path: '/materials',
       name: 'materials',
@@ -117,6 +119,12 @@ const router = createRouter({
       name: 'showMaterial',
       component: ShowMaterial
     },
+    {
+      path: '/materials/edit/:material_id',
+      name: 'editMaterial',
+      component: EditMaterial
+    },
+    //Login
     {
       path: '/login',
       name: 'login',

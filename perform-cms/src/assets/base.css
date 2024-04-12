@@ -36,6 +36,8 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+  overflow: hidden;
+
 }
 
 /* colors defines for the performCMS */

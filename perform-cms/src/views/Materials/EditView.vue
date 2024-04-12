@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import NavMenu from '../../components/NavMenu.vue'
 import { ref, onMounted } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { useRoute } from 'vue-router'
 import '@/assets/base.css'
-import { post } from '@/lib/callApi'
+import { get, put } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
-import router from '@/router'
 import NavButton from '@/components/NavButton.vue'
+
+const router = useRoute()
+
 const name = ref('')
 const description = ref('')
-const image_url = ref('')
+const image_url = ref(new File([], '', undefined))
 const image_src = ref('')
 
 const alertErr = ref(false)
@@ -26,7 +28,7 @@ const onChangeInput = (e: any) => {
   const file = e.target.files[0]
   if (!file) return
 
-  image_url.value = file;
+  image_url.value = file
   // Convertir l'image en URL de données
   const reader = new FileReader()
   reader.onload = (e) => {
@@ -35,7 +37,8 @@ const onChangeInput = (e: any) => {
   reader.readAsDataURL(file)
 }
 
-const sendData = (quitForm: boolean) => {
+const sendData = async () => {
+  const id = router.params.material_id;
   const option = {
     body: {
       name: name.value,
@@ -43,32 +46,40 @@ const sendData = (quitForm: boolean) => {
       pictures: image_url.value
     }
   } as IERequestOptions
-  post('/admin/materials/', option, true, true)
-    .then((res) => {
-      error_message.value = ''
-      success_message.value = ''
-      if (res.status) {
-        const keys = Object.keys(res.data)
-        for (let i = 0; i < keys.length; i++) {
-          error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
-        }
-        throw Error()
-      } else {
-        name.value = ''
-        description.value = ''
-        image_url.value = ''
-        if (quitForm) {
-          router.push('/materials')
-        } else {
-          success_message.value = 'Vous avez ajoutez : ' + res.name
-          alertSuc.value = true
-        }
-      }
-    })
-    .catch((error) => {
-      alertErr.value = true
-    })
+  const res = await put('/admin/materials/' + id + '/', option, true, true);
+  console.log(res);
 }
+
+const getMaterial = async () => {
+    const id = router.params.material_id
+    const res = await get('/admin/materials/' + id + '/')
+    console.log(res)
+    name.value = await res.name
+    description.value = await res.description
+    image_src.value = await res.pictures
+    const pictures_array = res.pictures.split('/')
+    console.log()
+    let response = await fetch(image_src.value);
+    let data = await response.blob();
+    let metadata = {
+      type: 'image/'+pictures_array[5].split('.')[1]
+    };
+    let file = new File([data], pictures_array[5], metadata);
+    image_url.value = file;
+    if (!file) return
+
+    image_url.value = file
+    // Convertir l'image en URL de données
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      image_src.value = e.target?.result as string
+    }
+    reader.readAsDataURL(file)
+  }
+
+onMounted(() => {
+  getMaterial();
+})
 </script>
 <style>
 .return_btn {
@@ -114,7 +125,7 @@ const sendData = (quitForm: boolean) => {
     {{ success_message }}
   </v-alert>
   <div class="mainWrapper">
-    <NavButton class='returnBack' :text="'Retour'" :url="'/materials'"/>
+    <NavButton class="returnBack" :text="'Retour'" :url="'/materials'" />
     <h1>Ajouter un Matériel</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">
@@ -143,8 +154,7 @@ const sendData = (quitForm: boolean) => {
       </div>
 
       <div class="buttonWrapper">
-        <button @click="sendData(false)">Créer et continuer</button>
-        <button class="return_btn" @click="sendData(true)">Créer</button>
+        <button @click="sendData(false)">Modifier</button>
       </div>
     </form>
   </div>

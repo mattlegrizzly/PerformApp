@@ -187,27 +187,43 @@ const post = async (
  * @param {*} authorization
  * @returns
  */
-const put = async (urlChunk: string, options = {} as IERequestOptions, authorization = true) => {
+const put = async (urlChunk: string, options = {} as IERequestOptions, authorization = true, image : Boolean) => {
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
 
+  const headers = new Headers()
+  if (!image) {
+    headers.append('Content-Type', 'application/json')
+  } else {
+    headers.append('Accept', 'application/json')
+  }
   handleParams(url, options)
 
-  const headers = new Headers()
-  const token = cookies.get('access')
-
-  headers.append('Content-Type', 'application/json')
   if (authorization) {
+    const token = cookies.get('access')
     headers.append('Authorization', `Bearer ${token}`)
+  }
+
+  let body
+  if (image) {
+    const formData = new FormData()
+
+    for (const key in options.body) {
+      formData.append(key as string, options.body[key] as string)
+    }
+    body = formData
+  } else {
+    body = JSON.stringify(options.body)
   }
 
   const request = new Request(url, {
     method: 'PUT',
     headers: headers,
-    body: JSON.stringify(options.body)
+    body: body
   })
 
   const response = await fetch(request)
+
   return handleResponse(response)
 }
 

@@ -1,7 +1,18 @@
 <template lang="">
   <NavMenu />
   <div class="mainWrapper">
-    <h1>{{ material === undefined ? '': material.name }}</h1>
+    <div class="headerBtns">
+      <NavButton class='returnBtn' :text="'Retour'" :url="'/materials'"/>
+      <NavButton class='editBtn' :text="'Modifier'" :url="'/materials/edit/'+ material.id"/>
+    </div>
+    <h1>Carte du matériel : {{ material === undefined ? '': material.name }}</h1>
+    <h2 class="showTitle">Titre</h2>
+    <p>{{ material === undefined ? '': material.name }}</p>
+    <h2 class="showTitle">Description</h2>
+    <p>
+      {{material.description}}
+    </p>
+    <h2 class="showTitle">Image</h2>
     <div class="imageDiv">
         <v-img :width="300" aspect-ratio="16/9" cover :src="material.pictures"></v-img>
       </div>
@@ -13,7 +24,7 @@ import { ref } from 'vue'
 import { get } from '@/lib/callApi'
 import { useRoute } from 'vue-router'
 import { onMounted } from 'vue'
-
+import NavButton from '@/components/NavButton.vue'
 const router = useRoute()
 const material = ref('')
 
@@ -27,4 +38,20 @@ onMounted(() => {
   getMaterial()
 })
 </script>
-<style lang=""></style>
+<style>
+h1, h2 {
+  text-align: left !important;
+}
+
+.showTitle {
+  margin-bottom : 0px !important;
+  margin-top : 10px !important;
+}
+
+.headerBtns {
+  margin-top : 10px;
+  display : flex;
+  justify-content: space-between;
+  padding-right : 10px;
+}
+</style>
