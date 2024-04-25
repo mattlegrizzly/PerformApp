@@ -12,13 +12,13 @@ class MaterialSerializer(serializers.ModelSerializer):
 class ExerciseStepSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseStep
-        fields = ['text', 'exercise']
+        fields = ['id', 'text', 'exercise']
 
 #Detailed serializer for Exercise Serializer
 class ExerciseStepDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseStep
-        fields = ['text'] 
+        fields = ['id', 'text'] 
 
 #Creation serializer only with id
 class ExerciseMaterialSerializer(serializers.ModelSerializer):
@@ -72,7 +72,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
     zone_exercise = ExerciseZoneDetailedSerializer(many=True, read_only=True)
     class Meta:
         model = Exercise
-        fields = ['name', 'description', 'video', 'steps_exercise', 'material_exercise', 'zone_exercise', 'sports_exercise']
+        fields = ['id', 'name', 'description', 'video', 'steps_exercise', 'material_exercise', 'zone_exercise', 'sports_exercise']
 
 
 

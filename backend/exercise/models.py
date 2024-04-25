@@ -1,5 +1,6 @@
 from django.db import models
 from sport.models import Sport
+from typing import List
 
 def upload_to(instance, filename):
     return 'images/{filename}'.format(filename=filename)
@@ -30,6 +31,16 @@ class Exercise(models.Model):
     video = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
+    materials = models.ManyToManyField(to=Material, through="exercise.ExerciseMaterial")
+    sports = models.ManyToManyField(to=Sport, through="exercise.ExerciseSport")
+
+    @property
+    def material_ids(self) -> List[int]:
+        return [material.id for material in self.materials.all()]
+    
+    @property
+    def sports_ids(self) -> List[int]:
+        return [sport.id for sport in self.sports.all()]
 
 class ExerciseStep(models.Model):
     text = models.CharField(max_length=255)

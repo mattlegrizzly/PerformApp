@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework import filters, mixins, status, viewsets, pagination
 from rest_framework.response import Response
 
+from sport.models import Sport
 from .models import Material, Exercise, ExerciseStep, ExerciseMaterial, ExerciseSport, ExerciseZone, WorkZone
 from .serializers import MaterialSerializer, ExerciseSerializer, ExerciseStepSerializer, ExerciseMaterialSerializer, ExerciseSportSerializer, ExerciseZoneSerializer, WorkZoneSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
@@ -150,6 +151,25 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def update(self, request, *args, **kwargs):
+        data = request.data
+        material_ids = data.get("material_ids", [])
+        if material_ids != "":
+            materials_list = material_ids.split(",")
+            materials_list = [int(num) for num in materials_list]
+            obj = self.get_object()
+            if obj.material_ids != materials_list:
+                new_materials = Material.objects.filter(id__in=materials_list)
+                obj.materials.set(new_materials)
+                obj.save()
+        sports_ids = data.get("sports_ids", [])
+        if sports_ids != "":
+            sports_list = sports_ids.split(",")
+            sports_list = [int(num) for num in sports_list]
+            obj = self.get_object()
+            if obj.sports_ids != sports_list:
+                new_sports = Sport.objects.filter(id__in=sports_list)
+                obj.sports.set(new_sports)
+                obj.save()
         return super().update(request, *args, **kwargs)
 
     @extend_schema(
@@ -212,6 +232,17 @@ class AdminExerciseStepViewSet(viewsets.ModelViewSet):
         tags=['Admin - Exercise Step'],
         responses={200: "OK"}
     )
+    @action(detail=False, methods=['get'], url_path="exercise/(?P<exercise_id>\d+)")
+    def exercise(self, request, *args, **kwargs):
+        exercise_id = kwargs.get('exercise_id')
+        queryset = self.queryset.filter(exercise=exercise_id)
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        tags=['Admin - Exercise Step'],
+        responses={200: "OK"}
+    )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
@@ -241,7 +272,8 @@ class AdminExerciseStepViewSet(viewsets.ModelViewSet):
         responses={204: "No Content"}
     )
     def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+        super().destroy(request, *args, **kwargs)
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 #------------------EXERCISE_MATERIAL------------------
 # Admin ViewSet
