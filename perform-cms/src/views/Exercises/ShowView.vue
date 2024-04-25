@@ -1,0 +1,92 @@
+<template lang="">
+  <NavMenu />
+  <div class="mainWrapper">
+    <AlertComponents
+      :message_alert="error_message"
+      :type="'error'"
+      :title="error_title"
+      :alertValue="alertErr"
+    />
+    <div class="headerBtns">
+      <NavButton class="returnBtn" :text="'Retour'" :url="'/exercises'" :back="'back'" />
+      <NavButton class="editBtn" :text="'Modifier'" :url="'/exercises/edit/' + router.params.exercise_id" />
+    </div>
+    <h1>Carte de l'exercise : {{ exercise === undefined ? '' : exercise.name }}</h1>
+    <h2 class="showTitle">Titre</h2>
+    <p>{{ exercise === undefined ? '' : exercise.name }}</p>
+    <h2 class="showTitle">Description</h2>
+    <p>
+      {{ exercise.description }}
+    </p>
+    <h2 class="showTitle">Matériels</h2>
+    <div v-for="(element, index) in exercise.material_exercise" :key="index">
+      <p>- {{ element.material.name }}</p>
+    </div>
+    <h2 class="showTitle">Sports</h2>
+    <!-- <div v-for="(element, index) in exercise.sports_exercise" :key="index">
+      <p>- {{ element.sport.name }}</p>
+    </div> -->
+    <v-chip-group v-for="(element, index) in exercise.sports_exercise" :key="index">
+    <v-chip>{{ element.sport.name }}</v-chip>
+  </v-chip-group>
+    <h2 class="showTitle">Etapes d'exécution</h2>
+    <div v-for="(element, index) in exercise.steps_exercise" :key="index">
+      <p>Etape {{index+1}} : {{ element.text }}</p>
+    </div>
+    <h2 class="showTitle">Vidéo</h2>
+    <div class="imageDiv">
+      <video id="player" playsinline controls data-poster="/path/to/poster.jpg">
+        <source type="video/mp4" />
+        <source type="video/webm" />
+      </video>
+    </div>
+  </div>
+</template>
+<script setup lang="ts">
+import NavMenu from '@/components/NavMenu.vue'
+import { ref } from 'vue'
+import { get } from '@/lib/callApi'
+import { useRoute } from 'vue-router'
+import { onMounted } from 'vue'
+import NavButton from '@/components/NavButton.vue'
+import AlertComponents from '@/components/AlertComponents.vue'
+
+const router = useRoute()
+const exercise = ref('')
+const exercise_id = ref(-1)
+
+const alertErr = ref(false)
+const error_message = ref('')
+const error_title = ref('')
+
+const getExercises = async () => {
+  const id = router.params.exercise_id
+  const res = await get('/admin/exercises/' + id + '/')
+  if (res.status === 404) {
+    error_title.value = 'Error while retrieve Exercise id ' + id
+    error_message.value = res.data.detail
+    alertErr.value = true
+  } else {
+    exercise.value = await res
+    console.log(exercise.value)
+  }
+}
+
+onMounted(() => {
+  getExercises()
+})
+</script>
+<style>
+.showTitle {
+  text-align: left !important;
+  margin-bottom: 0px !important;
+  margin-top: 10px !important;
+}
+
+.headerBtns {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 10px;
+}
+</style>

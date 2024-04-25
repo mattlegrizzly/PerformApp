@@ -206,6 +206,7 @@ const put = async (urlChunk: string, options = {} as IERequestOptions, authoriza
 
   let body
   if (image) {
+    console.log(body)
     const formData = new FormData()
 
     for (const key in options.body) {
@@ -284,7 +285,8 @@ const patch = async (urlChunk: string, options = {} as IERequestOptions, authori
  * @param {*} authorization
  */
 const del = async (urlChunk: any, authorization = true) => {
-  const url = new URL(urlChunk, baseUrl)
+  const relativeUrlString = '/api' + urlChunk
+  const url = new URL(relativeUrlString, baseUrl)
 
   const headers = new Headers()
 
@@ -302,7 +304,9 @@ const del = async (urlChunk: any, authorization = true) => {
     headers: headers
   })
 
-  await fetch(request)
+  
+
+  return fetch(request)
 }
 
 export { get, post, put, del, patch, refresh, verifyToken }

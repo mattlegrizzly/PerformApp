@@ -9,6 +9,7 @@
         <a href="/users">Users</a>
         <a href="/exercises">Exercices</a>
         <a href="/materials">Materials</a>
+        <a href="/sports">Sports</a>
       </nav>
       <div class="buttonWrapper">
         <button @click="deconnectUser">Disconnect</button>

@@ -9,8 +9,9 @@ import router from '@/router'
 const exercises = ref({})
 
 const getExercises = async () => {
-  const res = await get('/admin/exercises');
-  exercises.value = await res;
+  const res = await get('/exercises');
+  console.log(res)
+  exercises.value = await res.results;
 }
 
 onMounted(() => {
@@ -25,10 +26,10 @@ onMounted(() => {
   <div class="mainWrapper">
     <h1>Exercises</h1>
     <div>
-      <NavButton url="/exercises/add" text="Ajouter" />
+      <NavButton url="/exercises/add" text="Ajouter" prepend-icon="mdi-plus" />
     </div>
     <div>
-      <ListElement :headerTable="['Nom']" :contentTable="exercises" :limitData="1" />
+      <ListElement :headerTable="['id','Nom']" :contentTable="exercises" :limitData="2" nav="exercises"/>
     </div>
   </div>
 </template>

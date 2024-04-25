@@ -5,12 +5,15 @@ import NavButton from '@/components/NavButton.vue'
 import { ref, onMounted } from 'vue'
 import { get } from '@/lib/callApi'
 import router from '@/router'
+import { useRoute } from 'vue-router'
 
+const navRoute = useRoute()
 const materials = ref({})
 const materialsCount = ref(0)
 const itemsPerPage = ref(10)
-const pagination = ref(1)
+const pagination = ref(0)
 const page = ref(1)
+
 const getMaterials = async () => {
   const res = await get('/admin/materials', {
     body: {},
@@ -22,15 +25,33 @@ const getMaterials = async () => {
   pagination.value = Math.ceil(materialsCount.value / itemsPerPage.value)
 }
 const setPagination = async (e: Event) => {
-    const target = e.target as HTMLElement
-    if(target && target.outerText) {
-      page.value = parseInt(target.outerText);
-      getMaterials()
-    }
+  const target = e.target as HTMLElement
+
+  if (target && target.outerText) {
+    page.value = parseInt(target.outerText)
+    router.replace({
+      path: navRoute.path,
+      query: { page: page.value }
+    })
+    getMaterials()
+  }
+}
+
+const changePagination = async (e : any) => {
+  page.value = parseInt(e)
+  router.replace({
+    path: navRoute.path,
+      query: { page: e}
+    })
+    getMaterials()
 }
 
 onMounted(() => {
-  getMaterials()
+  const pageQuery = navRoute.query.page as string;
+  if(pageQuery){
+    page.value = parseInt(pageQuery)
+  }
+  getMaterials();
 })
 </script>
 <style lang=""></style>
@@ -41,11 +62,11 @@ onMounted(() => {
   <div class="mainWrapper">
     <h1>Materials</h1>
     <div>
-      <NavButton url="/materials/add" text="Ajouter" />
+      <NavButton url="/materials/add" text="Ajouter" prepend-icon="mdi-plus"/>
     </div>
     <div>
-      <ListElement :headerTable="['Id', 'Nom']" :contentTable="materials" :limitData="2" />
-      <v-pagination :length="pagination" @click="setPagination"></v-pagination>
+      <ListElement :headerTable="['Id', 'Nom']" :contentTable="materials" :limitData="2" nav="materials" />
+      <v-pagination :model-value='page' :length="pagination" @click="setPagination" @next="changePagination" @prev="changePagination"></v-pagination>
     </div>
   </div>
 </template>

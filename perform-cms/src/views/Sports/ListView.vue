@@ -29,7 +29,7 @@ onMounted(() => {
       <NavButton url="/sports/add" text="Ajouter" />
     </div>
     <div>
-      <ListElement :headerTable="['Id', 'Nom']" :contentTable="sports" :limitData="2" />
+      <ListElement :headerTable="['Id', 'Nom']" :contentTable="sports" :limitData="2" nav="sports"/>
     </div>
   </div>
 </template>

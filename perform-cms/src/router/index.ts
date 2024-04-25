@@ -10,8 +10,12 @@ import UsersView from '@/views/UsersView.vue'
 
 import ListExercises from '@/views/Exercises/ListView.vue'
 import AddExercise from '@/views/Exercises/AddView.vue'
+import ShowExercise from '@/views/Exercises/ShowView.vue'
+import EditExercise from '@/views/Exercises/EditView.vue'
 
 import ListSports from '@/views/Sports/ListView.vue'
+import ShowSport from '@/views/Sports/ShowView.vue'
+import EditSport from '@/views/Sports/EditView.vue'
 import AddSport from '@/views/Sports/AddView.vue'
 
 import PageNotFoundView from '@/views/PageNotFoundView.vue'
@@ -41,7 +45,10 @@ const removeUser = () => {
 
 const isLoggedIn = async () => {
   const access = cookies.get('access');
-  if (!access) return;
+  if (!access) {
+    console.log('no access')
+    return
+  };
 
   try {
     console.log('yes');
@@ -88,6 +95,18 @@ const router = createRouter({
       name: 'addExercise',
       component: AddExercise
     },
+    
+    {
+      path: '/exercises/show/:exercise_id',
+      name: 'showExercise',
+      component: ShowExercise
+    },
+    
+    {
+      path: '/exercises/edit/:exercise_id',
+      name: 'editExercise',
+      component: EditExercise
+    },
     {
       path: '/sports',
       name: 'sport',
@@ -97,6 +116,18 @@ const router = createRouter({
       path: '/sports/add',
       name: 'addSport',
       component: AddSport
+    },
+    
+    {
+      path: '/sports/show/:sport_id',
+      name: 'showSport',
+      component: ShowSport
+    },
+    
+    {
+      path: '/sports/edit/:sport_id',
+      name: 'editSport',
+      component: EditSport
     },
     {
       path: '/users',
@@ -141,7 +172,7 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
   console.log(userStore.access)
-  if (userStore.access == '' && cookies.get('access') !== ' ') {
+  if (userStore.access == undefined || userStore.access == '' && cookies.get('access') !== ' ') {
     isLoggedIn().then(() =>{
       if (userStore.access !== '') {
         return { name: 'home' }

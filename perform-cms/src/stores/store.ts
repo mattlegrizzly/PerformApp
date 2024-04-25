@@ -39,10 +39,10 @@ export const useUserStore = defineStore({
 export const usePaginationStore = defineStore({
   id: 'pagination',
   state: () => ({
-    materials: 0,
-    sports: 0,
-    users: 0,
-    exercises: 0
+    materials: 1,
+    sports: 1,
+    users: 1,
+    exercises: 1
   }),
   getters: {
     getPaginationMaterials(): number {

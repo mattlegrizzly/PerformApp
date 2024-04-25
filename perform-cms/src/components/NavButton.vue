@@ -3,18 +3,24 @@ import router from '@/router'
 
 const props = defineProps ([
     'url',
-    'text'
+    'text',
+    'back'
 ])
 const nav = () => {
-  router.push(props.url);
+  console.log(props.back)
+  if(props.back) {
+    router.back(props.url);
+  } else {
+    router.push(props.url);
+  }
 }
 </script>
 <style lang=""></style>
 
 <template lang="">
-      <v-btn prepend-icon="mdi-add" @click='nav'>
+      <v-btn @click='nav'>
         <template v-slot:prepend>
-          <v-icon color="success"></v-icon>
+          <v-icon></v-icon>
         </template>
 
         {{props.text}}

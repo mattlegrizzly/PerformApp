@@ -3,23 +3,18 @@
   <div class="mainWrapper">
     <AlertComponents :message_alert='error_message' :type='"error"' :title='error_title' :alertValue="alertErr"/>
     <div class="headerBtns">
-      <NavButton class='returnBtn' :text="'Retour'" :url="'/materials'" :back='"back"'/>
-      <NavButton class='editBtn' :text="'Modifier'" :url="'/materials/edit/'+ material.id"/>
+      <NavButton class='returnBtn' :text="'Retour'" :url="'/sports'" :back='"back"'/>
+      <NavButton class='editBtn' :text="'Modifier'" :url="'/sports/edit/'+ sport.id"/>
     </div>
-    <h1>Carte du matériel : {{ material === undefined ? '': material.name }}</h1>
+    <h1>Carte du sport : {{ sport === undefined ? '': sport.name }}</h1>
     <h2 class="showTitle">Titre</h2>
-    <p>{{ material === undefined ? '': material.name }}</p>
-    <h2 class="showTitle">Description</h2>
     <p>
-      {{material.description}}
+      {{sport.name}}
     </p>
-    <h2 class="showTitle">Image</h2>
-    <div class="imageDiv">
-        <v-img :width="300" aspect-ratio="16/9" cover :src="material.pictures"></v-img>
-      </div>
   </div>
 </template>
 <script setup lang="ts">
+
 import NavMenu from '@/components/NavMenu.vue'
 import { ref } from 'vue'
 import { get } from '@/lib/callApi'
@@ -29,26 +24,26 @@ import NavButton from '@/components/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents.vue'
 
 const router = useRoute()
-const material = ref('')
+const sport = ref('')
 
 const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
-const getMaterial = async () => {
- const id = router.params.material_id;
-  const res = await get('/admin/materials/'+id+'/')
+const getSport = async () => {
+ const id = router.params.sport_id;
+  const res = await get('/admin/sports/'+id+'/')
   if(res.status === 404) {
     error_title.value = 'Error while retrieve Material id ' + id
     error_message.value = res.data.detail
     alertErr.value = true
   } else {
-    material.value = await res;
+    sport.value = await res;
   }
 }
 
 onMounted(() => {
-  getMaterial()
+  getSport()
 })
 </script>
 <style>

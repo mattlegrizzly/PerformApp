@@ -23,7 +23,7 @@ import '@ionic/vue/css/text-alignment.css';
 import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
-
+import '@mdi/font/css/materialdesignicons.css'
 // Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -31,7 +31,11 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
-// default options config: { expires: '1d', path: '/', domain: '', secure: '', sameSite: 'Lax' , partitioned: false}
+export default createVuetify({
+  icons: {
+    defaultSet: 'mdi', // This is already the default value - only for display purposes
+  },
+})
 
 const vuetify = createVuetify({
   components,

@@ -17,6 +17,7 @@ const image_src = ref('')
 
 const alertErr = ref(false)
 const error_message = ref('')
+const error_title = ref('')
 
 const onChangeInput = (e: any) => {
   const file = e.target.files[0]
@@ -48,6 +49,7 @@ const sendData = async () => {
           error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
         }
         alertErr.value = true;
+        error_title.value = "Modification Error"
     } else {
       router.push('/materials/show/' + id+ '/')
     }
@@ -58,27 +60,33 @@ const getMaterial = async () => {
     const id = routerNav.params.material_id
     const res = await get('/admin/materials/' + id + '/')
     console.log(res)
-    name.value = await res.name
-    description.value = await res.description
-    image_src.value = await res.pictures
-    const pictures_array = res.pictures.split('/')
-    console.log()
-    let response = await fetch(image_src.value);
-    let data = await response.blob();
-    let metadata = {
-      type: 'image/'+pictures_array[5].split('.')[1]
-    };
-    let file = new File([data], pictures_array[5], metadata);
-    image_url.value = file;
-    if (!file) return
-
-    image_url.value = file
-    // Convertir l'image en URL de données
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      image_src.value = e.target?.result as string
-    }
-    reader.readAsDataURL(file)
+    if(res.status === 404) {
+        error_title.value = 'Error while retrieve sports id ' + id
+        error_message.value = res.data.detail
+        alertErr.value = true
+      } else {
+        name.value = await res.name
+        description.value = await res.description
+        image_src.value = await res.pictures
+        const pictures_array = res.pictures.split('/')
+        console.log()
+        let response = await fetch(image_src.value);
+        let data = await response.blob();
+        let metadata = {
+          type: 'image/'+pictures_array[5].split('.')[1]
+        };
+        let file = new File([data], pictures_array[5], metadata);
+        image_url.value = file;
+        if (!file) return
+    
+        image_url.value = file
+        // Convertir l'image en URL de données
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          image_src.value = e.target?.result as string
+        }
+        reader.readAsDataURL(file)
+      }
   }
 
 onMounted(() => {
@@ -107,9 +115,9 @@ onMounted(() => {
 <template lang="">
   <NavMenu />
   <div class="mainWrapper">
-    <AlertComponents :message_alert='error_message' :type='"error"' :title='"Error de modification"' :alertValue="alertErr"/>
-    <NavButton class="returnBack" :text="'Retour'" :url="'/materials'" />
-    <h1>Ajouter un Matériel</h1>
+    <AlertComponents :message_alert='error_message' :type='"error"' :title='error_title' :alertValue="alertErr"/>
+    <NavButton class="returnBack" :text="'Retour'" :url="'/materials'" :back='"back"' />
+    <h1>Editer un Matériel</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">
         <v-text-field v-model="name" label="Nom du matériel * " variant="filled"></v-text-field>

@@ -59,7 +59,7 @@ const sendData = (quitForm: boolean) => {
         image_url.value = ''
         image_src.value = '';
         if (quitForm) {
-          router.push('/materials')
+          router.back()
         } else {
           success_message.value = 'Vous avez ajoutez : ' + res.name
           alertSuc.value = true
