@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework import filters, mixins, status, viewsets, pagination
 from rest_framework.response import Response
-
+import os
 from sport.models import Sport
 from .models import Material, Exercise, ExerciseStep, ExerciseMaterial, ExerciseSport, ExerciseZone, WorkZone
 from .serializers import MaterialSerializer, ExerciseSerializer, ExerciseStepSerializer, ExerciseMaterialSerializer, ExerciseSportSerializer, ExerciseZoneSerializer, WorkZoneSerializer
@@ -145,6 +145,18 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
+    
+    def perform_update(self, serializer):
+        instance = serializer.instance
+        old_video_path = instance.video.path if instance.video else None
+        old_video_name = old_video_path.split('/')[-1]
+        new_video_path = serializer.validated_data.get('video')._name
+        if old_video_name and new_video_path and old_video_name != new_video_path:
+            # Supprimer le fichier vidéo précédent
+            if os.path.isfile(old_video_path):
+                os.remove(old_video_path) 
+
+        super().perform_update(serializer)  # Appel de la méthode perform_update de la classe parent
 
     @extend_schema(
         tags=['Admin - Exercise'],
@@ -153,7 +165,7 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         data = request.data
         material_ids = data.get("material_ids", [])
-        if material_ids != "":
+        if material_ids != "" and isinstance(material_ids, str):
             materials_list = material_ids.split(",")
             materials_list = [int(num) for num in materials_list]
             obj = self.get_object()
@@ -161,8 +173,15 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
                 new_materials = Material.objects.filter(id__in=materials_list)
                 obj.materials.set(new_materials)
                 obj.save()
+        else :
+            obj = self.get_object()
+            if obj.material_ids != material_ids:
+                new_materials = Material.objects.filter(id__in=material_ids)
+                obj.materials.set(new_materials)
+                obj.save()
+
         sports_ids = data.get("sports_ids", [])
-        if sports_ids != "":
+        if sports_ids != "" and isinstance(sports_ids, str):
             sports_list = sports_ids.split(",")
             sports_list = [int(num) for num in sports_list]
             obj = self.get_object()
@@ -170,6 +189,13 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
                 new_sports = Sport.objects.filter(id__in=sports_list)
                 obj.sports.set(new_sports)
                 obj.save()
+        else :
+            obj = self.get_object()
+            if obj.sports_ids != sports_ids:
+                new_sports = Material.objects.filter(id__in=sports_ids)
+                obj.materials.set(new_sports)
+                obj.save()
+        
         return super().update(request, *args, **kwargs)
 
     @extend_schema(

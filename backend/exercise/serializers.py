@@ -70,6 +70,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
     material_exercise = ExerciseMaterialDetailedSerializer(many=True, read_only=True)
     sports_exercise = ExerciseSportDetailedSerializer(many=True, read_only=True)
     zone_exercise = ExerciseZoneDetailedSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Exercise
         fields = ['id', 'name', 'description', 'video', 'steps_exercise', 'material_exercise', 'zone_exercise', 'sports_exercise']

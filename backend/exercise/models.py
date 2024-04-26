@@ -1,8 +1,21 @@
 from django.db import models
 from sport.models import Sport
 from typing import List
+from datetime import datetime
+import glob
+import os
+import fnmatch
+def upload_to_video(instance, filename):
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    ext = filename.split('.')[-1]  # Récupérer l'extension du fichier
+    filename_edit = f"exercice_{instance.id}_{timestamp}.{ext}"
+    print(instance)
+    return 'video/{filename}'.format(filename=filename_edit)
 
 def upload_to(instance, filename):
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    ext = filename.split('.')[-1]  # Récupérer l'extension du fichier
+    filename_edit = f"material_{instance.id}_{timestamp}.{ext}"
     return 'images/{filename}'.format(filename=filename)
 
 class Zone(models.TextChoices):
@@ -28,7 +41,7 @@ class Material(models.Model):
 class Exercise(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=255)
-    video = models.CharField(max_length=255)
+    video = models.FileField(upload_to=upload_to_video, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     materials = models.ManyToManyField(to=Material, through="exercise.ExerciseMaterial")
