@@ -3,57 +3,52 @@ import NavMenu from '../../components/NavMenu.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import '@/assets/base.css'
-import { get, post, put, del } from '@/lib/callApi'
+import { get, post, put, patch, del } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
 import NavButton from '@/components/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents.vue'
 import router from '@/router'
+import { nanoid } from 'nanoid'
+
 const routerNav = useRoute()
 
 const materials = ref([])
 const sports = ref([])
+const videoController = ref(document.createElement('video'))
 
-//Old Value
-const name = ref('')
-const description = ref('')
-const steps = ref([])
+const const_exercice: any = ref()
+const exercise: any = ref({})
+
+const file = ref()
 const materials_selected = ref([])
-const init_materials = ref([])
 const sport_selected = ref([])
-const inis_sports = ref([])
-const image_url = ref(new File([], '', undefined))
-const image_src = ref('')
+const video_url = ref('')
+const video_src = ref('')
 
 const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
-const onChangeInput = (e: any) => {
-  const file = e.target.files[0]
-  if (!file) return
-
-  image_url.value = file
-  // Convertir l'image en URL de données
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    image_src.value = e.target?.result as string
-  }
-  reader.readAsDataURL(file)
+const onChangeInput = (file: File) => {
+  exercise.value.video = file
+  video_src.value = URL.createObjectURL(file)
+  videoController.value.load()
 }
 
 const sendData = async () => {
   const id = routerNav.params.exercise_id
   const option = {
     body: {
-      id: id,
-      name: name.value,
-      description: description.value,
-      video: 'zqdz',
-      material_ids: [materials_selected.value],
-      sports_ids: [sport_selected.value]
+      name: exercise.value.name,
+      description: exercise.value.description,
+      material_ids: materials_selected.value,
+      sports_ids: sport_selected.value
     }
   } as IERequestOptions
-  put('/admin/exercises/' + id + '/', option, true, true).then((res) => {
+  if (const_exercice.value.video !== exercise.value.video) {
+    option.body['video'] = exercise.value.video
+  }
+  patch('/admin/exercises/' + id + '/', option, true, true).then((res) => {
     if (res.status > 300) {
       const keys = Object.keys(res.data)
       for (let i = 0; i < keys.length; i++) {
@@ -62,22 +57,44 @@ const sendData = async () => {
       alertErr.value = true
       error_title.value = 'Modification Error'
     } else {
-      router.push('/exercises/show/' + id + '/')
+      //router.push('/exercises/show/' + id + '/')
+      let startStep = const_exercice.value.steps_exercise
+      let endStep = exercise.value.steps_exercise
+      const newStep = endStep.filter((step) => !startStep.find((step_) => step_.id === step.id))
+      const modified = startStep.filter((step) => endStep.find((step_) => step_.id === step.id))
+      const deleted = startStep.filter((step) => !endStep.find((step_) => step_.id === step.id))
+
+      console.log(modified)
+      newStep.map((step) => {
+        const stepToPush = {
+          body: {
+            exercise: id,
+            text: step.text
+          }
+        }
+        res = post('/admin/steps/', stepToPush, true)
+      })
+
+      deleted.map((step) => {
+        res = del('/admin/steps/' + step.id + '')
+      })
+
+      modified.map((step) => {
+        const elem = endStep.find((step_) => step_.id == step.id)
+        if(elem.text !== step.text){
+          const options = {
+            body : {
+              text: elem.text
+            }
+          }
+          res = patch('/admin/steps/'+elem.id+'/',options , true)
+        }
+      })
     }
   })
-
-  for (const step of steps.value) {
-    const option = {
-      body : {
-        text : step.text,
-        exercise : id
-       }
-    }
-    put('/admin/steps/'+step.id +'/', option, true, false)
-  }
 }
 
-const getMaterial = async () => {
+const getExercise = async () => {
   const id = routerNav.params.exercise_id
   const res = await get('/admin/exercises/' + id + '/')
   if (res.status === 404) {
@@ -85,20 +102,32 @@ const getMaterial = async () => {
     error_message.value = res.data.detail
     alertErr.value = true
   } else {
-    name.value = await res.name
-    description.value = await res.description
-    image_src.value = await res.pictures
-    init_materials.value = await res.material_exercise
-    inis_sports.value = await res.sports_exercise
-    steps.value = await res.steps_exercise
-    for (let elem of init_materials.value) {
+    const_exercice.value = JSON.parse(JSON.stringify(await res))
+    exercise.value = JSON.parse(JSON.stringify(await res))
+    for (let elem of exercise.value.material_exercise) {
       //@ts-expect-error
       materials_selected.value.push(elem.material.id)
     }
-    for (let elem of inis_sports.value) {
+    for (let elem of exercise.value.sports_exercise) {
       //@ts-expect-error
       sport_selected.value.push(elem.sport.id)
     }
+    video_url.value = await exercise.value.video
+    const video_array = res.video.split('/')
+    console.log(video_array)
+    await fetch(video_url.value).then((response) => {
+      response.blob().then((data) => {
+        if (video_array[1] == '') {
+          let metadata = {
+            type: 'video/' + video_array[3].split('.')[1]
+          }
+          file.value = new File([data], video_array[3], metadata)
+          video_url.value = file.value
+        }
+        video_src.value = 'http://127.0.0.1:8000' + exercise.value.video
+        videoController.value.load()
+      })
+    })
   }
   const res_materials = await get('/materials')
   if (res_materials.status === 404) {
@@ -119,7 +148,14 @@ const getMaterial = async () => {
 }
 
 const addStep = async () => {
-  const id = routerNav.params.exercise_id
+  const id = nanoid()
+  const step = {
+    id,
+    text: ''
+  }
+  exercise.value.steps_exercise.push(step)
+
+  /* const id = routerNav.params.exercise_id
   const option = {
     body: {
       exercise: id,
@@ -133,19 +169,39 @@ const addStep = async () => {
     alertErr.value = true
   } else {
     const steps_res = await get('/admin/steps/exercise/' + id + '/')
-    if (steps_res.status === 404) {
+    if (steps_res.status > 300) {
       error_title.value = 'Error while retrieve sports'
       error_message.value = add_res.data.detail
       alertErr.value = true
     } else {
       steps.value = steps_res
-      console.log(steps.value)
+    }
+  } */
+}
+
+//LISTER ICI POUR SUPPRIMER
+const removeStep = async (id: number) => {
+  console.log(id)
+  for (const [index, step] of exercise.value.steps_exercise.entries()) {
+    if (step.id == id) {
+      exercise.value.steps_exercise.splice(index, 1)
     }
   }
+  /* const id_exercise = routerNav.params.exercise_id
+
+  const res_delet = await del('/admin/steps/' + id + '/')
+  if (res_delet.status > 300) {
+    error_title.value = 'Error while delete step'
+    error_message.value = 'Not deleted'
+    alertErr.value = true
+  } else {
+    const steps_res = await get('/admin/steps/exercise/' + id_exercise + '/')
+    steps.value = steps_res
+  } */
 }
 
 onMounted(() => {
-  getMaterial()
+  getExercise()
 })
 </script>
 <style>
@@ -194,29 +250,41 @@ onMounted(() => {
     <h1>Editer un Exercise</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">
-        <v-text-field v-model="name" label="Nom du matériel * " variant="filled"></v-text-field>
+        <v-text-field
+          v-model="exercise.name"
+          label="Nom du matériel * "
+          variant="filled"
+        ></v-text-field>
       </div>
       <div class="inputFormDiv">
         <v-textarea
           label="Description *"
           name="input-7-1"
-          v-model="description"
+          v-model="exercise.description"
           variant="filled"
           auto-grow
         ></v-textarea>
       </div>
       <div class="inputFormDiv">
         <v-file-input
-          label="Photo du matériel"
-          prepend-icon="mdi-camera"
+          label="Video d'execution"
+          prepend-icon="mdi-video"
           variant="filled"
-          v-model="image_url"
-          @change="onChangeInput($event)"
+          type="file"
+          accept="video/*"
+          v-model="video_url"
+          @update:modelValue="onChangeInput($event)"
         ></v-file-input>
       </div>
-      <div class="imageDiv">
-        <v-img :width="300" aspect-ratio="16/9" cover :src="image_src"></v-img>
-      </div>
+      <video
+        ref="videoController"
+        id="player"
+        playsinline
+        controls
+        data-poster="/path/to/poster.jpg"
+      >
+        <source :src="video_src" type="video/mp4" />
+      </video>
       <h2>Sports</h2>
       <v-select
         v-model="sport_selected"
@@ -246,7 +314,7 @@ onMounted(() => {
       >
       </v-select>
       <h2>Etapes</h2>
-      <div id="steps" v-for="(element, index) in steps" :key="index">
+      <div id="steps" v-for="(element, index) in exercise.steps_exercise" :key="index">
         <v-text-field
           v-model="element.text"
           :label="'Etape ' + (index + 1)"

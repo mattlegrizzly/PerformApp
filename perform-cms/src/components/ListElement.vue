@@ -6,13 +6,9 @@ import { onMounted } from 'vue';
 const props = defineProps(['headerTable', 'contentTable', 'limitData', 'nav'])
 
 const navigate = (index) => {
-  console.log('index ', index)
   router.push('/'+props.nav+'/show/' + index)
 }
 
-onMounted(async () => {
-  console.log('content ' , await props)
-})
 </script>
 
 <template>

@@ -29,7 +29,6 @@ const cookies = useCookies(['locale'])
 const deconnectUser = () => {
   cookies.remove('access');
   userStore.removeUser();
-  console.log(userStore.getUser)
   router.push('/login');
 }
 </script>

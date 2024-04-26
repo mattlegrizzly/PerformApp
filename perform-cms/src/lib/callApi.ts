@@ -7,6 +7,16 @@ const cookies = useCookies(['locale'])
 
 const baseUrl = 'http://127.0.0.1:8000/'
 
+function generateBoundary() {
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+  let boundary = '';
+  for (let i = 0; i < array.length; i++) {
+    boundary += array[i].toString(16);
+  }
+  return boundary;
+}
+
 const verifyToken = async () => {
   const access = cookies.get('access')
   const relativeUrlString = '/api/token/verify/'
@@ -139,7 +149,7 @@ const post = async (
   urlChunk: String,
   options = {} as IERequestOptions,
   authorization = false,
-  image: boolean
+  image: boolean = false,
 ) => {
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
@@ -190,11 +200,12 @@ const post = async (
 const put = async (urlChunk: string, options = {} as IERequestOptions, authorization = true, image : Boolean) => {
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
-
+  const boundary = generateBoundary();
   const headers = new Headers()
   if (!image) {
     headers.append('Content-Type', 'application/json')
   } else {
+    console.log(options)
     headers.append('Accept', 'application/json')
   }
   handleParams(url, options)
@@ -206,11 +217,14 @@ const put = async (urlChunk: string, options = {} as IERequestOptions, authoriza
 
   let body
   if (image) {
-    console.log(body)
+    console.log('body ', options.body)
     const formData = new FormData()
 
-    for (const key in options.body) {
-      formData.append(key as string, options.body[key] as string)
+    Object.entries(options.body).forEach(([key, value]) => {
+      formData.append(key as string, value as string)
+    })
+    for (const key of formData.entries()) {
+      console.log(key[0], key[1]) 
     }
     body = formData
   } else {
@@ -235,20 +249,22 @@ const put = async (urlChunk: string, options = {} as IERequestOptions, authoriza
  * @param {*} authorization
  * @returns
  */
-const patch = async (urlChunk: string, options = {} as IERequestOptions, authorization = true) => {
+const patch = async (
+  urlChunk: String,
+  options = {} as IERequestOptions,
+  authorization = false,
+  image: boolean = false,
+) => {
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
 
-  handleParams(url, options)
-
   const headers = new Headers()
-
-  if (urlChunk.includes('recipes')) {
-    // For FormData, we don't set Content-Type header,
-    // it will be set automatically along with boundary
-  } else {
+  if (!image) {
     headers.append('Content-Type', 'application/json')
+  } else {
+    headers.append('Accept', 'application/json')
   }
+  handleParams(url, options)
 
   if (authorization) {
     const token = cookies.get('access')
@@ -256,13 +272,12 @@ const patch = async (urlChunk: string, options = {} as IERequestOptions, authori
   }
 
   let body
-  if (urlChunk.includes('recipes')) {
+  if (image) {
     const formData = new FormData()
 
-    Object.entries(options.body).forEach((field) => {
-      formData.append(field[0], field[1])
-    })
-
+    for (const key in options.body) {
+      formData.append(key as string, options.body[key] as string)
+    }
     body = formData
   } else {
     body = JSON.stringify(options.body)

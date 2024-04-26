@@ -42,7 +42,6 @@ const sendData = async () => {
     }
   } as IERequestOptions
   put('/admin/materials/' + id + '/', option, true, true).then((res) => {
-    console.log(res)
     if(res.status > 300) {
       const keys = Object.keys(res.data)
         for (let i = 0; i < keys.length; i++) {
@@ -59,7 +58,6 @@ const sendData = async () => {
 const getMaterial = async () => {
     const id = routerNav.params.material_id
     const res = await get('/admin/materials/' + id + '/')
-    console.log(res)
     if(res.status === 404) {
         error_title.value = 'Error while retrieve sports id ' + id
         error_message.value = res.data.detail
@@ -69,7 +67,6 @@ const getMaterial = async () => {
         description.value = await res.description
         image_src.value = await res.pictures
         const pictures_array = res.pictures.split('/')
-        console.log()
         let response = await fetch(image_src.value);
         let data = await response.blob();
         let metadata = {

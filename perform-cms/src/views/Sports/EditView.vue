@@ -25,7 +25,6 @@ const sendData = async () => {
     }
   } as IERequestOptions
   put('/admin/sports/' + id + '/', option, true, true).then((res) => {
-    console.log(res)
     if(res.status > 300) {
       const keys = Object.keys(res.data)
         for (let i = 0; i < keys.length; i++) {
@@ -42,7 +41,6 @@ const getSport = async () => {
   const id = routerNav.params.sport_id;
     try{
       const res = await get('/admin/sports/' + id + '/')
-      console.log(res)
       if(res.status === 404) {
         error_title.value = 'Error while retrieve sports id ' + id
         error_message.value = res.data.detail
@@ -51,7 +49,6 @@ const getSport = async () => {
       name.value = await res.name
     }
     catch(error : any){
-      console.log('erreur')
         error_message.value = error.data.status
         alertErr.value = true
     }

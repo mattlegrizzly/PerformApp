@@ -10,7 +10,6 @@ const exercises = ref({})
 
 const getExercises = async () => {
   const res = await get('/exercises');
-  console.log(res)
   exercises.value = await res.results;
 }
 

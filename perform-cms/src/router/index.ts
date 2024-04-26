@@ -46,12 +46,10 @@ const removeUser = () => {
 const isLoggedIn = async () => {
   const access = cookies.get('access');
   if (!access) {
-    console.log('no access')
     return
   };
 
   try {
-    console.log('yes');
     const tokenResponse = await verifyToken();
 
     if (tokenResponse.status > 300) {
@@ -59,7 +57,6 @@ const isLoggedIn = async () => {
         const refreshResponse = await refresh();
 
         if (refreshResponse.status > 300) {
-          removeUser();
           return;
         }
       }
@@ -68,9 +65,10 @@ const isLoggedIn = async () => {
     }
 
     const userResponse = await get('/admin/users_all/me/', { body: {} }, true);
-    setUser(userResponse);
+    setUser(await userResponse);
     return;
   } catch (error) {
+    removeUser();
     return;
   }
 };
@@ -171,13 +169,12 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
-  console.log(userStore.access)
-  if (userStore.access == undefined || userStore.access == '' && cookies.get('access') !== ' ') {
+  if (userStore.access == '' && cookies.get('access') !== ' ' && to.name !== 'login') {
     isLoggedIn().then(() =>{
       if (userStore.access !== '') {
         return { name: 'home' }
       } else {
-        return { name: 'login' }
+        router.push('login')
       }
     })
   }

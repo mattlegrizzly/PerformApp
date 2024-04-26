@@ -35,9 +35,9 @@
     </div>
     <h2 class="showTitle">Vidéo</h2>
     <div class="imageDiv">
-      <video id="player" playsinline controls data-poster="/path/to/poster.jpg">
-        <source type="video/mp4" />
-        <source type="video/webm" />
+      <video ref="videoController" id="player" playsinline controls data-poster="/path/to/poster.jpg">
+        <source :src="'http://127.0.0.1:8000' + exercise.video" type="video/mp4" />
+        <source :src="'http://127.0.0.1:8000' + exercise.video" type="video/webm" />
       </video>
     </div>
   </div>
@@ -54,6 +54,7 @@ import AlertComponents from '@/components/AlertComponents.vue'
 const router = useRoute()
 const exercise = ref('')
 const exercise_id = ref(-1)
+const videoController = ref(document.createElement('video'))
 
 const alertErr = ref(false)
 const error_message = ref('')
@@ -68,7 +69,7 @@ const getExercises = async () => {
     alertErr.value = true
   } else {
     exercise.value = await res
-    console.log(exercise.value)
+    videoController.value.load();
   }
 }
 

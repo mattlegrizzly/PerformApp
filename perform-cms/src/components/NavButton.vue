@@ -7,7 +7,6 @@ const props = defineProps ([
     'back'
 ])
 const nav = () => {
-  console.log(props.back)
   if(props.back) {
     router.back(props.url);
   } else {
