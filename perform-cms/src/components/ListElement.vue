@@ -6,6 +6,7 @@ import { onMounted } from 'vue';
 const props = defineProps(['headerTable', 'contentTable', 'limitData', 'nav'])
 
 const navigate = (index) => {
+  console.log(index)
   router.push('/'+props.nav+'/show/' + index)
 }
 
@@ -23,7 +24,7 @@ const navigate = (index) => {
         <tbody>
             <tr class="item-table" v-for="(row, index) in props.contentTable" :key="index" >
               <template v-for="(value, key, i) in row" >
-                    <td @click="navigate(value)" v-if="i < props.limitData" :key="key">{{ value }}</td>
+                    <td @click="navigate(row.id)" v-if="i < props.limitData" :key="key">{{ value }}</td>
                 </template>
             </tr>
         </tbody>

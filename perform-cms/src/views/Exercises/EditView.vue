@@ -132,7 +132,7 @@ const getExercise = async () => {
   const res_materials = await get('/materials')
   if (res_materials.status === 404) {
     error_title.value = 'Error while retrieve materials'
-    error_message.value = res.data.detail
+    error_message.value = res_materials.data.detail
     alertErr.value = true
   } else {
     materials.value = res_materials.results
@@ -140,7 +140,7 @@ const getExercise = async () => {
   const res_sports = await get('/sports')
   if (res_materials.status === 404) {
     error_title.value = 'Error while retrieve sports'
-    error_message.value = res.data.detail
+    error_message.value = res_sports.data.detail
     alertErr.value = true
   } else {
     sports.value = res_sports.results
