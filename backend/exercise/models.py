@@ -33,7 +33,6 @@ class WorkZone(models.Model):
 
 class Material(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=255)
     pictures = models.ImageField(upload_to=upload_to, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)

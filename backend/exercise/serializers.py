@@ -6,7 +6,7 @@ class MaterialSerializer(serializers.ModelSerializer):
     pictures = serializers.ImageField(required=False)
     class Meta:
         model = Material
-        fields = ['id', 'name', 'description', 'pictures']
+        fields = ['id', 'name', 'pictures']
 
 #Creation serializer only with id
 class ExerciseStepSerializer(serializers.ModelSerializer):
