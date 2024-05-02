@@ -15,7 +15,6 @@ const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
 
-
 const getUsers = async () => {
   const res = await get('/admin/users_all', {
     body: {},
@@ -27,14 +26,13 @@ const getUsers = async () => {
   pagination.value = Math.ceil(usersCount.value / itemsPerPage.value)
 }
 
-const setPage = (value : number) => {
-  page.value = value;
+const setPage = (value: number) => {
+  page.value = value
 }
 
 onMounted(() => {
-  getUsers();
+  getUsers()
 })
-
 </script>
 <style lang=""></style>
 
@@ -44,13 +42,16 @@ onMounted(() => {
   <div class="mainWrapper">
     <h1>Users</h1>
     <div>
-      <NavButton url="/users/add" text="Ajouter" />
-     
+      <NavButton url="/users/add" text="Ajouter" prepend-icon="mdi-plus" />
     </div>
     <div>
-      <ListElement :headerTable="['Id', 'Nom']" :contentTable="users" :limitData="2" nav="users"/>
-      <PaginationComponent :setPage='setPage' :page='page' :getData='getUsers' :pagination='pagination' />
-
+      <ListElement :headerTable="['Id', 'Nom']" :contentTable="users" :limitData="2" nav="users" />
+      <PaginationComponent
+        :setPage="setPage"
+        :page="page"
+        :getData="getUsers"
+        :pagination="pagination"
+      />
     </div>
   </div>
 </template>

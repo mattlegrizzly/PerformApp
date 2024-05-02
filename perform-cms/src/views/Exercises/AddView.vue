@@ -18,7 +18,7 @@ const videoController = ref(document.createElement('video'))
 
 const const_exercice: any = ref()
 const exercise: any = ref({})
-const steps_exercise : any = ref([]);
+const steps_exercise: any = ref([])
 
 const file = ref()
 const materials_selected = ref([])
@@ -49,7 +49,7 @@ const sendData = async () => {
   if (exercise.value.video) {
     option.body['video'] = exercise.value.video
   }
-  post('/admin/exercises/' , option, true, true).then((res) => {
+  post('/admin/exercises/', option, true, true).then((res) => {
     if (res.status > 300) {
       const keys = Object.keys(res.data)
       for (let i = 0; i < keys.length; i++) {
@@ -59,7 +59,7 @@ const sendData = async () => {
       error_title.value = 'Modification Error'
     } else {
       console.log(res.id)
-      const id = res.id;
+      const id = res.id
       //router.push('/exercises/show/' + id + '/')
       steps_exercise.value.map((step) => {
         const stepToPush = {
@@ -72,7 +72,7 @@ const sendData = async () => {
       })
 
       materials_selected.value.map((material) => {
-        console.log('material ' , material)
+        console.log('material ', material)
         const materialToPush = {
           body: {
             exercise: id,
@@ -123,32 +123,8 @@ const addStep = async () => {
     text: 'Saisissez une étape'
   }
   steps_exercise.value.push(step)
-
-  /* const id = routerNav.params.exercise_id
-  const option = {
-    body: {
-      exercise: id,
-      text: 'text'
-    }
-  }
-  const add_res = await post('/admin/steps/', option, true, false)
-  if (add_res.status === 404) {
-    error_title.value = 'Error while retrieve sports'
-    error_message.value = add_res.data.detail
-    alertErr.value = true
-  } else {
-    const steps_res = await get('/admin/steps/exercise/' + id + '/')
-    if (steps_res.status > 300) {
-      error_title.value = 'Error while retrieve sports'
-      error_message.value = add_res.data.detail
-      alertErr.value = true
-    } else {
-      steps.value = steps_res
-    }
-  } */
 }
 
-//LISTER ICI POUR SUPPRIMER
 const removeStep = async (id: number) => {
   console.log(id)
   for (const [index, step] of steps_exercise.value.entries()) {
@@ -156,17 +132,6 @@ const removeStep = async (id: number) => {
       steps_exercise.value.splice(index, 1)
     }
   }
-  /* const id_exercise = routerNav.params.exercise_id
-
-  const res_delet = await del('/admin/steps/' + id + '/')
-  if (res_delet.status > 300) {
-    error_title.value = 'Error while delete step'
-    error_message.value = 'Not deleted'
-    alertErr.value = true
-  } else {
-    const steps_res = await get('/admin/steps/exercise/' + id_exercise + '/')
-    steps.value = steps_res
-  } */
 }
 
 onMounted(() => {
@@ -197,6 +162,10 @@ onMounted(() => {
 
 #steps button {
   margin-left: 10px;
+}
+
+#player {
+  height: 400px;
 }
 </style>
 
@@ -282,18 +251,18 @@ onMounted(() => {
         single-line
       >
       </v-select>
-      <h2>Etapes</h2>
+      <h2>Instructions</h2>
       <div id="steps" v-for="(element, index) in steps_exercise" :key="index">
         <v-text-field
           v-model="element.text"
-          :label="'Etape ' + (index + 1)"
+          :label="'Instruction ' + (index + 1)"
           variant="filled"
         ></v-text-field>
         <v-btn icon="mdi-delete" @click="removeStep(element.id)"> </v-btn>
       </div>
-      <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une étape </v-btn>
+      <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une instruction</v-btn>
       <div class="buttonWrapper">
-        <button @click="sendData(false)">Modifier</button>
+        <button @click="sendData(false)">Ajouter</button>
       </div>
     </form>
   </div>

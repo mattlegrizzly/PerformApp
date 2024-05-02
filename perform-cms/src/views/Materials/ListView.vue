@@ -15,9 +15,8 @@ const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
 
-
-const setPage = (value : number) => {
-  page.value = value;
+const setPage = (value: number) => {
+  page.value = value
 }
 
 const getMaterials = async () => {
@@ -32,15 +31,15 @@ const getMaterials = async () => {
 }
 
 onMounted(() => {
-  const pageQuery = navRoute.query.page as string;
-  if(pageQuery){
+  const pageQuery = navRoute.query.page as string
+  if (pageQuery) {
     page.value = parseInt(pageQuery)
-  } 
+  }
   /* const searchQuery = navRoute.query.search as string;
   if(pageQuery){
     sea.value = parseInt(pageQuery)
   } */
-  getMaterials();
+  getMaterials()
 })
 </script>
 <style lang=""></style>
@@ -51,12 +50,21 @@ onMounted(() => {
   <div class="mainWrapper">
     <h1>Materials</h1>
     <div>
-      <NavButton url="/materials/add" text="Ajouter" prepend-icon="mdi-plus"/>
+      <NavButton url="/materials/add" text="Ajouter" prepend-icon="mdi-plus" />
     </div>
     <div>
-      <ListElement :headerTable="['Id', 'Nom']" :contentTable="materials" :limitData="2" nav="materials" />
-      <PaginationComponent :setPage='setPage' :page='page' :getData='getMaterials' :pagination='pagination' />
-
+      <ListElement
+        :headerTable="['Id', 'Nom', 'Image']"
+        :contentTable="materials"
+        :limitData="3"
+        nav="materials"
+      />
+      <PaginationComponent
+        :setPage="setPage"
+        :page="page"
+        :getData="getMaterials"
+        :pagination="pagination"
+      />
     </div>
   </div>
 </template>

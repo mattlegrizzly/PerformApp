@@ -8,7 +8,6 @@ import type IERequestOptions from '@/types/request'
 import router from '@/router'
 import NavButton from '@/components/NavButton.vue'
 const name = ref('')
-const description = ref('')
 const image_url = ref('')
 const image_src = ref('')
 
@@ -26,7 +25,7 @@ const onChangeInput = (e: any) => {
   const file = e.target.files[0]
   if (!file) return
 
-  image_url.value = file;
+  image_url.value = file
   // Convertir l'image en URL de données
   const reader = new FileReader()
   reader.onload = (e) => {
@@ -39,7 +38,6 @@ const sendData = (quitForm: boolean) => {
   const option = {
     body: {
       name: name.value,
-      description: description.value,
       pictures: image_url.value
     }
   } as IERequestOptions
@@ -55,9 +53,8 @@ const sendData = (quitForm: boolean) => {
         throw Error()
       } else {
         name.value = ''
-        description.value = ''
         image_url.value = ''
-        image_src.value = '';
+        image_src.value = ''
         if (quitForm) {
           router.back()
         } else {
@@ -92,44 +89,40 @@ const sendData = (quitForm: boolean) => {
 
 <template lang="">
   <NavMenu />
- 
+
   <div class="mainWrapper">
     <v-alert
-    :model-value="alertErr"
-    border="start"
-    close-label="Close Alert"
-    color="error"
-    title="Erreur de connexion"
-    closable
-    @click:close="closePopup"
-  >
-    {{ error_message }}
-  </v-alert>
-  <v-alert
-    :model-value="alertSuc"
-    border="start"
-    close-label="Close Alert"
-    color="success"
-    title="Matériel ajouté"
-    closable
-    @click:close="closePopup"
-  >
-    {{ success_message }}
-  </v-alert>
-    <NavButton class='returnBack' :text="'Retour'" :url="'/materials'"/>
+      :model-value="alertErr"
+      border="start"
+      close-label="Close Alert"
+      color="error"
+      title="Erreur de connexion"
+      closable
+      @click:close="closePopup"
+    >
+      {{ error_message }}
+    </v-alert>
+    <v-alert
+      :model-value="alertSuc"
+      border="start"
+      close-label="Close Alert"
+      color="success"
+      title="Matériel ajouté"
+      closable
+      @click:close="closePopup"
+    >
+      {{ success_message }}
+    </v-alert>
+    <NavButton
+      class="returnBack"
+      :text="'Retour'"
+      :url="'/materials'"
+      prepend-icon="mdi-arrow-left"
+    />
     <h1>Ajouter un Matériel</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">
         <v-text-field v-model="name" label="Nom du matériel * " variant="filled"></v-text-field>
-      </div>
-      <div class="inputFormDiv">
-        <v-textarea
-          label="Description *"
-          name="input-7-1"
-          v-model="description"
-          variant="filled"
-          auto-grow
-        ></v-textarea>
       </div>
       <div class="inputFormDiv">
         <v-file-input
@@ -141,7 +134,7 @@ const sendData = (quitForm: boolean) => {
         ></v-file-input>
       </div>
       <div class="imageDiv">
-        <v-img :width="300" aspect-ratio="16/9" cover :src="image_src"></v-img>
+        <v-img :height="100" aspect-ratio="16/9" :src="image_src"></v-img>
       </div>
 
       <div class="buttonWrapper">

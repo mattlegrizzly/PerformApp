@@ -30,7 +30,7 @@ import { get } from '@/lib/callApi'
 
 const cookies = useCookies(['locale'])
 
-const setUser = (res : any) => {
+const setUser = (res: any) => {
   const userStore = useUserStore()
   userStore.setUser(res)
   const date = new Date()
@@ -45,33 +45,33 @@ const removeUser = () => {
 }
 
 const isLoggedIn = async () => {
-  const access = cookies.get('access');
-  if (!access) return false;
+  const access = cookies.get('access')
+  if (!access) return false
 
   try {
-    const tokenResponse = await verifyToken();
-    console.log('token response ', tokenResponse)    
-    if (tokenResponse.status > 300) {
-      if (tokenResponse.status === 401) {
-        const refreshResponse = await refresh();
-      console.log('refresh response ', refreshResponse)    
+    const tokenResponse = await verifyToken()
+    console.log('token response ', await tokenResponse)
+    if ((await tokenResponse.status) > 300) {
+      if ((await tokenResponse.status) === 401) {
+        const refreshResponse = await refresh()
+        console.log('refresh response ', await refreshResponse)
 
-        if (refreshResponse.status > 300) {
-          return false;
+        if ((await refreshResponse.status) > 300) {
+          return false
         }
       }
-      removeUser();
-      return false;
+      removeUser()
+      return false
     }
 
-    const userResponse = await get('/admin/users_all/me/', { body: {} }, true);
-    setUser(await userResponse);
-    return true;
+    const userResponse = await get('/admin/users_all/me/', { body: {} }, true)
+    setUser(await userResponse)
+    return true
   } catch (error) {
-    removeUser();
-    return false;
+    removeUser()
+    return false
   }
-};
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -91,13 +91,13 @@ const router = createRouter({
       name: 'addExercise',
       component: AddExercise
     },
-    
+
     {
       path: '/exercises/show/:exercise_id',
       name: 'showExercise',
       component: ShowExercise
     },
-    
+
     {
       path: '/exercises/edit/:exercise_id',
       name: 'editExercise',
@@ -113,13 +113,13 @@ const router = createRouter({
       name: 'addSport',
       component: AddSport
     },
-    
+
     {
       path: '/sports/show/:sport_id',
       name: 'showSport',
       component: ShowSport
     },
-    
+
     {
       path: '/sports/edit/:sport_id',
       name: 'editSport',
@@ -175,22 +175,21 @@ router.beforeEach(async (to, from, next) => {
   // Cette fonction sera appelée avant chaque navigation de route
 
   // Exécutez votre fonction isLoggedIn pour vérifier si l'utilisateur est connecté
-  
 
   // Maintenant, vous pouvez mettre en place votre logique de redirection en fonction de l'état de connexion de l'utilisateur
-  const isAuthenticated = await isLoggedIn();
+  const isAuthenticated = await isLoggedIn()
   console.log(await isAuthenticated)
 
-  if (to.name === 'login' && await isAuthenticated) {
+  if (to.name === 'login' && (await isAuthenticated)) {
     // Si l'utilisateur est déjà connecté et qu'il essaie d'accéder à la page de connexion, redirigez-le vers la page d'accueil
-    next({ name: 'home' });
-  } else if (to.name !== "login" && await !isAuthenticated) {
+    next({ name: 'home' })
+  } else if (to.name !== 'login' && (await !isAuthenticated)) {
     // Si la route nécessite une authentification et que l'utilisateur n'est pas authentifié, redirigez-le vers la page de connexion
-    next({ name: 'login' });
+    next({ name: 'login' })
   } else {
     // Si l'utilisateur est authentifié ou si la route n'exige pas d'authentification, laissez-le continuer
-    next();
+    next()
   }
-});
+})
 
 export default router

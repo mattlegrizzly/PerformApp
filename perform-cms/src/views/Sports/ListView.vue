@@ -14,8 +14,8 @@ const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
 
-const setPage = (value : number) => {
-  page.value = value;
+const setPage = (value: number) => {
+  page.value = value
 }
 
 const getSports = async () => {
@@ -30,9 +30,8 @@ const getSports = async () => {
 }
 
 onMounted(() => {
-  getSports();
+  getSports()
 })
-
 </script>
 <style lang=""></style>
 
@@ -42,11 +41,21 @@ onMounted(() => {
   <div class="mainWrapper">
     <h1>Sports</h1>
     <div>
-      <NavButton url="/sports/add" text="Ajouter" />
+      <NavButton url="/sports/add" text="Ajouter" prepend-icon="mdi-plus" />
     </div>
     <div>
-      <ListElement :headerTable="['Id', 'Nom']" :contentTable="sports" :limitData="2" nav="sports"/>
-      <PaginationComponent :setPage='setPage' :page='page' :getData='getSports' :pagination='pagination' />
+      <ListElement
+        :headerTable="['Id', 'Nom']"
+        :contentTable="sports"
+        :limitData="2"
+        nav="sports"
+      />
+      <PaginationComponent
+        :setPage="setPage"
+        :page="page"
+        :getData="getSports"
+        :pagination="pagination"
+      />
     </div>
   </div>
 </template>

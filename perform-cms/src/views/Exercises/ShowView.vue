@@ -8,8 +8,19 @@
       :alertValue="alertErr"
     />
     <div class="headerBtns">
-      <NavButton class="returnBtn" :text="'Retour'" :url="'/exercises'" :back="'back'" />
-      <NavButton class="editBtn" :text="'Modifier'" :url="'/exercises/edit/' + router.params.exercise_id" />
+      <NavButton
+        class="returnBtn"
+        :text="'Retour'"
+        :url="'/exercises'"
+        :back="'back'"
+        prepend-icon="mdi-arrow-left"
+      />
+      <NavButton
+        class="editBtn"
+        :text="'Modifier'"
+        :url="'/exercises/edit/' + router.params.exercise_id"
+        prepend-icon="mdi-pencil"
+      />
     </div>
     <h1>Carte de l'exercise : {{ exercise === undefined ? '' : exercise.name }}</h1>
     <h2 class="showTitle">Titre</h2>
@@ -27,15 +38,21 @@
       <p>- {{ element.sport.name }}</p>
     </div> -->
     <v-chip-group v-for="(element, index) in exercise.sports_exercise" :key="index">
-    <v-chip>{{ element.sport.name }}</v-chip>
-  </v-chip-group>
+      <v-chip>{{ element.sport.name }}</v-chip>
+    </v-chip-group>
     <h2 class="showTitle">Etapes d'exécution</h2>
     <div v-for="(element, index) in exercise.steps_exercise" :key="index">
-      <p>Etape {{index+1}} : {{ element.text }}</p>
+      <p>Etape {{ index + 1 }} : {{ element.text }}</p>
     </div>
     <h2 class="showTitle">Vidéo</h2>
     <div class="imageDiv">
-      <video ref="videoController" id="player" playsinline controls data-poster="/path/to/poster.jpg">
+      <video
+        ref="videoController"
+        id="player"
+        playsinline
+        controls
+        data-poster="/path/to/poster.jpg"
+      >
         <source :src="'http://127.0.0.1:8000' + exercise.video" type="video/mp4" />
         <source :src="'http://127.0.0.1:8000' + exercise.video" type="video/webm" />
       </video>
@@ -69,7 +86,7 @@ const getExercises = async () => {
     alertErr.value = true
   } else {
     exercise.value = await res
-    videoController.value.load();
+    videoController.value.load()
   }
 }
 
