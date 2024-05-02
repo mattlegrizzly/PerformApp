@@ -37,16 +37,23 @@ const verifyToken = async () => {
   const response = await fetch(request)
   if (response.status == 401) {
     const resRefresh = await response.json()
+    console.log('res refresh ', resRefresh)
     if (response.status > 300) {
       return {
         status: response.status,
         data: resRefresh
       }
     } else {
-      return resRefresh // Retourne les données normalement si le token est valide
+      return {
+        status: response.status,
+        data: resRefresh
+      }
     }
   } else {
-    return response
+    return {
+      status: response.status,
+      data: {}
+    }
   }
 }
 
@@ -55,9 +62,12 @@ const handleParams = (url: URL, options: IERequestOptions) => {
     Object.keys(options.search).map((searchProperty: any) => {
       //@ts-expect-error
       const searchValues = options.search[searchProperty]
+      console.log(searchValues)
 
       if (Array.isArray(searchValues)) {
         searchValues.map((searchValue) => url.searchParams.append(searchProperty, searchValue))
+      } else {
+        url.searchParams.set('search', searchValues)
       }
     })
   }
@@ -127,6 +137,7 @@ const get = async (
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
 
+  console.log(options)
   handleParams(url, options)
 
   const headers = new Headers()
@@ -197,7 +208,7 @@ const post = async (
  * @param {*} authorization
  * @returns
  */
-const put = async (urlChunk: string, options = {} as IERequestOptions, authorization = true, image : Boolean) => {
+const put = async (urlChunk: string, options = {} as IERequestOptions, authorization = true, image: Boolean) => {
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
   const boundary = generateBoundary();
@@ -224,7 +235,7 @@ const put = async (urlChunk: string, options = {} as IERequestOptions, authoriza
       formData.append(key as string, value as string)
     })
     for (const key of formData.entries()) {
-      console.log(key[0], key[1]) 
+      console.log(key[0], key[1])
     }
     body = formData
   } else {
@@ -319,7 +330,7 @@ const del = async (urlChunk: any, authorization = true) => {
     headers: headers
   })
 
-  
+
 
   return fetch(request)
 }

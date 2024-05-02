@@ -16,6 +16,9 @@ export const useUserStore = defineStore({
         access: state.access,
         refresh: state.refresh
       }
+    },
+    getAccess(state) {
+      return state.access
     }
   },
   actions: {
@@ -36,40 +39,3 @@ export const useUserStore = defineStore({
   }
 })
 
-export const usePaginationStore = defineStore({
-  id: 'pagination',
-  state: () => ({
-    materials: 1,
-    sports: 1,
-    users: 1,
-    exercises: 1
-  }),
-  getters: {
-    getPaginationMaterials(): number {
-      return this.materials
-    },
-    getPaginationSports(): number {
-      return this.sports
-    },
-    getPaginationUsers(): number {
-      return this.users
-    },
-    getPaginationExercices(): number {
-      return this.exercises
-    }
-  },
-  actions: {
-    setPaginationMaterials(payload: number) {
-      this.materials += payload
-    },
-    setPaginationExercises(payload: number) {
-      this.exercises += payload
-    },
-    setPaginationSports(payload: number) {
-      this.sports += payload
-    },
-    setPaginationUsers(payload: number) {
-      this.users += payload
-    }
-  }
-})

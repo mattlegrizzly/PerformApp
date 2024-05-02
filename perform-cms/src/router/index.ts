@@ -6,7 +6,8 @@ import AddMaterial from '@/views/Materials/AddView.vue'
 import ShowMaterial from '@/views/Materials/ShowView.vue'
 import EditMaterial from '@/views/Materials/EditView.vue'
 
-import UsersView from '@/views/UsersView.vue'
+import ListUsers from '@/views/Users/ListView.vue'
+import ShowUsers from '@/views/Users/ShowView.vue'
 
 import ListExercises from '@/views/Exercises/ListView.vue'
 import AddExercise from '@/views/Exercises/AddView.vue'
@@ -45,35 +46,32 @@ const removeUser = () => {
 
 const isLoggedIn = async () => {
   const access = cookies.get('access');
-  if (!access) {
-    return
-  };
+  if (!access) return false;
 
   try {
     const tokenResponse = await verifyToken();
-
+    console.log('token response ', tokenResponse)    
     if (tokenResponse.status > 300) {
       if (tokenResponse.status === 401) {
         const refreshResponse = await refresh();
+      console.log('refresh response ', refreshResponse)    
 
         if (refreshResponse.status > 300) {
-          return;
+          return false;
         }
       }
       removeUser();
-      return;
+      return false;
     }
 
     const userResponse = await get('/admin/users_all/me/', { body: {} }, true);
     setUser(await userResponse);
-    return;
+    return true;
   } catch (error) {
     removeUser();
-    return;
+    return false;
   }
 };
-
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -127,10 +125,16 @@ const router = createRouter({
       name: 'editSport',
       component: EditSport
     },
+    //Users
     {
       path: '/users',
       name: 'users',
-      component: UsersView
+      component: ListUsers
+    },
+    {
+      path: '/users/show/:user_id',
+      name: 'showUsers',
+      component: ShowUsers
     },
     //Materials
     {
@@ -167,23 +171,26 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to, from) => {
-  const userStore = useUserStore()
-  if (userStore.access == '' && cookies.get('access') !== ' ' && to.name !== 'login') {
-    isLoggedIn().then(() =>{
-      if (userStore.access !== '') {
-        return { name: 'home' }
-      } else {
-        router.push('login')
-      }
-    })
+router.beforeEach(async (to, from, next) => {
+  // Cette fonction sera appelée avant chaque navigation de route
+
+  // Exécutez votre fonction isLoggedIn pour vérifier si l'utilisateur est connecté
+  
+
+  // Maintenant, vous pouvez mettre en place votre logique de redirection en fonction de l'état de connexion de l'utilisateur
+  const isAuthenticated = await isLoggedIn();
+  console.log(await isAuthenticated)
+
+  if (to.name === 'login' && await isAuthenticated) {
+    // Si l'utilisateur est déjà connecté et qu'il essaie d'accéder à la page de connexion, redirigez-le vers la page d'accueil
+    next({ name: 'home' });
+  } else if (to.name !== "login" && await !isAuthenticated) {
+    // Si la route nécessite une authentification et que l'utilisateur n'est pas authentifié, redirigez-le vers la page de connexion
+    next({ name: 'login' });
+  } else {
+    // Si l'utilisateur est authentifié ou si la route n'exige pas d'authentification, laissez-le continuer
+    next();
   }
-  else if (userStore.access !== '' && to.name === 'login') {
-    return { name: 'home' }
-  }
-  else if (userStore.access === '' && to.name !== 'login') {
-    return { name: 'login' }
-  }
-})
+});
 
 export default router

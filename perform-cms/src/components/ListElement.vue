@@ -42,13 +42,14 @@ const navigate = (index) => {
 }
 
 
-.item-table td{ 
+.item-table{ 
   transition: 0.3s;
 }
 
 .item-table:hover td{ 
-  font-weight: 600 !important;
+  text-decoration: underline;
   transition: 0.3s;
+  color: var(--primary-blue);
 }
 
 
