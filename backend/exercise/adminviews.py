@@ -36,9 +36,27 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def list(self, request, *args, **kwargs):
+        # Appliquer l'ordre initial par id si nécessaire
+        queryset = self.queryset.order_by("id")
+
+        # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
             self.pagination_class.page_size = request.query_params.get("itemsPerPage")
-        return super().list(request, *args, **kwargs)
+
+        # Filtrer le queryset
+        queryset = self.filter_queryset(queryset)
+
+        # Paginer le queryset trié
+        page = self.paginate_queryset(queryset)
+        
+        # Si la pagination est activée, sérialiser la page paginée
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        # Sinon, sérialiser le queryset complet
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         tags=['Admin - Material'],
@@ -91,6 +109,8 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name", "description", "materials__name", "sports__name"]
 
     @extend_schema(
         tags=['Admin - Exercise'],
@@ -108,17 +128,32 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         queryset = Exercise.objects.all().order_by("created_at")[:5]
         return queryset
 
-    @extend_schema(
+    @extend_schema( 
         tags=['Admin - Exercise'],
         responses={200: "OK"}
     )
     def list(self, request, *args, **kwargs):
+        # Appliquer l'ordre initial par id si nécessaire
+        queryset = self.queryset.order_by("id")
+
+        # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
             self.pagination_class.page_size = request.query_params.get("itemsPerPage")
+
+        # Filtrer le queryset
+        queryset = self.filter_queryset(queryset)
+
+        # Paginer le queryset trié
+        page = self.paginate_queryset(queryset)
         
-        queryset = self.filter_queryset(self.get_queryset())  # Filtrer le queryset si nécessaire
-        serializer = self.serializer_class(queryset, many=True)  # Créer une instance du sérialiseur
-        return Response(serializer.data)
+        # Si la pagination est activée, sérialiser la page paginée
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        # Sinon, sérialiser le queryset complet
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         tags=['Admin - Exercise'],
@@ -126,7 +161,11 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path="latest")
     def latest(self, request):
+        print('cc')
         latest_exercises = self.get_latest()
+        search_term = self.request.query_params.get("search")
+        if search_term:
+            queryset = queryset.filter(name=search_term)
         serializer = self.serializer_class(latest_exercises, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -240,9 +279,27 @@ class AdminExerciseStepViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def list(self, request, *args, **kwargs):
+        # Appliquer l'ordre initial par id si nécessaire
+        queryset = self.queryset.order_by("id")
+
+        # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
             self.pagination_class.page_size = request.query_params.get("itemsPerPage")
-        return super().list(request, *args, **kwargs)
+
+        # Filtrer le queryset
+        queryset = self.filter_queryset(queryset)
+
+        # Paginer le queryset trié
+        page = self.paginate_queryset(queryset)
+        
+        # Si la pagination est activée, sérialiser la page paginée
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        # Sinon, sérialiser le queryset complet
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     @extend_schema(
         tags=['Admin - Exercise Step'],
@@ -406,9 +463,27 @@ class AdminExerciseSportViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def list(self, request, *args, **kwargs):
+        # Appliquer l'ordre initial par id si nécessaire
+        queryset = self.queryset.order_by("id")
+
+        # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
             self.pagination_class.page_size = request.query_params.get("itemsPerPage")
-        return super().list(request, *args, **kwargs)
+
+        # Filtrer le queryset
+        queryset = self.filter_queryset(queryset)
+
+        # Paginer le queryset trié
+        page = self.paginate_queryset(queryset)
+        
+        # Si la pagination est activée, sérialiser la page paginée
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        # Sinon, sérialiser le queryset complet
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         tags=['Admin - Exercise Sport'],
