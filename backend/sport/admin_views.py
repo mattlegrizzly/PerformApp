@@ -12,7 +12,21 @@ class AdminSportViewSet(viewsets.ModelViewSet):
     queryset = Sport.objects.all()
     serializer_class = SportSerializer
     permission_classes = [permissions.IsAdminUser]
-
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name"]
+    @extend_schema(
+        tags=['Admin - Sport'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="all")
+    def get(self, request):
+        # Récupérez toutes les entités de votre modèle sans limite
+        items = Sport.objects.all()
+        # Sérialisez les données
+        serializer = SportSerializer(items, many=True)
+        # Retournez la réponse
+        return Response(serializer.data)
+    
     @extend_schema(
         tags=['Admin - Sport'],
         responses={200: "OK"}

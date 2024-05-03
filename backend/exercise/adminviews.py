@@ -14,11 +14,26 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name"]
+    @extend_schema(
+        tags=['Admin - Material'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="all")
+    def get(self, request):
+        # Récupérez toutes les entités de votre modèle sans limite
+        items = Material.objects.all()
+        # Sérialisez les données
+        serializer = MaterialSerializer(items, many=True)
+        # Retournez la réponse
+        return Response(serializer.data)
 
     @extend_schema(
         tags=['Admin - Material'],
         responses={200: "OK"}
     )
+    @action(detail=False, methods=['get'], url_path="all")
     def get_queryset(self):
         queryset = Material.objects.all()
         return queryset
@@ -81,6 +96,20 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        instance = serializer.instance
+        old_photo_path = instance.pictures.path if instance.pictures else None
+        print(old_photo_path)
+        if(old_photo_path):
+            old_photo_name = old_photo_path.split('/')[-1]
+            new_photo_path = serializer.validated_data.get('pictures')
+            if old_photo_name and new_photo_path and old_photo_name != new_photo_path._name:
+                # Supprimer le fichier vidéo précédent
+                if os.path.isfile(old_photo_path):
+                    os.remove(old_photo_path) 
+
+        super().perform_update(serializer)  # Appel de la méthode perform_update de la classe parent
 
     @extend_schema(
         tags=['Admin - Material'],
@@ -161,7 +190,6 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path="latest")
     def latest(self, request):
-        print('cc')
         latest_exercises = self.get_latest()
         search_term = self.request.query_params.get("search")
         if search_term:
@@ -189,8 +217,8 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         instance = serializer.instance
         old_video_path = instance.video.path if instance.video else None
         old_video_name = old_video_path.split('/')[-1]
-        new_video_path = serializer.validated_data.get('video')._name
-        if old_video_name and new_video_path and old_video_name != new_video_path:
+        new_video_path = serializer.validated_data.get('video')
+        if old_video_name and new_video_path and old_video_name != new_video_path._name:
             # Supprimer le fichier vidéo précédent
             if os.path.isfile(old_video_path):
                 os.remove(old_video_path) 

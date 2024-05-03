@@ -16,7 +16,7 @@ def upload_to(instance, filename):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     ext = filename.split('.')[-1]  # Récupérer l'extension du fichier
     filename_edit = f"material_{instance.id}_{timestamp}.{ext}"
-    return 'images/{filename}'.format(filename=filename)
+    return 'images/{filename}'.format(filename=filename_edit)
 
 class Zone(models.TextChoices):
     muscle = 'MU', "Muscle"
