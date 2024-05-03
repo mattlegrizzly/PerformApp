@@ -180,11 +180,12 @@ const post = async (
 
   let body
   if (image) {
+    console.log('body ', options.body)
     const formData = new FormData()
 
-    for (const key in options.body) {
-      formData.append(key as string, options.body[key] as string)
-    }
+    Object.entries(options.body).forEach(([key, value]) => {
+      formData.append(key as string, value as string)
+    })
     body = formData
   } else {
     body = JSON.stringify(options.body)

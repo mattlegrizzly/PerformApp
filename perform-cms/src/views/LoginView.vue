@@ -4,17 +4,17 @@ import router from '@/router'
 import image from '@/assets/logo_perform.png'
 import '@/assets/base.css'
 import { useCookies } from '@vueuse/integrations/useCookies'
-import { useUserStore } from '@/stores/store';
+import { useUserStore } from '@/stores/store'
 
 const cookies = useCookies(['locale'])
 
 const email = ref('')
 const password = ref('')
-
+const show2 = ref(false)
 const alert = ref(false)
 const error_message = ref('error')
 
-const userStore = useUserStore();
+const userStore = useUserStore()
 
 const sendData = () => {
   const requestOptions = {
@@ -31,10 +31,10 @@ const sendData = () => {
       }
     })
     .then((data) => {
-      userStore.setUser(data);
-      var date = new Date();
-      date.setDate(date.getDate() + 7);
-      cookies.set('access', data.access, {expires: date});
+      userStore.setUser(data)
+      var date = new Date()
+      date.setDate(date.getDate() + 7)
+      cookies.set('access', data.access, { expires: date })
       router.push('/')
       password.value = ''
       email.value = ''
@@ -87,7 +87,7 @@ h2 {
 }
 
 .inputFormDiv {
-  width: 100%;
+  width: 300px;
   display: flex;
   flex-wrap: wrap;
 }
@@ -103,9 +103,7 @@ input {
 
 .inputFormDiv input {
   border-bottom: 1px black !important;
-  border-radius: 20px;
   padding: 10px;
-  background-color: #00000008;
 }
 
 .buttonWrapper {
@@ -154,11 +152,17 @@ input {
     <form @submit.prevent="submit">
       <div class="inputFormDiv">
         <span>Email </span>
-        <input v-model="email" placeholder="entre-votre email" />
+        <v-text-field v-model="email" placeholder="entre-votre email" />
       </div>
       <div class="inputFormDiv">
         <span>Mot de passe</span>
-        <input v-model="password" type="password" placeholder="*****" />
+        <v-text-field
+          v-model="password"
+          placeholder="*****"
+          @click:append-inner="show2 = !show2"
+          :append-inner-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="show2 === true ? 'text' : 'password'"
+        />
       </div>
       <div class="buttonWrapper">
         <button @click="sendData">Se connecter</button>

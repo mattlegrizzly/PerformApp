@@ -5,11 +5,11 @@
         <img class="logo" :src="image" />
       </div>
       <nav>
-        <a href="/">Home</a>
-        <a href="/users">Users</a>
-        <a href="/exercises">Exercices</a>
-        <a href="/materials">Materials</a>
-        <a href="/sports">Sports</a>
+        <a v-on:click.stop.prevent="routerMove('/')">Home</a>
+        <a v-on:click.stop.prevent="routerMove('/users')">Users</a>
+        <a v-on:click.stop.prevent="routerMove('/exercises')">Exercices</a>
+        <a v-on:click.stop.prevent="routerMove('/materials')">Materials</a>
+        <a v-on:click.stop.prevent="routerMove('/sports')">Sports</a>
       </nav>
       <div class="buttonWrapper">
         <button @click="deconnectUser">Disconnect</button>
@@ -20,27 +20,32 @@
 <script setup lang="ts">
 import image from '@/assets/logo_perform.png'
 import router from '@/router'
-import {useCookies} from '@vueuse/integrations/useCookies'
-import { useUserStore } from '@/stores/store';
+import { useCookies } from '@vueuse/integrations/useCookies'
+import { useUserStore } from '@/stores/store'
 
-const userStore = useUserStore();
+const userStore = useUserStore()
 const cookies = useCookies(['locale'])
 
+const routerMove = (route: string) => {
+  router.push(route)
+}
+
 const deconnectUser = () => {
-  cookies.remove('access');
-  userStore.removeUser();
-  router.push('/login');
+  cookies.remove('access')
+  console.log(cookies.getAll())
+  userStore.removeUser()
+  router.push('/login')
 }
 </script>
 <style>
 .navApp {
   height: 100vh;
-    width: 300px;
-    padding-top: 10px;
-    box-shadow: 0px 0px 10px rgb(219, 219, 219);
-    position: absolute;
-    left: 0px;
-    top: 0px;
+  width: 300px;
+  padding-top: 10px;
+  box-shadow: 0px 0px 10px rgb(219, 219, 219);
+  position: absolute;
+  left: 0px;
+  top: 0px;
 }
 
 .navApp nav {

@@ -8,12 +8,34 @@ import router from '@/router'
 import { useRoute } from 'vue-router'
 import PaginationComponent from '@/components/PaginationComponent.vue'
 
+const navRoute = useRoute()
+
 const users = ref({})
 //Refs pour la pagination
 const usersCount = ref(0)
 const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
+const nameSearch = ref('')
+
+const changeInput = async () => {
+  const res = await get('/admin/users_all', {
+    body: {},
+    itemsPerPage: itemsPerPage.value,
+    page: page.value,
+    search: {
+      name: nameSearch.value
+    }
+  })
+
+  router.replace({
+    path: navRoute.path,
+    query: { search: nameSearch.value }
+  })
+  users.value = await res.results
+  usersCount.value = res.count
+  pagination.value = Math.ceil(usersCount.value / itemsPerPage.value)
+}
 
 const getUsers = async () => {
   const res = await get('/admin/users_all', {
@@ -43,6 +65,12 @@ onMounted(() => {
     <h1>Users</h1>
     <div>
       <NavButton url="/users/add" text="Ajouter" prepend-icon="mdi-plus" />
+      <v-text-field
+        v-model="nameSearch"
+        label="Chercher un utilisateur .."
+        variant="filled"
+        @update:modelValue="changeInput"
+      ></v-text-field>
     </div>
     <div>
       <ListElement :headerTable="['Id', 'Nom']" :contentTable="users" :limitData="2" nav="users" />

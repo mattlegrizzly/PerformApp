@@ -36,6 +36,7 @@ const changeInput = async () => {
   sportsCount.value = res.count
   pagination.value = Math.ceil(sportsCount.value / itemsPerPage.value)
 }
+
 const setPage = (value: number) => {
   page.value = value
 }
