@@ -46,6 +46,7 @@ const removeUser = () => {
 
 const isLoggedIn = async () => {
   const access = cookies.get('access')
+  console.log('access ', access)
   if (!access) return false
 
   try {

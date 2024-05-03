@@ -4,31 +4,40 @@ import router from '@/router'
 
 const navRoute = useRoute()
 
-const props = defineProps(['setPage','page', 'getData', 'pagination'])
+const props = defineProps(['setPage', 'page', 'getData', 'pagination'])
 
 const setPagination = async (e: Event) => {
   const target = e.target as HTMLElement
 
   if (target && target.outerText) {
-    props.setPage(parseInt(target.outerText))
+    console.log(target)
+    console.log('outer text ', target.outerText)
+    const page = parseInt(target.outerText)
+    props.setPage(page)
     router.replace({
       path: navRoute.path,
-      query: { page: props.page }
+      query: { page: page }
     })
     props.getData()
   }
 }
 
-const changePagination = async (e : any) => {
+const changePagination = async (e: any) => {
   props.setPage(parseInt(e))
   router.replace({
     path: navRoute.path,
-      query: { page: e}
-    })
-    props.getData()
+    query: { page: e }
+  })
+  props.getData()
 }
 </script>
 
 <template>
-     <v-pagination :model-value='page' :length="props.pagination" @click="setPagination" @next="changePagination" @prev="changePagination"></v-pagination>
+  <v-pagination
+    :model-value="page"
+    :length="props.pagination"
+    @click="setPagination"
+    @next="changePagination"
+    @prev="changePagination"
+  ></v-pagination>
 </template>

@@ -12,7 +12,7 @@
         class="returnBtn"
         :text="'Retour'"
         :url="'/exercises'"
-        :back="'back'"
+        :back="back"
         prepend-icon="mdi-arrow-left"
       />
       <NavButton
@@ -73,6 +73,8 @@ const exercise = ref('')
 const exercise_id = ref(-1)
 const videoController = ref(document.createElement('video'))
 
+const back = ref('back')
+
 const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
@@ -91,6 +93,11 @@ const getExercises = async () => {
 }
 
 onMounted(() => {
+  if (router.query.edit) {
+    back.value = ''
+  } else {
+    back.value = 'back'
+  }
   getExercises()
 })
 </script>

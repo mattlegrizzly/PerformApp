@@ -16,7 +16,7 @@ const pagination = ref(0)
 const page = ref(1)
 
 const navRoute = useRoute()
-const nameSearch = ref('');
+const nameSearch = ref('')
 
 const changeInput = async () => {
   const res = await get('/admin/exercises', {
@@ -29,9 +29,9 @@ const changeInput = async () => {
   })
 
   router.replace({
-      path: navRoute.path,
-      query: { search: nameSearch.value}
-    })
+    path: navRoute.path,
+    query: { search: nameSearch.value }
+  })
   exercises.value = await res.results
   exercisesCount.value = res.count
   pagination.value = Math.ceil(exercisesCount.value / itemsPerPage.value)
@@ -49,22 +49,22 @@ const getExercises = async () => {
 }
 
 const setPage = (value) => {
-  page.value = value;
+  page.value = value
 }
 
-
 onMounted(() => {
-  
-  const pageQuery = navRoute.query.page;
-  if(pageQuery){
+  const pageQuery = navRoute.query.page
+  if (pageQuery) {
     page.value = parseInt(pageQuery)
-  } 
-  const searchQuery = navRoute.query.search;
-  if(searchQuery){
+  }
+  const searchQuery = navRoute.query.search
+  console.log(searchQuery)
+  if (searchQuery) {
     nameSearch.value = searchQuery
     changeInput()
-  } 
-  getExercises();
+  } else {
+    getExercises()
+  }
 })
 </script>
 <style lang=""></style>
@@ -77,11 +77,11 @@ onMounted(() => {
     <div>
       <NavButton url="/exercises/add" text="Ajouter" prepend-icon="mdi-plus" />
       <v-text-field
-          v-model="nameSearch"
-          label="Chercher un matériel"
-          variant="filled"
-          @update:modelValue='changeInput'
-        ></v-text-field>
+        v-model="nameSearch"
+        label="Chercher un exercice, un sport, un matériel.."
+        variant="filled"
+        @update:modelValue="changeInput"
+      ></v-text-field>
     </div>
     <div>
       <ListElement

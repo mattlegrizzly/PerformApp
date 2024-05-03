@@ -14,6 +14,26 @@ const materialsCount = ref(0)
 const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
+const nameSearch = ref('')
+
+const changeInput = async () => {
+  const res = await get('/admin/materials', {
+    body: {},
+    itemsPerPage: itemsPerPage.value,
+    page: page.value,
+    search: {
+      name: nameSearch.value
+    }
+  })
+
+  router.replace({
+    path: navRoute.path,
+    query: { search: nameSearch.value }
+  })
+  materials.value = await res.results
+  materialsCount.value = res.count
+  pagination.value = Math.ceil(materialsCount.value / itemsPerPage.value)
+}
 
 const setPage = (value: number) => {
   page.value = value
@@ -35,11 +55,13 @@ onMounted(() => {
   if (pageQuery) {
     page.value = parseInt(pageQuery)
   }
-  /* const searchQuery = navRoute.query.search as string;
-  if(pageQuery){
-    sea.value = parseInt(pageQuery)
-  } */
-  getMaterials()
+  const searchQuery = navRoute.query.search as string
+  if (searchQuery) {
+    nameSearch.value = searchQuery
+    changeInput()
+  } else {
+    getMaterials()
+  }
 })
 </script>
 <style lang=""></style>
@@ -51,6 +73,12 @@ onMounted(() => {
     <h1>Materials</h1>
     <div>
       <NavButton url="/materials/add" text="Ajouter" prepend-icon="mdi-plus" />
+      <v-text-field
+        v-model="nameSearch"
+        label="Chercher un matériel.."
+        variant="filled"
+        @update:modelValue="changeInput"
+      ></v-text-field>
     </div>
     <div>
       <ListElement

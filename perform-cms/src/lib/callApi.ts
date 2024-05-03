@@ -8,13 +8,13 @@ const cookies = useCookies(['locale'])
 const baseUrl = 'http://127.0.0.1:8000/'
 
 function generateBoundary() {
-  const array = new Uint8Array(16);
-  crypto.getRandomValues(array);
-  let boundary = '';
+  const array = new Uint8Array(16)
+  crypto.getRandomValues(array)
+  let boundary = ''
   for (let i = 0; i < array.length; i++) {
-    boundary += array[i].toString(16);
+    boundary += array[i].toString(16)
   }
-  return boundary;
+  return boundary
 }
 
 const verifyToken = async () => {
@@ -35,10 +35,10 @@ const verifyToken = async () => {
   })
 
   const response = await fetch(request)
-  if (response.status == 401) {
+  if ((await response.status) == 401) {
     const resRefresh = await response.json()
-    console.log('res refresh ', resRefresh)
-    if (response.status > 300) {
+    console.log('res refresh ', await resRefresh)
+    if ((await response.status) > 300) {
       return {
         status: response.status,
         data: resRefresh
@@ -160,7 +160,7 @@ const post = async (
   urlChunk: String,
   options = {} as IERequestOptions,
   authorization = false,
-  image: boolean = false,
+  image: boolean = false
 ) => {
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
@@ -208,10 +208,15 @@ const post = async (
  * @param {*} authorization
  * @returns
  */
-const put = async (urlChunk: string, options = {} as IERequestOptions, authorization = true, image: Boolean) => {
+const put = async (
+  urlChunk: string,
+  options = {} as IERequestOptions,
+  authorization = true,
+  image: Boolean
+) => {
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
-  const boundary = generateBoundary();
+  const boundary = generateBoundary()
   const headers = new Headers()
   if (!image) {
     headers.append('Content-Type', 'application/json')
@@ -234,9 +239,6 @@ const put = async (urlChunk: string, options = {} as IERequestOptions, authoriza
     Object.entries(options.body).forEach(([key, value]) => {
       formData.append(key as string, value as string)
     })
-    for (const key of formData.entries()) {
-      console.log(key[0], key[1])
-    }
     body = formData
   } else {
     body = JSON.stringify(options.body)
@@ -264,7 +266,7 @@ const patch = async (
   urlChunk: String,
   options = {} as IERequestOptions,
   authorization = false,
-  image: boolean = false,
+  image: boolean = false
 ) => {
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
@@ -329,8 +331,6 @@ const del = async (urlChunk: any, authorization = true) => {
     method: 'DELETE',
     headers: headers
   })
-
-
 
   return fetch(request)
 }

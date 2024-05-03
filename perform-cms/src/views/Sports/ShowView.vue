@@ -12,7 +12,7 @@
         class="returnBtn"
         :text="'Retour'"
         :url="'/sports'"
-        :back="'back'"
+        :back="back"
         prepend-icon="mdi-arrow-left"
       />
       <NavButton
@@ -41,6 +41,8 @@ import AlertComponents from '@/components/AlertComponents.vue'
 const router = useRoute()
 const sport = ref('')
 
+const back = ref('back')
+
 const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
@@ -58,6 +60,11 @@ const getSport = async () => {
 }
 
 onMounted(() => {
+  if (router.query.edit) {
+    back.value = ''
+  } else {
+    back.value = 'back'
+  }
   getSport()
 })
 </script>

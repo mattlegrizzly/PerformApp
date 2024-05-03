@@ -64,7 +64,6 @@ const sendData = async () => {
       const modified = startStep.filter((step) => endStep.find((step_) => step_.id === step.id))
       const deleted = startStep.filter((step) => !endStep.find((step_) => step_.id === step.id))
 
-      console.log(modified)
       newStep.map((step) => {
         const stepToPush = {
           body: {
@@ -81,15 +80,17 @@ const sendData = async () => {
 
       modified.map((step) => {
         const elem = endStep.find((step_) => step_.id == step.id)
-        if(elem.text !== step.text){
+        if (elem.text !== step.text) {
           const options = {
-            body : {
+            body: {
               text: elem.text
             }
           }
-          res = patch('/admin/steps/'+elem.id+'/',options , true)
+          res = patch('/admin/steps/' + elem.id + '/', options, true)
         }
       })
+
+      router.push('/exercises/show/' + id + '/?edit=true')
     }
   })
 }
@@ -114,7 +115,6 @@ const getExercise = async () => {
     }
     video_url.value = await exercise.value.video
     const video_array = res.video.split('/')
-    console.log(video_array)
     await fetch(video_url.value).then((response) => {
       response.blob().then((data) => {
         if (video_array[1] == '') {
@@ -154,50 +154,15 @@ const addStep = async () => {
     text: ''
   }
   exercise.value.steps_exercise.push(step)
-
-  /* const id = routerNav.params.exercise_id
-  const option = {
-    body: {
-      exercise: id,
-      text: 'text'
-    }
-  }
-  const add_res = await post('/admin/steps/', option, true, false)
-  if (add_res.status === 404) {
-    error_title.value = 'Error while retrieve sports'
-    error_message.value = add_res.data.detail
-    alertErr.value = true
-  } else {
-    const steps_res = await get('/admin/steps/exercise/' + id + '/')
-    if (steps_res.status > 300) {
-      error_title.value = 'Error while retrieve sports'
-      error_message.value = add_res.data.detail
-      alertErr.value = true
-    } else {
-      steps.value = steps_res
-    }
-  } */
 }
 
 //LISTER ICI POUR SUPPRIMER
 const removeStep = async (id: number) => {
-  console.log(id)
   for (const [index, step] of exercise.value.steps_exercise.entries()) {
     if (step.id == id) {
       exercise.value.steps_exercise.splice(index, 1)
     }
   }
-  /* const id_exercise = routerNav.params.exercise_id
-
-  const res_delet = await del('/admin/steps/' + id + '/')
-  if (res_delet.status > 300) {
-    error_title.value = 'Error while delete step'
-    error_message.value = 'Not deleted'
-    alertErr.value = true
-  } else {
-    const steps_res = await get('/admin/steps/exercise/' + id_exercise + '/')
-    steps.value = steps_res
-  } */
 }
 
 onMounted(() => {

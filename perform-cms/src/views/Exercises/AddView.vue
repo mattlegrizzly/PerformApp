@@ -58,7 +58,6 @@ const sendData = async () => {
       alertErr.value = true
       error_title.value = 'Modification Error'
     } else {
-      console.log(res.id)
       const id = res.id
       //router.push('/exercises/show/' + id + '/')
       steps_exercise.value.map((step) => {
@@ -72,7 +71,6 @@ const sendData = async () => {
       })
 
       materials_selected.value.map((material) => {
-        console.log('material ', material)
         const materialToPush = {
           body: {
             exercise: id,
@@ -92,27 +90,27 @@ const sendData = async () => {
         res = post('/admin/exercisesports/', sportToPush, true)
       })
 
-      router.push('/exercises/show/' + id)
+      router.push('/exercises/show/' + id + '/?edit=true')
     }
   })
 }
 
 const getExercise = async () => {
-  const res_materials = await get('/materials')
+  const res_materials = await get('/admin/materials/all/', { body: {} }, true)
   if (res_materials.status === 404) {
     error_title.value = 'Error while retrieve materials'
     error_message.value = res_materials.data.detail
     alertErr.value = true
   } else {
-    materials.value = res_materials.results
+    materials.value = res_materials
   }
-  const res_sports = await get('/sports')
+  const res_sports = await get('/admin/sports/all/', { body: {} }, true)
   if (res_sports.status === 404) {
     error_title.value = 'Error while retrieve sports'
     error_message.value = res_sports.data.detail
     alertErr.value = true
   } else {
-    sports.value = res_sports.results
+    sports.value = res_sports
   }
 }
 
@@ -126,7 +124,6 @@ const addStep = async () => {
 }
 
 const removeStep = async (id: number) => {
-  console.log(id)
   for (const [index, step] of steps_exercise.value.entries()) {
     if (step.id == id) {
       steps_exercise.value.splice(index, 1)
