@@ -3,12 +3,17 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import validate_email, MinLengthValidator, EmailValidator
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from exercise.models import Exercise, WorkZone
+from datetime import datetime
 
 def upload_to(instance, filename):
-    return 'images/{filename}'.format(filename=filename)
+    print(instance)
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    ext = filename.split('.')[-1]  # Récupérer l'extension du fichier
+    filename_edit = f"user_{instance.email}_{timestamp}.{ext}"
+    return 'user/{filename}'.format(filename=filename_edit)
 
 class Manager(BaseUserManager):
-    def create_user(self, first_name, last_name, email, password=None):
+    def create_user(self, first_name, last_name, email, profile_picture, password=None):
         if not first_name:
             raise ValueError("User must have a first name")
         if not last_name:
@@ -24,6 +29,7 @@ class Manager(BaseUserManager):
             email=email,
             first_name=first_name,
             last_name=last_name,
+            profile_picture=profile_picture
         )
         user.set_password(password)
         user.save(using=self._db)

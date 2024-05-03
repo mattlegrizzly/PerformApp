@@ -2,9 +2,7 @@ from django.db import models
 from sport.models import Sport
 from typing import List
 from datetime import datetime
-import glob
-import os
-import fnmatch
+
 def upload_to_video(instance, filename):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     ext = filename.split('.')[-1]  # Récupérer l'extension du fichier

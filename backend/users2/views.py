@@ -21,6 +21,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.viewsets import ViewSet
 import jwt
 from backend.settings import SIMPLE_JWT
+from rest_framework import filters, mixins, status, viewsets, pagination
 
 from .serializers import (
     UserSerializer,     
@@ -176,7 +177,8 @@ class AdminUserViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
-
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["email", "first_name", 'last_name']
     def get_schema_fields(self, path, method):
         fields = super().get_schema_fields(path, method)
 
@@ -348,6 +350,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class AdminUsersAllViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["email", "first_name", 'last_name']
     permission_classes = [permissions.IsAuthenticated]
 
     @extend_schema(
