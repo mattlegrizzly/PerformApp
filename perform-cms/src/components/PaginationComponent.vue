@@ -16,7 +16,7 @@ const setPagination = async (e: Event) => {
     props.setPage(page)
     router.replace({
       path: navRoute.path,
-      query: { page: page }
+      query: Object.assign({}, navRoute.query, { page: page }) 
     })
     props.getData()
   }

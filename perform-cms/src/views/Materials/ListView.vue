@@ -70,15 +70,21 @@ onMounted(() => {
   <NavMenu />
 
   <div class="mainWrapper">
-    <h1>Materials</h1>
-    <div>
+    <h1 class="listTitle">Materiels ({{materialsCount}})</h1>
+    <h5 class="underTitle">Retrouvez la liste de tous vos Matériels</h5>
+    <div class="headerList">
       <NavButton url="/materials/add" text="Ajouter" prepend-icon="mdi-plus" />
-      <v-text-field
-        v-model="nameSearch"
-        label="Chercher un matériel.."
-        variant="filled"
-        @update:modelValue="changeInput"
-      ></v-text-field>
+      <div class="searchBar">
+        <div class="searchBar">
+        <v-text-field
+        placeholder="Chercher un matériel"
+        prepend-inner-icon='mdi-magnify'
+          v-model="nameSearch"
+          @update:modelValue="changeInput"
+          variant="filled"
+        ></v-text-field>
+        </div>
+      </div>
     </div>
     <div>
       <ListElement

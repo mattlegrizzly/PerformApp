@@ -16,6 +16,45 @@
   overflow-y: scroll;
 }
 
+
+.listTitle {
+  text-align: left;
+}
+
+.underTitle {
+  color : rgb(143, 143, 143);
+  font-size: 14px;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.headerList {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+}
+
+.searchBar {
+  width: 400px;
+}
+
+.searchBar .v-field__field {
+  height: 38px;
+  display: flex;
+  align-items: center;
+}
+
+.searchBar .v-input .v-input__details {
+  display: none;
+}
+
+.searchBar .v-field__field input {
+  padding: 0px !important;
+  font-size: 14px;
+}
+
 a,
 .green {
   text-decoration: none;

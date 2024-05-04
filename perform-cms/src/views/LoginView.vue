@@ -31,16 +31,25 @@ const sendData = () => {
       }
     })
     .then((data) => {
-      userStore.setUser(data)
-      var date = new Date()
-      date.setDate(date.getDate() + 7)
-      cookies.set('access', data.access, { expires: date })
-      router.push('/')
-      password.value = ''
-      email.value = ''
+      if(data.user.is_superuser === true) {
+        userStore.setUser(data)
+        var date = new Date()
+        date.setDate(date.getDate() + 7)
+        cookies.set('access', data.access, { expires: date })
+        router.push('/')
+        password.value = ''
+        email.value = ''
+      } else {
+        throw Error('You\'re not allowed.')
+      }
     })
-    .catch(() => {
-      error_message.value = 'Credential error'
+    .catch((error) => {
+      console.log(error)
+      if(error.message) {
+      error_message.value = error.message
+      } else {
+        error_message.value = "Credential error"
+      }
       alert.value = true
     })
 }

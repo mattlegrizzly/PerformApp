@@ -72,15 +72,19 @@ onMounted(() => {
   <NavMenu />
 
   <div class="mainWrapper">
-    <h1>Sports</h1>
-    <div>
+    <h1 class="listTitle">Sports ({{sportsCount}})</h1>
+    <h5 class="underTitle">Retrouvez la liste de tous vos Sports</h5>
+    <div class="headerList">
       <NavButton url="/sports/add" text="Ajouter" prepend-icon="mdi-plus" />
-      <v-text-field
+      <div class="searchBar">
+        <v-text-field
+        placeholder="Chercher un sport"
+        prepend-inner-icon='mdi-magnify'
         v-model="nameSearch"
-        label="Chercher un matériel.."
         variant="filled"
         @update:modelValue="changeInput"
       ></v-text-field>
+      </div>
     </div>
     <div>
       <ListElement

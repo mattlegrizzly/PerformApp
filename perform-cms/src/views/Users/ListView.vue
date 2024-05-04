@@ -62,18 +62,22 @@ onMounted(() => {
   <NavMenu />
 
   <div class="mainWrapper">
-    <h1>Users</h1>
-    <div>
+    <h1 class="listTitle">Tous les utilisateurs ({{usersCount}})</h1>
+    <h5 class="underTitle">Retrouvez la liste de tous vos Utilisateurs</h5>
+    <div class="headerList">
       <NavButton url="/users/add" text="Ajouter" prepend-icon="mdi-plus" />
-      <v-text-field
+      <div class="searchBar">
+        <v-text-field
+        placeholder="Chercher un utilisateur"
+        prepend-inner-icon='mdi-magnify'
         v-model="nameSearch"
-        label="Chercher un utilisateur .."
         variant="filled"
         @update:modelValue="changeInput"
       ></v-text-field>
+      </div>
     </div>
     <div>
-      <ListElement :headerTable="['Id', 'Nom']" :contentTable="users" :limitData="2" nav="users" />
+      <ListElement :headerTable="['Id', 'Email', 'Nom', 'Prénom']" :contentTable="users" :limitData="4" nav="users" />
       <PaginationComponent
         :setPage="setPage"
         :page="page"

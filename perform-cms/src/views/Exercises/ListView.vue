@@ -7,13 +7,24 @@ import { get } from '@/lib/callApi'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import PaginationComponent from '@/components/PaginationComponent.vue'
+import OrderByComponent from '@/components/OrderByComponent.vue'
 
 const exercises = ref({})
 //Ref pour la pagination
 const exercisesCount = ref(0)
+const orderBy = ref("")
 const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
+
+const order = [
+  { id: 'orderByNameAsc', value: 'Nom (Croissant)' },
+  { id: 'orderByNameDesc', value: 'Nom (Décroissant)' },
+  { id: 'orderByIdAsc', value: 'Id (Croissant)' },
+  { id: 'orderByIdDesc', value: 'Id (Décroissant)' },
+  { id: 'orderByDateAsc', value: 'Date (Croissant)' },
+  { id: 'orderByDateDesc', value: 'Date (Décroissant)' }
+]
 
 const navRoute = useRoute()
 const nameSearch = ref('')
@@ -50,15 +61,29 @@ const getExercises = async () => {
 
 const setPage = (value) => {
   page.value = value
+  console.log(page.value)
 }
+
+const setOrderBy = (value) =>{
+    orderBy.value = value
+  }
+
 
 onMounted(() => {
   const pageQuery = navRoute.query.page
   if (pageQuery) {
     page.value = parseInt(pageQuery)
   }
+  const orderByQuery = navRoute.query.orderBy
+  if (pageQuery) {
+    order.map((order) => {
+      if(order.id === orderByQuery){
+        orderBy.value = order
+      }
+    })
+    console.log(orderBy.value)
+  } 
   const searchQuery = navRoute.query.search
-  console.log(searchQuery)
   if (searchQuery) {
     nameSearch.value = searchQuery
     changeInput()
@@ -73,16 +98,21 @@ onMounted(() => {
   <NavMenu />
 
   <div class="mainWrapper">
-    <h1>Exercises</h1>
-    <div>
+    <h1 class="listTitle">Exercices ({{ exercisesCount }})</h1>
+    <h5 class="underTitle">Retrouvez la liste de tous vos exercices</h5>
+    <div class="headerList">
       <NavButton url="/exercises/add" text="Ajouter" prepend-icon="mdi-plus" />
-      <v-text-field
-        v-model="nameSearch"
-        label="Chercher un exercice, un sport, un matériel.."
-        variant="filled"
-        @update:modelValue="changeInput"
-      ></v-text-field>
+      <div class="searchBar">
+        <v-text-field
+          placeholder="Chercher un exercice, un sport, un matériel."
+          prepend-inner-icon="mdi-magnify"
+          v-model="nameSearch"
+          variant="filled"
+          @update:modelValue="changeInput"
+        ></v-text-field>
+      </div>
     </div>
+    <OrderByComponent :orderBy='orderBy' :setOrderBy='setOrderBy' />
     <div>
       <ListElement
         :headerTable="['id', 'Nom']"
