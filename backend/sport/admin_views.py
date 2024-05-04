@@ -1,6 +1,6 @@
 from rest_framework import permissions, viewsets
 from .models import Sport, SportsUser
-from .serializers import SportSerializer, SportsUserSerializer
+from .serializers import SportSerializer, SportsUserSerializer, SportsDetailedUserSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from rest_framework import filters, mixins, status, viewsets, pagination
 from rest_framework.decorators import action
@@ -144,7 +144,9 @@ class AdminSportsUserViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+        instance = self.get_object()
+        serializer = SportsUserDetailSerializer(instance)
+        return Response(serializer.data)
 
     @extend_schema(
         tags=['Admin - Sports User'],

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import User, UsersFavExercises, Injurie, Wellness
-from sport.serializers import SportsUserSerializer
+from sport.serializers import SportsDetailedUserSerializer
 from exercise.serializers import ExerciseSerializer, WorkZoneSerializer
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -42,12 +42,12 @@ class UserDetailedSerializer(serializers.ModelSerializer):
             return False
 
 class UserSerializer(serializers.ModelSerializer):
-    sports_user = SportsUserSerializer(many=True, read_only=False)
+    sports_user = SportsDetailedUserSerializer(many=True, read_only=False)
     user_injuries = InjurieSerializer(many=True, read_only=False)
     users_wellness = WellnessSerializer(many=True, read_only=False)
     class Meta:
         model = User
-        fields = [ 'id', 'email', 'first_name', 'last_name' , 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'users_wellness']
+        fields = [ 'id', 'email', 'first_name', 'last_name' , 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'users_wellness', 'is_superuser']
         extra_kwargs = {'password': {'write_only': True}}
 
     def check_email_exists(self, email, new_email):

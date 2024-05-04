@@ -9,6 +9,11 @@ class SportSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class SportsUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SportsUser
+        fields = ['user', 'sport']
+
+class SportsDetailedUserSerializer(serializers.ModelSerializer):
     sport = SportSerializer()
     class Meta:
         model = SportsUser
