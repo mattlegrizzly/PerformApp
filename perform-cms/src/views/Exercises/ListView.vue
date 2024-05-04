@@ -12,36 +12,43 @@ import OrderByComponent from '@/components/OrderByComponent.vue'
 const exercises = ref({})
 //Ref pour la pagination
 const exercisesCount = ref(0)
-const orderBy = ref("")
+const orderBy = ref({ id: 'default', value: 'Par défaut'})
 const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
-
 const order = [
   { id: 'orderByNameAsc', value: 'Nom (Croissant)' },
   { id: 'orderByNameDesc', value: 'Nom (Décroissant)' },
   { id: 'orderByIdAsc', value: 'Id (Croissant)' },
   { id: 'orderByIdDesc', value: 'Id (Décroissant)' },
   { id: 'orderByDateAsc', value: 'Date (Croissant)' },
-  { id: 'orderByDateDesc', value: 'Date (Décroissant)' }
+  { id: 'orderByDateDesc', value: 'Date (Décroissant)' },
+  { id: 'default', value: 'Par défaut'}
 ]
 
 const navRoute = useRoute()
 const nameSearch = ref('')
 
 const changeInput = async () => {
-  const res = await get('/admin/exercises', {
+  console.log(orderBy.value)
+  const option = {
     body: {},
     itemsPerPage: itemsPerPage.value,
     page: page.value,
     search: {
       name: nameSearch.value
     }
-  })
+  }
+  if (orderBy.value !== '') {
+    console.log('Order by')
+    option['orderBy'] = orderBy.value.id
+  }
+
+  const res = await get('/admin/exercises', option)
 
   router.replace({
     path: navRoute.path,
-    query: { search: nameSearch.value }
+    query: Object.assign({}, navRoute.query, { search: nameSearch.value })
   })
   exercises.value = await res.results
   exercisesCount.value = res.count
@@ -49,11 +56,21 @@ const changeInput = async () => {
 }
 
 const getExercises = async () => {
-  const res = await get('/exercises', {
+  const option = {
     body: {},
     itemsPerPage: itemsPerPage.value,
     page: page.value
-  })
+  }
+  if (orderBy.value !== '') {
+    option['orderBy'] = orderBy.value.id
+  }
+  if (nameSearch.value !== '') {
+    option['search'] = {
+      name: nameSearch.value
+    }
+  }
+
+  const res = await get('/admin/exercises', option)
   exercises.value = await res.results
   exercisesCount.value = res.count
   pagination.value = Math.ceil(exercisesCount.value / itemsPerPage.value)
@@ -61,13 +78,12 @@ const getExercises = async () => {
 
 const setPage = (value) => {
   page.value = value
-  console.log(page.value)
 }
 
-const setOrderBy = (value) =>{
-    orderBy.value = value
-  }
-
+const setOrderBy = (value) => {
+  orderBy.value = value
+  getExercises()
+}
 
 onMounted(() => {
   const pageQuery = navRoute.query.page
@@ -75,21 +91,18 @@ onMounted(() => {
     page.value = parseInt(pageQuery)
   }
   const orderByQuery = navRoute.query.orderBy
-  if (pageQuery) {
+  if (orderByQuery) {
     order.map((order) => {
-      if(order.id === orderByQuery){
+      if (order.id === orderByQuery) {
         orderBy.value = order
       }
     })
-    console.log(orderBy.value)
-  } 
+  }
   const searchQuery = navRoute.query.search
   if (searchQuery) {
     nameSearch.value = searchQuery
-    changeInput()
-  } else {
-    getExercises()
   }
+  getExercises('')
 })
 </script>
 <style lang=""></style>
@@ -112,7 +125,7 @@ onMounted(() => {
         ></v-text-field>
       </div>
     </div>
-    <OrderByComponent :orderBy='orderBy' :setOrderBy='setOrderBy' />
+    <OrderByComponent :orderBy="orderBy" :setOrderBy="setOrderBy" />
     <div>
       <ListElement
         :headerTable="['id', 'Nom']"

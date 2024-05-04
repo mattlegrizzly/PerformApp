@@ -7,6 +7,7 @@ import { get } from '@/lib/callApi'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import PaginationComponent from '@/components/PaginationComponent.vue'
+import OrderByComponent from '@/components/OrderByComponent.vue'
 
 const navRoute = useRoute()
 
@@ -17,6 +18,21 @@ const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
 const nameSearch = ref('')
+const orderBy = ref({ id: 'default', value: 'Par défaut'})
+const order = [
+  { id: 'orderByNameAsc', value: 'Nom (Croissant)' },
+  { id: 'orderByNameDesc', value: 'Nom (Décroissant)' },
+  { id: 'orderByIdAsc', value: 'Id (Croissant)' },
+  { id: 'orderByIdDesc', value: 'Id (Décroissant)' },
+  { id: 'orderByDateAsc', value: 'Date (Croissant)' },
+  { id: 'orderByDateDesc', value: 'Date (Décroissant)' },
+  { id: 'default', value: 'Par défaut'}
+]
+
+const setOrderBy = (value) => {
+  orderBy.value = value
+  getExercises()
+}
 
 const changeInput = async () => {
   const res = await get('/admin/users_all', {
@@ -30,7 +46,7 @@ const changeInput = async () => {
 
   router.replace({
     path: navRoute.path,
-    query: { search: nameSearch.value }
+    query: Object.assign({}, navRoute.query, { search: nameSearch.value })
   })
   users.value = await res.results
   usersCount.value = res.count
@@ -53,6 +69,22 @@ const setPage = (value: number) => {
 }
 
 onMounted(() => {
+  const pageQuery = navRoute.query.page
+  if (pageQuery) {
+    page.value = parseInt(pageQuery)
+  }
+  const orderByQuery = navRoute.query.orderBy
+  if (orderByQuery) {
+    order.map((order) => {
+      if (order.id === orderByQuery) {
+        orderBy.value = order
+      }
+    })
+  }
+  const searchQuery = navRoute.query.search
+  if (searchQuery) {
+    nameSearch.value = searchQuery
+  }
   getUsers()
 })
 </script>
@@ -76,6 +108,7 @@ onMounted(() => {
       ></v-text-field>
       </div>
     </div>
+    <OrderByComponent :orderBy="orderBy" :setOrderBy="setOrderBy" />
     <div>
       <ListElement :headerTable="['Id', 'Email', 'Nom', 'Prénom']" :contentTable="users" :limitData="4" nav="users" />
       <PaginationComponent

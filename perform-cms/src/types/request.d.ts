@@ -1,7 +1,8 @@
 interface IERequestOptions {
     search? : Array<string>,
-    page? : number,
-    itemsPerPage? : number,
+    page? : string,
+    itemsPerPage? : string,
+    orderBy? : string,
     body : Array<string|blob> | {},
 }
 

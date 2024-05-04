@@ -48,17 +48,13 @@ const removeUser = () => {
 
 const isLoggedIn = async () => {
   const access = cookies.get('access')
-  console.log('access ', access)
   if (!access) return false
 
   try {
     const tokenResponse = await verifyToken()
-    console.log('token response ', await tokenResponse)
     if ((await tokenResponse.status) > 300) {
       if ((await tokenResponse.status) === 401) {
         const refreshResponse = await refresh()
-        console.log('refresh response ', await refreshResponse)
-
         if ((await refreshResponse.status) > 300) {
           return false
         }
@@ -186,12 +182,8 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   // Cette fonction sera appelée avant chaque navigation de route
-
-  // Exécutez votre fonction isLoggedIn pour vérifier si l'utilisateur est connecté
-
   // Maintenant, vous pouvez mettre en place votre logique de redirection en fonction de l'état de connexion de l'utilisateur
   const isAuthenticated = await isLoggedIn()
-  console.log(await isAuthenticated)
 
   if (to.name === 'login' && (await isAuthenticated)) {
     // Si l'utilisateur est déjà connecté et qu'il essaie d'accéder à la page de connexion, redirigez-le vers la page d'accueil

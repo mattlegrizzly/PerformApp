@@ -7,6 +7,7 @@ import { get } from '@/lib/callApi'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import PaginationComponent from '@/components/PaginationComponent.vue'
+import OrderByComponent from '@/components/OrderByComponent.vue'
 
 const navRoute = useRoute()
 const materials = ref({})
@@ -15,6 +16,22 @@ const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
 const nameSearch = ref('')
+const orderBy = ref({ id: 'default', value: 'Par défaut'})
+const order = [
+  { id: 'orderByNameAsc', value: 'Nom (Croissant)' },
+  { id: 'orderByNameDesc', value: 'Nom (Décroissant)' },
+  { id: 'orderByIdAsc', value: 'Id (Croissant)' },
+  { id: 'orderByIdDesc', value: 'Id (Décroissant)' },
+  { id: 'orderByDateAsc', value: 'Date (Croissant)' },
+  { id: 'orderByDateDesc', value: 'Date (Décroissant)' },
+  { id: 'default', value: 'Par défaut'}
+]
+
+const setOrderBy = (value) => {
+  console.log(value)
+  orderBy.value = value
+  getMaterials()
+}
 
 const changeInput = async () => {
   const res = await get('/admin/materials', {
@@ -28,7 +45,7 @@ const changeInput = async () => {
 
   router.replace({
     path: navRoute.path,
-    query: { search: nameSearch.value }
+    query: Object.assign({}, navRoute.query, { search: nameSearch.value })
   })
   materials.value = await res.results
   materialsCount.value = res.count
@@ -40,11 +57,21 @@ const setPage = (value: number) => {
 }
 
 const getMaterials = async () => {
-  const res = await get('/admin/materials', {
+  const option = {
     body: {},
     itemsPerPage: itemsPerPage.value,
     page: page.value
-  })
+  }
+  if (orderBy.value !== '') {
+    option['orderBy'] = orderBy.value.id
+  }
+  if (nameSearch.value !== '') {
+    option['search'] = {
+      name: nameSearch.value
+    }
+  }
+
+  const res = await get('/admin/materials', option)
   materials.value = await res.results
   materialsCount.value = res.count
   pagination.value = Math.ceil(materialsCount.value / itemsPerPage.value)
@@ -58,10 +85,16 @@ onMounted(() => {
   const searchQuery = navRoute.query.search as string
   if (searchQuery) {
     nameSearch.value = searchQuery
-    changeInput()
-  } else {
-    getMaterials()
   }
+  const orderByQuery = navRoute.query.orderBy
+  if (orderByQuery) {
+    order.map((order) => {
+      if (order.id === orderByQuery) {
+        orderBy.value = order
+      }
+    })
+  }
+  getMaterials()
 })
 </script>
 <style lang=""></style>
@@ -86,6 +119,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    <OrderByComponent :orderBy="orderBy" :setOrderBy="setOrderBy" />
     <div>
       <ListElement
         :headerTable="['Id', 'Nom', 'Image']"

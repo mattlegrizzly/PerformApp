@@ -37,7 +37,6 @@ const verifyToken = async () => {
   const response = await fetch(request)
   if ((await response.status) == 401) {
     const resRefresh = await response.json()
-    console.log('res refresh ', await resRefresh)
     if ((await response.status) > 300) {
       return {
         status: response.status,
@@ -62,7 +61,6 @@ const handleParams = (url: URL, options: IERequestOptions) => {
     Object.keys(options.search).map((searchProperty: any) => {
       //@ts-expect-error
       const searchValues = options.search[searchProperty]
-      console.log(searchValues)
 
       if (Array.isArray(searchValues)) {
         searchValues.map((searchValue) => url.searchParams.append(searchProperty, searchValue))
@@ -78,6 +76,10 @@ const handleParams = (url: URL, options: IERequestOptions) => {
 
   if (typeof options.page !== 'undefined') {
     url.searchParams.set('page', options.page)
+  }
+
+  if (typeof options.orderBy !== 'undefined') {
+    url.searchParams.set('orderBy', options.orderBy)
   }
 }
 
@@ -137,7 +139,6 @@ const get = async (
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
 
-  console.log(options)
   handleParams(url, options)
 
   const headers = new Headers()
@@ -180,7 +181,6 @@ const post = async (
 
   let body
   if (image) {
-    console.log('body ', options.body)
     const formData = new FormData()
 
     Object.entries(options.body).forEach(([key, value]) => {
@@ -222,7 +222,6 @@ const put = async (
   if (!image) {
     headers.append('Content-Type', 'application/json')
   } else {
-    console.log(options)
     headers.append('Accept', 'application/json')
   }
   handleParams(url, options)
@@ -234,7 +233,6 @@ const put = async (
 
   let body
   if (image) {
-    console.log('body ', options.body)
     const formData = new FormData()
 
     Object.entries(options.body).forEach(([key, value]) => {

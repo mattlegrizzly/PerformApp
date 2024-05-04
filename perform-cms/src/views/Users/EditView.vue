@@ -37,7 +37,6 @@ const onChangeInput = (e: any) => {
   if (!file) return
 
   image_url.value = file
-  console.log(image_url.value)
   // Convertir l'image en URL de données
   const reader = new FileReader()
   reader.onload = (e) => {
@@ -104,7 +103,6 @@ const sendData = (quitForm: boolean) => {
 }
 
 const getUser = async () => {
-  console.log(navRoute.params)
   const id = navRoute.params.user_id
   try {
     const res = await get('/admin/users_all/' + id + '/')

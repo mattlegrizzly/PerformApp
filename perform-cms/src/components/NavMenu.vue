@@ -32,7 +32,6 @@ const routerMove = (route: string) => {
 
 const deconnectUser = () => {
   cookies.remove('access')
-  console.log(cookies.getAll())
   userStore.removeUser()
   router.push('/login')
 }

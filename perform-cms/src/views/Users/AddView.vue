@@ -33,7 +33,6 @@ const onChangeInput = (e: any) => {
   if (!file) return
 
   image_url.value = file
-  console.log(image_url.value)
   // Convertir l'image en URL de données
   const reader = new FileReader()
   reader.onload = (e) => {
@@ -56,7 +55,6 @@ function genererTexteAleatoire() {
 }
 
 const sendData = (quitForm: boolean) => {
-  console.log('profile ', image_url.value)
   const option = {
     body: {
       email: user.value.email,
@@ -70,7 +68,6 @@ const sendData = (quitForm: boolean) => {
     }
   } as IERequestOptions
 
-  console.log(option)
   post('/register/', option, false, true)
     .then((res) => {
       error_message.value = ''

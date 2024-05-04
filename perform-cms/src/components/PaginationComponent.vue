@@ -10,8 +10,6 @@ const setPagination = async (e: Event) => {
   const target = e.target as HTMLElement
 
   if (target && target.outerText) {
-    console.log(target)
-    console.log('outer text ', target.outerText)
     const page = parseInt(target.outerText)
     props.setPage(page)
     router.replace({
