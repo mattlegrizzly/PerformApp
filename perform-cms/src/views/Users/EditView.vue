@@ -3,24 +3,28 @@ import NavMenu from '../../components/NavMenu.vue'
 import { ref, onMounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import '@/assets/base.css'
-import { post } from '@/lib/callApi'
+import { patch, get } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
 import router from '@/router'
 import NavButton from '@/components/NavButton.vue'
+import { useRoute } from 'vue-router'
 
 const user = ref({})
 
+const navRoute = useRoute()
 const alertErr = ref(false)
 const alertSuc = ref(false)
 const error_message = ref('')
 const success_message = ref('error')
 
+const isFormData = ref(false)
+
 const gender = ref([
-  {id : 'male', value : "Homme"},
-  {id : 'female', value : "Femme"},
-  {id : 'other', value : "Autre"}
+  { id: 'male', value: 'Homme' },
+  { id: 'female', value: 'Femme' },
+  { id: 'other', value: 'Autre' }
 ])
-const image_url = ref('')
+const image_url = ref(new File([], '', undefined))
 const image_src = ref('')
 
 const closePopup = () => {
@@ -42,36 +46,37 @@ const onChangeInput = (e: any) => {
   reader.readAsDataURL(file)
 }
 
-function genererTexteAleatoire() {
-  var caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+='
-  var longueur = 15
-  var texteAleatoire = ''
-
-  for (var i = 0; i < longueur; i++) {
-    var caractereAleatoire = caracteres.charAt(Math.floor(Math.random() * caracteres.length))
-    texteAleatoire += caractereAleatoire
-  }
-
-  return texteAleatoire
-}
-
 const sendData = (quitForm: boolean) => {
-  console.log('profile ', image_url.value)
+  const id = navRoute.params.user_id
   const option = {
     body: {
-      email: user.value.email,
-      password: user.value.password,
       last_name: user.value.last_name,
       first_name: user.value.first_name,
       gender: user.value.gender,
       age: user.value.age,
-      size: user.value.size,
-      profile_picture: image_url.value
+      size: user.value.size
     }
   } as IERequestOptions
-
-  console.log(option)
-  post('/register/', option, false, true)
+  if (user.value.profile_picture) {
+    const splitUser = user.value.profile_picture.split('/')
+    const nameFile = splitUser[splitUser.length - 1]
+    if (image_url.value.name !== nameFile) {
+      //@ts-expect-error
+      option.body['profile_picture'] = image_url.value
+      isFormData.value = true
+    } else {
+      isFormData.value = false
+    }
+  } else {
+    if(image_url.value) {
+      //@ts-expect-error
+      option.body['profile_picture'] = image_url.value
+      isFormData.value = true
+    } else {
+      isFormData.value = false
+    }
+  }
+  patch('/admin/users_all/' + id + '/', option, true, isFormData.value)
     .then((res) => {
       error_message.value = ''
       success_message.value = ''
@@ -83,11 +88,11 @@ const sendData = (quitForm: boolean) => {
         throw Error()
       } else {
         if (quitForm) {
-          router.push('/users')
+          router.push('/users/show/' + id + '/?edit=true')
         } else {
-          success_message.value = 'Vous avez ajoutez : ' + res.first_name + ' ' + res.last_name
+          success_message.value = 'Vous avez modifiez : ' + res.first_name + ' ' + res.last_name
           user.value = {}
-          image_url.value = ''
+          image_url.value = new File([], '', undefined)
           image_src.value = ''
           alertSuc.value = true
         }
@@ -98,8 +103,44 @@ const sendData = (quitForm: boolean) => {
     })
 }
 
+const getUser = async () => {
+  console.log(navRoute.params)
+  const id = navRoute.params.user_id
+  try {
+    const res = await get('/admin/users_all/' + id + '/')
+    if (res.status > 300) {
+      //error_title.value = 'Error while retrieve sports id ' + id
+      error_message.value = res.data.detail
+      alertErr.value = true
+    } else {
+      user.value = res
+      image_src.value = await res.profile_picture
+      const pictures_array = res.profile_picture.split('/')
+      let response = await fetch(image_src.value)
+      let data = await response.blob()
+      let metadata = {
+        type: 'image/' + pictures_array[5].split('.')[1]
+      }
+      let file = new File([data], pictures_array[5], metadata)
+      image_url.value = file
+      if (!file) return
+
+      image_url.value = file
+      // Convertir l'image en URL de données
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        image_src.value = e.target?.result as string
+      }
+      reader.readAsDataURL(file)
+    }
+  } catch (error: any) {
+    error_message.value = error.data.status
+    alertErr.value = true
+  }
+}
+
 onMounted(() => {
-  user.value.password = genererTexteAleatoire()
+  getUser()
 })
 </script>
 <style>
@@ -146,11 +187,8 @@ onMounted(() => {
   </v-alert>
   <div class="mainWrapper">
     <NavButton class="returnBack" :text="'Retour'" :url="'/users'" prepend-icon="mdi-arrow-left" />
-    <h1>Ajouter un Utilisateur</h1>
+    <h1>Editer un Utilisateur</h1>
     <form @submit.prevent="submit">
-      <div class="inputFormDiv">
-        <v-text-field v-model="user.email" label="Email * " variant="filled"></v-text-field>
-      </div>
       <div class="inputFormDiv">
         <v-text-field v-model="user.last_name" label="Nom " variant="filled"></v-text-field>
         <v-text-field v-model="user.first_name" label="Pénom " variant="filled"></v-text-field>
@@ -174,9 +212,6 @@ onMounted(() => {
         ></v-select>
       </div>
       <div class="inputFormDiv">
-        <v-text-field label="Mot de passe" v-model="user.password"></v-text-field>
-      </div>
-      <div class="inputFormDiv">
         <v-file-input
           label="Photo de profil utilisateur"
           prepend-icon="mdi-camera"
@@ -189,8 +224,7 @@ onMounted(() => {
         <v-img :height="100" aspect-ratio="16/9" :src="image_src"></v-img>
       </div>
       <div class="buttonWrapper">
-        <button @click="sendData(false)">Créer et continuer</button>
-        <button class="return_btn" @click="sendData(true)">Créer</button>
+        <button class="return_btn" @click="sendData(true)">Modifier</button>
       </div>
     </form>
   </div>

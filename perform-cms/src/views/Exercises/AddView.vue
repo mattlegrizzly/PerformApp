@@ -241,7 +241,6 @@ onMounted(() => {
         hint="Sélectionnez le matériel utilisé"
         item-title="name"
         item-value="id"
-        mulitple
         label="Select"
         multiple
         persistent-hint

@@ -34,9 +34,6 @@
       <p>- {{ element.material.name }}</p>
     </div>
     <h2 class="showTitle">Sports</h2>
-    <!-- <div v-for="(element, index) in exercise.sports_exercise" :key="index">
-      <p>- {{ element.sport.name }}</p>
-    </div> -->
     <v-chip-group v-for="(element, index) in exercise.sports_exercise" :key="index">
       <v-chip>{{ element.sport.name }}</v-chip>
     </v-chip-group>

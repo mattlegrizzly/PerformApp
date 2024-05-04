@@ -9,6 +9,7 @@ import EditMaterial from '@/views/Materials/EditView.vue'
 import ListUsers from '@/views/Users/ListView.vue'
 import ShowUsers from '@/views/Users/ShowView.vue'
 import AddUser from '@/views/Users/AddView.vue'
+import EditUser from '@/views/Users/EditView.vue'
 
 import ListExercises from '@/views/Exercises/ListView.vue'
 import AddExercise from '@/views/Exercises/AddView.vue'
@@ -138,11 +139,15 @@ const router = createRouter({
       name: 'showUsers',
       component: ShowUsers
     },
-
     {
       path: '/users/add',
       name: 'addUser',
       component: AddUser
+    },
+    {
+      path: '/users/edit/:user_id',
+      name: 'editUser',
+      component: EditUser
     },
     //Materials
     {
