@@ -359,8 +359,12 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def list(self, request, *args, **kwargs):
-        # Appliquer l'ordre initial par id si nécessaire
-        queryset = self.queryset.order_by("id")
+        if request.query_params.get("orderByIdDesc"):
+            # Appliquer l'ordre initial par id si nécessaire
+            queryset = self.queryset.order_by("-id")
+        else:
+            queryset = self.queryset.order_by("id")
+
 
         # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
