@@ -93,6 +93,17 @@ const sendData = async () => {
         res = post('/admin/exercisesports/', sportToPush, true)
       })
 
+      muscle_selected.value.map((muscle) => {
+      console.log(muscle)
+        const sportToPush = {
+          body: {
+            exercise: id,
+            zone: muscle
+          }
+        }
+        res = post('/admin/exercisezones/', sportToPush, true)
+      })
+
       router.push('/exercises/show/' + id + '/?edit=true')
     }
   })
@@ -116,14 +127,13 @@ const getExercise = async () => {
     sports.value = res_sports
   }
 
-  const res_muscles = await get('/admin/workzones/', { body: {} }, true)
+  const res_muscles = await get('/admin/workzones/all/', { body: {} }, true)
   if (res_muscles.status > 300) {
     error_title.value = 'Error while retrieve muscles'
     error_message.value = res_muscles.data.detail
     alertErr.value = true
   } else {
-    muscles.value = res_muscles.results
-    console.log(muscles)
+    muscles.value = res_muscles
   }
 }
 
@@ -140,6 +150,27 @@ const removeStep = async (id: number) => {
   for (const [index, step] of steps_exercise.value.entries()) {
     if (step.id == id) {
       steps_exercise.value.splice(index, 1)
+    }
+  }
+}
+
+const setMuscleSelected = (key: string, action: string) => {
+  if (action === 'add') {
+    const findKey =
+      muscle_selected.value.filter(function (element) {
+        return element === key
+      }).length == 0
+    console.log(findKey)
+    if (findKey) {
+      muscle_selected.value.push(key)
+    }
+  } else {
+    // Trouver l'index de la valeur à supprimer
+    var index = muscle_selected.value.indexOf(key)
+
+    if (index !== -1) {
+      // Supprimer la valeur à l'index trouvé
+      muscle_selected.value.splice(index, 1)
     }
   }
 }
@@ -197,7 +228,6 @@ onMounted(() => {
     />
     <h1>Ajouter un Exercise</h1>
     <form @submit.prevent="submit">
-      
       <div class="inputFormDiv">
         <v-text-field
           v-model="exercise.name"
@@ -235,11 +265,16 @@ onMounted(() => {
         <source :src="video_src" type="video/mp4" />
       </video>
       <h2>Zones de travail</h2>
-      <BodyComponent :height='400' :muscleSelected='muscle_selected'/>
+      <BodyComponent
+        :height="400"
+        :muscleSelected="muscle_selected"
+        :setMuscleSelected="setMuscleSelected"
+        :viewOnly="'add'"
+      />
       <v-select
         v-model="muscle_selected"
         :items="muscles"
-        hint="Sélectionnez le sport utilisé"
+        hint="Sélectionnez les muscles utilisés"
         item-title="name"
         item-value="code"
         label="Select"

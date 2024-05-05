@@ -9,8 +9,11 @@ import NavButton from '@/components/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents.vue'
 import router from '@/router'
 import { nanoid } from 'nanoid'
+import BodyComponent from '@/components/BodyComponent.vue'
 
+const muscle_selected = ref([])
 const routerNav = useRoute()
+const muscles = ref([])
 
 const materials = ref([])
 const sports = ref([])
@@ -95,6 +98,27 @@ const sendData = async () => {
   })
 }
 
+const setMuscleSelected = (key: string, action: string) => {
+  if (action === 'add') {
+    const findKey =
+      muscle_selected.value.filter(function (element) {
+        return element === key
+      }).length == 0
+    console.log(findKey)
+    if (findKey) {
+      muscle_selected.value.push(key)
+    }
+  } else {
+    // Trouver l'index de la valeur à supprimer
+    var index = muscle_selected.value.indexOf(key)
+
+    if (index !== -1) {
+      // Supprimer la valeur à l'index trouvé
+      muscle_selected.value.splice(index, 1)
+    }
+  }
+}
+
 const getExercise = async () => {
   const id = routerNav.params.exercise_id
   const res = await get('/admin/exercises/' + id + '/')
@@ -105,6 +129,19 @@ const getExercise = async () => {
   } else {
     const_exercice.value = JSON.parse(JSON.stringify(await res))
     exercise.value = JSON.parse(JSON.stringify(await res))
+    const temp_muscle = []
+    exercise.value.zone_exercises.map((muscle) => {
+      temp_muscle.push(muscle.zone.code)
+    })
+    muscle_selected.value = temp_muscle
+    const res_muscles = await get('/admin/workzones/all/', { body: {} }, true)
+    if (res_muscles.status > 300) {
+      error_title.value = 'Error while retrieve muscles'
+      error_message.value = res_muscles.data.detail
+      alertErr.value = true
+    } else {
+      muscles.value = res_muscles
+    }
     for (let elem of exercise.value.material_exercise) {
       //@ts-expect-error
       materials_selected.value.push(elem.material.id)
@@ -278,6 +315,24 @@ onMounted(() => {
         single-line
       >
       </v-select>
+      <h2 class="showTitle">Muscles</h2>
+      <BodyComponent
+        :height="400"
+        :muscleSelected="muscle_selected"
+        :setMuscleSelected="setMuscleSelected"
+        :viewOnly="'edit'"
+      />
+      <v-select
+        v-model="muscle_selected"
+        :items="muscles"
+        hint="Sélectionnez les muscles utilisés"
+        item-title="name"
+        item-value="code"
+        label="Select"
+        multiple
+        persistent-hint
+        single-line
+      ></v-select>
       <h2>Etapes</h2>
       <div id="steps" v-for="(element, index) in exercise.steps_exercise" :key="index">
         <v-text-field

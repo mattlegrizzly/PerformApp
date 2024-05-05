@@ -33,6 +33,12 @@
     <div v-for="(element, index) in exercise.material_exercise" :key="index">
       <p>- {{ element.material.name }}</p>
     </div>
+    <h2 class="showTitle">Muscles</h2>
+    <BodyComponent
+        :height="400"
+        :muscleSelected="muscle_selected"
+        :viewOnly="'show'"
+      />
     <h2 class="showTitle">Sports</h2>
     <v-chip-group v-for="(element, index) in exercise.sports_exercise" :key="index">
       <v-chip>{{ element.sport.name }}</v-chip>
@@ -64,6 +70,9 @@ import { useRoute } from 'vue-router'
 import { onMounted } from 'vue'
 import NavButton from '@/components/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents.vue'
+import BodyComponent from '@/components/BodyComponent.vue'
+
+const muscle_selected = ref([])
 
 const router = useRoute()
 const exercise = ref('')
@@ -76,6 +85,7 @@ const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
+
 const getExercises = async () => {
   const id = router.params.exercise_id
   const res = await get('/admin/exercises/' + id + '/')
@@ -85,6 +95,12 @@ const getExercises = async () => {
     alertErr.value = true
   } else {
     exercise.value = await res
+    const muscle_res = await res.zone_exercises
+    const temp_muscle = [];
+    muscle_res.map((muscle) => {
+      temp_muscle.push(muscle.zone.code);
+    })
+    muscle_selected.value = temp_muscle
     videoController.value.load()
   }
 }
