@@ -15,6 +15,7 @@ const routerNav = useRoute()
 
 const materials = ref([])
 const sports = ref([])
+const muscles = ref([])
 const videoController = ref(document.createElement('video'))
 
 const const_exercice: any = ref()
@@ -24,6 +25,7 @@ const steps_exercise: any = ref([])
 const file = ref()
 const materials_selected = ref([])
 const sport_selected = ref([])
+const muscle_selected = ref([])
 const video_url = ref('')
 const video_src = ref('')
 
@@ -113,6 +115,16 @@ const getExercise = async () => {
   } else {
     sports.value = res_sports
   }
+
+  const res_muscles = await get('/admin/workzones/', { body: {} }, true)
+  if (res_muscles.status > 300) {
+    error_title.value = 'Error while retrieve muscles'
+    error_message.value = res_muscles.data.detail
+    alertErr.value = true
+  } else {
+    muscles.value = res_muscles.results
+    console.log(muscles)
+  }
 }
 
 const addStep = async () => {
@@ -185,7 +197,7 @@ onMounted(() => {
     />
     <h1>Ajouter un Exercise</h1>
     <form @submit.prevent="submit">
-      <BodyComponent />
+      
       <div class="inputFormDiv">
         <v-text-field
           v-model="exercise.name"
@@ -222,6 +234,20 @@ onMounted(() => {
       >
         <source :src="video_src" type="video/mp4" />
       </video>
+      <h2>Zones de travail</h2>
+      <BodyComponent :height='400' :muscleSelected='muscle_selected'/>
+      <v-select
+        v-model="muscle_selected"
+        :items="muscles"
+        hint="Sélectionnez le sport utilisé"
+        item-title="name"
+        item-value="code"
+        label="Select"
+        multiple
+        persistent-hint
+        single-line
+      >
+      </v-select>
       <h2>Sports</h2>
       <v-select
         v-model="sport_selected"
