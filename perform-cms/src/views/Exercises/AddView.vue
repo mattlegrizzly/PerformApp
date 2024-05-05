@@ -9,6 +9,7 @@ import NavButton from '@/components/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents.vue'
 import router from '@/router'
 import { nanoid } from 'nanoid'
+import BodyComponent from '@/components/BodyComponent.vue'
 
 const routerNav = useRoute()
 
@@ -184,6 +185,7 @@ onMounted(() => {
     />
     <h1>Ajouter un Exercise</h1>
     <form @submit.prevent="submit">
+      <BodyComponent />
       <div class="inputFormDiv">
         <v-text-field
           v-model="exercise.name"
