@@ -678,6 +678,19 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
         tags=['Admin - Work Zone'],
         responses={200: "OK"}
     )
+    @action(detail=False, methods=['get'], url_path="all")
+    def get(self, request):
+        # Récupérez toutes les entités de votre modèle sans limite
+        items = WorkZone.objects.all()
+        # Sérialisez les données
+        serializer = WorkZoneSerializer(items, many=True)
+        # Retournez la réponse
+        return Response(serializer.data)
+    
+    @extend_schema(
+        tags=['Admin - Work Zone'],
+        responses={200: "OK"}
+    )
     def get_queryset(self):
         queryset = WorkZone.objects.all()
         return queryset
@@ -708,12 +721,12 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
         latest_workzone = self.get_latest()
         serializer = self.serializer_class(latest_workzone, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK) 
-
     @extend_schema(
-        tags=['Admin - Work Zone'],
-        responses={200: "OK"}
-    )
+            tags=['Admin - Work Zone'],
+            responses={200: "OK"}
+        )
     def retrieve(self, request, *args, **kwargs):
+        kwargs['lookup_field'] = 'code'
         return super().retrieve(request, *args, **kwargs)
 
     @extend_schema(
@@ -721,6 +734,7 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
         responses={201: "Created"}
     )
     def create(self, request, *args, **kwargs):
+        kwargs['lookup_field'] = 'code'
         return super().create(request, *args, **kwargs)
 
     @extend_schema(
@@ -728,6 +742,7 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def update(self, request, *args, **kwargs):
+        kwargs['lookup_field'] = 'code'
         return super().update(request, *args, **kwargs)
 
     @extend_schema(
@@ -735,6 +750,7 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def partial_update(self, request, *args, **kwargs):
+        kwargs['lookup_field'] = 'code'
         return super().partial_update(request, *args, **kwargs)
 
     @extend_schema(
@@ -742,4 +758,5 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
         responses={204: "No Content"}
     )
     def destroy(self, request, *args, **kwargs):
+        kwargs['lookup_field'] = 'code'
         return super().destroy(request, *args, **kwargs)

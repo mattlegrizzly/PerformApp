@@ -22,7 +22,7 @@ class Zone(models.TextChoices):
 
 class WorkZone(models.Model):
     name = models.CharField(max_length=100, null=False)
-    code = models.CharField(max_length=100, null=True)
+    code = models.CharField(max_length=100, null=False, primary_key=True)
     zone = models.CharField(choices=Zone.choices , default=Zone.muscle, max_length=2)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
@@ -67,4 +67,4 @@ class ExerciseSport(models.Model):
 
 class ExerciseZone(models.Model):
     zone = models.ForeignKey(WorkZone, on_delete=models.CASCADE)
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="zone_exercise")
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="zone_exercises")

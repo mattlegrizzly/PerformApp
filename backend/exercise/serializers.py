@@ -49,7 +49,7 @@ class ExerciseSportDetailedSerializer(serializers.ModelSerializer):
 class WorkZoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkZone
-        fields = ['id', 'name', 'code', 'zone']
+        fields = ['name', 'code', 'zone']
 
 #Creation serializer only with id
 class ExerciseZoneSerializer(serializers.ModelSerializer):
@@ -69,11 +69,11 @@ class ExerciseSerializer(serializers.ModelSerializer):
     steps_exercise = ExerciseStepDetailedSerializer(many=True, read_only=True)
     material_exercise = ExerciseMaterialDetailedSerializer(many=True, read_only=True)
     sports_exercise = ExerciseSportDetailedSerializer(many=True, read_only=True)
-    zone_exercise = ExerciseZoneDetailedSerializer(many=True, read_only=True)
+    zone_exercises = ExerciseZoneDetailedSerializer(many=True, read_only=True)
     
     class Meta:
         model = Exercise
-        fields = ['id', 'name', 'description', 'video', 'steps_exercise', 'material_exercise', 'zone_exercise', 'sports_exercise', 'created_at']
+        fields = ['id', 'name', 'description', 'video', 'steps_exercise', 'material_exercise', 'zone_exercises', 'sports_exercise', 'created_at']
 
 
 
