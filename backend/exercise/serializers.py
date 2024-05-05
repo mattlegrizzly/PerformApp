@@ -49,7 +49,7 @@ class ExerciseSportDetailedSerializer(serializers.ModelSerializer):
 class WorkZoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkZone
-        fields = ['name', 'zone']
+        fields = ['id', 'name', 'code', 'zone']
 
 #Creation serializer only with id
 class ExerciseZoneSerializer(serializers.ModelSerializer):

@@ -21,7 +21,8 @@ class Zone(models.TextChoices):
     articulation = 'AR', "Articulation"
 
 class WorkZone(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=False)
+    code = models.CharField(max_length=100, null=True)
     zone = models.CharField(choices=Zone.choices , default=Zone.muscle, max_length=2)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
