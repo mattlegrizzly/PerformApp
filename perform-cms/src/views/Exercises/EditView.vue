@@ -45,7 +45,8 @@ const sendData = async () => {
       name: exercise.value.name,
       description: exercise.value.description,
       material_ids: materials_selected.value,
-      sports_ids: sport_selected.value
+      sports_ids: sport_selected.value,
+      muscles_id: muscle_selected.value
     }
   } as IERequestOptions
   if (const_exercice.value.video !== exercise.value.video) {
