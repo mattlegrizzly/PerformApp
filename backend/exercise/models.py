@@ -44,6 +44,7 @@ class Exercise(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True)
     materials = models.ManyToManyField(to=Material, through="exercise.ExerciseMaterial")
     sports = models.ManyToManyField(to=Sport, through="exercise.ExerciseSport")
+    muscles = models.ManyToManyField(to=WorkZone, through="exercise.ExerciseZone")
 
     @property
     def material_ids(self) -> List[int]:
@@ -52,6 +53,10 @@ class Exercise(models.Model):
     @property
     def sports_ids(self) -> List[int]:
         return [sport.id for sport in self.sports.all()]
+    
+    @property
+    def muscles_id(self) -> List[str]:
+        return [muscle.code for muscle in self.muscles.all()]
 
 class ExerciseStep(models.Model):
     text = models.CharField(max_length=255)
