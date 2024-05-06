@@ -201,6 +201,22 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         if request.query_params.get("itemsPerPage"):
             self.pagination_class.page_size = request.query_params.get("itemsPerPage")
 
+        # Filtrer le queryset en fonction des paramètres de la requête
+        material_ids = request.query_params.getlist('material_id')
+        sport_ids = request.query_params.getlist('sport_id')
+        workzone_codes = request.query_params.getlist('workzone_code')
+
+        # Si des identifiants de matériaux sont fournis dans la requête
+        if material_ids:
+            material_ids = [int(id) for ids in material_ids for id in ids.split(',')]
+            queryset = self.queryset.filter(material_exercise__material__id__in=material_ids)
+        if sport_ids:
+            sport_ids = [int(id) for ids in sport_ids for id in ids.split(',')]
+            queryset = self.queryset.filter(sports_exercise__sport__id__in=sport_ids)
+        if workzone_codes:
+            workzone_codes = [str(id) for ids in workzone_codes for id in ids.split(',')]
+            queryset = self.queryset.filter(zone_exercises__zone__code__in=workzone_codes)
+
         # Filtrer le queryset
         queryset = self.filter_queryset(queryset)
 
@@ -210,10 +226,12 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         # Si la pagination est activée, sérialiser la page paginée
         if page is not None:
             serializer = self.get_serializer(page, many=True)
+            print('hello' , serializer.data)
             return self.get_paginated_response(serializer.data)
 
         # Sinon, sérialiser le queryset complet
         serializer = self.get_serializer(queryset, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
