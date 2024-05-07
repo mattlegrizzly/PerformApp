@@ -3,7 +3,11 @@ interface IERequestOptions {
     page? : string,
     itemsPerPage? : string,
     orderBy? : string,
-    body : Array<string|blob> | {},
+    material_id? : string,
+    sport_id? : string,
+    workzone_code? : string,
+    body : Array<string|blob|number> | {} | [],
 }
 
-export default IERequestOptions
+
+export default IERequestOptions;

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import NavMenu from '../../components/NavMenu.vue'
+import NavMenu from '../../components/NavMenu/NavMenu.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import '@/assets/base.css'
 import { get, put } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
-import NavButton from '@/components/NavButton.vue'
-import AlertComponents from '@/components/AlertComponents.vue'
+import NavButton from '@/components/NavButton/NavButton.vue'
+import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import router from '@/router'
 const routerNav = useRoute()
 

@@ -17,6 +17,8 @@ const error_message = ref('error')
 const userStore = useUserStore()
 
 const sendData = () => {
+  cookies.remove('access')
+
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -32,6 +34,7 @@ const sendData = () => {
     })
     .then((data) => {
       if(data.user.is_superuser === true) {
+        console.log(data)
         userStore.setUser(data)
         var date = new Date()
         date.setDate(date.getDate() + 7)

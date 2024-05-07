@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { watch } from 'vue'
+import './index.css'
+const props = defineProps(['height', 'width', 'muscleSelected', 'setMuscleSelected', 'viewOnly'])
 
-const props = defineProps(['height', 'muscleSelected', 'setMuscleSelected', 'viewOnly'])
 const muscleClicked = (event) => {
   if (props.viewOnly === 'show') {
     return // Si maRef n'est pas vrai, la méthode ne sera pas exécutée
   }
   // Récupérer l'élément SVG cliqué
   const target = event.target
-  console.log(target)
   // Vérifier si l'élément cliqué est un muscle
   if (target.classList.contains('muscle')) {
     // Récupérer les données du muscle cliqué
@@ -33,26 +33,9 @@ const muscleClicked = (event) => {
   }
 }
 
-watch(
-  () => props.muscleSelected,
-  (newValue, oldValue) => {
-    console.log('oui ', props.muscleSelected)
-    if (props.viewOnly === 'edit' || props.viewOnly === 'add') {
-      props.muscleSelected.map((muscle) => {
-        console.log(muscle)
-        const muscles = document.querySelectorAll('[data-muscle="' + muscle + '"]')
-        Array.from(muscles).map((muscle) => {
-          const selected = muscle.getAttribute('selected')
-          const fill = muscle.getAttribute('fill')
-          if (!selected && fill) {
-            muscle.style.fill = 'red'
-            muscle.setAttribute('selected', 'true')
-          }
-        })
-      })
-    }
-    const deleted = oldValue.filter((muscle) => !newValue.find((muscle_) => muscle_ === muscle))
-    props.muscleSelected.map((muscle) => {
+//Méthode qui va colorer le path du muscle sélectionné et ajouter l'attribut select
+const setSelectedProps = () => {
+  props.muscleSelected.map((muscle : string) => {
       const muscles = document.querySelectorAll('[data-muscle="' + muscle + '"]')
       Array.from(muscles).map((muscle) => {
         const selected = muscle.getAttribute('selected')
@@ -63,10 +46,19 @@ watch(
         }
       })
     })
+}
+
+watch(
+  () => props.muscleSelected,
+  (newValue, oldValue) => {
+    if (props.viewOnly === 'edit' || props.viewOnly === 'add') {
+      setSelectedProps()
+    }
+    const deleted = oldValue.filter((muscle) => !newValue.find((muscle_) => muscle_ === muscle))
+    setSelectedProps()
 
     deleted.map((deleted) => {
       const muscles = document.querySelectorAll('[data-muscle="' + deleted + '"]')
-      console.log(muscles)
       Array.from(muscles).map((muscle) => {
         const selected = muscle.getAttribute('selected')
         const fill = muscle.getAttribute('fill')
@@ -81,37 +73,13 @@ watch(
 )
 
 onMounted(() => {
-  console.log(props.viewOnly)
 })
 </script>
 
-<style>
-/* Style au survol du groupe */
-.bodymap {
-  transition: 0.3s;
-}
-
-.bodymap .muscle {
-  transition: 0.3s;
-}
-
-/* Style au survol du groupe */
-.bodymap:hover {
-  fill: rgb(255, 169, 169); /* Couleur de remplissage des muscles au survol */
-  transition: 0.3s;
-}
-
-/* Style des muscles au survol */
-.bodymap:hover .muscle {
-  transition: 0.3s;
-
-  fill: rgb(255, 169, 169); /* Couleur de remplissage des muscles au survol */
-}
-</style>
-
 <template>
+  <!-- FRONT Body -->
   <svg
-    width="228"
+    :width="props.width ? props.width : '228'"
     :height="props.height"
     viewBox="0 0 228 658"
     fill="none"
@@ -584,9 +552,9 @@ onMounted(() => {
     />
   </svg>
 
-  <!-- BACK Body  -->
+  <!-- BACK Body -->
   <svg
-    width="240"
+    :width="props.width ? props.width : '228'"
     :height="props.height"
     viewBox="0 0 240 658"
     fill="none"

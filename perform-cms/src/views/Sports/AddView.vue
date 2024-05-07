@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import NavMenu from '../../components/NavMenu.vue'
+import NavMenu from '../../components/NavMenu/NavMenu.vue'
 import { ref, onMounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import '@/assets/base.css'
 import { post } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
 import router from '@/router'
-import NavButton from '@/components/NavButton.vue'
+import NavButton from '@/components/NavButton/NavButton.vue'
 
 const name = ref('')
 const description = ref('')

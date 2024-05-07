@@ -46,13 +46,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import NavMenu from '@/components/NavMenu.vue'
+import NavMenu from '@/components/NavMenu/NavMenu.vue'
 import { ref } from 'vue'
 import { get } from '@/lib/callApi'
 import { useRoute } from 'vue-router'
 import { onMounted } from 'vue'
-import NavButton from '@/components/NavButton.vue'
-import AlertComponents from '@/components/AlertComponents.vue'
+import NavButton from '@/components/NavButton/NavButton.vue'
+import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 
 const router = useRoute()
 const user = ref({})

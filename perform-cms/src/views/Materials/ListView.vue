@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import NavMenu from '@/components/NavMenu.vue'
-import ListElement from '@/components/ListElement.vue'
-import NavButton from '@/components/NavButton.vue'
+import NavMenu from '@/components/NavMenu/NavMenu.vue'
+import ListElement from '@/components/ListElement/ListElement.vue'
+import NavButton from '@/components/NavButton/NavButton.vue'
 import { ref, onMounted } from 'vue'
 import { get } from '@/lib/callApi'
 import router from '@/router'
 import { useRoute } from 'vue-router'
-import PaginationComponent from '@/components/PaginationComponent.vue'
-import OrderByComponent from '@/components/OrderByComponent.vue'
+import PaginationComponent from '@/components/PaginationComponent/PaginationComponent.vue'
+import OrderByComponent from '@/components/OrderByComponent/OrderByComponent.vue'
 
 const navRoute = useRoute()
 const materials = ref({})

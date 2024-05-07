@@ -1,21 +1,10 @@
 import type IERequestOptions from '@/types/request'
-import type { IEUser, IEUserData } from '@/types/types'
 import { useUserStore } from '@/stores/store'
 import { useCookies } from '@vueuse/integrations/useCookies'
 
 const cookies = useCookies(['locale'])
 
 const baseUrl = 'http://127.0.0.1:8000/'
-
-function generateBoundary() {
-  const array = new Uint8Array(16)
-  crypto.getRandomValues(array)
-  let boundary = ''
-  for (let i = 0; i < array.length; i++) {
-    boundary += array[i].toString(16)
-  }
-  return boundary
-}
 
 const verifyToken = async () => {
   const access = cookies.get('access')
@@ -81,6 +70,15 @@ const handleParams = (url: URL, options: IERequestOptions) => {
   if (typeof options.orderBy !== 'undefined') {
     url.searchParams.set('orderBy', options.orderBy)
   }
+  if (typeof options.material_id !== 'undefined') {
+    url.searchParams.set('material_id', options.material_id)
+  }
+  if (typeof options.sport_id !== 'undefined') {
+    url.searchParams.set('sport_id', options.sport_id)
+  }
+  if (typeof options.workzone_code !== 'undefined') {
+    url.searchParams.set('workzone_code', options.workzone_code)
+  }
 }
 
 const handleResponse = async (response: Response): Promise<any> => {
@@ -95,6 +93,10 @@ const handleResponse = async (response: Response): Promise<any> => {
   }
 }
 
+/**
+ * This function permits to refresh token and User in the store
+ * @returns
+ */
 const refresh = async () => {
   const userStore = useUserStore()
   const relativeUrlString = '/api/refresh_tokens/'
@@ -125,7 +127,7 @@ const refresh = async () => {
 }
 
 /**
- * This function permits to do some get request with React Query
+ * This function permits to do some get request with Fetch
  * @param {*} urlChunk
  * @param {*} options
  * @param {*} authorization
@@ -157,6 +159,14 @@ const get = async (
   return handleResponse(response)
 }
 
+/**
+ * This function permits to do some post request with Fetch
+ * @param {*} urlChunk
+ * @param {*} options
+ * @param {*} authorization
+ * @param {*} image
+ * @returns
+ */
 const post = async (
   urlChunk: String,
   options = {} as IERequestOptions,
@@ -217,7 +227,6 @@ const put = async (
 ) => {
   const relativeUrlString = '/api' + urlChunk
   const url = new URL(relativeUrlString, baseUrl)
-  const boundary = generateBoundary()
   const headers = new Headers()
   if (!image) {
     headers.append('Content-Type', 'application/json')
@@ -257,7 +266,7 @@ const put = async (
 /**
  * This function permits to do some patch request to the API
  * @param {*} urlChunk
- * @param {*} options
+ * @param {Array<string>} options
  * @param {*} authorization
  * @returns
  */
@@ -286,9 +295,10 @@ const patch = async (
   let body
   if (image) {
     const formData = new FormData()
-
-    for (const key in options.body) {
-      formData.append(key as string, options.body[key] as string)
+    if (Array.isArray(options.body)) {
+      for (const key in options.body) {
+        formData.append(key as string, options.body[key] as string)
+      }
     }
     body = formData
   } else {
@@ -323,8 +333,6 @@ const del = async (urlChunk: any, authorization = true) => {
   if (authorization) {
     headers.append('Authorization', `Bearer ${token}`)
   }
-
-  // headers.append('Access-Control-Allow-Origin', '*')
 
   const request = new Request(url, {
     method: 'DELETE',

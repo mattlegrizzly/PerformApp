@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import NavMenu from '@/components/NavMenu.vue'
+import NavMenu from '@/components/NavMenu/NavMenu.vue'
 import type { IEUser, IEUserData } from '@/types/types'
 import { get, verifyToken } from '@/lib/callApi'
-import ListElement from '@/components/ListElement.vue'
-import AlertComponents from '@/components/AlertComponents.vue'
+import ListElement from '@/components/ListElement/ListElement.vue'
+import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import { useUserStore } from '@/stores/store';
 
 const users = ref([{}])

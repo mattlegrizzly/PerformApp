@@ -2,7 +2,7 @@
 import router from '@/router'
 import { defineProps } from 'vue'
 import { onMounted } from 'vue'
-
+import './index.css'
 const props = defineProps(['headerTable', 'contentTable', 'limitData', 'nav'])
 
 const navigate = (index) => {
@@ -38,23 +38,3 @@ const navigate = (index) => {
   </v-table>
 </template>
 
-<style>
-.item-table {
-  transition: 0.3s;
-}
-
-.item-table:hover {
-  transition: 0.3s;
-  background-color: rgb(246, 246, 246);
-}
-
-.item-table {
-  transition: 0.3s;
-}
-
-.item-table:hover td {
-  text-decoration: underline;
-  transition: 0.3s;
-  color: var(--primary-blue);
-}
-</style>

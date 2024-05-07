@@ -5,7 +5,7 @@
         </div>
 </template>
 <script setup lang="ts">
-import NavMenu from '@/components/NavMenu.vue';
+import NavMenu from '@/components/NavMenu/NavMenu.vue';
 </script>
 <style lang="">
     

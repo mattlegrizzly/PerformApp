@@ -2,7 +2,7 @@
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
-
+import './index.css'
 const navRoute = useRoute()
 
 const props = defineProps(['setOrderBy', 'orderBy'])
@@ -35,9 +35,6 @@ const changeOrder = (e) => {
   })
 }
 
-onMounted(() => {
-  console.log(props.orderBy)
-})
 </script>
 
 <template>
@@ -54,33 +51,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style>
-
-.orderBy {
-  width: 400px;
-  right: 0px;
-}
-
-.orderBy .v-field__field {
-  height: 40px;
-  display: flex;
-  align-items: center;
-}
-
-
-.orderBy .v-field__field .v-field__input {
-  padding: 0px !important;
-  padding-left: 20px !important;
-  font-size: 14px;
-}
-
-.orderByParent {
-  display: flex;
-  justify-content: end;
-}
-
-.orderBy .v-input .v-input__details {
-  display: none;
-}
-</style>

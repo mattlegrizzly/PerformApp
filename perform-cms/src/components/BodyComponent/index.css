@@ -1,0 +1,22 @@
+
+/* Style au survol du groupe */
+.bodymap {
+    transition: 0.3s;
+  }
+  
+  .bodymap .muscle {
+    transition: 0.3s;
+  }
+  
+  /* Style au survol du groupe */
+  .bodymap:hover {
+    fill: rgb(255, 169, 169); /* Couleur de remplissage des muscles au survol */
+    transition: 0.3s;
+  }
+  
+  /* Style des muscles au survol */
+  .bodymap:hover .muscle {
+    transition: 0.3s;
+  
+    fill: rgb(255, 169, 169); /* Couleur de remplissage des muscles au survol */
+  }
