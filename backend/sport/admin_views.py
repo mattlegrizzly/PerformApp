@@ -21,7 +21,24 @@ class AdminSportViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path="all")
     def get(self, request):
         # Récupérez toutes les entités de votre modèle sans limite
-        items = Sport.objects.all()
+        items = Sport.objects.all()        
+        if request.query_params.get("orderBy"):
+            # Appliquer l'ordre initial par id si nécessaire
+            order = request.query_params.get("orderBy")
+            if order == "orderByNameAsc":
+                items = self.queryset.order_by("name")
+            elif order == "orderByNameDesc":
+                items = self.queryset.order_by("-name")
+            elif order == "orderByIdAsc" or order == "default":
+                items = self.queryset.order_by("id")
+            elif order == "orderByIdDesc":
+                items = self.queryset.order_by("-id")
+            elif order == "orderByDateAsc":
+                items = self.queryset.order_by("created_at")
+            elif order == "orderByDateDesc":
+                items = self.queryset.order_by("-created_at")
+        else:
+            items = self.queryset.order_by("id")
         # Sérialisez les données
         serializer = SportSerializer(items, many=True)
         # Retournez la réponse

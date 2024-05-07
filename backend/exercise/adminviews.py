@@ -22,8 +22,26 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path="all")
     def get(self, request):
-        # Récupérez toutes les entités de votre modèle sans limite
         items = Material.objects.all()
+        
+        if request.query_params.get("orderBy"):
+            # Appliquer l'ordre initial par id si nécessaire
+            order = request.query_params.get("orderBy")
+            if order == "orderByNameAsc":
+                items = self.queryset.order_by("name")
+            elif order == "orderByNameDesc":
+                items = self.queryset.order_by("-name")
+            elif order == "orderByIdAsc" or order == "default":
+                items = self.queryset.order_by("id")
+            elif order == "orderByIdDesc":
+                items = self.queryset.order_by("-id")
+            elif order == "orderByDateAsc":
+                items = self.queryset.order_by("created_at")
+            elif order == "orderByDateDesc":
+                items = self.queryset.order_by("-created_at")
+        else:
+            items = self.queryset.order_by("id")
+        # Récupérez toutes les entités de votre modèle sans limite
         # Sérialisez les données
         serializer = MaterialSerializer(items, many=True)
         # Retournez la réponse
@@ -68,6 +86,7 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
             elif order == "orderByDateDesc":
                 queryset = self.queryset.order_by("-created_at")
         else:
+            print('oder by id')
             queryset = self.queryset.order_by("id")
 
         # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
@@ -116,7 +135,6 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         instance = serializer.instance
         old_photo_path = instance.pictures.path if instance.pictures else None
-        print(old_photo_path)
         if(old_photo_path):
             old_photo_name = old_photo_path.split('/')[-1]
             new_photo_path = serializer.validated_data.get('pictures')
@@ -226,7 +244,6 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         # Si la pagination est activée, sérialiser la page paginée
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            print('hello' , serializer.data)
             return self.get_paginated_response(serializer.data)
 
         # Sinon, sérialiser le queryset complet
@@ -714,7 +731,20 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path="all")
     def get(self, request):
         # Récupérez toutes les entités de votre modèle sans limite
-        items = WorkZone.objects.all()
+        items = WorkZone.objects.all()        
+        if request.query_params.get("orderBy"):
+            # Appliquer l'ordre initial par id si nécessaire
+            order = request.query_params.get("orderBy")
+            if order == "orderByNameAsc":
+                items = self.queryset.order_by("name")
+            elif order == "orderByNameDesc":
+                items = self.queryset.order_by("-name")
+            elif order == "orderByDateAsc":
+                items = self.queryset.order_by("created_at")
+            elif order == "orderByDateDesc":
+                items = self.queryset.order_by("-created_at")
+        else:
+            items = self.queryset.order_by("created_at")
         # Sérialisez les données
         serializer = WorkZoneSerializer(items, many=True)
         # Retournez la réponse
