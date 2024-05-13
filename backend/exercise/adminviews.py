@@ -326,23 +326,25 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         else :
             obj = self.get_object()
             if obj.sports_ids != sports_ids:
-                new_sports = Material.objects.filter(id__in=sports_ids)
-                obj.materials.set(new_sports)
+                new_sports = Sport.objects.filter(id__in=sports_ids)
+                obj.sports.set(new_sports)
                 obj.save()
 
         muscles_ids = data.get("muscles_id", [])
-        if muscles_ids != "" and isinstance(material_ids, str):
+
+        if muscles_ids != "" and isinstance(muscles_ids, str):
             muscles_list = muscles_ids.split(",")
+            print(muscles_list)
             obj = self.get_object()
-            if obj.muscles_id != muscles_list:
+            if obj.muscles_ids != muscles_list:
                 new_muscles = WorkZone.objects.filter(code__in=muscles_list)
                 obj.muscles.set(new_muscles)
                 obj.save()
         else :
             obj = self.get_object()
-            if obj.material_ids != material_ids:
-                new_materials = Material.objects.filter(id__in=material_ids)
-                obj.materials.set(new_materials)
+            if obj.muscles_ids != muscles_ids:
+                new_muscles = WorkZone.objects.filter(code__in=muscles_ids)
+                obj.muscles.set(new_muscles)
                 obj.save()
         
         return super().update(request, *args, **kwargs)

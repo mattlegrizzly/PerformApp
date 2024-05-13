@@ -55,7 +55,7 @@ class Exercise(models.Model):
         return [sport.id for sport in self.sports.all()]
     
     @property
-    def muscles_id(self) -> List[str]:
+    def muscles_ids(self) -> List[str]:
         return [muscle.code for muscle in self.muscles.all()]
 
 class ExerciseStep(models.Model):
