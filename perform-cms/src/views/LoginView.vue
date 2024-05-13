@@ -18,6 +18,7 @@ const userStore = useUserStore()
 
 const sendData = () => {
   cookies.remove('access')
+//A CORRIGER
 
   const requestOptions = {
     method: 'POST',

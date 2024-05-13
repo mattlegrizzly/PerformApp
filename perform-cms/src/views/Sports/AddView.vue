@@ -105,5 +105,4 @@ const sendData = (quitForm: boolean) => {
       </div>
     </form>
   </div>
-  <RouterView />
 </template>

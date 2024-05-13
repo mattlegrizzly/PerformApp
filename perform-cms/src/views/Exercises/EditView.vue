@@ -10,18 +10,23 @@ import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import router from '@/router'
 import { nanoid } from 'nanoid'
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
+import './exercises.css'
 
-const muscle_selected = ref([])
 const routerNav = useRoute()
-const muscles = ref([])
 
+//Data qui vont être utilisé dans les menus déroulants
+const muscles = ref([])
 const materials = ref([])
 const sports = ref([])
+
+const api_url = import.meta.env.VITE_API_URL
+
 const videoController = ref(document.createElement('video'))
 
 const const_exercice: any = ref()
 const exercise: any = ref({})
 
+const muscle_selected = ref([])
 const file = ref()
 const materials_selected = ref([])
 const sport_selected = ref([])
@@ -32,6 +37,17 @@ const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
+const dataToRetrieve = [{
+  link : '/admin/materials/all/',
+  array : materials
+}, {
+  link : '/admin/sports/all/',
+  array : sports
+}, {
+  link : '/admin/workzones/all/',
+  array : muscles
+}]
+
 const onChangeInput = (file: File) => {
   exercise.value.video = file
   video_src.value = URL.createObjectURL(file)
@@ -40,6 +56,7 @@ const onChangeInput = (file: File) => {
 
 const sendData = async () => {
   const id = routerNav.params.exercise_id
+  let isFormData = false;
   const option = {
     body: {
       name: exercise.value.name,
@@ -51,8 +68,10 @@ const sendData = async () => {
   } as IERequestOptions
   if (const_exercice.value.video !== exercise.value.video) {
     option.body['video'] = exercise.value.video
+    isFormData = true
   }
-  patch('/admin/exercises/' + id + '/', option, true, true).then((res) => {
+  console.log(option)
+  patch('/admin/exercises/' + id + '/', option, true, isFormData).then((res) => {
     if (res.status > 300) {
       const keys = Object.keys(res.data)
       for (let i = 0; i < keys.length; i++) {
@@ -135,14 +154,6 @@ const getExercise = async () => {
       temp_muscle.push(muscle.zone.code)
     })
     muscle_selected.value = temp_muscle
-    const res_muscles = await get('/admin/workzones/all/', { body: {} }, true)
-    if (res_muscles.status > 300) {
-      error_title.value = 'Error while retrieve muscles'
-      error_message.value = res_muscles.data.detail
-      alertErr.value = true
-    } else {
-      muscles.value = res_muscles
-    }
     for (let elem of exercise.value.material_exercise) {
       //@ts-expect-error
       materials_selected.value.push(elem.material.id)
@@ -162,27 +173,21 @@ const getExercise = async () => {
           file.value = new File([data], video_array[3], metadata)
           video_url.value = file.value
         }
-        video_src.value = 'http://127.0.0.1:8000' + exercise.value.video
+        video_src.value = api_url + exercise.value.video
         videoController.value.load()
       })
     })
   }
-  const res_materials = await get('/materials')
-  if (res_materials.status === 404) {
+  dataToRetrieve.map(async (elem) => {
+    const res = await get(elem.link, { body: {} }, true)
+  if (res.status === 404) {
     error_title.value = 'Error while retrieve materials'
-    error_message.value = res_materials.data.detail
+    error_message.value = res.data.detail
     alertErr.value = true
   } else {
-    materials.value = res_materials.results
+    elem.array.value = res
   }
-  const res_sports = await get('/sports')
-  if (res_materials.status === 404) {
-    error_title.value = 'Error while retrieve sports'
-    error_message.value = res_sports.data.detail
-    alertErr.value = true
-  } else {
-    sports.value = res_sports.results
-  }
+  })
 }
 
 const addStep = async () => {
@@ -208,30 +213,6 @@ onMounted(() => {
 })
 </script>
 <style>
-.return_btn {
-  background-color: white !important;
-  color: var(--primary-blue) !important;
-  border: 1px solid var(--primary-blue);
-  transition: 0.3s;
-}
-
-.return_btn:hover {
-  transition: 0.3s;
-  background-color: var(--primary-blue) !important;
-  color: white !important;
-}
-
-.returnBack {
-  margin-top: 10px;
-}
-
-#steps {
-  display: flex;
-}
-
-#steps button {
-  margin-left: 10px;
-}
 </style>
 
 <template lang="">
@@ -349,5 +330,4 @@ onMounted(() => {
       </div>
     </form>
   </div>
-  <RouterView />
 </template>

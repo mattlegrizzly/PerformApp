@@ -4,7 +4,7 @@ import { useCookies } from '@vueuse/integrations/useCookies'
 
 const cookies = useCookies(['locale'])
 
-const baseUrl = 'http://127.0.0.1:8000/'
+const baseUrl = import.meta.env.VITE_API_URL + '/'
 
 const verifyToken = async () => {
   const access = cookies.get('access')
@@ -295,15 +295,15 @@ const patch = async (
   let body
   if (image) {
     const formData = new FormData()
-    if (Array.isArray(options.body)) {
-      for (const key in options.body) {
-        formData.append(key as string, options.body[key] as string)
-      }
-    }
+
+    Object.entries(options.body).forEach(([key, value]) => {
+      formData.append(key as string, value as string)
+    })
     body = formData
   } else {
     body = JSON.stringify(options.body)
   }
+  console.log(body)
 
   const request = new Request(url, {
     method: 'PATCH',

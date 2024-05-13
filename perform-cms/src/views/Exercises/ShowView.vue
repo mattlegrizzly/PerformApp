@@ -1,3 +1,59 @@
+<script setup lang="ts">
+import NavMenu from '@/components/NavMenu/NavMenu.vue'
+import { ref } from 'vue'
+import { get } from '@/lib/callApi'
+import { useRoute } from 'vue-router'
+import { onMounted } from 'vue'
+import NavButton from '@/components/NavButton/NavButton.vue'
+import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
+import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
+import './exercises.css'
+
+const muscle_selected = ref([])
+
+const api_url = import.meta.env.VITE_API_URL
+
+const router = useRoute()
+const exercise = ref('')
+const exercise_id = ref(-1)
+const videoController = ref(document.createElement('video'))
+
+const back = ref('back')
+
+const alertErr = ref(false)
+const error_message = ref('')
+const error_title = ref('')
+
+
+const getExercises = async () => {
+  const id = router.params.exercise_id
+  const res = await get('/admin/exercises/' + id + '/')
+  if (res.status === 404) {
+    error_title.value = 'Error while retrieve Exercise id ' + id
+    error_message.value = res.data.detail
+    alertErr.value = true
+  } else {
+    exercise.value = await res
+    const muscle_res = await res.zone_exercises
+    const temp_muscle = [];
+    muscle_res.map((muscle) => {
+      temp_muscle.push(muscle.zone.code);
+    })
+    muscle_selected.value = temp_muscle
+    videoController.value.load()
+  }
+}
+
+onMounted(() => {
+  if (router.query.edit) {
+    back.value = ''
+  } else {
+    back.value = 'back'
+  }
+  getExercises()
+})
+</script>
+
 <template lang="">
   <NavMenu />
   <div class="mainWrapper">
@@ -56,75 +112,9 @@
         controls
         data-poster="/path/to/poster.jpg"
       >
-        <source :src="'http://127.0.0.1:8000' + exercise.video" type="video/mp4" />
-        <source :src="'http://127.0.0.1:8000' + exercise.video" type="video/webm" />
+        <source :src="api_url + exercise.video" type="video/mp4" />
+        <source :src="api_url + exercise.video" type="video/webm" />
       </video>
     </div>
   </div>
 </template>
-<script setup lang="ts">
-import NavMenu from '@/components/NavMenu/NavMenu.vue'
-import { ref } from 'vue'
-import { get } from '@/lib/callApi'
-import { useRoute } from 'vue-router'
-import { onMounted } from 'vue'
-import NavButton from '@/components/NavButton/NavButton.vue'
-import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
-import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
-
-const muscle_selected = ref([])
-
-const router = useRoute()
-const exercise = ref('')
-const exercise_id = ref(-1)
-const videoController = ref(document.createElement('video'))
-
-const back = ref('back')
-
-const alertErr = ref(false)
-const error_message = ref('')
-const error_title = ref('')
-
-
-const getExercises = async () => {
-  const id = router.params.exercise_id
-  const res = await get('/admin/exercises/' + id + '/')
-  if (res.status === 404) {
-    error_title.value = 'Error while retrieve Exercise id ' + id
-    error_message.value = res.data.detail
-    alertErr.value = true
-  } else {
-    exercise.value = await res
-    const muscle_res = await res.zone_exercises
-    const temp_muscle = [];
-    muscle_res.map((muscle) => {
-      temp_muscle.push(muscle.zone.code);
-    })
-    muscle_selected.value = temp_muscle
-    videoController.value.load()
-  }
-}
-
-onMounted(() => {
-  if (router.query.edit) {
-    back.value = ''
-  } else {
-    back.value = 'back'
-  }
-  getExercises()
-})
-</script>
-<style>
-.showTitle {
-  text-align: left !important;
-  margin-bottom: 0px !important;
-  margin-top: 10px !important;
-}
-
-.headerBtns {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  padding-right: 10px;
-}
-</style>

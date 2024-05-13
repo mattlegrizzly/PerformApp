@@ -123,7 +123,6 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  <RouterView />
 </template>
 
 <style>

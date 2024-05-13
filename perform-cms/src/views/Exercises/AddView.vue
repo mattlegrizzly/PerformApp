@@ -7,10 +7,11 @@ import { get, post, put, patch, del } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
+import setMuscleSelected from '../utils/bodyComponent';
 import router from '@/router'
 import { nanoid } from 'nanoid'
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
-
+import './exercises.css'
 const routerNav = useRoute()
 
 const materials = ref([])
@@ -18,20 +19,28 @@ const sports = ref([])
 const muscles = ref([])
 const videoController = ref(document.createElement('video'))
 
-const const_exercice: any = ref()
 const exercise: any = ref({})
 const steps_exercise: any = ref([])
 
-const file = ref()
 const materials_selected = ref([])
 const sport_selected = ref([])
 const muscle_selected = ref([])
-const video_url = ref('')
 const video_src = ref('')
 
 const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
+
+const dataToRetrieve = [{
+  link : '/admin/materials/all/',
+  array : materials
+}, {
+  link : '/admin/sports/all/',
+  array : sports
+}, {
+  link : '/admin/workzones/all/',
+  array : muscles
+}]
 
 const onChangeInput = (file: File) => {
   exercise.value.video = file
@@ -110,31 +119,17 @@ const sendData = async () => {
 }
 
 const getExercise = async () => {
-  const res_materials = await get('/admin/materials/all/', { body: {} }, true)
-  if (res_materials.status === 404) {
+  dataToRetrieve.map(async (elem) => {
+    const res = await get(elem.link, { body: {} }, true)
+  if (res.status === 404) {
     error_title.value = 'Error while retrieve materials'
-    error_message.value = res_materials.data.detail
+    error_message.value = res.data.detail
     alertErr.value = true
   } else {
-    materials.value = res_materials
+    elem.array.value = res
   }
-  const res_sports = await get('/admin/sports/all/', { body: {} }, true)
-  if (res_sports.status === 404) {
-    error_title.value = 'Error while retrieve sports'
-    error_message.value = res_sports.data.detail
-    alertErr.value = true
-  } else {
-    sports.value = res_sports
-  }
+  })
 
-  const res_muscles = await get('/admin/workzones/all/', { body: {} }, true)
-  if (res_muscles.status > 300) {
-    error_title.value = 'Error while retrieve muscles'
-    error_message.value = res_muscles.data.detail
-    alertErr.value = true
-  } else {
-    muscles.value = res_muscles
-  }
 }
 
 const addStep = async () => {
@@ -154,62 +149,14 @@ const removeStep = async (id: number) => {
   }
 }
 
-const setMuscleSelected = (key: string, action: string) => {
-  if (action === 'add') {
-    const findKey =
-      muscle_selected.value.filter(function (element) {
-        return element === key
-      }).length == 0
-    console.log(findKey)
-    if (findKey) {
-      muscle_selected.value.push(key)
-    }
-  } else {
-    // Trouver l'index de la valeur à supprimer
-    var index = muscle_selected.value.indexOf(key)
-
-    if (index !== -1) {
-      // Supprimer la valeur à l'index trouvé
-      muscle_selected.value.splice(index, 1)
-    }
-  }
+const setMuscle = (key: string, action: string) => {
+  setMuscleSelected(key, action, muscle_selected.value)
 }
 
 onMounted(() => {
   getExercise()
 })
 </script>
-<style>
-.return_btn {
-  background-color: white !important;
-  color: var(--primary-blue) !important;
-  border: 1px solid var(--primary-blue);
-  transition: 0.3s;
-}
-
-.return_btn:hover {
-  transition: 0.3s;
-  background-color: var(--primary-blue) !important;
-  color: white !important;
-}
-
-.returnBack {
-  margin-top: 10px;
-}
-
-#steps {
-  display: flex;
-}
-
-#steps button {
-  margin-left: 10px;
-}
-
-#player {
-  height: 400px;
-}
-</style>
-
 <template lang="">
   <NavMenu />
   <div class="mainWrapper">
@@ -268,7 +215,7 @@ onMounted(() => {
       <BodyComponent
         :height="400"
         :muscleSelected="muscle_selected"
-        :setMuscleSelected="setMuscleSelected"
+        :setMuscleSelected="setMuscle"
         :viewOnly="'add'"
       />
       <v-select
@@ -325,5 +272,4 @@ onMounted(() => {
       </div>
     </form>
   </div>
-  <RouterView />
 </template>

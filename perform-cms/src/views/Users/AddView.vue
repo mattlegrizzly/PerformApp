@@ -191,5 +191,4 @@ onMounted(() => {
       </div>
     </form>
   </div>
-  <RouterView />
 </template>
