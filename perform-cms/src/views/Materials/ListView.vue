@@ -8,6 +8,8 @@ import router from '@/router'
 import { useRoute } from 'vue-router'
 import PaginationComponent from '@/components/PaginationComponent/PaginationComponent.vue'
 import OrderByComponent from '@/components/OrderByComponent/OrderByComponent.vue'
+import type { Order } from '@/types/types'
+import type IERequestOptions from '@/types/request'
 
 const navRoute = useRoute()
 const materials = ref({})
@@ -27,8 +29,7 @@ const order = [
   { id: 'default', value: 'Par défaut'}
 ]
 
-const setOrderBy = (value) => {
-  console.log(value)
+const setOrderBy = (value : Order) => {
   orderBy.value = value
   getMaterials()
 }
@@ -36,8 +37,8 @@ const setOrderBy = (value) => {
 const changeInput = async () => {
   const res = await get('/admin/materials', {
     body: {},
-    itemsPerPage: itemsPerPage.value,
-    page: page.value,
+    itemsPerPage: itemsPerPage.value.toString(),
+    page: page.value.toString(),
     search: {
       name: nameSearch.value
     }
@@ -59,14 +60,18 @@ const setPage = (value: number) => {
 const getMaterials = async () => {
   const option = {
     body: {},
-    itemsPerPage: itemsPerPage.value,
-    page: page.value
+    itemsPerPage: itemsPerPage.value.toString(),
+    page: page.value.toString(),
+    search : {
+      name : '',
+    },
+    orderBy : { id: 'default', value: 'Par défaut'}
   }
-  if (orderBy.value !== '') {
-    option['orderBy'] = orderBy.value.id
+  if (orderBy.value) {
+    option.orderBy = orderBy.value
   }
   if (nameSearch.value !== '') {
-    option['search'] = {
+    option.search = {
       name: nameSearch.value
     }
   }

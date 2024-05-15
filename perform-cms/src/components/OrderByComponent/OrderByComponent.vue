@@ -17,7 +17,7 @@ const order = [
   { id: 'orderByDateDesc', value: 'Date (Décroissant)' }
 ]
 
-const changeOrder = (e) => {
+const changeOrder = (e : any) => {
   console.log('Change ', e)
   let find = false;
   order.map((order) => {

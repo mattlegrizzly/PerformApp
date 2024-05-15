@@ -8,6 +8,7 @@ import router from '@/router'
 import PaginationComponent from '@/components/PaginationComponent/PaginationComponent.vue'
 import { useRoute } from 'vue-router'
 import OrderByComponent from '@/components/OrderByComponent/OrderByComponent.vue'
+import type { Order } from '@/types/types'
 
 const navRoute = useRoute()
 
@@ -29,7 +30,7 @@ const order = [
   { id: 'default', value: 'Par défaut'}
 ]
 
-const setOrderBy = (value) => {
+const setOrderBy = (value : Order) => {
   orderBy.value = value
   getSports()
 }
@@ -37,8 +38,8 @@ const setOrderBy = (value) => {
 const changeInput = async () => {
   const res = await get('/admin/sports', {
     body: {},
-    itemsPerPage: itemsPerPage.value,
-    page: page.value,
+    itemsPerPage: itemsPerPage.value.toString(),
+    page: page.value.toString(),
     search: {
       name: nameSearch.value
     }
@@ -60,11 +61,15 @@ const setPage = (value: number) => {
 const getSports = async () => {
   const option = {
     body: {},
-    itemsPerPage: itemsPerPage.value,
-    page: page.value
+    itemsPerPage: itemsPerPage.value.toString(),
+    page: page.value.toString(),
+    search : {
+      name : '',
+    },
+    orderBy : { id: 'default', value: 'Par défaut'}
   }
-  if (orderBy.value !== '') {
-    option['orderBy'] = orderBy.value.id
+  if (orderBy.value) {
+    option.orderBy = orderBy.value
   }
   if (nameSearch.value !== '') {
     option['search'] = {

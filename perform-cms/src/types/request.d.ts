@@ -1,12 +1,16 @@
+import type { Order } from "./types";
+
 interface IERequestOptions {
-    search? : Array<string>,
+    search? : {
+        name : string
+    },
     page? : string,
     itemsPerPage? : string,
-    orderBy? : string,
+    orderBy? : Order,
     material_id? : string,
     sport_id? : string,
     workzone_code? : string,
-    body : Array<string|blob|number> | {} | [],
+    body : Array<string|blob|number> | {} | [] | any,
 }
 
 

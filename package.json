@@ -4,6 +4,7 @@
   "description": "Project (api, cms and mobile app) for the perform enterprise",
   "main": "index.js",
   "scripts": {
+    "build": "npm run build --prefix perform-cms", 
     "test": "echo \"Error: no test specified\" && exit 1",
     "commit": "cz"
   },

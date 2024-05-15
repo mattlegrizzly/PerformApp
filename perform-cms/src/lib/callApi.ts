@@ -68,7 +68,7 @@ const handleParams = (url: URL, options: IERequestOptions) => {
   }
 
   if (typeof options.orderBy !== 'undefined') {
-    url.searchParams.set('orderBy', options.orderBy)
+    url.searchParams.set('orderBy', options.orderBy.id)
   }
   if (typeof options.material_id !== 'undefined') {
     url.searchParams.set('material_id', options.material_id)

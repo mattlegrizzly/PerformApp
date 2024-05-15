@@ -11,6 +11,7 @@ import router from '@/router'
 import { nanoid } from 'nanoid'
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
 import './exercises.css'
+import type { Step, Muscle } from '@/types/types'
 
 const routerNav = useRoute()
 
@@ -26,7 +27,7 @@ const videoController = ref(document.createElement('video'))
 const const_exercice: any = ref()
 const exercise: any = ref({})
 
-const muscle_selected = ref([])
+const muscle_selected : any = ref([])
 const file = ref()
 const materials_selected = ref([])
 const sport_selected = ref([])
@@ -37,16 +38,20 @@ const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
-const dataToRetrieve = [{
-  link : '/admin/materials/all/',
-  array : materials
-}, {
-  link : '/admin/sports/all/',
-  array : sports
-}, {
-  link : '/admin/workzones/all/',
-  array : muscles
-}]
+const dataToRetrieve = [
+  {
+    link: '/admin/materials/all/',
+    array: materials
+  },
+  {
+    link: '/admin/sports/all/',
+    array: sports
+  },
+  {
+    link: '/admin/workzones/all/',
+    array: muscles
+  }
+]
 
 const onChangeInput = (file: File) => {
   exercise.value.video = file
@@ -56,7 +61,7 @@ const onChangeInput = (file: File) => {
 
 const sendData = async () => {
   const id = routerNav.params.exercise_id
-  let isFormData = false;
+  let isFormData = false
   const option = {
     body: {
       name: exercise.value.name,
@@ -83,11 +88,11 @@ const sendData = async () => {
       //router.push('/exercises/show/' + id + '/')
       let startStep = const_exercice.value.steps_exercise
       let endStep = exercise.value.steps_exercise
-      const newStep = endStep.filter((step) => !startStep.find((step_) => step_.id === step.id))
-      const modified = startStep.filter((step) => endStep.find((step_) => step_.id === step.id))
-      const deleted = startStep.filter((step) => !endStep.find((step_) => step_.id === step.id))
+      const newStep = endStep.filter((step : Step) => !startStep.find((step_ : Step) => step_.id === step.id))
+      const modified = startStep.filter((step : Step) => endStep.find((step_ : Step) => step_.id === step.id))
+      const deleted = startStep.filter((step : Step) => !endStep.find((step_ : Step) => step_.id === step.id))
 
-      newStep.map((step) => {
+      newStep.map((step : Step) => {
         const stepToPush = {
           body: {
             exercise: id,
@@ -97,12 +102,12 @@ const sendData = async () => {
         res = post('/admin/steps/', stepToPush, true)
       })
 
-      deleted.map((step) => {
+      deleted.map((step : Step) => {
         res = del('/admin/steps/' + step.id + '')
       })
 
-      modified.map((step) => {
-        const elem = endStep.find((step_) => step_.id == step.id)
+      modified.map((step : Step) => {
+        const elem = endStep.find((step_ : Step) => step_.id == step.id)
         if (elem.text !== step.text) {
           const options = {
             body: {
@@ -121,7 +126,7 @@ const sendData = async () => {
 const setMuscleSelected = (key: string, action: string) => {
   if (action === 'add') {
     const findKey =
-      muscle_selected.value.filter(function (element) {
+      muscle_selected.value.filter(function (element : string) {
         return element === key
       }).length == 0
     console.log(findKey)
@@ -149,8 +154,8 @@ const getExercise = async () => {
   } else {
     const_exercice.value = JSON.parse(JSON.stringify(await res))
     exercise.value = JSON.parse(JSON.stringify(await res))
-    const temp_muscle = []
-    exercise.value.zone_exercises.map((muscle) => {
+    const temp_muscle : Array<string> = []
+    exercise.value.zone_exercises.map((muscle : Muscle) => {
       temp_muscle.push(muscle.zone.code)
     })
     muscle_selected.value = temp_muscle
@@ -180,13 +185,13 @@ const getExercise = async () => {
   }
   dataToRetrieve.map(async (elem) => {
     const res = await get(elem.link, { body: {} }, true)
-  if (res.status === 404) {
-    error_title.value = 'Error while retrieve materials'
-    error_message.value = res.data.detail
-    alertErr.value = true
-  } else {
-    elem.array.value = res
-  }
+    if (res.status === 404) {
+      error_title.value = 'Error while retrieve materials'
+      error_message.value = res.data.detail
+      alertErr.value = true
+    } else {
+      elem.array.value = res
+    }
   })
 }
 
@@ -212,8 +217,7 @@ onMounted(() => {
   getExercise()
 })
 </script>
-<style>
-</style>
+<style></style>
 
 <template lang="">
   <NavMenu />

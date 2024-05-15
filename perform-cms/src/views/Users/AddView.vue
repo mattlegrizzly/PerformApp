@@ -7,8 +7,10 @@ import { post } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
 import router from '@/router'
 import NavButton from '@/components/NavButton/NavButton.vue'
+import type { Step, IEUserData } from '@/types/types'
 
-const user = ref({})
+const user : any = ref({
+})
 
 const alertErr = ref(false)
 const alertSuc = ref(false)

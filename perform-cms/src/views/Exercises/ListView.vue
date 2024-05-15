@@ -11,7 +11,7 @@ import OrderByComponent from '@/components/OrderByComponent/OrderByComponent.vue
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
 import { RouterView } from 'vue-router'
 import './exercises.css'
-
+import MultiSelectComponent from '@/components/MultiSelectComponent/MultiSelectComponent.vue'
 const exercises = ref({})
 
 const materials = ref({})
@@ -43,19 +43,34 @@ const order = [
 
 const api_url = import.meta.env.VITE_API_URL
 const params_push = [
-    {
-      query_key: 'material_id',
-      array_name: 'materials_id_filter'
-    },
-    {
-      query_key: 'sport_id',
-      array_name: 'sport_selected'
-    },
-    {
-      query_key: 'workzone_code',
-      array_name: 'muscle_selected'
-    }
-  ]
+  {
+    query_key: 'material_id',
+    array_name: 'materials_id_filter'
+  },
+  {
+    query_key: 'sport_id',
+    array_name: 'sport_selected'
+  },
+  {
+    query_key: 'workzone_code',
+    array_name: 'muscle_selected'
+  }
+]
+
+const dataToRetrieve = [
+  {
+    link: '/admin/materials/all/',
+    array: materials
+  },
+  {
+    link: '/admin/sports/all/',
+    array: sports
+  },
+  {
+    link: '/admin/workzones/all/',
+    array: muscles
+  }
+]
 
 const navRoute = useRoute()
 const nameSearch = ref('')
@@ -170,17 +185,18 @@ const getExercises = async () => {
   exercisesCount.value = res.count
   pagination.value = Math.ceil(exercisesCount.value / itemsPerPage.value)
 }
+
 const pushData = (params_push) => {
-    params_push.map((elem) => {
-      const ids = navRoute.query[elem.query_key]
-      if (ids) {
-        const array = ids.split(',')
-        array.map((id) => {
-          elem.array_name.value.push(id)
-        })
-      }
-    })
-  }
+  params_push.map((elem) => {
+    const ids = navRoute.query[elem.query_key]
+    if (ids) {
+      const array = ids.split(',')
+      array.map((id) => {
+        elem.array_name.value.push(id)
+      })
+    }
+  })
+}
 
 const jointByComa = (array) => {
   let stringWithCommas = ''
@@ -220,36 +236,18 @@ onMounted(async () => {
     nameSearch.value = searchQuery
   }
 
-  pushData(params_push);
-  
-  const res_materials = await get('/admin/materials/all/', { body: {} }, true)
-  if (res_materials.status === 404) {
-    error_title.value = 'Error while retrieve materials'
-    error_message.value = res_materials.data.detail
-    alertErr.value = true
-  } else {
-    materials.value = res_materials
-    materials.value.map((material, index) => {
-      materials.value[index].pictures = api_url + material.pictures
-    })
-  }
-  const res_sports = await get('/admin/sports/all/', { body: {} }, true)
-  if (res_sports.status === 404) {
-    error_title.value = 'Error while retrieve sports'
-    error_message.value = res_sports.data.detail
-    alertErr.value = true
-  } else {
-    sports.value = res_sports
-  }
+  pushData(params_push)
 
-  const res_muscles = await get('/admin/workzones/all/', { body: {} }, true)
-  if (res_muscles.status > 300) {
-    error_title.value = 'Error while retrieve muscles'
-    error_message.value = res_muscles.data.detail
-    alertErr.value = true
-  } else {
-    muscles.value = res_muscles
-  }
+  dataToRetrieve.map(async (elem) => {
+    const res = await get(elem.link, { body: {} }, true)
+    if (res.status === 404) {
+      error_title.value = 'Error while retrieve materials'
+      error_message.value = res.data.detail
+      alertErr.value = true
+    } else {
+      elem.array.value = res
+    }
+  })
 
   getExercises('')
 })
@@ -312,19 +310,13 @@ onMounted(async () => {
               </v-row>
             </v-card-item>
             <v-card-item title="Sports">
-              <v-select
-                v-model="sport_selected"
+              <MultiSelectComponent 
+              :models="sport_selected"
                 :items="sports"
-                hint="Sélectionnez le sport utilisé"
-                item-title="name"
-                item-value="id"
-                mulitple
-                label="Select"
-                multiple
-                persistent-hint
-                single-line
-              >
-              </v-select>
+                hint="SSélectionnez le sport utilisé"
+                title="name"
+                value="id"
+              />
             </v-card-item>
             <v-card-item title="Zones de travail">
               <BodyComponent
@@ -334,18 +326,13 @@ onMounted(async () => {
                 :setMuscleSelected="setMuscleSelected"
                 :viewOnly="'add'"
               />
-              <v-select
-                v-model="muscle_selected"
+              <MultiSelectComponent 
+              :models="muscle_selected"
                 :items="muscles"
                 hint="Sélectionnez les muscles utilisés"
-                item-title="name"
-                item-value="code"
-                label="Select"
-                multiple
-                persistent-hint
-                single-line
-              >
-              </v-select>
+                value="code"
+                title="name"
+              />
             </v-card-item>
             <v-card-actions>
               <v-spacer></v-spacer>

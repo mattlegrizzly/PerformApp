@@ -9,7 +9,7 @@ import router from '@/router'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import { useRoute } from 'vue-router'
 
-const user = ref({})
+const user : any = ref({})
 
 const navRoute = useRoute()
 const alertErr = ref(false)
@@ -60,7 +60,6 @@ const sendData = (quitForm: boolean) => {
     const splitUser = user.value.profile_picture.split('/')
     const nameFile = splitUser[splitUser.length - 1]
     if (image_url.value.name !== nameFile) {
-      //@ts-expect-error
       option.body['profile_picture'] = image_url.value
       isFormData.value = true
     } else {
@@ -68,7 +67,6 @@ const sendData = (quitForm: boolean) => {
     }
   } else {
     if(image_url.value) {
-      //@ts-expect-error
       option.body['profile_picture'] = image_url.value
       isFormData.value = true
     } else {

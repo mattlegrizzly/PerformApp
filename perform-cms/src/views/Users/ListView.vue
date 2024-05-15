@@ -8,7 +8,7 @@ import router from '@/router'
 import { useRoute } from 'vue-router'
 import PaginationComponent from '@/components/PaginationComponent/PaginationComponent.vue'
 import OrderByComponent from '@/components/OrderByComponent/OrderByComponent.vue'
-
+import type { Order } from '@/types/types'
 const navRoute = useRoute()
 
 const users = ref({})
@@ -29,16 +29,16 @@ const order = [
   { id: 'default', value: 'Par défaut'}
 ]
 
-const setOrderBy = (value) => {
+const setOrderBy = (value : Order) => {
   orderBy.value = value
-  getExercises()
+  getUsers()
 }
 
 const changeInput = async () => {
   const res = await get('/admin/users_all', {
     body: {},
-    itemsPerPage: itemsPerPage.value,
-    page: page.value,
+    itemsPerPage: itemsPerPage.value.toString(),
+    page: page.value.toString(),
     search: {
       name: nameSearch.value
     }
@@ -56,8 +56,8 @@ const changeInput = async () => {
 const getUsers = async () => {
   const res = await get('/admin/users_all', {
     body: {},
-    itemsPerPage: itemsPerPage.value,
-    page: page.value
+    itemsPerPage: itemsPerPage.value.toString(),
+    page: page.value.toString()
   })
   users.value = await res.results
   usersCount.value = res.count
@@ -71,7 +71,7 @@ const setPage = (value: number) => {
 onMounted(() => {
   const pageQuery = navRoute.query.page
   if (pageQuery) {
-    page.value = parseInt(pageQuery)
+    page.value = parseInt(pageQuery.toString())
   }
   const orderByQuery = navRoute.query.orderBy
   if (orderByQuery) {
@@ -83,7 +83,7 @@ onMounted(() => {
   }
   const searchQuery = navRoute.query.search
   if (searchQuery) {
-    nameSearch.value = searchQuery
+    nameSearch.value = searchQuery.toString()
   }
   getUsers()
 })

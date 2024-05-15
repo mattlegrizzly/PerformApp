@@ -8,8 +8,9 @@ import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
 import './exercises.css'
+import type { Muscle } from '@/types/types'
 
-const muscle_selected = ref([])
+const muscle_selected : any = ref([])
 
 const api_url = import.meta.env.VITE_API_URL
 
@@ -35,8 +36,8 @@ const getExercises = async () => {
   } else {
     exercise.value = await res
     const muscle_res = await res.zone_exercises
-    const temp_muscle = [];
-    muscle_res.map((muscle) => {
+    const temp_muscle : Array<String>= [];
+    muscle_res.map((muscle : Muscle) => {
       temp_muscle.push(muscle.zone.code);
     })
     muscle_selected.value = temp_muscle
