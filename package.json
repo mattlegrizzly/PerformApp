@@ -4,7 +4,7 @@
   "description": "Project (api, cms and mobile app) for the perform enterprise",
   "main": "index.js",
   "scripts": {
-    "build": "npm i --prefix perform-cms & npm run build --prefix perform-cms", 
+    "build": "npm i --prefix perform-cms & npm run build --prefix perform-cms",
     "test": "echo \"Error: no test specified\" && exit 1",
     "commit": "cz"
   },
@@ -20,7 +20,8 @@
   "homepage": "https://github.com/mattlegrizzly/PerformApp#readme",
   "devDependencies": {
     "commitizen": "^4.3.0",
-    "cz-conventional-changelog": "^3.3.0"
+    "cz-conventional-changelog": "^3.3.0",
+    "npm-run-all": "^4.1.5"
   },
   "config": {
     "commitizen": {
