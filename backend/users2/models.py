@@ -13,7 +13,7 @@ def upload_to(instance, filename):
     return 'user/{filename}'.format(filename=filename_edit)
 
 class Manager(BaseUserManager):
-    def create_user(self, first_name, last_name, email, profile_picture, password=None):
+    def create_user(self, first_name, last_name, email, password=None):
         if not first_name:
             raise ValueError("User must have a first name")
         if not last_name:
@@ -28,8 +28,7 @@ class Manager(BaseUserManager):
         user = self.model(
             email=email,
             first_name=first_name,
-            last_name=last_name,
-            profile_picture=profile_picture
+            last_name=last_name
         )
         user.set_password(password)
         user.save(using=self._db)
