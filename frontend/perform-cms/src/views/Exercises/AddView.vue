@@ -9,6 +9,7 @@ import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import { nanoid } from 'nanoid'
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
 import './exercises.css'
+import router from '@/router'
 
 const materials = ref([])
 const sports = ref([])
@@ -45,10 +46,15 @@ const dataToRetrieve = [
   }
 ]
 
-const onChangeInput = (file: File) => {
-  exercise.value.video = file
-  video_src.value = URL.createObjectURL(file)
-  videoController.value.load()
+const onChangeInput = (file: Array<File>) => {
+  exercise.value.video = file[0]
+  if (file[0] && file[0].type.startsWith('video/')) {
+    const videoURL = URL.createObjectURL(file[0]) // Créer un URL pour le fichier vidéo
+    video_src.value = videoURL
+    videoController.value.load()
+  } else {
+    console.error('Veuillez sélectionner un fichier vidéo valide.')
+  }
 }
 
 const sendData = async () => {
@@ -75,7 +81,7 @@ const sendData = async () => {
       error_title.value = 'Modification Error'
     } else {
       const id = res.id
-      //router.push('/exercises/show/' + id + '/')
+      router.push('/exercises/show/' + id + '/')
       steps_exercise.value.map((step: { text: string; id: number }) => {
         const stepToPush = {
           body: {
