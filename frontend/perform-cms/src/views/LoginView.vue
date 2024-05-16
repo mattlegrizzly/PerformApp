@@ -18,14 +18,14 @@ const userStore = useUserStore()
 
 const sendData = () => {
   cookies.remove('access')
-//A CORRIGER
+  //A CORRIGER
 
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email.value, password: password.value })
   }
-  fetch('http://127.0.0.1:8000/api/login/', requestOptions)
+  fetch(import.meta.env.VITE_API_URL + '/api/login/', requestOptions)
     .then((response) => {
       if (response.status >= 300) {
         throw Error()
@@ -34,7 +34,7 @@ const sendData = () => {
       }
     })
     .then((data) => {
-      if(data.user.is_superuser === true) {
+      if (data.user.is_superuser === true) {
         console.log(data)
         userStore.setUser(data)
         var date = new Date()
@@ -44,15 +44,15 @@ const sendData = () => {
         password.value = ''
         email.value = ''
       } else {
-        throw Error('You\'re not allowed.')
+        throw Error("You're not allowed.")
       }
     })
     .catch((error) => {
       console.log(error)
-      if(error.message) {
-      error_message.value = error.message
+      if (error.message) {
+        error_message.value = error.message
       } else {
-        error_message.value = "Credential error"
+        error_message.value = 'Credential error'
       }
       alert.value = true
     })

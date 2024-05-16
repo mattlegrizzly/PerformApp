@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import NavMenu from '@/components/NavMenu/NavMenu.vue'
 import ListElement from '@/components/ListElement/ListElement.vue'
 import NavButton from '@/components/NavButton/NavButton.vue'
@@ -11,7 +11,6 @@ import OrderByComponent from '@/components/OrderByComponent/OrderByComponent.vue
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
 import { RouterView } from 'vue-router'
 import './exercises.css'
-import MultiSelectComponent from '@/components/MultiSelectComponent/MultiSelectComponent.vue'
 const exercises = ref({})
 
 const materials = ref({})
@@ -157,16 +156,22 @@ const getExercises = async () => {
   const option = {
     body: {},
     itemsPerPage: itemsPerPage.value,
-    page: page.value
+    page: page.value,
+    search: {
+      name: ''
+    },
+    orderBy: { id: 'default', value: 'Par défaut' }
   }
-  if (orderBy.value !== '') {
-    option['orderBy'] = orderBy.value.id
+  if (orderBy.value) {
+    option.orderBy = orderBy.value
   }
   if (nameSearch.value !== '') {
-    option['search'] = {
+    option.search = {
       name: nameSearch.value
     }
   }
+
+  console.log(option)
 
   if (materials_id_filter.value.length > 0) {
     option['material_id'] = jointByComa(materials_id_filter.value)
@@ -213,7 +218,8 @@ const setPage = (value) => {
   page.value = value
 }
 
-const setOrderBy = (value) => {
+const setOrderBy = (value: Order) => {
+  console.log(value)
   orderBy.value = value
   getExercises()
 }
@@ -310,13 +316,19 @@ onMounted(async () => {
               </v-row>
             </v-card-item>
             <v-card-item title="Sports">
-              <MultiSelectComponent 
-              :models="sport_selected"
+              <v-select
+                v-model="sport_selected"
                 :items="sports"
-                hint="SSélectionnez le sport utilisé"
-                title="name"
-                value="id"
-              />
+                hint="Sélectionnez le sport utilisé"
+                item-title="name"
+                item-value="id"
+                mulitple
+                label="Select"
+                multiple
+                persistent-hint
+                single-line
+              >
+              </v-select>
             </v-card-item>
             <v-card-item title="Zones de travail">
               <BodyComponent
@@ -326,13 +338,18 @@ onMounted(async () => {
                 :setMuscleSelected="setMuscleSelected"
                 :viewOnly="'add'"
               />
-              <MultiSelectComponent 
-              :models="muscle_selected"
+              <v-select
+                v-model="muscle_selected"
                 :items="muscles"
                 hint="Sélectionnez les muscles utilisés"
-                value="code"
-                title="name"
-              />
+                item-title="name"
+                item-value="code"
+                label="Select"
+                multiple
+                persistent-hint
+                single-line
+              >
+              </v-select>
             </v-card-item>
             <v-card-actions>
               <v-spacer></v-spacer>

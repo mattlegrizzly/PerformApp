@@ -1,30 +1,29 @@
 <script setup lang="ts">
 import NavMenu from '../../components/NavMenu/NavMenu.vue'
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import '@/assets/base.css'
-import { get, post, put, patch, del } from '@/lib/callApi'
+import { get, post } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
-import type Step from '@/types/types'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
-import router from '@/router'
 import { nanoid } from 'nanoid'
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
 import './exercises.css'
-const routerNav = useRoute()
 
 const materials = ref([])
 const sports = ref([])
 const muscles = ref([])
 const videoController = ref(document.createElement('video'))
 
-const exercise: any = ref({})
+const exercise: any = ref({
+  name: '',
+  description: ''
+})
 const steps_exercise: any = ref([])
 
 const materials_selected = ref([])
 const sport_selected = ref([])
-const muscle_selected = ref([])
+const muscle_selected: any = ref([])
 const video_src = ref('')
 
 const alertErr = ref(false)
@@ -53,7 +52,7 @@ const onChangeInput = (file: File) => {
 }
 
 const sendData = async () => {
-  const id = routerNav.params.exercise_id
+  console.log(materials_selected.value)
   const option = {
     body: {
       name: exercise.value.name,
@@ -65,6 +64,7 @@ const sendData = async () => {
   if (exercise.value.video) {
     option.body.video = exercise.value.video
   }
+  console.log(option)
   post('/admin/exercises/', option, true, true).then((res) => {
     if (res.status > 300) {
       const keys = Object.keys(res.data)
@@ -76,10 +76,7 @@ const sendData = async () => {
     } else {
       const id = res.id
       //router.push('/exercises/show/' + id + '/')
-      steps_exercise.value.map((step : {
-        text : string,
-        id : number
-      }) => {
+      steps_exercise.value.map((step: { text: string; id: number }) => {
         const stepToPush = {
           body: {
             exercise: id,
@@ -109,8 +106,7 @@ const sendData = async () => {
         res = post('/admin/exercisesports/', sportToPush, true)
       })
 
-      muscle_selected.value.map((muscle) => {
-        console.log(muscle)
+      muscle_selected.value.map((muscle: any) => {
         const sportToPush = {
           body: {
             exercise: id,
@@ -120,7 +116,7 @@ const sendData = async () => {
         res = post('/admin/exercisezones/', sportToPush, true)
       })
 
-      router.push('/exercises/show/' + id + '/?edit=true')
+      //router.push('/exercises/show/' + id + '/?edit=true')
     }
   })
 }
@@ -155,26 +151,26 @@ const removeStep = async (id: number) => {
   }
 }
 
-const setMuscle = (key: string, action: string, muscle_selected : any) => {
-    if (action === 'add') {
-      const findKey =
-        muscle_selected.filter(function (element : any) {
-          return element === key
-        }).length == 0
-      console.log(findKey)
-      if (findKey) {
-        muscle_selected.push(key)
-      }
-    } else {
-      // Trouver l'index de la valeur à supprimer
-      const index = muscle_selected.indexOf(key)
-  
-      if (index !== -1) {
-        // Supprimer la valeur à l'index trouvé
-        muscle_selected.splice(index, 1)
-      }
+const setMuscle = (key: string, action: string) => {
+  if (action === 'add') {
+    const findKey =
+      muscle_selected.value.filter(function (element: any) {
+        return element === (key as string)
+      }).length == 0
+    console.log(findKey)
+    if (findKey) {
+      muscle_selected.value.push(key)
+    }
+  } else {
+    // Trouver l'index de la valeur à supprimer
+    const index = muscle_selected.value.indexOf(key)
+
+    if (index !== -1) {
+      // Supprimer la valeur à l'index trouvé
+      muscle_selected.value.splice(index, 1)
     }
   }
+}
 
 onMounted(() => {
   getExercise()
@@ -241,29 +237,44 @@ onMounted(() => {
         :setMuscleSelected="setMuscle"
         :viewOnly="'add'"
       />
-      <MultiSelectComponent
-        :models="muscle_selected"
+      <v-select
+        v-model="muscle_selected"
         :items="muscles"
         hint="Sélectionnez les muscles utilisés"
-        value="code"
-        title="name"
-      />
+        item-title="name"
+        item-value="code"
+        label="Select"
+        multiple
+        persistent-hint
+        single-line
+      >
+      </v-select>
       <h2>Sports</h2>
-      <MultiSelectComponent
-        :models="sport_selected"
+      <v-select
+        v-model="sport_selected"
         :items="sports"
         hint="Sélectionnez le sport utilisé"
-        value="id"
-        title="name"
-      />
+        item-title="name"
+        item-value="id"
+        label="Select"
+        multiple
+        persistent-hint
+        single-line
+      >
+      </v-select>
       <h2>Matériels</h2>
-      <MultiSelectComponent
-        :models="materials_selected"
+      <v-select
+        v-model="materials_selected"
         :items="materials"
         hint="Sélectionnez le matériel utilisé"
-        value="id"
-        title="name"
-      />
+        item-title="name"
+        item-value="id"
+        label="Select"
+        multiple
+        persistent-hint
+        single-line
+      >
+      </v-select>
       <h2>Instructions</h2>
       <div id="steps" v-for="(element, index) in steps_exercise" :key="index">
         <v-text-field

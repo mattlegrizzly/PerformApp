@@ -68,6 +68,7 @@ const handleParams = (url: URL, options: IERequestOptions) => {
   }
 
   if (typeof options.orderBy !== 'undefined') {
+    console.log(options)
     url.searchParams.set('orderBy', options.orderBy.id)
   }
   if (typeof options.material_id !== 'undefined') {
@@ -154,7 +155,7 @@ const get = async (
     method: 'GET',
     headers: headers
   })
-
+  console.log(request)
   const response = await fetch(request)
   return handleResponse(response)
 }

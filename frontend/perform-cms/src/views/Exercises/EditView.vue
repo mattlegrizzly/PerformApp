@@ -27,7 +27,7 @@ const videoController = ref(document.createElement('video'))
 const const_exercice: any = ref()
 const exercise: any = ref({})
 
-const muscle_selected : any = ref([])
+const muscle_selected: any = ref([])
 const file = ref()
 const materials_selected = ref([])
 const sport_selected = ref([])
@@ -88,11 +88,17 @@ const sendData = async () => {
       //router.push('/exercises/show/' + id + '/')
       let startStep = const_exercice.value.steps_exercise
       let endStep = exercise.value.steps_exercise
-      const newStep = endStep.filter((step : Step) => !startStep.find((step_ : Step) => step_.id === step.id))
-      const modified = startStep.filter((step : Step) => endStep.find((step_ : Step) => step_.id === step.id))
-      const deleted = startStep.filter((step : Step) => !endStep.find((step_ : Step) => step_.id === step.id))
+      const newStep = endStep.filter(
+        (step: Step) => !startStep.find((step_: Step) => step_.id === step.id)
+      )
+      const modified = startStep.filter((step: Step) =>
+        endStep.find((step_: Step) => step_.id === step.id)
+      )
+      const deleted = startStep.filter(
+        (step: Step) => !endStep.find((step_: Step) => step_.id === step.id)
+      )
 
-      newStep.map((step : Step) => {
+      newStep.map((step: Step) => {
         const stepToPush = {
           body: {
             exercise: id,
@@ -102,12 +108,12 @@ const sendData = async () => {
         res = post('/admin/steps/', stepToPush, true)
       })
 
-      deleted.map((step : Step) => {
+      deleted.map((step: Step) => {
         res = del('/admin/steps/' + step.id + '')
       })
 
-      modified.map((step : Step) => {
-        const elem = endStep.find((step_ : Step) => step_.id == step.id)
+      modified.map((step: Step) => {
+        const elem = endStep.find((step_: Step) => step_.id == step.id)
         if (elem.text !== step.text) {
           const options = {
             body: {
@@ -126,7 +132,7 @@ const sendData = async () => {
 const setMuscleSelected = (key: string, action: string) => {
   if (action === 'add') {
     const findKey =
-      muscle_selected.value.filter(function (element : string) {
+      muscle_selected.value.filter(function (element: string) {
         return element === key
       }).length == 0
     console.log(findKey)
@@ -154,8 +160,8 @@ const getExercise = async () => {
   } else {
     const_exercice.value = JSON.parse(JSON.stringify(await res))
     exercise.value = JSON.parse(JSON.stringify(await res))
-    const temp_muscle : Array<string> = []
-    exercise.value.zone_exercises.map((muscle : Muscle) => {
+    const temp_muscle: Array<string> = []
+    exercise.value.zone_exercises.map((muscle: Muscle) => {
       temp_muscle.push(muscle.zone.code)
     })
     muscle_selected.value = temp_muscle
@@ -282,7 +288,6 @@ onMounted(() => {
         item-value="id"
         mulitple
         label="Select"
-        multiple
         persistent-hint
         single-line
       >
