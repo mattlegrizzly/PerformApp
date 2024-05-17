@@ -2,7 +2,7 @@
     <ion-page>
         <ion-tabs>
             <ion-router-outlet></ion-router-outlet>
-            <ion-tab-bar color="primary" style="border-radius: 20px 20px 0px 0px; height: 90px" slot="bottom">
+            <ion-tab-bar id="nav-menu-tab" style="border-radius: 20px 20px 0px 0px; height: 90px" slot="bottom">
                 <ion-tab-button tab="home" href="/home">
                     <ion-icon :name="isRouteActive('Home') ? 'home-selected' : 'home'" />
                 </ion-tab-button>
@@ -26,6 +26,8 @@
 <script setup lang="ts">
 import { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon } from '@ionic/vue';
 import { useRoute } from 'vue-router';
+import './index.css'
+import '../../assets/base.css'
 const route = useRoute();
 
 const isRouteActive = (routeName: string) => {

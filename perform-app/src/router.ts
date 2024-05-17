@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import NavMenu from './components/NavBar.vue';
+import NavMenu from './components/NavBar/NavBar.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {

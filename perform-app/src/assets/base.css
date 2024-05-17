@@ -38,6 +38,9 @@
   --section-gap: 160px;
   overflow: hidden;
 
+  /*Override IONIC color*/
+  --ion-color-primary: var(--primary-blue)
+
 }
 
 /* colors defines for the performCMS */
@@ -56,6 +59,15 @@
   --wellness-color3 : #CCB2FF;
   --wellness-color4 : #FFB1C1;
   --wellness-color5 : #FFE6AA;
+  --pd-l : 30px;
+  --pd-r : 30px;
+  --pd-t : 55px;
+}
+
+.perform-page {
+  padding-top: var(--pd-t);    
+  padding-left: var(--pd-l);    
+  padding-right: var(--pd-r);    
 
 }
 
@@ -86,7 +98,7 @@
     background-color 0.5s;
   line-height: 1.6;
   font-family:
-    'Montserrat';
+    'Montserrat' !important;
 }
 
 h1 {
