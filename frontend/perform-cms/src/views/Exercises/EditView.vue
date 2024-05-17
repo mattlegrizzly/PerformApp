@@ -77,6 +77,7 @@ const sendData = async () => {
   }
   patch('/admin/exercises/' + id + '/', option, true, isFormData).then((res) => {
     if (res.status > 300) {
+      console.log('res, ', res)
       const keys = Object.keys(res.data)
       for (let i = 0; i < keys.length; i++) {
         error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
@@ -287,7 +288,7 @@ onMounted(() => {
         hint="Sélectionnez le sport utilisé"
         item-title="name"
         item-value="id"
-        mulitple
+        multiple
         label="Select"
         persistent-hint
         single-line
