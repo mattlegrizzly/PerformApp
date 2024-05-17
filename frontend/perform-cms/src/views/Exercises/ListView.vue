@@ -10,7 +10,13 @@ import PaginationComponent from '@/components/PaginationComponent/PaginationComp
 import OrderByComponent from '@/components/OrderByComponent/OrderByComponent.vue'
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
 import { RouterView } from 'vue-router'
+import type { Order } from '@/types/types'
 import './exercises.css'
+
+const alertErr = ref(false)
+const error_title = ref('')
+const error_message = ref('')
+
 const exercises = ref({})
 
 const materials = ref({})
@@ -40,7 +46,6 @@ const order = [
   { id: 'default', value: 'Par défaut' }
 ]
 
-const api_url = import.meta.env.VITE_API_URL
 const params_push = [
   {
     query_key: 'material_id',
@@ -247,7 +252,7 @@ onMounted(async () => {
   dataToRetrieve.map(async (elem) => {
     const res = await get(elem.link, { body: {} }, true)
     if (res.status === 404) {
-      error_title.value = 'Error while retrieve materials'
+      error_title.value = 'Error while retrieve Exercises'
       error_message.value = res.data.detail
       alertErr.value = true
     } else {
@@ -255,12 +260,18 @@ onMounted(async () => {
     }
   })
 
-  getExercises('')
+  getExercises()
 })
 </script>
 
 <template lang="">
   <NavMenu />
+  <AlertComponents
+    :title="'Erreur de récupération des données'"
+    :type="'error'"
+    :alertValue="alert"
+    :message_alert="alertMessage"
+  />
   <router-view>
     <div class="mainWrapper">
       <h1 class="listTitle">Exercices ({{ exercisesCount }})</h1>
