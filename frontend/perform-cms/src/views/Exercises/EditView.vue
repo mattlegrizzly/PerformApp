@@ -75,7 +75,6 @@ const sendData = async () => {
     option.body['video'] = exercise.value.video
     isFormData = true
   }
-  console.log(option)
   patch('/admin/exercises/' + id + '/', option, true, isFormData).then((res) => {
     if (res.status > 300) {
       const keys = Object.keys(res.data)
@@ -135,7 +134,6 @@ const setMuscleSelected = (key: string, action: string) => {
       muscle_selected.value.filter(function (element: string) {
         return element === key
       }).length == 0
-    console.log(findKey)
     if (findKey) {
       muscle_selected.value.push(key)
     }
@@ -174,23 +172,26 @@ const getExercise = async () => {
       sport_selected.value.push(elem.sport.id)
     }
     video_url.value = await exercise.value.video
-    const video_array = res.video.split('/')
-    await fetch(video_url.value).then((response) => {
-      response.blob().then((data) => {
-        if (video_array[1] == '') {
-          let metadata = {
-            type: 'video/' + video_array[3].split('.')[1]
+    if (res.video) {
+      const video_array = res.video.split('/')
+      await fetch(video_url.value).then((response) => {
+        response.blob().then((data) => {
+          if (video_array[1] == '') {
+            let metadata = {
+              type: 'video/' + video_array[3].split('.')[1]
+            }
+            file.value = new File([data], video_array[3], metadata)
+            video_url.value = file.value
           }
-          file.value = new File([data], video_array[3], metadata)
-          video_url.value = file.value
-        }
-        video_src.value = api_url + exercise.value.video
-        videoController.value.load()
+          video_src.value = api_url + exercise.value.video
+          videoController.value.load()
+        })
       })
-    })
+    }
   }
   dataToRetrieve.map(async (elem) => {
     const res = await get(elem.link, { body: {} }, true)
+    console.log(elem, ' res ', res)
     if (res.status === 404) {
       error_title.value = 'Error while retrieve materials'
       error_message.value = res.data.detail

@@ -30,8 +30,12 @@ interface Muscle {
 }
 
 interface Order {
-  id : string,
-  value : string
+  id: string,
+  value: string
 }
 
-export { IEUser, IEUserData, Step, Muscle, Order }
+interface QueryParams {
+  query_key: string,
+  array_name: any
+}
+export { IEUser, IEUserData, Step, Muscle, Order, QueryParams }
