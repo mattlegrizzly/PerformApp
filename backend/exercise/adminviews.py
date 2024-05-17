@@ -235,6 +235,10 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
             workzone_codes = [str(id) for ids in workzone_codes for id in ids.split(',')]
             queryset = self.queryset.filter(zone_exercises__zone__code__in=workzone_codes)
 
+        # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
+
         # Filtrer le queryset
         queryset = self.filter_queryset(queryset)
 
@@ -283,12 +287,13 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         instance = serializer.instance
         old_video_path = instance.video.path if instance.video else None
-        old_video_name = old_video_path.split('/')[-1]
-        new_video_path = serializer.validated_data.get('video')
-        if old_video_name and new_video_path and old_video_name != new_video_path._name:
-            # Supprimer le fichier vidéo précédent
-            if os.path.isfile(old_video_path):
-                os.remove(old_video_path) 
+        if(old_video_path): 
+            old_video_name = old_video_path.split('/')[-1]
+            new_video_path = serializer.validated_data.get('video')
+            if old_video_name and new_video_path and old_video_name != new_video_path._name:
+                # Supprimer le fichier vidéo précédent
+                if os.path.isfile(old_video_path):
+                    os.remove(old_video_path) 
 
         super().perform_update(serializer)  # Appel de la méthode perform_update de la classe parent
 
