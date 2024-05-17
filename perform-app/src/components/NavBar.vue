@@ -2,7 +2,7 @@
     <ion-page>
         <ion-tabs>
             <ion-router-outlet></ion-router-outlet>
-            <ion-tab-bar color="primary" slot="bottom">
+            <ion-tab-bar color="primary" style="border-radius: 20px 20px 0px 0px; height: 90px" slot="bottom">
                 <ion-tab-button tab="home" href="/home">
                     <ion-icon :name="isRouteActive('Home') ? 'home-selected' : 'home'" />
                 </ion-tab-button>

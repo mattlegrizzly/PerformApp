@@ -1,0 +1,77 @@
+@import './base.css';
+@import './index.css';
+
+#app {
+  height: 100vh;
+  width: 100vw; 
+  overflow: hidden;
+}
+
+.mainWrapper {
+  padding-left: 20px;
+  left: 300px !important;
+  position: absolute;
+  height: 100vh;
+  width : calc(100vw - 300px - 20px);
+  overflow-y: scroll;
+}
+
+
+.listTitle {
+  text-align: left;
+}
+
+.underTitle {
+  color : rgb(143, 143, 143);
+  font-size: 14px;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.headerList {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+}
+
+.searchBar {
+  width: 400px;
+}
+
+.searchBar .v-field__field {
+  height: 38px;
+  display: flex;
+  align-items: center;
+}
+
+.searchBar .v-input .v-input__details {
+  display: none;
+}
+
+.searchBar .v-field__field input {
+  padding: 0px !important;
+  font-size: 14px;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: var(--background);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: var(--primary-blue20);
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+}
