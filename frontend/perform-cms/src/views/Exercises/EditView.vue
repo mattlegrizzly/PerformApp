@@ -288,8 +288,8 @@ onMounted(() => {
         hint="Sélectionnez le sport utilisé"
         item-title="name"
         item-value="id"
-        multiple
         label="Select"
+        multiple
         persistent-hint
         single-line
       >
@@ -301,7 +301,6 @@ onMounted(() => {
         hint="Sélectionnez le matériel utilisé"
         item-title="name"
         item-value="id"
-        mulitple
         label="Select"
         multiple
         persistent-hint
