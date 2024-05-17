@@ -4,7 +4,7 @@ import { watch } from 'vue'
 import './index.css'
 const props = defineProps(['height', 'width', 'muscleSelected', 'setMuscleSelected', 'viewOnly'])
 
-const muscleClicked = (event : any) => {
+const muscleClicked = (event: any) => {
   if (props.viewOnly === 'show') {
     return // Si maRef n'est pas vrai, la méthode ne sera pas exécutée
   }
@@ -15,7 +15,9 @@ const muscleClicked = (event : any) => {
     // Récupérer les données du muscle cliqué
     const muscleKey = target.getAttribute('data-muscle')
 
-    const muscles = document.querySelectorAll('[data-muscle="' + muscleKey + '"]') as NodeListOf<HTMLElement>
+    const muscles = document.querySelectorAll(
+      '[data-muscle="' + muscleKey + '"]'
+    ) as NodeListOf<HTMLElement>
     Array.from(muscles).forEach((muscle) => {
       const fill = muscle.getAttribute('fill')
       if (muscle.getAttribute('selected') && fill) {
@@ -35,17 +37,20 @@ const muscleClicked = (event : any) => {
 
 //Méthode qui va colorer le path du muscle sélectionné et ajouter l'attribut select
 const setSelectedProps = () => {
-  props.muscleSelected.map((muscle : string) => {
-      const muscles = document.querySelectorAll('[data-muscle="' + muscle + '"]') as NodeListOf<HTMLElement>
-      Array.from(muscles).map((muscle) => {
-        const selected = muscle.getAttribute('selected')
-        const fill = muscle.getAttribute('fill')
-        if (!selected && fill) {
-          muscle.style.fill = 'red'
-          muscle.setAttribute('selected', 'true')
-        }
-      })
+  console.log('muscle ', props.muscleSelected)
+  props.muscleSelected.map((muscle: string) => {
+    const muscles = document.querySelectorAll(
+      '[data-muscle="' + muscle + '"]'
+    ) as NodeListOf<HTMLElement>
+    Array.from(muscles).map((muscle) => {
+      const selected = muscle.getAttribute('selected')
+      const fill = muscle.getAttribute('fill')
+      if (!selected && fill) {
+        muscle.style.fill = 'red'
+        muscle.setAttribute('selected', 'true')
+      }
     })
+  })
 }
 
 watch(
@@ -54,15 +59,18 @@ watch(
     if (props.viewOnly === 'edit' || props.viewOnly === 'add') {
       setSelectedProps()
     }
-    const deleted = oldValue.filter((muscle : any) => !newValue.find((muscle_ : any) => muscle_ === muscle))
+    const deleted = oldValue.filter(
+      (muscle: any) => !newValue.find((muscle_: any) => muscle_ === muscle)
+    )
     setSelectedProps()
 
-    deleted.map((deleted : any) => {
-      const muscles = document.querySelectorAll('[data-muscle="' + deleted + '"]') as NodeListOf<HTMLElement>
-      Array.from(muscles).map((muscle : HTMLElement) => {
+    deleted.map((deleted: any) => {
+      const muscles = document.querySelectorAll(
+        '[data-muscle="' + deleted + '"]'
+      ) as NodeListOf<HTMLElement>
+      Array.from(muscles).map((muscle: HTMLElement) => {
         const selected = muscle.getAttribute('selected')
         const fill = muscle.getAttribute('fill')
-        console.log(selected)
         if (selected && fill) {
           muscle.style.fill = '#E9E9E9'
           muscle.removeAttribute('selected')
@@ -73,6 +81,9 @@ watch(
 )
 
 onMounted(() => {
+  if (props.viewOnly === 'edit' || props.viewOnly === 'add') {
+    setSelectedProps()
+  }
 })
 </script>
 

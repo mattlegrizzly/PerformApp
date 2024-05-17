@@ -8,7 +8,7 @@ const navRoute = useRoute()
 const props = defineProps(['setOrderBy', 'orderBy'])
 
 const order = [
-  { id: 'default', value: 'Par défaut'},
+  { id: 'default', value: 'Par défaut' },
   { id: 'orderByNameAsc', value: 'Nom (Croissant)' },
   { id: 'orderByNameDesc', value: 'Nom (Décroissant)' },
   { id: 'orderByIdAsc', value: 'Id (Croissant)' },
@@ -17,24 +17,22 @@ const order = [
   { id: 'orderByDateDesc', value: 'Date (Décroissant)' }
 ]
 
-const changeOrder = (e : any) => {
-  console.log('Change ', e)
-  let find = false;
+const changeOrder = (e: any) => {
+  let find = false
   order.map((order) => {
     if (order.id === e) {
       props.setOrderBy(order)
-      find = true;
+      find = true
     }
   })
-  if (!find){
-    props.setOrderBy({ id: 'default', value: 'Par défaut'})
+  if (!find) {
+    props.setOrderBy({ id: 'default', value: 'Par défaut' })
   }
   router.replace({
     path: navRoute.path,
     query: Object.assign({}, navRoute.query, { orderBy: e })
   })
 }
-
 </script>
 
 <template>

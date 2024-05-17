@@ -6,7 +6,7 @@ import type { IEUser, IEUserData } from '@/types/types'
 import { get, verifyToken } from '@/lib/callApi'
 import ListElement from '@/components/ListElement/ListElement.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
-import { useUserStore } from '@/stores/store';
+import { useUserStore } from '@/stores/store'
 
 const users = ref([{}])
 const materials = ref([{}])
@@ -16,16 +16,15 @@ const exercises = ref([{}])
 const alert = ref(false)
 const alertMessage = ref('')
 
-const userStore = useUserStore();
+const userStore = useUserStore()
 const user = ref({
   user: {} as IEUserData
 } as IEUser)
 
-
 const getUsers = async () => {
   await get('/admin/users_all/latest')
-  .then((res) => {
-      users.value = res;
+    .then((res) => {
+      users.value = res
     })
     .catch((error: Error) => {
       alert.value = true
@@ -36,7 +35,7 @@ const getUsers = async () => {
 const getMaterials = async () => {
   get('/admin/materials/latest')
     .then((res) => {
-      materials.value = res;
+      materials.value = res
     })
     .catch((error: Error) => {
       alert.value = true
@@ -47,7 +46,7 @@ const getMaterials = async () => {
 const getExercises = async () => {
   get('/admin/exercises/latest')
     .then((res) => {
-      exercises.value = res;
+      exercises.value = res
     })
     .catch((error: Error) => {
       alert.value = true
@@ -67,23 +66,25 @@ const getSports = async () => {
 }
 
 onMounted(() => {
-  verifyToken().then((res) => {
-    if(res.status > 300){
-      if(res.status == 401){
-        throw Error('Token not valid')
-      } else {
-        throw Error()
+  verifyToken()
+    .then((res) => {
+      if (res.status > 300) {
+        if (res.status == 401) {
+          throw Error('Token not valid')
+        } else {
+          throw Error()
+        }
       }
-    }
-    user.value = userStore.getUser;
-    getUsers()
-    getExercises()
-    getSports()
-    getMaterials()
-  }).catch((error) => {
-    console.log('error ', error)
-  })
-  
+      user.value = userStore.getUser
+      getUsers()
+      getExercises()
+      getSports()
+      getMaterials()
+    })
+    .catch((error: Error) => {
+      alert.value = true
+      alertMessage.value = error.message
+    })
 })
 </script>
 

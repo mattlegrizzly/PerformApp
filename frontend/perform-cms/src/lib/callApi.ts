@@ -68,7 +68,6 @@ const handleParams = (url: URL, options: IERequestOptions) => {
   }
 
   if (typeof options.orderBy !== 'undefined') {
-    console.log(options)
     url.searchParams.set('orderBy', options.orderBy.id)
   }
   if (typeof options.material_id !== 'undefined') {
@@ -155,9 +154,15 @@ const get = async (
     method: 'GET',
     headers: headers
   })
-  console.log(request)
   const response = await fetch(request)
-  return handleResponse(response)
+  if (await response.status > 301) {
+    return {
+      status: response.status,
+      data: response.statusText
+    }
+  } else {
+    return handleResponse(response)
+  }
 }
 
 /**
@@ -209,8 +214,14 @@ const post = async (
   })
 
   const response = await fetch(request)
-
-  return handleResponse(response)
+  if (await response.status > 301) {
+    return {
+      status: response.status,
+      data: response.statusText
+    }
+  } else {
+    return handleResponse(response)
+  }
 }
 
 /**
@@ -260,8 +271,14 @@ const put = async (
   })
 
   const response = await fetch(request)
-
-  return handleResponse(response)
+  if (await response.status > 301) {
+    return {
+      status: response.status,
+      data: response.statusText
+    }
+  } else {
+    return handleResponse(response)
+  }
 }
 
 /**
@@ -304,7 +321,6 @@ const patch = async (
   } else {
     body = JSON.stringify(options.body)
   }
-  console.log(body)
 
   const request = new Request(url, {
     method: 'PATCH',
@@ -313,8 +329,15 @@ const patch = async (
   })
 
   const response = await fetch(request)
+  if (await response.status > 301) {
+    return {
+      status: response.status,
+      data: response.statusText
+    }
+  } else {
+    return handleResponse(response)
+  }
 
-  return handleResponse(response)
 }
 
 /**
