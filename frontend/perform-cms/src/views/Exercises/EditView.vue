@@ -212,7 +212,6 @@ const addStep = async () => {
   exercise.value.steps_exercise.push(step)
 }
 
-//LISTER ICI POUR SUPPRIMER
 const removeStep = async (id: number) => {
   for (const [index, step] of exercise.value.steps_exercise.entries()) {
     if (step.id == id) {

@@ -14,15 +14,6 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@capacitor/android": "next",
-    "@capacitor/app": "next",
-    "@capacitor/core": "next",
-    "@capacitor/haptics": "next",
-    "@capacitor/ios": "next",
-    "@capacitor/keyboard": "next",
-    "@capacitor/status-bar": "next",
-    "@ionic/vue": "^7.8.2",
-    "@ionic/vue-router": "^7.8.2",
     "@vueuse/integrations": "^10.9.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
