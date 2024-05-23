@@ -5,7 +5,6 @@ import { chevronBackOutline } from "ionicons/icons";
 
 const props = defineProps(["url", "text", "back"]);
 const nav = () => {
-  console.log(props.url);
   if (props.back == "back") {
     router.back(props.url);
   } else {

@@ -59,9 +59,9 @@
   --wellness-color3 : #CCB2FF;
   --wellness-color4 : #FFB1C1;
   --wellness-color5 : #FFE6AA;
-  --pd-l : 30px;
-  --pd-r : 30px;
-  --pd-t : 55px;
+  --pd-l : 20px;
+  --pd-r : 20px;
+  --pd-t : 20px;
 }
 
 .perform-page {
@@ -69,20 +69,6 @@
   padding-left: var(--pd-l);    
   padding-right: var(--pd-r);    
 
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
 }
 
 *,
@@ -94,7 +80,6 @@
 }
 * {
   transition:0.5s;
-  background-color: white;
   line-height: 1.6;
   font-family:
     'Montserrat' !important;
@@ -103,7 +88,7 @@
 h1 {
   color: var(--primary-blue);
   font-weight: 700;
-  font-size: 26;
+  font-size: 23px;
 }
 
 body {

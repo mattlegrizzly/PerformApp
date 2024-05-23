@@ -40,7 +40,6 @@ import {
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
-  IonLabel,
   IonIcon,
 } from "@ionic/vue";
 import { useRoute } from "vue-router";
@@ -49,7 +48,6 @@ import "../../assets/base.css";
 const route = useRoute();
 
 const isRouteActive = (routeName: string) => {
-  console.log(routeName, " ", route.name);
   return route.name === routeName;
 };
 </script>

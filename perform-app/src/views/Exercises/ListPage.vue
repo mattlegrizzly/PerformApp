@@ -4,17 +4,32 @@
   <ion-page>
     <div id="header-wrapper">
       <div class="perform-page">
-        <h1 style="margin-top: 0px">Liste exercices</h1>
+        <h1 style="margin-top: 0px">Exercices</h1>
         <ion-label>Rechercher un exercice :</ion-label>
-        <ion-input id="search-input" label-placement="floating" fill="outline" placeholder="Cherchez un exercice"
-          shape="round"></ion-input>
+        <ion-input
+          id="search-input"
+          fill="outline"
+          slot="end"
+          placeholder="Cherchez un exercice"
+          shape="round"
+          @ionInput="handleSearchInput($event)"
+        ></ion-input>
         <div class="filter-div">
           <ion-button>Filtres</ion-button>
           <ion-list class="filter-item">
             <ion-item>
-              <ion-select aria-label="Trier par" interface="popover" placeholder="Trier par">
-                <ion-select-option v-for="order in order" :key="order.id" :value="order.id">{{ order.value
-                  }}</ion-select-option>
+              <ion-select
+                aria-label="Trier par"
+                interface="popover"
+                placeholder="Trier par"
+                @ionChange="handleOrderChange($event)"
+              >
+                <ion-select-option
+                  v-for="elem in order"
+                  :key="elem.id"
+                  :value="elem.id"
+                  >{{ elem.value }}</ion-select-option
+                >
               </ion-select>
             </ion-item>
           </ion-list>
@@ -31,8 +46,14 @@
     </div>
 
     <ion-content color="light">
-      <ion-list v-if="showExercises" class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id"
-        @click="goPage(exercise.id)">
+      <ion-list
+        v-if="showExercises"
+        class="list-item"
+        :inset="true"
+        v-for="exercise in exercises"
+        :key="exercises.id"
+        @click="goPage(exercise.id)"
+      >
         <ion-item>
           <div class="exercice-img">
             <label>{{ exercise.name[0] }}</label>
@@ -41,7 +62,13 @@
           <ion-icon :icon="chevronForwardOutline"></ion-icon>
         </ion-item>
       </ion-list>
-      <ion-list v-if="!showExercises" class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id">
+      <ion-list
+        v-if="!showExercises"
+        class="list-item"
+        :inset="true"
+        v-for="exercise in exercises"
+        :key="exercises.id"
+      >
         <ion-item>
           <div class="exercice-img">
             <label>oui</label>
@@ -74,11 +101,13 @@ import {
   IonPage,
   IonSelect,
   IonSelectOption,
-  IonButton
+  IonButton,
 } from "@ionic/vue";
-import { get } from "@/lib/callApi.ts";
+import { get } from "../../lib/callApi";
 import { onMounted, ref } from "vue";
 import { chevronForwardOutline } from "ionicons/icons";
+import "./index.css";
+import router from "../../router";
 
 const order = [
   { id: "orderByNameAsc", value: "Nom (Croissant)" },
@@ -90,28 +119,85 @@ const order = [
   { id: "default", value: "Par défaut" },
 ];
 
+const searchValue = ref("");
+const orderBy = ref("");
+const showExercises = ref(true);
+const exercises: any = ref([]);
+
 const goPage = (id: any) => {
   console.log(id);
   router.push({ name: "ExercisesView", params: { id: id } });
 };
 
 const handleChange = (event: any) => {
-  console.log("event", event.detail.value);
   if (event.detail.value == "all") {
     showExercises.value = true;
   } else {
     showExercises.value = false;
   }
-  console.log("event", showExercises.value);
 };
-const showExercises = ref(true);
-const exercises: any = ref([]);
 
-import "./index.css";
-import router from "../../router";
+const handleOrderChange = (event: any) => {
+  orderBy.value = event.detail.value;
+  const option = {
+    body: {},
+    search: searchValue.value != "" ? searchValue.value : "",
+    orderBy: { id: event.detail.value },
+  }; /* as IERequestOptions; */
+  console.log(orderBy.value);
+  /* if (orderBy.value) {
+    option.orderBy = orderBy.value;
+  }
+  if (materials_id_filter.value.length > 0) {
+    option.material_id = materials_id_filter.value;
+  }
+  if (muscle_selected.value.length > 0) {
+    option.workzone_code = muscle_selected.value;
+  }
+  if (sport_selected.value.length > 0) {
+    option.sport_id = sport_selected.value;
+  } */
+
+  get("/exercises", option, false).then((res) => {
+    if (res.status > 300) {
+    } else {
+      exercises.value = res.results;
+    }
+  });
+};
+const handleSearchInput = (event: any) => {
+  searchValue.value = event.target.value;
+  const option = {
+    body: {},
+    search: event.target.value,
+    orderBy: {
+      id: "",
+    },
+  }; /* as IERequestOptions; */
+  if (orderBy.value) {
+    option.orderBy.id = orderBy.value;
+  }
+  /*
+  if (materials_id_filter.value.length > 0) {
+    option.material_id = materials_id_filter.value;
+  }
+  if (muscle_selected.value.length > 0) {
+    option.workzone_code = muscle_selected.value;
+  }
+  if (sport_selected.value.length > 0) {
+    option.sport_id = sport_selected.value;
+  } */
+
+  get("/exercises", option, false).then((res) => {
+    if (res.status > 300) {
+    } else {
+      exercises.value = res.results;
+    }
+  });
+};
 
 onMounted(() => {
-  get("/exercises", { body: {} }, false, false).then((res: any) => {
+  get("/exercises", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
     } else {
       exercises.value = res.results;

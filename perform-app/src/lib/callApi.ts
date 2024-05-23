@@ -1,10 +1,10 @@
-import type IERequestOptions from "@/types/request";
-import { useUserStore } from "@/stores/store";
+import type IERequestOptions from "../types/requet";
+
 import { useCookies } from "@vueuse/integrations/useCookies";
 
 const cookies = useCookies(["locale"]);
 
-const baseUrl = import.meta.env.VITE_API_URL + "/";
+const baseUrl = import.meta.env.VITE_API_URL + "";
 
 const verifyToken = async () => {
   const access = cookies.get("access");
@@ -48,14 +48,8 @@ const verifyToken = async () => {
 const handleParams = (url: URL, options: IERequestOptions) => {
   if (typeof options.search !== "undefined" && options && options.search) {
     Object.keys(options.search).map((searchProperty: any) => {
-      const searchValues = options.search[searchProperty];
-
-      if (Array.isArray(searchValues)) {
-        searchValues.map((searchValue) =>
-          url.searchParams.append(searchProperty, searchValue)
-        );
-      } else {
-        url.searchParams.set("search", searchValues);
+      if (options.search) {
+        url.searchParams.set("search", options.search);
       }
     });
   }
@@ -98,7 +92,7 @@ const handleResponse = async (response: Response): Promise<any> => {
  * This function permits to refresh token and User in the store
  * @returns
  */
-const refresh = async () => {
+/* const refresh = async () => {
   const userStore = useUserStore();
   const relativeUrlString = "/api/refresh_tokens/";
   const url = new URL(relativeUrlString, baseUrl);
@@ -125,7 +119,7 @@ const refresh = async () => {
   } catch (error) {
     throw new Error("Impossible de rafraîchir le token");
   }
-};
+}; */
 
 /**
  * This function permits to do some get request with Fetch
@@ -145,7 +139,6 @@ const get = async (
   handleParams(url, options);
 
   const headers = new Headers();
-
   if (authorization) {
     const token = cookies.get("access");
     headers.append("Authorization", `Bearer ${token}`);
@@ -154,6 +147,7 @@ const get = async (
   const request = new Request(url, {
     method: "GET",
     headers: headers,
+    mode: "cors",
   });
   const response = await fetch(request);
   if ((await response.status) > 301) {
@@ -366,4 +360,4 @@ const del = async (urlChunk: any, authorization = true) => {
   return fetch(request);
 };
 
-export { get, post, put, del, patch, refresh, verifyToken };
+export { get, post, put, del, patch, /* refresh */ verifyToken };

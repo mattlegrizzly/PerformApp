@@ -90,7 +90,7 @@
           <div style="width: 45%">
             <ion-list
               style="width: 100%"
-              v-for="(muscle, index) of exercises.zone_exercises"
+              v-for="muscle of exercises.zone_exercises"
             >
               <ion-item>
                 {{ muscle.zone.name }}
@@ -119,10 +119,12 @@ import { starOutline } from "ionicons/icons";
 import "@/assets/base.css";
 import "@/assets/main.css";
 import { useRoute } from "vue-router";
-import NavButton from "@/components/NavButton/NavButton.vue";
+//@ts-expect-error
+import NavButton from "../../components/NavButton/NavButton.vue";
 import "perform-body-component-lib/style.css";
+//@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
-
+import type { Step, Muscle, Material, Sport } from "../../types/allType";
 import "./index.css";
 const router = useRoute();
 const api_url = import.meta.env.VITE_API_URL;
@@ -131,17 +133,18 @@ import { ref, onMounted } from "vue";
 import { get } from "../../lib/callApi";
 const exercises = ref({
   name: "",
-  zone_exercises: [],
+  zone_exercises: [] as Muscle[],
   video: "",
+  steps_exercise: [] as Step[],
+  material_exercise: [] as Material[],
+  sports_exercise: [] as Sport[],
 });
 const handleChange = (event: any) => {
-  console.log("event", event.detail.value);
   if (event.detail.value == "all") {
     showExercises.value = true;
   } else {
     showExercises.value = false;
   }
-  console.log("event", showExercises.value);
 };
 const showExercises = ref(true);
 onMounted(() => {
