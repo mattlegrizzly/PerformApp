@@ -24,7 +24,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'exercises',
                 name: 'Exercises',
-                component: () => import('./views/Exercises/List.vue'),
+                component: () => import('./views/Exercises/ListPage.vue'),
             },
             {
                 path: 'search',
