@@ -6,6 +6,35 @@
 .list-item {
     margin-inline-start: var(--pd-l) !important;
     margin-inline-end: var(--pd-r) !important;
+    border-radius: 10px !important;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0px 4px 8px #d4d4d4;
+}
+
+.input-label-placement-floating.sc-ion-input-md-h input.sc-ion-input-md {
+    opacity: 1;
+}
+
+#search-input {
+    border-radius: 20px;
+}
+
+ion-input ion-label {
+    font-size: 16px;
+    text-transform: none;
+}
+ion-segment-button ion-label {
+    text-transform: none;
+    font-weight: 700;
+    font-size: 14px;
+}
+.list-item ion-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .filter-div {
@@ -22,6 +51,14 @@
 .filter-div ion-list {
     width: 45%;
     height: 60px;
+}
+
+ion-segment {
+    display: flex;
+}
+
+ion-segment-button {
+    width: 50%;
 }
 
 ion-select {
@@ -50,4 +87,18 @@ ion-popover .popover-viewport {
     justify-content: center;
     align-items: center;
     margin-right: 20px;
+}
+
+/* View Page */
+.info_wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info_wrapper .info_exercise {
+    width: 45%;
+}
+
+.info_wrapper .info_exercise ion-chip {
+   font-size: 6px !important;
 }
