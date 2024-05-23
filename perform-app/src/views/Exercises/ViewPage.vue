@@ -8,23 +8,40 @@
           <NavButton link="exercises" text="retour" back="back" />
           <ion-icon :icon="starOutline" size="large"></ion-icon>
         </div>
-        <h1 style="color: black; margin-top: 0px; margin-bottom: 10px">{{ exercises.name }}</h1>
+        <h1 style="color: black; margin-top: 0px; margin-bottom: 10px">
+          {{ exercises.name }}
+        </h1>
         <div class="info_wrapper">
           <div class="info_exercise">
             <h2>Matériels :</h2>
-            <ion-chip v-for="element of exercises.material_exercise" color="primary">{{ element.material.name
-              }}</ion-chip>
+            <ion-chip
+              v-for="element of exercises.material_exercise"
+              color="primary"
+              >{{ element.material.name }}</ion-chip
+            >
           </div>
           <div class="info_exercise">
             <h2>Sports :</h2>
-            <ion-chip v-for="element of exercises.sports_exercise" color="primary">{{ element.sport.name }}</ion-chip>
+            <ion-chip
+              v-for="element of exercises.sports_exercise"
+              color="primary"
+              >{{ element.sport.name }}</ion-chip
+            >
           </div>
         </div>
-
       </div>
       <div class="imageDiv">
-        <video ref="videoController" id="player" playsinline data-poster="/path/to/poster.jpg" height="250" autoplay
-          hideControl loop clickToPlay>
+        <video
+          ref="videoController"
+          id="player"
+          playsinline
+          data-poster="/path/to/poster.jpg"
+          height="250"
+          autoplay
+          hideControl
+          loop
+          clickToPlay
+        >
           <source :src="api_url + exercises.video" type="video/mp4" />
           <source :src="api_url + exercises.video" type="video/webm" />
         </video>
@@ -37,11 +54,20 @@
           <ion-label>Muscle</ion-label>
         </ion-segment-button>
       </ion-segment>
-      <div style="padding-top: 10px !important;" class="perform-page">
+      <div style="padding-top: 10px !important" class="perform-page">
         <div v-if="showExercises">
-          <ion-list v-if="showExercises" class="list-item"
-            style=" height: 45px; margin-left: 0px  !important; margin-right: 0px !important;" :inset="true"
-            v-for="(step, index) in exercises.steps_exercise" :key="step.id">
+          <ion-list
+            v-if="showExercises"
+            class="list-item"
+            style="
+              height: 45px;
+              margin-left: 0px !important;
+              margin-right: 0px !important;
+            "
+            :inset="true"
+            v-for="(step, index) in exercises.steps_exercise"
+            :key="step.id"
+          >
             <ion-item class="step_info">
               <div class="num_step">
                 {{ index + 1 }}
@@ -51,12 +77,21 @@
           </ion-list>
         </div>
         <div v-if="!showExercises" style="display: flex">
-          <div style="display: flex; width: 50%; justify-content: center;">
-            <BodyComponent :height="'200'" :width="'100'" :viewOnly="'show'"
-              :muscleSelected="exercises.zone_exercises" />
+          <div
+            style="display: flex; width: 50%; justify-content: space-between"
+          >
+            <BodyComponent
+              :height="'200'"
+              :width="'100'"
+              :viewOnly="'show'"
+              :muscleSelected="exercises.zone_exercises"
+            />
           </div>
-          <div style="display: flex; width: 50%; ">
-            <ion-list style="width: 100%;" v-for=" (muscle, index) of exercises.zone_exercises">
+          <div style="width: 45%">
+            <ion-list
+              style="width: 100%"
+              v-for="(muscle, index) of exercises.zone_exercises"
+            >
               <ion-item>
                 {{ muscle.zone.name }}
               </ion-item>
@@ -78,7 +113,7 @@ import {
   IonSegmentButton,
   IonList,
   IonLabel,
-  IonItem
+  IonItem,
 } from "@ionic/vue";
 import { starOutline } from "ionicons/icons";
 import "@/assets/base.css";

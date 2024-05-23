@@ -93,9 +93,8 @@
   font-weight: normal;
 }
 * {
-  transition:
-    color 0.5s,
-    background-color 0.5s;
+  transition:0.5s;
+  background-color: white;
   line-height: 1.6;
   font-family:
     'Montserrat' !important;
