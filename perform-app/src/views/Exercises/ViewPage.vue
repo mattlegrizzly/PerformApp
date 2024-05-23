@@ -51,9 +51,12 @@
           </ion-list>
         </div>
         <div v-if="!showExercises" style="display: flex">
-          <BodyComponent :height="'200'" :width="'100'" :viewOnly="'show'" :muscleSelected="exercises.zone_exercises" />
-          <div>
-            <ion-list v-for="(muscle, index) of exercises.zone_exercises">
+          <div style="display: flex; width: 50%; justify-content: center;">
+            <BodyComponent :height="'200'" :width="'100'" :viewOnly="'show'"
+              :muscleSelected="exercises.zone_exercises" />
+          </div>
+          <div style="display: flex; width: 50%; ">
+            <ion-list style="width: 100%;" v-for=" (muscle, index) of exercises.zone_exercises">
               <ion-item>
                 {{ muscle.zone.name }}
               </ion-item>
