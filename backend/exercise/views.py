@@ -74,13 +74,9 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK) 
 
     def retrieve(self, request, *args, **kwargs):
-        exercise_id = self.kwargs['pk']
-        steps = ExerciseStep.objects.filter(exercise_id=exercise_id)
-        steps_serializer = ExerciseStepSerializer(steps, many=True)
-        data = steps_serializer.data
-        exercise = Exercise.objects.get(pk=exercise_id)
-        exercise_serializer = self.serializer_class(exercise)
-        return Response(data)
+        instance = self.get_object()
+        serializer = self.serializer_class(instance)
+        return Response(serializer.data)
 #------------------EXERCISE_STEPS------------------
 # List/Get ViewSet
 class ExerciseStepViewSet(viewsets.ReadOnlyModelViewSet):
