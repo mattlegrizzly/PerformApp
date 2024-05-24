@@ -19,11 +19,6 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v3
 
-            - name: Who am i
-              run: |
-                  whoami
-                  exit 0
-
             - name: Setting Env Vars
               run: |
                   if ! grep -q "DB_PASSWORD=" config/.env.production; then
