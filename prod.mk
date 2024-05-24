@@ -9,7 +9,6 @@ build:
 
 run:
 	@docker compose -f docker-compose.production.yml -p perform-app --env-file config/.env.production up -d
-	@docker cp perform-app-vue-admin-1:/var/www/admin/. /var/www/admin
 
 stop:
 	@docker compose -f docker-compose.production.yml -p perform-app --env-file config/.env.production stop
