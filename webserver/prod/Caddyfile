@@ -1,31 +1,28 @@
-localhost {
+:80 {
 
-	encode gzip
-	
-	handle /static/* {
-		root * /srv/app
-		file_server
-	}
+    encode gzip
 
-	handle /media/* {
-		root * /srv/app
-		file_server
-	}
+    handle /static/* {
+        root * /srv/app/static
+        file_server
+    }
 
-	handle /api/* {
-		reverse_proxy /backend/* django:8000
-	}
+    handle /media/* {
+        root * /srv/app/media
+        file_server
+    }
 
-	log
+    handle /api/* {
+        reverse_proxy /backend/* django:8000
+    }
 
-	handle {
-		
-		encode gzip
+    handle {
 
-		root * /var/www/admin/
-		try_files {path} /index.html
+        encode gzip
 
-		file_server
-	}
-    
-} 
+        root * /var/www/admin/
+        try_files {path} /index.html
+
+        file_server
+    }
+}
