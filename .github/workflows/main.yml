@@ -54,9 +54,15 @@ jobs:
                   if [ "$(docker ps -q -f name=vue_cms_prod)" ]; then
                       docker rm vue_cms_prod
                   fi
-                  docker volume rm performapp_vue_cms_prod
-                  docker volume rm performapp_caddy_config
-                  docker volume rm performapps_caddy_data
+                  if [ "$(docker volume ls -q -f name=performapp_vue_cms_prod)" ]; then
+                        docker volume rm performapp_vue_cms_prod
+                  fi
+                  if [ "$(docker volume ls -q -f name=performapp_caddy_config)" ]; then
+                        docker volume rm performapp_caddy_config
+                  fi
+                  if [ "$(docker volume ls -q -f name=performapps_caddy_data)" ]; then
+                        docker volume rm performapps_caddy_data
+                  fi
             - name: Build Updated Docker Compose Environment
               run: |
                   make -f prod.mk build
