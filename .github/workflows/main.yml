@@ -46,10 +46,14 @@ jobs:
               run: |
                   make -f prod.mk stop
                   if [ "$(docker ps -a -q)" ]; then
-                    docker stop $(docker ps -a -q)
+                      docker stop $(docker ps -a -q)
                   fi
-                  docker rm webserver_prod
-                  docker rm vue_cms_prod
+                  if [ "$(docker ps -q -f name=webserver_prod)" ]; then
+                      docker rm webserver_prod
+                  fi
+                  if [ "$(docker ps -q -f name=vue_cms_prod)" ]; then
+                      docker rm vue_cms_prod
+                  fi
                   docker volume rm performapp_vue_cms_prod
                   docker volume rm performapp_caddy_config
                   docker volume rm performapps_caddy_data
