@@ -1,17 +1,20 @@
 FROM node:alpine as build_admin
 
-WORKDIR /app
+    WORKDIR /app
 
-COPY . /app
+    COPY . /app
 
-RUN npm install
+    RUN npm install
 
-ARG VITE_API_URL
+    ARG VITE_API_URL
 
-RUN npm run build
+    RUN npm run build
+
+
+
 
 FROM node:alpine as run_admin
 
-COPY --from=build_admin /app/dist /var/www/admin/
+    COPY --from=build_admin /app/dist /var/www/admin/
 
-EXPOSE 5172
+    EXPOSE 5172

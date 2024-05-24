@@ -1,4 +1,4 @@
-front.localhost {
+localhost {
 
 	encode gzip
 	
@@ -12,20 +12,20 @@ front.localhost {
 		file_server
 	}
 
-	handle {
+	handle /api/* {
 		reverse_proxy /backend/* django:8000
 	}
 
 	log
-}
 
-admin.localhost {
-	
-	encode gzip
+	handle {
+		
+		encode gzip
 
-    root * /var/www/admin/
-	try_files {path} /index.html
+		root * /var/www/admin/
+		try_files {path} /index.html
 
-    file_server
+		file_server
+	}
     
 } 
