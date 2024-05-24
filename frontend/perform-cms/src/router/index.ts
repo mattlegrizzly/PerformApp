@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 
 import ListMaterials from '@/views/Materials/ListView.vue'
@@ -62,9 +62,8 @@ const isLoggedIn = async () => {
       removeUser()
       return false
     }
-
-    const userResponse = await get('/admin/users_all/me/', { body: {} }, true)
-    setUser(await userResponse)
+    const res = get('/admin/users_all/me/', { body: {} }, true);
+    setUser(await res)
     return true
   } catch (error) {
     removeUser()
@@ -184,7 +183,6 @@ router.beforeEach(async (to, from, next) => {
   // Cette fonction sera appelée avant chaque navigation de route
   // Maintenant, vous pouvez mettre en place votre logique de redirection en fonction de l'état de connexion de l'utilisateur
   const isAuthenticated = await isLoggedIn()
-
   if (to.name === 'login' && (await isAuthenticated)) {
     // Si l'utilisateur est déjà connecté et qu'il essaie d'accéder à la page de connexion, redirigez-le vers la page d'accueil
     next({ name: 'home' })

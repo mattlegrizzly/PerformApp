@@ -58,7 +58,6 @@ const onChangeInput = (file: Array<File>) => {
 }
 
 const sendData = async () => {
-  console.log(materials_selected.value)
   const option = {
     body: {
       name: exercise.value.name,
@@ -70,7 +69,6 @@ const sendData = async () => {
   if (exercise.value.video) {
     option.body.video = exercise.value.video
   }
-  console.log(option)
   post('/admin/exercises/', option, true, true).then((res) => {
     if (res.status > 300) {
       const keys = Object.keys(res.data)
@@ -122,7 +120,7 @@ const sendData = async () => {
         res = post('/admin/exercisezones/', sportToPush, true)
       })
 
-      //router.push('/exercises/show/' + id + '/?edit=true')
+      router.push('/exercises/show/' + id + '/?edit=true')
     }
   })
 }
@@ -163,7 +161,6 @@ const setMuscle = (key: string, action: string) => {
       muscle_selected.value.filter(function (element: any) {
         return element === (key as string)
       }).length == 0
-    console.log(findKey)
     if (findKey) {
       muscle_selected.value.push(key)
     }

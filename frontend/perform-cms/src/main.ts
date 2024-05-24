@@ -5,8 +5,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import '@ionic/core/css/ionic.bundle.css';
-import { IonicVue } from '@ionic/vue';
+import { IonicVue } from '@ionic/vue'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -58,5 +57,5 @@ app.use(IonicVue)
 app.use(vuetify)
 
 router.isReady().then(() => {
-    app.mount('#app');
-  });
+  app.mount('#app');
+});

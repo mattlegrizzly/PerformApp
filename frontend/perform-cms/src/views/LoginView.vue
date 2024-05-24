@@ -2,64 +2,54 @@
 import { ref } from 'vue'
 import router from '@/router'
 import image from '@/assets/logo_perform.png'
+import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import '@/assets/base.css'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { useUserStore } from '@/stores/store'
-
+import { post } from '@/lib/callApi'
 const cookies = useCookies(['locale'])
 
 const email = ref('')
 const password = ref('')
 const show2 = ref(false)
-const alert = ref(false)
-const error_message = ref('error')
+const alertErr = ref(false)
+const error_message = ref('')
+const error_title = ref('')
 
 const userStore = useUserStore()
 
 const sendData = () => {
-  cookies.remove('access')
-  //A CORRIGER
-
   const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email.value, password: password.value })
+    body: { email: email.value, password: password.value }
   }
-  fetch(import.meta.env.VITE_API_URL + '/api/login/', requestOptions)
+  post('/login/', requestOptions)
     .then((response) => {
-      if (response.status >= 300) {
-        throw Error()
+      if (response.status > 300) {
+        const keys = Object.keys(response.data)
+        for (let i = 0; i < keys.length; i++) {
+          error_message.value += keys[i] + ' : ' + response.data[keys[i]] + '\n\n'
+        }
+        alertErr.value = true
+        error_title.value = 'Modification Error'
       } else {
-        return response.json()
-      }
-    })
-    .then((data) => {
-      if (data.user.is_superuser === true) {
-        console.log(data)
-        userStore.setUser(data)
+        userStore.setUser(response.user)
         var date = new Date()
         date.setDate(date.getDate() + 7)
-        cookies.set('access', data.access, { expires: date })
+        cookies.set('access', response.access, { expires: date })
         router.push('/')
         password.value = ''
         email.value = ''
-      } else {
-        throw Error("You're not allowed.")
       }
     })
     .catch((error) => {
-      console.log(error)
       if (error.message) {
         error_message.value = error.message
       } else {
+        error_title.value = 'Connexion error'
         error_message.value = 'Credential error'
       }
-      alert.value = true
+      alertErr.value = true
     })
-}
-
-const closePopup = () => {
-  alert.value = false
 }
 </script>
 
@@ -144,18 +134,12 @@ input {
 }
 </style>
 <template lang="">
-  <v-alert
-    :model-value="alert"
-    border="start"
-    close-label="Close Alert"
-    color="error"
-    title="Erreur de connexion"
-    variant="tonal"
-    closable
-    @click:close="closePopup"
-  >
-    {{ error_message }}
-  </v-alert>
+  <AlertComponents
+    :message_alert="error_message"
+    :type="'error'"
+    :title="error_title"
+    :alertValue="alertErr"
+  />
   <div class="loginContent">
     <div class="logoContent">
       <img :src="image" />
