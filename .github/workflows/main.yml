@@ -21,6 +21,11 @@ jobs:
 
             - name: Setting Env Vars
               run: |
+                  whomai
+                  exit 0
+                  
+            - name: Setting Env Vars
+              run: |
                   if ! grep -q "DB_PASSWORD=" config/.env.production; then
                   printf "\n" >> config/.env.production
                   printf "DB_PASSWORD=%s\n" "$DB_PASSWORD" >> config/.env.production
