@@ -2,16 +2,16 @@ include ./config/.env.production
 export $(shell sed 's/=.*//' config/.env.production)
 
 build:
-	@docker compose -f docker-compose.production.yml -p grizzlee-recipes --env-file config/.env.production build --no-cache
+	@docker compose --file docker-compose.production.yml -p grizzlee-recipes --env-file config/.env.production build --no-cache
 
 run:
-	@docker compose -f docker-compose.production.yml -p grizzlee-recipes --env-file config/.env.production up -d
+	@docker compose --file docker-compose.production.yml -p grizzlee-recipes --env-file config/.env.production up -d
 
 stop:
-	@docker compose -f docker-compose.production.yml -p grizzlee-recipes --env-file config/.env.production stop
+	@docker compose --file docker-compose.production.yml -p grizzlee-recipes --env-file config/.env.production stop
 
 clean_containers:
-	@docker container prune -f
+	@docker container prune --file
     
 clean_images:
-	@docker image prune -f
+	@docker image prune --file
