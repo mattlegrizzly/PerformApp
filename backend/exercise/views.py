@@ -29,7 +29,6 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
 
     def list(self, request, *args, **kwargs):
         # Appliquer l'ordre initial par id si nécessaire
-        print('list')
         if request.query_params.get("orderBy"):
             # Appliquer l'ordre initial par id si nécessaire
             order = request.query_params.get("orderBy")
@@ -37,7 +36,7 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = self.queryset.order_by("name")
             elif order == "orderByNameDesc":
                 queryset = self.queryset.order_by("-name")
-            elif order == "orderByIdAsc":
+            elif order == "orderByIdAsc" or order == "default":
                 queryset = self.queryset.order_by("id")
             elif order == "orderByIdDesc":
                 queryset = self.queryset.order_by("-id")
@@ -47,6 +46,26 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = self.queryset.order_by("-created_at")
         else:
             queryset = self.queryset.order_by("id")
+
+        # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
+
+        # Filtrer le queryset en fonction des paramètres de la requête
+        material_ids = request.query_params.getlist('material_id')
+        sport_ids = request.query_params.getlist('sport_id')
+        workzone_codes = request.query_params.getlist('workzone_code')
+
+        # Si des identifiants de matériaux sont fournis dans la requête
+        if material_ids:
+            material_ids = [int(id) for ids in material_ids for id in ids.split(',')]
+            queryset = self.queryset.filter(material_exercise__material__id__in=material_ids)
+        if sport_ids:
+            sport_ids = [int(id) for ids in sport_ids for id in ids.split(',')]
+            queryset = self.queryset.filter(sports_exercise__sport__id__in=sport_ids)
+        if workzone_codes:
+            workzone_codes = [str(id) for ids in workzone_codes for id in ids.split(',')]
+            queryset = self.queryset.filter(zone_exercises__zone__code__in=workzone_codes)
 
         # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
@@ -74,13 +93,9 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK) 
 
     def retrieve(self, request, *args, **kwargs):
-        exercise_id = self.kwargs['pk']
-        steps = ExerciseStep.objects.filter(exercise_id=exercise_id)
-        steps_serializer = ExerciseStepSerializer(steps, many=True)
-        data = steps_serializer.data
-        exercise = Exercise.objects.get(pk=exercise_id)
-        exercise_serializer = self.serializer_class(exercise)
-        return Response(data)
+        instance = self.get_object()
+        serializer = self.serializer_class(instance)
+        return Response(serializer.data)
 #------------------EXERCISE_STEPS------------------
 # List/Get ViewSet
 class ExerciseStepViewSet(viewsets.ReadOnlyModelViewSet):

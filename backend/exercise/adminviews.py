@@ -252,7 +252,6 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
 
         # Sinon, sérialiser le queryset complet
         serializer = self.get_serializer(queryset, many=True)
-
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(

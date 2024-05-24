@@ -1,0 +1,61 @@
+name: Perform Cms Continous delivery
+
+on:
+    push:
+        branches: ['production']
+
+jobs:
+    deploy:
+        runs-on: self-hosted
+
+        env:
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_USER: ${{ secrets.DB_USER }}
+            PG_USER: ${{ secrets.PG_USER }}
+            PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+            SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setting Env Vars
+              run: |
+                  if ! grep -q "DB_PASSWORD" config/.env.production; then
+                      printf "\n" >> config/.env.production
+                      printf "\nDB_PASSWORD=$DB_PASSWORD" >> config/.env.production
+                  fi
+                  if ! grep -q "DB_USER=" config/.env.production; then
+                      printf "\nDB_USER=$DB_USER" >> config/.env.production
+                  fi
+                  if ! grep -q "PG_USER=" config/.env.production; then
+                      printf "\nPG_USER=$PG_USER" >> config/.env.production
+                  fi
+                  if ! grep -q "PG_PASSWORD=" config/.env.production; then
+                      printf "\nPG_PASSWORD=$PG_PASSWORD" >> config/.env.production
+                  fi
+                  if ! grep -q "SECRET_KEY=" config/.env.production; then
+                      printf "\nSECRET_KEY=$SECRET_KEY\n" >> config/.env.production
+                  fi
+
+            - name: Stop Old Docker Compose Environment and removing persistent volumes except for database
+              run: |
+                  make -f prod.mk stop
+                  if [ "$(docker ps -a -q)" ]; then
+                    docker stop $(docker ps -a -q)
+                  fi
+                  docker rm webserver_prod
+                  docker rm vue_cms_prod
+                  docker volume rm performapp_vue_cms_prod
+                  docker volume rm performapp_caddy_config
+                  docker volume rm performapps_caddy_data
+            - name: Build Updated Docker Compose Environment
+              run: |
+                  make -f prod.mk build
+            - name: Run Updated Docker Compose Environment
+              run: |
+                  make -f prod.mk run
+            - name: Remove Unused Docker Compose Environment
+              run: |
+                  make -f prod.mk clean_containers
+                  make -f prod.mk clean_images

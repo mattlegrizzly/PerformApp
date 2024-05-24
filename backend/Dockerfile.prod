@@ -1,0 +1,36 @@
+# Use an official Python base image
+FROM python:3.9
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+
+RUN apt-get update \
+  # dependencies for building Python packages
+  && apt-get install -y build-essential \
+  # psycopg2 dependencies
+  && apt-get install -y libpq-dev \
+  # postgres client
+  && apt-get install -y postgresql-client \
+  # install pipx  
+  && apt-get install -y  pip \ 
+  # install poetry
+  && pip install poetry 
+
+WORKDIR /srv/app
+
+# Requirements are installed here to ensure they will be cached.
+COPY pyproject.toml . 
+COPY poetry.lock .
+
+RUN poetry config virtualenvs.create false
+RUN poetry install
+
+COPY entrypoint.local.sh /entrypoint.local.sh
+
+COPY . .
+
+RUN chmod a+x /entrypoint.local.sh
+
+EXPOSE $PORT
+
+ENTRYPOINT ["/entrypoint.local.sh"]

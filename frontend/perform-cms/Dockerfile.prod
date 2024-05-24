@@ -1,0 +1,17 @@
+FROM node:alpine as build_admin
+
+WORKDIR /app
+
+COPY . /app
+
+RUN npm install
+
+ARG VITE_API_URL
+
+RUN npm run build
+
+FROM node:alpine as run_admin
+
+COPY --from=build_admin /app/dist /var/www/admin/
+
+EXPOSE 5172

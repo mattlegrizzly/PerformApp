@@ -29,10 +29,13 @@ SECRET_KEY = 'django-insecure-2nyzquon+fe1$y($h6(gzjc1e7hjfb35lbo6rmtkpbgxursh%*
 DEBUG = True
 
 ADMIN_ENABLED = False
-ALLOWED_HOSTS=os.getenv("ALLOWED_HOSTS").split(",")
+#ALLOWED_HOSTS=os.getenv("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS=['*']
 API_URL = os.getenv("API_URL")
 AUTH_USER_MODEL = "cms.User"
-CORS_ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
+#CORS_ALLOWED_ORIGINS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
 DEBUG = bool(os.getenv("DEBUG"))
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LANGUAGE_CODE = "en-us"
