@@ -2,7 +2,7 @@ name: Perform Cms Continous delivery
 
 on:
     push:
-        branches: ['production']
+        branches: ["production"]
 
 jobs:
     deploy:
@@ -21,21 +21,25 @@ jobs:
 
             - name: Setting Env Vars
               run: |
-                  if ! grep -q "DB_PASSWORD" config/.env.production; then
-                    printf "\n" >> config/.env.production
-                    printf "\nDB_PASSWORD=$DB_PASSWORD" >> config/.env.production
+                  if ! grep -q "DB_PASSWORD=" config/.env.production; then
+                  printf "\n" >> config/.env.production
+                  printf "DB_PASSWORD=%s\n" "$DB_PASSWORD" >> config/.env.production
                   fi
+
                   if ! grep -q "DB_USER=" config/.env.production; then
-                    printf "\nDB_USER=$DB_USER" >> config/.env.production
+                  printf "DB_USER=%s\n" "$DB_USER" >> config/.env.production
                   fi
+
                   if ! grep -q "PG_USER=" config/.env.production; then
-                    printf "\nPG_USER=$PG_USER" >> config/.env.production
+                  printf "PG_USER=%s\n" "$PG_USER" >> config/.env.production
                   fi
+
                   if ! grep -q "PG_PASSWORD=" config/.env.production; then
-                    printf "\nPG_PASSWORD=$PG_PASSWORD" >> config/.env.production
+                  printf "PG_PASSWORD=%s\n" "$PG_PASSWORD" >> config/.env.production
                   fi
+
                   if ! grep -q "SECRET_KEY=" config/.env.production; then
-                    printf "\nSECRET_KEY=$SECRET_KEY\n" >> config/.env.production
+                  printf "SECRET_KEY=%s\n" "$SECRET_KEY" >> config/.env.production
                   fi
 
             - name: Stop Old Docker Compose Environment and removing persistent volumes except for database
