@@ -1,0 +1,127 @@
+version: '3.9'
+name: performapp
+
+services:
+    postgres:
+        image: postgres:15.3-bullseye
+        container_name: postgres_db_prod
+        environment:
+            - PGDATA=var/lib/postgresql/data/pgdata
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_USER=${DB_USER}
+        networks:
+            - perform-app_network
+        restart: always
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    postgres_backup:
+        build:
+            context: ./db
+            dockerfile: Dockerfile
+        container_name: postgres_backup_prod
+        environment:
+            - PGDATABASE=${DB_NAME}
+            - PGPASSWORD=${DB_PASSWORD}
+            - PGUSER=${DB_USER}
+            - PGHOST=${DB_HOST}
+        depends_on:
+            - postgres
+        networks:
+            - perform-app_network
+        volumes:
+            - ./db/backup:/backup
+
+    postgres_admin:
+        image: dpage/pgadmin4:latest
+        container_name: postgres_admin_prod
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=${PG_USER}
+            - PGADMIN_DEFAULT_PASSWORD=${PG_PASSWORD}
+        depends_on:
+            - postgres
+            - postgres_backup
+        networks:
+            - perform-app_network
+        ports:
+            - '${PG_PORT}:80'
+
+    django:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile.prod
+        container_name: django_prod
+        tty: true
+        environment:
+            - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+            - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+            - API_URL=${API_URL}
+            - DEBUG=${DEBUG}
+            - GUNICORN_BIND_HOST=${GUNICORN_BIND_HOST}
+            - PORT=${PORT}
+            - SECRET_KEY=${SECRET_KEY}
+            - DB_NAME=${DB_NAME}
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+        depends_on:
+            - postgres
+            - postgres_backup
+        networks:
+            - perform-app_network
+        ports:
+            - '${PORT}:8000'
+        restart: always
+        volumes:
+            - media:/srv/app/media
+            - static:/srv/app/static
+
+    vue-admin:
+        build:
+            context: ./frontend/perform-cms
+            dockerfile: Dockerfile.prods
+        container_name: vue_cms_prod
+        environment:
+            - VITE_API_URL=${VITE_API_URL}
+        ports:
+            - '5172:5172'
+        networks:
+            - perform-app_network
+        restart: always
+        tty: true
+        volumes:
+            - build_admin:/var/www/admin
+
+    webserver:
+        image: caddy:2
+        container_name: webserver_prod
+        ports:
+            - '8080:80'
+            - '443:443'
+        networks:
+            - perform-app_network
+        restart: unless-stopped
+        volumes:
+            - ./webserver/prod/Caddyfile:/etc/caddy/Caddyfile
+            - ./certs:/ssl/certs
+            - caddy_data:/data
+            - caddy_config:/config
+            - media:/srv/app/media
+            - static:/srv/app/static
+            - build_client:/var/www/client/
+            - build_admin:/var/www/admin/
+
+networks:
+    perform-app_network:
+
+volumes:
+    postgres_data:
+    static:
+    media:
+    caddy_data:
+    caddy_config:
+    build_client:
+    build_admin:
