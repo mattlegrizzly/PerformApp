@@ -4,7 +4,7 @@ import { useCookies } from '@vueuse/integrations/useCookies'
 
 const cookies = useCookies(['locale'])
 
-const baseUrl = 'http://api.grizzlyperform.app/'
+const baseUrl = 'https://api.grizzlyperform.app/'
 
 const verifyToken = async () => {
   const access = cookies.get('access')
