@@ -21,7 +21,7 @@ jobs:
 
             - name: Setting Env Vars
               run: |
-                  whomai
+                  whoami
                   exit 0
                   
             - name: Setting Env Vars
