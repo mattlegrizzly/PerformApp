@@ -1,0 +1,31 @@
+front.localhost {
+
+	encode gzip
+	
+	handle /static/* {
+		root * /srv/app
+		file_server
+	}
+
+	handle /media/* {
+		root * /srv/app
+		file_server
+	}
+
+	handle {
+		reverse_proxy /backend/* django:8000
+	}
+
+	log
+}
+
+admin.localhost {
+	
+	encode gzip
+
+    root * /var/www/admin/
+	try_files {path} /index.html
+
+    file_server
+    
+} 
