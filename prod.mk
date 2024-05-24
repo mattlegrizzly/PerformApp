@@ -21,7 +21,7 @@ clean_images:
 	@docker image prune -f
 
 createsuperuser:
-	@docker compose --f docker-compose.production.yml -p perform-app exec $(API) python manage.py createsuperuser
+	@docker compose -f docker-compose.production.yml exec $(API) python manage.py createsuperuser
 
 init_db:
-	@docker compose -f docker-compose.production.yml -p perform-app --env-file config/.env.production exec -u $(DB_USER) postgres psql $(DB_NAME) $(DB_USER) -f /docker-entrypoint-initdb.d/init.sql
+	@docker compose -f docker-compose.production.yml --env-file config/.env.production exec -u $(DB_USER) postgres psql $(DB_NAME) $(DB_USER) -f /docker-entrypoint-initdb.d/init.sql
