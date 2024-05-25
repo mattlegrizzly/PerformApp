@@ -45,7 +45,7 @@ create_superuser:
 	@docker compose -f $(CMP) --env-file $(ENV) exec $(API) python manage.py createsuperuser
 
 init_db:
-	@docker compose -f $(CMP) --env-file $(ENV) exec -u $(DB_USER) postgres psql $(DB_NAME) $(DB_USER) -f /docker-entrypoint-initdb.d/init.sql
+	@docker compose -f $(CMP) --env-file $(ENV) exec postgres psql $(DB_NAME) $(DB_USER) -f /docker-entrypoint-initdb.d/init.sql
 
 run_django:
 	@docker exec -d $(API) python manage.py runserver 0.0.0.0:8000
