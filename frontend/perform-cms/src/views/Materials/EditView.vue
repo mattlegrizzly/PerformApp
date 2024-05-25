@@ -8,6 +8,7 @@ import type IERequestOptions from '@/types/request'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import router from '@/router'
+import DeleteModalComponent from '@/components/DeleteModalComponent/DeleteModalComponent.vue'
 const routerNav = useRoute()
 
 const name = ref('')
@@ -115,13 +116,21 @@ onMounted(() => {
       :title="error_title"
       :alertValue="alertErr"
     />
-    <NavButton
-      class="returnBack"
-      :text="'Retour'"
-      :url="'/materials'"
-      :back="'back'"
-      prepend-icon="mdi-arrow-left"
-    />
+    <div class="headerBtns">
+      <NavButton
+        class="returnBack"
+        :text="'Retour'"
+        :url="'/materials'"
+        :back="'back'"
+        prepend-icon="mdi-arrow-left"
+      />
+      <DeleteModalComponent
+        :item="name"
+        url="/admin/materials"
+        :id="routerNav.params.material_id"
+        list="materials"
+      />
+    </div>
     <h1>Editer un Matériel</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">

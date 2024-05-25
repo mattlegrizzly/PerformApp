@@ -92,7 +92,6 @@ const addMaterialFilter = (id: any) => {
     const index = materials_id_filter.value.indexOf(id)
     materials_id_filter.value.splice(index, 1)
   }
-  console.log(materials_id_filter.value)
 }
 
 const setMuscleSelected = (key: string, action: string) => {
@@ -213,19 +212,16 @@ const getExercises = async () => {
 }
 
 const pushData = (params_push: any) => {
-  console.log(muscle_selected)
   params_push.map((elem: any) => {
     const ids = navRoute.query[elem.query_key] as any
     if (ids) {
       const array = ids.split(',')
       array.map((id: any) => {
-        console.log(elem)
         if (elem.query_key != 'workzone_code') elem.array_name.value.push(parseInt(id))
         else elem.array_name.value.push(id)
       })
     }
   })
-  console.log(muscle_selected)
 }
 
 const jointByComa = (array: Array<string>) => {

@@ -17,8 +17,7 @@ const muscles = ref([])
 const videoController = ref(document.createElement('video'))
 
 const exercise: any = ref({
-  name: '',
-  description: ''
+  name: ''
 })
 const steps_exercise: any = ref([])
 
@@ -61,7 +60,6 @@ const sendData = async () => {
   const option = {
     body: {
       name: exercise.value.name,
-      description: exercise.value.description,
       material_ids: materials_selected.value,
       sports_ids: sport_selected.value
     }
@@ -203,15 +201,6 @@ onMounted(() => {
           label="Nom du matériel * "
           variant="filled"
         ></v-text-field>
-      </div>
-      <div class="inputFormDiv">
-        <v-textarea
-          label="Description *"
-          name="input-7-1"
-          v-model="exercise.description"
-          variant="filled"
-          auto-grow
-        ></v-textarea>
       </div>
       <div class="inputFormDiv">
         <v-file-input

@@ -7,6 +7,7 @@ import { get, put } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
+import DeleteModalComponent from '@/components/DeleteModalComponent/DeleteModalComponent.vue'
 import router from '@/router'
 
 const routerNav = useRoute()
@@ -85,7 +86,16 @@ onMounted(() => {
       :title="error_title"
       :alertValue="alertErr"
     />
-    <NavButton class="returnBack" :text="'Retour'" :url="'/sports'" :back="'back'" />
+    <div class="headerBtns">
+      <NavButton class="returnBack" :text="'Retour'" :url="'/sports'" :back="'back'" />
+
+      <DeleteModalComponent
+        :item="name"
+        url="/admin/sports"
+        :id="routerNav.params.sport_id"
+        list="sports"
+      />
+    </div>
     <h1>Editer un sport</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">

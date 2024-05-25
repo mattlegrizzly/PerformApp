@@ -30,8 +30,6 @@ const muscleClicked = (event: any) => {
         muscle.setAttribute('selected', 'true')
       }
     })
-    // Déclencher un événement ou effectuer une action en fonction du muscle cliqué
-    //console.log('Muscle cliqué:', muscle)
   }
 }
 
