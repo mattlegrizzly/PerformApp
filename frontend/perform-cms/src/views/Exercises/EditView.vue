@@ -12,7 +12,7 @@ import { nanoid } from 'nanoid'
 import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
 import './exercises.css'
 import type { Step, Muscle } from '@/types/types'
-
+import DeleteModalComponent from '@/components/DeleteModalComponent/DeleteModalComponent.vue'
 const routerNav = useRoute()
 
 //Data qui vont être utilisé dans les menus déroulants
@@ -65,7 +65,6 @@ const sendData = async () => {
   const option = {
     body: {
       name: exercise.value.name,
-      description: exercise.value.description,
       material_ids: materials_selected.value,
       sports_ids: sport_selected.value,
       muscles_id: muscle_selected.value
@@ -77,7 +76,6 @@ const sendData = async () => {
   }
   patch('/admin/exercises/' + id + '/', option, true, isFormData).then((res) => {
     if (res.status > 300) {
-      console.log('res, ', res)
       const keys = Object.keys(res.data)
       for (let i = 0; i < keys.length; i++) {
         error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
@@ -235,13 +233,21 @@ onMounted(() => {
       :title="error_title"
       :alertValue="alertErr"
     />
-    <NavButton
-      class="returnBack"
-      :text="'Retour'"
-      :url="'/exercises'"
-      :back="'back'"
-      prepend-icon="mdi-arrow-left"
-    />
+    <div class="headerBtns">
+      <NavButton
+        class="returnBack"
+        :text="'Retour'"
+        :url="'/exercises'"
+        :back="'back'"
+        prepend-icon="mdi-arrow-left"
+      />
+      <DeleteModalComponent
+        :item="exercise.name"
+        url="/admin/exercises"
+        :id="routerNav.params.exercise_id"
+        list="exercises"
+      />
+    </div>
     <h1>Editer un Exercise</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">
@@ -250,15 +256,6 @@ onMounted(() => {
           label="Nom du matériel * "
           variant="filled"
         ></v-text-field>
-      </div>
-      <div class="inputFormDiv">
-        <v-textarea
-          label="Description *"
-          name="input-7-1"
-          v-model="exercise.description"
-          variant="filled"
-          auto-grow
-        ></v-textarea>
       </div>
       <div class="inputFormDiv">
         <v-file-input

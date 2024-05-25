@@ -7,9 +7,10 @@ import { patch, get } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
 import router from '@/router'
 import NavButton from '@/components/NavButton/NavButton.vue'
+import DeleteModalComponent from '@/components/DeleteModalComponent/DeleteModalComponent.vue'
 import { useRoute } from 'vue-router'
 
-const user : any = ref({})
+const user: any = ref({})
 
 const navRoute = useRoute()
 const alertErr = ref(false)
@@ -66,7 +67,7 @@ const sendData = (quitForm: boolean) => {
       isFormData.value = false
     }
   } else {
-    if(image_url.value) {
+    if (image_url.value) {
       option.body['profile_picture'] = image_url.value
       isFormData.value = true
     } else {
@@ -182,7 +183,21 @@ onMounted(() => {
     {{ success_message }}
   </v-alert>
   <div class="mainWrapper">
-    <NavButton class="returnBack" :text="'Retour'" :url="'/users'" prepend-icon="mdi-arrow-left" />
+    <div class="headerBtns">
+      <NavButton
+        class="returnBack"
+        :text="'Retour'"
+        :url="'/users'"
+        prepend-icon="mdi-arrow-left"
+      />
+
+      <DeleteModalComponent
+        :item="user.last_name + ' ' + user.first_name"
+        url="/admin/users_all"
+        :id="navRoute.params.user_id"
+        list="users"
+      />
+    </div>
     <h1>Editer un Utilisateur</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">

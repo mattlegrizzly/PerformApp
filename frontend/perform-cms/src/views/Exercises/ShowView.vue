@@ -82,10 +82,7 @@ onMounted(() => {
     <h1>Carte de l'exercise : {{ exercise === undefined ? '' : exercise.name }}</h1>
     <h2 class="showTitle">Titre</h2>
     <p>{{ exercise === undefined ? '' : exercise.name }}</p>
-    <h2 class="showTitle">Description</h2>
-    <p>
-      {{ exercise.description }}
-    </p>
+
     <h2 class="showTitle">Matériels</h2>
     <div v-for="(element, index) in exercise.material_exercise" :key="index">
       <p>- {{ element.material.name }}</p>

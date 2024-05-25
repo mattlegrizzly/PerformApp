@@ -38,7 +38,6 @@ class Material(models.Model):
 
 class Exercise(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=255)
     video = models.FileField(upload_to=upload_to_video, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)

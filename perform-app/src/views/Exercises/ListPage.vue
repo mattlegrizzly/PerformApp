@@ -125,7 +125,6 @@ const showExercises = ref(true);
 const exercises: any = ref([]);
 
 const goPage = (id: any) => {
-  console.log(id);
   router.push({ name: "ExercisesView", params: { id: id } });
 };
 

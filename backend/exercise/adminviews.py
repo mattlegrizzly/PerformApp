@@ -173,7 +173,7 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ["name", "description", "materials__name", "sports__name"]
+    search_fields = ["name", "materials__name", "sports__name"]
 
     @extend_schema(
         tags=['Admin - Exercise'],
