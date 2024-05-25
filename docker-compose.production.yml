@@ -1,5 +1,5 @@
 version: '3.9'
-name: performapp
+name: perform-app
 
 services:
     postgres:
@@ -82,7 +82,7 @@ services:
     vue-admin:
         build:
             context: ./frontend/perform-cms
-            dockerfile: Dockerfile.prods
+            dockerfile: Dockerfile.prod
         container_name: vue_cms_prod
         environment:
             - VITE_API_URL=${VITE_API_URL}

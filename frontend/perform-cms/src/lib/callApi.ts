@@ -4,7 +4,7 @@ import { useCookies } from '@vueuse/integrations/useCookies'
 
 const cookies = useCookies(['locale'])
 
-const baseUrl = import.meta.env.VITE_API_URL + '/'
+const baseUrl = import.meta.env.VITE_API_URL
 
 const verifyToken = async () => {
   const access = cookies.get('access')

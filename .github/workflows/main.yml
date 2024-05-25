@@ -2,7 +2,7 @@ name: Perform Cms Continous delivery
 
 on:
     push:
-        branches: ['production']
+        branches: ["production"]
 
 jobs:
     deploy:
@@ -17,38 +17,57 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Setting Env Vars
               run: |
-                  if ! grep -q "DB_PASSWORD" config/.env.production; then
-                      printf "\n" >> config/.env.production
-                      printf "\nDB_PASSWORD=$DB_PASSWORD" >> config/.env.production
+                  whoami
+                  exit 0
+                  
+            - name: Setting Env Vars
+              run: |
+                  if ! grep -q "DB_PASSWORD=" config/.env.production; then
+                  printf "\n" >> config/.env.production
+                  printf "DB_PASSWORD=%s\n" "$DB_PASSWORD" >> config/.env.production
                   fi
+
                   if ! grep -q "DB_USER=" config/.env.production; then
-                      printf "\nDB_USER=$DB_USER" >> config/.env.production
+                  printf "DB_USER=%s\n" "$DB_USER" >> config/.env.production
                   fi
+
                   if ! grep -q "PG_USER=" config/.env.production; then
-                      printf "\nPG_USER=$PG_USER" >> config/.env.production
+                  printf "PG_USER=%s\n" "$PG_USER" >> config/.env.production
                   fi
+
                   if ! grep -q "PG_PASSWORD=" config/.env.production; then
-                      printf "\nPG_PASSWORD=$PG_PASSWORD" >> config/.env.production
+                  printf "PG_PASSWORD=%s\n" "$PG_PASSWORD" >> config/.env.production
                   fi
+
                   if ! grep -q "SECRET_KEY=" config/.env.production; then
-                      printf "\nSECRET_KEY=$SECRET_KEY\n" >> config/.env.production
+                  printf "SECRET_KEY=%s\n" "$SECRET_KEY" >> config/.env.production
                   fi
 
             - name: Stop Old Docker Compose Environment and removing persistent volumes except for database
               run: |
                   make -f prod.mk stop
                   if [ "$(docker ps -a -q)" ]; then
-                    docker stop $(docker ps -a -q)
+                      docker stop $(docker ps -a -q)
                   fi
-                  docker rm webserver_prod
-                  docker rm vue_cms_prod
-                  docker volume rm performapp_vue_cms_prod
-                  docker volume rm performapp_caddy_config
-                  docker volume rm performapps_caddy_data
+                  if [ "$(docker ps -q -f name=webserver_prod)" ]; then
+                      docker rm webserver_prod
+                  fi
+                  if [ "$(docker ps -q -f name=vue_cms_prod)" ]; then
+                      docker rm vue_cms_prod
+                  fi
+                  if [ "$(docker volume ls -q -f name=performapp_vue_cms_prod)" ]; then
+                        docker volume rm performapp_vue_cms_prod
+                  fi
+                  if [ "$(docker volume ls -q -f name=performapp_caddy_config)" ]; then
+                        docker volume rm performapp_caddy_config
+                  fi
+                  if [ "$(docker volume ls -q -f name=performapps_caddy_data)" ]; then
+                        docker volume rm performapps_caddy_data
+                  fi
             - name: Build Updated Docker Compose Environment
               run: |
                   make -f prod.mk build
