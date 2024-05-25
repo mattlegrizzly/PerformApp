@@ -26,3 +26,33 @@
         file_server
     }
 }
+
+:443 {
+
+    encode gzip
+
+    handle /static/* {
+        root * /srv/app/static
+        file_server
+    }
+
+    handle /media/* {
+        root * /srv/app/media
+        file_server
+    }
+
+    handle /api/* {
+        reverse_proxy /backend/* django:8000
+    }
+
+    handle {
+
+        encode gzip
+
+        root * /var/www/admin/
+        try_files {path} /index.html
+
+        file_server
+    }
+}
+
