@@ -62,6 +62,9 @@ jobs:
           if [ "$(docker volume ls -q -f name=perform-app-vue-admin)" ]; then
                 docker volume rm perform-app-vue-admin
           fi
+          if [ "$(docker volume ls -q -f name=perform-app_build_admin)" ]; then
+                docker volume rm perform-app_build_admin
+          fi
           docker ps -a -q --filter "volume=perform-app_caddy_config" | xargs -r docker rm -f
           if [ "$(docker volume ls -q -f name=perform-app_caddy_config)" ]; then
             docker volume rm perform-app_caddy_config
