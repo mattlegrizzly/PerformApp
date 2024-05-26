@@ -30,7 +30,6 @@ DEBUG = True
 
 ADMIN_ENABLED = False
 ALLOWED_HOSTS=os.getenv("ALLOWED_HOSTS").split(",")
-ALLOWED_HOSTS=['localhost']
 API_URL = os.getenv("API_URL")
 AUTH_USER_MODEL = "cms.User"
 CORS_ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
