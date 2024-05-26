@@ -67,9 +67,6 @@ jobs:
           if [ "$(docker volume ls -q -f name=perform-app_vue_cms_prod)" ]; then
                 docker volume rm perform-app_vue_cms_prod
           fi
-          if [ "$(docker volume ls -q -f name=perform-app_caddy_config)" ]; then
-                docker volume rm perform-app_caddy_config
-          fi
           if [ "$(docker volume ls -q -f name=perform-app_caddy_data)" ]; then
                 docker volume rm perform-app_caddy_data
           fi
