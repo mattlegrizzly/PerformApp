@@ -81,6 +81,8 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
                 to_emails=recipient_list,
                 subject='Perform App Registration',
                 html_content= f'Hello,\n\nYour account has been created successfully. Here are your credentials:\n\nEmail: {user.email}\nPassword: {request.data.get("password")}\n\nThank you for registering!')
+            
+            print ('api ' , settings.SENDGRID_API_KEY)
             try:
                 sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
                 response = sg.send(message)
