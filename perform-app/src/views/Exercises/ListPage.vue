@@ -149,7 +149,7 @@ const handleOrderChange = (event: any) => {
     option.sport_id = sport_selected.value;
   } */
 
-  get("/exercises", option, false).then((res) => {
+  get("/exercises/", option, false).then((res) => {
     if (res.status > 300) {
     } else {
       exercises.value = res.results;
@@ -166,7 +166,7 @@ const handleSearchInput = (event: any) => {
     },
   }; /* as IERequestOptions; */
   if (orderBy.value) {
-    option.orderBy.id = orderBy.value;
+    option.orderBy = orderBy.value;
   }
   /*
   if (materials_id_filter.value.length > 0) {
