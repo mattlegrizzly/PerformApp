@@ -1,80 +1,85 @@
 name: Perform Cms Continous delivery
 
 on:
-    push:
-        branches: ["production"]
+  push:
+    branches: ["production"]
 
 jobs:
-    deploy:
-        runs-on: self-hosted
+  deploy:
+    runs-on: self-hosted
 
-        env:
-            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-            DB_USER: ${{ secrets.DB_USER }}
-            PG_USER: ${{ secrets.PG_USER }}
-            PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
-            SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    env:
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_USER: ${{ secrets.DB_USER }}
+      PG_USER: ${{ secrets.PG_USER }}
+      PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      SENDGRID_API: ${{ secrets.SENDGRID_API }}
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            - name: Setting Env Vars
-              run: |
-                  whoami
-                  exit 0
-                  
-            - name: Setting Env Vars
-              run: |
-                  if ! grep -q "DB_PASSWORD=" config/.env.production; then
-                  printf "\n" >> config/.env.production
-                  printf "DB_PASSWORD=%s\n" "$DB_PASSWORD" >> config/.env.production
-                  fi
+      - name: Setting Env Vars
+        run: |
+          whoami
+          exit 0
 
-                  if ! grep -q "DB_USER=" config/.env.production; then
-                  printf "DB_USER=%s\n" "$DB_USER" >> config/.env.production
-                  fi
+      - name: Setting Env Vars
+        run: |
+          if ! grep -q "DB_PASSWORD=" config/.env.production; then
+          printf "\n" >> config/.env.production
+          printf "DB_PASSWORD=%s\n" "$DB_PASSWORD" >> config/.env.production
+          fi
 
-                  if ! grep -q "PG_USER=" config/.env.production; then
-                  printf "PG_USER=%s\n" "$PG_USER" >> config/.env.production
-                  fi
+          if ! grep -q "DB_USER=" config/.env.production; then
+          printf "DB_USER=%s\n" "$DB_USER" >> config/.env.production
+          fi
 
-                  if ! grep -q "PG_PASSWORD=" config/.env.production; then
-                  printf "PG_PASSWORD=%s\n" "$PG_PASSWORD" >> config/.env.production
-                  fi
+          if ! grep -q "PG_USER=" config/.env.production; then
+          printf "PG_USER=%s\n" "$PG_USER" >> config/.env.production
+          fi
 
-                  if ! grep -q "SECRET_KEY=" config/.env.production; then
-                  printf "SECRET_KEY=%s\n" "$SECRET_KEY" >> config/.env.production
-                  fi
+          if ! grep -q "PG_PASSWORD=" config/.env.production; then
+          printf "PG_PASSWORD=%s\n" "$PG_PASSWORD" >> config/.env.production
+          fi
 
-            - name: Stop Old Docker Compose Environment and removing persistent volumes except for database
-              run: |
-                  make -f prod.mk stop
-                  if [ "$(docker ps -a -q)" ]; then
-                      docker stop $(docker ps -a -q)
-                  fi
-                  if [ "$(docker ps -q -f name=webserver_prod)" ]; then
-                      docker rm webserver_prod
-                  fi
-                  if [ "$(docker ps -q -f name=vue_cms_prod)" ]; then
-                      docker rm vue_cms_prod
-                  fi
-                  if [ "$(docker volume ls -q -f name=performapp_vue_cms_prod)" ]; then
-                        docker volume rm performapp_vue_cms_prod
-                  fi
-                  if [ "$(docker volume ls -q -f name=performapp_caddy_config)" ]; then
-                        docker volume rm performapp_caddy_config
-                  fi
-                  if [ "$(docker volume ls -q -f name=performapps_caddy_data)" ]; then
-                        docker volume rm performapps_caddy_data
-                  fi
-            - name: Build Updated Docker Compose Environment
-              run: |
-                  make -f prod.mk build
-            - name: Run Updated Docker Compose Environment
-              run: |
-                  make -f prod.mk run
-            - name: Remove Unused Docker Compose Environment
-              run: |
-                  make -f prod.mk clean_containers
-                  make -f prod.mk clean_images
+          if ! grep -q "SECRET_KEY=" config/.env.production; then
+          printf "SECRET_KEY=%s\n" "$SECRET_KEY" >> config/.env.production
+          fi
+
+          if ! grep -q "SENDGRID_API=" config/.env.production; then
+          printf "SENDGRID_API=%s\n" "$SENDGRID_API" >> config/.env.production
+          fi
+
+      - name: Stop Old Docker Compose Environment and removing persistent volumes except for database
+        run: |
+          make -f prod.mk stop
+          if [ "$(docker ps -a -q)" ]; then
+              docker stop $(docker ps -a -q)
+          fi
+          if [ "$(docker ps -q -f name=webserver_prod)" ]; then
+              docker rm webserver_prod
+          fi
+          if [ "$(docker ps -q -f name=vue_cms_prod)" ]; then
+              docker rm vue_cms_prod
+          fi
+          if [ "$(docker volume ls -q -f name=performapp_vue_cms_prod)" ]; then
+                docker volume rm performapp_vue_cms_prod
+          fi
+          if [ "$(docker volume ls -q -f name=performapp_caddy_config)" ]; then
+                docker volume rm performapp_caddy_config
+          fi
+          if [ "$(docker volume ls -q -f name=performapps_caddy_data)" ]; then
+                docker volume rm performapps_caddy_data
+          fi
+      - name: Build Updated Docker Compose Environment
+        run: |
+          make -f prod.mk build
+      - name: Run Updated Docker Compose Environment
+        run: |
+          make -f prod.mk run
+      - name: Remove Unused Docker Compose Environment
+        run: |
+          make -f prod.mk clean_containers
+          make -f prod.mk clean_images

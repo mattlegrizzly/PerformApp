@@ -25,13 +25,13 @@ fi
 echo "pg_dump -h $PGHOST -U $PGUSER -d $PGDATABASE -a -w -F p > /backup/db_backup_\$(date +\%Y\%m\%d\%H\%M).sql" > /backup.sh
 chmod a+x /backup.sh
 
-# Check if there are existing cron jobs
-if crontab -l &> /dev/null; then
-    # If there are, append the new job
-    (crontab -l; echo "0 0 * * * bash /backup.sh > /var/log/backup.log 2>&1") | crontab -
+# Vérifie si le crontab de l'utilisateur github_runner existe
+if sudo -u github_runner crontab -l &> /dev/null; then
+    # Si des tâches cron existent, ajoutez la nouvelle tâche
+    (sudo -u github_runner crontab -l; echo "0 0 * * * /backup.sh > /var/log/backup.log 2>&1") | sudo -u github_runner crontab -
 else
-    # If there aren't, install the new job
-	echo "0 0 * * * bash /backup.sh > /var/log/backup.log 2>&1" | crontab -
+    # Si aucune tâche cron n'existe, créez une nouvelle crontab avec la tâche
+    echo "0 0 * * * /backup.sh > /var/log/backup.log 2>&1" | sudo -u github_runner crontab -
 fi
 
 # Create the log file if it doesn't exist
