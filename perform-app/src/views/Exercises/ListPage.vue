@@ -1,4 +1,34 @@
-<style scoped></style>
+<style scoped>
+.orderBy {
+  width: 100%;
+  right: 0px;
+}
+
+.orderBy .v-field__field {
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+
+.orderBy .v-field__field .v-field__input {
+  padding: 0px !important;
+  padding-left: 20px !important;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  font-size: 14px;
+}
+
+.orderByParent {
+  width: 45%;
+  display: flex;
+  justify-content: end;
+}
+
+.orderBy .v-input .v-input__details {
+  display: none;
+}
+</style>
 
 <template>
   <ion-page>
@@ -11,51 +41,59 @@
         <div class="filter-div">
           <ion-button>Filtres</ion-button>
           <div class="orderByParent">
+            <v-select :items="order" :model-value="orderBy" item-title="value" item-value="id"
+              @update:modelValue="changeOrder($event)"></v-select>
             <div class="orderBy">
-              <label>Trier par:</label>
-              <v-select :items="order" :model-value="orderBy" item-title="value" item-value="id"
-                @update:modelValue="changeOrder($event)"></v-select>
             </div>
           </div>
         </div>
       </div>
-      <ion-segment @ionChange="handleChange($event)" value="all">
-        <ion-segment-button value="all">
-          <ion-label>Tous les exercices</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="favorites">
-          <ion-label>Mes favoris</ion-label>
-        </ion-segment-button>
-      </ion-segment>
+      <v-tabs v-model="tab">
+        <v-tab value="one">Tous les exercices</v-tab>
+        <v-tab value="two">Mes favoris</v-tab>
+      </v-tabs>
     </div>
 
     <ion-content color="light">
-      <ion-list v-if="showExercises" class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id"
-        @click="goPage(exercise.id)">
-        <ion-item>
-          <div class="exercice-img">
-            <label>{{ exercise.name[0] }}</label>
-          </div>
-          <ion-label>{{ exercise.name }}</ion-label>
-          <ion-icon :icon="chevronForwardOutline"></ion-icon>
-        </ion-item>
-      </ion-list>
-      <ion-list v-if="!showExercises" class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id">
-        <ion-item>
-          <div class="exercice-img">
-            <label>oui</label>
-          </div>
-          <ion-label>oui</ion-label>
-          <ion-icon :icon="chevronForwardOutline"></ion-icon>
-        </ion-item>
-        <ion-item>
-          <div class="exercice-img">
-            <label>{{ exercise.name[0] }}</label>
-          </div>
-          <ion-label>{{ exercise.name }}</ion-label>
-          <ion-icon :icon="chevronForwardOutline"></ion-icon>
-        </ion-item>
-      </ion-list>
+      <v-card-text>
+        <v-tabs-window v-model="tab">
+          <v-tabs-window-item value="one">
+            <ion-list class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id"
+              @click="goPage(exercise.id)">
+              <ion-item>
+                <div class="exercice-img">
+                  <label>{{ exercise.name[0] }}</label>
+                </div>
+                <ion-label>{{ exercise.name }}</ion-label>
+                <ion-icon :icon="chevronForwardOutline"></ion-icon>
+              </ion-item>
+            </ion-list>
+          </v-tabs-window-item>
+
+          <v-tabs-window-item value="two">
+
+            <ion-list class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id">
+              <ion-item>
+                <div class="exercice-img">
+                  <label>oui</label>
+                </div>
+                <ion-label>oui</ion-label>
+                <ion-icon :icon="chevronForwardOutline"></ion-icon>
+              </ion-item>
+              <ion-item>
+                <div class="exercice-img">
+                  <label>{{ exercise.name[0] }}</label>
+                </div>
+                <ion-label>{{ exercise.name }}</ion-label>
+                <ion-icon :icon="chevronForwardOutline"></ion-icon>
+              </ion-item>
+            </ion-list>
+          </v-tabs-window-item>
+
+        </v-tabs-window>
+      </v-card-text>
+
+
     </ion-content>
   </ion-page>
 </template>
@@ -92,6 +130,7 @@ const order = [
   { id: "default", value: "Par défaut" },
 ];
 
+const tab = ref(null)
 const searchValue = ref("");
 const orderBy = ref({ id: "default", value: "Par défaut" });
 const showExercises = ref(true);
