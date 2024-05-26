@@ -21,9 +21,11 @@
     border-radius: 20px;
     min-height: 0px;
     height: 40px;
+    border-color: var(--ion-item-border-color, var(--ion-border-color, var(--ion-color-step-250, var(--ion-background-color-step-250, #c8c7cc))));
+    border: solid 1px;
 }
 
-#search-input .input-wrapper{
+#search-input .input-wrapper {
     padding-left: 20px;
 }
 
@@ -62,10 +64,10 @@ ion-segment-button ion-label {
     display: flex;
     align-items: center;
     border-radius: 5px;
-    border : 1px solid #d4d4d4;
+    border: 1px solid #d4d4d4;
 }
 
-.filter-div ion-list ion-item{
+.filter-div ion-list ion-item {
     display: flex;
     align-items: center;
     height: 40px !important;
@@ -112,6 +114,22 @@ ion-popover .popover-viewport {
     margin-right: 20px;
 }
 
+#tabs-exercise {
+    margin-top: 10px;
+}
+
+#tabs-exercise button {
+    text-transform: inherit;
+    width: 50%;
+    padding: 0px;
+    border-radius: 10px 10px 0px 0px;
+}
+
+#tabs-exercise .v-tab--selected {
+    background-color: var(--primary-blue);
+    color: white;
+}
+
 /* View Page */
 .info_wrapper {
     display: flex;
@@ -124,6 +142,8 @@ ion-popover .popover-viewport {
 }
 
 .info_wrapper .info_exercise ion-chip {
+    padding-left: 5px;
+    padding-right: 5px;
     font-size: 10px !important;
 }
 

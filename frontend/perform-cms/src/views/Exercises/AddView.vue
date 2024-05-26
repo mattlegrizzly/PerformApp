@@ -198,7 +198,7 @@ onMounted(() => {
       <div class="inputFormDiv">
         <v-text-field
           v-model="exercise.name"
-          label="Nom du matériel * "
+          label="Nom de l'exercice * "
           variant="filled"
         ></v-text-field>
       </div>

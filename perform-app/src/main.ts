@@ -34,6 +34,13 @@ import exerciseSelected from './assets/icons/ExercicesSelected.svg';
 import trainer from './assets/icons/Personal Trainer.svg'
 import program from './assets/icons/Programs.svg'
 
+//Vuetify
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+
 // Enregistrement de l'icône
 addIcons({
     'profile': profile,
@@ -46,11 +53,28 @@ addIcons({
     'program': program,
 });
 
+export default createVuetify({
+    icons: {
+        defaultSet: 'mdi', // This is already the default value - only for display purposes
+    },
+})
+
+const vuetify = createVuetify({
+    components,
+    directives,
+    icons: {
+        defaultSet: 'mdi',
+        aliases,
+        sets: {
+            mdi,
+        },
+    },
+})
 
 /* Theme variables */
 //import './theme/variables.css';
 
-const app = createApp(App).use(IonicVue).use(router);
+const app = createApp(App).use(IonicVue).use(vuetify).use(router);
 
 router.isReady().then(() => {
     app.mount('#app');

@@ -18,7 +18,7 @@ const itemsPerPage = ref(10)
 const pagination = ref(0)
 const page = ref(1)
 const nameSearch = ref('')
-const orderBy = ref({ id: 'default', value: 'Par défaut'})
+const orderBy = ref({ id: 'default', value: 'Par défaut' })
 const order = [
   { id: 'orderByNameAsc', value: 'Nom (Croissant)' },
   { id: 'orderByNameDesc', value: 'Nom (Décroissant)' },
@@ -26,10 +26,10 @@ const order = [
   { id: 'orderByIdDesc', value: 'Id (Décroissant)' },
   { id: 'orderByDateAsc', value: 'Date (Croissant)' },
   { id: 'orderByDateDesc', value: 'Date (Décroissant)' },
-  { id: 'default', value: 'Par défaut'}
+  { id: 'default', value: 'Par défaut' }
 ]
 
-const setOrderBy = (value : Order) => {
+const setOrderBy = (value: Order) => {
   orderBy.value = value
   getUsers()
 }

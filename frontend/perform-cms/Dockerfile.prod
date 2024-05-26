@@ -1,20 +1,32 @@
-FROM node:alpine as build_admin
+ARG NODE_VERSION=18.14.0
+ARG CADDY_VERSION=2
 
-    WORKDIR /app
+#Development stage
+FROM node:${NODE_VERSION}-alpine AS dev_admin
 
-    COPY . /app
+WORKDIR /app
 
-    RUN npm install
+COPY package.json package-lock.json ./
+RUN set -eux; \
+    npm install;
 
-    ARG VITE_API_URL
+COPY . ./
 
-    RUN npm run build
+VOLUME /app/node_modules
 
+CMD ["npm", "run", "dev", "--host"]
 
+# "build" stage
+# depends on the "development" stage above
+FROM dev_admin AS build_admin
 
+ARG VITE_API_URL
 
-FROM node:alpine as run_admin
+RUN set -eux; \
+	npm run build
 
-    COPY --from=build_admin /app/dist /var/www/admin/
+# "caddy" stage
+# depends on the "build" stage above
+FROM caddy:${CADDY_VERSION}-builder-alpine AS caddy_admin
 
-    EXPOSE 5172
+COPY --from=build_admin /app/dist /var/www/admin
