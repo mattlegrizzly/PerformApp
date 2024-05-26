@@ -58,16 +58,12 @@ jobs:
           if [ "$(docker ps -a -q)" ]; then
               docker stop $(docker ps -a -q)
           fi
-          if [ "$(docker ps -q -f name=webserver_prod)" ]; then
-              docker rm webserver_prod
-          fi
-          if [ "$(docker ps -q -f name=vue_cms_prod)" ]; then
-              docker rm vue_cms_prod
-          fi
-          if [ "$(docker volume ls -q -f name=perform-app-vue-admin)" ]; then
-                docker volume rm perform-app-vue-admin
-          fi
+          docker rm webserver_prod
+          docker rm vue_cms_prod
+          docker volume rm perform-app-vue-admin
+
           docker ps -a -q --filter "volume=perform-app_caddy_config" | xargs -r docker rm -f
+          docker volume rm perform-app_caddy_config
           docker volume rm perform-app_caddy_data
 
       - name: Build Updated Docker Compose Environment
