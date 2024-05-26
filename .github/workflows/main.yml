@@ -60,8 +60,7 @@ jobs:
           fi
           docker rm webserver_prod
           docker rm vue_cms_prod
-          docker volume rm perform-app-vue-admin
-
+          docker volume rm perform-app_build_admin
           docker ps -a -q --filter "volume=perform-app_caddy_config" | xargs -r docker rm -f
           docker volume rm perform-app_caddy_config
           docker volume rm perform-app_caddy_data
