@@ -13,6 +13,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from django.conf import settings
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
@@ -70,6 +73,22 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
             user = serializer.save()
             serialized_user = UserSerializer(user)
 
+            # Envoi de l'e-mail avec le mot de passe
+            subject = 'Welcome to Our Platform'
+            recipient_list = [user.email]
+            message = Mail(
+                from_email='contact@grizzlyperform.app',
+                to_emails=recipient_list,
+                subject='Perform App Registration',
+                html_content= f'Hello,\n\nYour account has been created successfully. Here are your credentials:\n\nEmail: {user.email}\nPassword: {request.data.get("password")}\n\nThank you for registering!')
+            try:
+                sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+                response = sg.send(message)
+                print(response.status_code)
+                print(response.body)
+                print(response.headers)
+            except Exception as e:
+                print('error ', e)
             return Response(data=serialized_user.data, status=status.HTTP_201_CREATED)
 
         raise ValidationError(serializer.errors, code="validation_error")
