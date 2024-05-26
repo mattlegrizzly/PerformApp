@@ -64,8 +64,8 @@ jobs:
           if [ "$(docker ps -q -f name=vue_cms_prod)" ]; then
               docker rm vue_cms_prod
           fi
-          if [ "$(docker volume ls -q -f name=perform-app_vue_cms_prod)" ]; then
-                docker volume rm perform-app_vue_cms_prod
+          if [ "$(docker volume ls -q -f name=perform-app-vue-admin)" ]; then
+                docker volume rm perform-app-vue-admin
           fi
       - name: Build Updated Docker Compose Environment
         run: |
