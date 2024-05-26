@@ -22,11 +22,6 @@ jobs:
 
       - name: Setting Env Vars
         run: |
-          whoami
-          exit 0
-
-      - name: Setting Env Vars
-        run: |
           if ! grep -q "DB_PASSWORD=" config/.env.production; then
           printf "\n" >> config/.env.production
           printf "DB_PASSWORD=%s\n" "$DB_PASSWORD" >> config/.env.production
@@ -58,12 +53,22 @@ jobs:
           if [ "$(docker ps -a -q)" ]; then
               docker stop $(docker ps -a -q)
           fi
-          docker rm webserver_prod
-          docker rm vue_cms_prod
-          docker volume rm perform-app_build_admin
+          if [ "$(docker ps -q -f name=webserver_prod)" ]; then
+              docker rm webserver_prod
+          fi
+          if [ "$(docker ps -q -f name=vue_cms_prod)" ]; then
+              docker rm vue_cms_prod
+          fi
+          if [ "$(docker volume ls -q -f name=perform-app-vue-admin)" ]; then
+                docker volume rm perform-app-vue-admin
+          fi
           docker ps -a -q --filter "volume=perform-app_caddy_config" | xargs -r docker rm -f
-          docker volume rm perform-app_caddy_config
-          docker volume rm perform-app_caddy_data
+          if [ "$(docker volume ls -q -f name=perform-app_caddy_config)" ]; then
+            docker volume rm perform-app_caddy_config
+          fi
+          if if [ "$(docker volume ls -q -f name=perform-app_caddy_data)" ]; then
+            docker volume rm perform-app_caddy_data
+          fi
 
       - name: Build Updated Docker Compose Environment
         run: |

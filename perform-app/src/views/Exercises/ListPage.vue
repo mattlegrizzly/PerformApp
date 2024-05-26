@@ -6,33 +6,17 @@
       <div class="perform-page">
         <h1 style="margin-top: 0px">Exercices</h1>
         <ion-label>Rechercher un exercice :</ion-label>
-        <ion-input
-          id="search-input"
-          fill="outline"
-          slot="end"
-          placeholder="Cherchez un exercice"
-          shape="round"
-          @ionInput="handleSearchInput($event)"
-        ></ion-input>
+        <ion-input id="search-input" fill="outline" slot="end" placeholder="Cherchez un exercice" shape="round"
+          @ionInput="handleSearchInput($event)"></ion-input>
         <div class="filter-div">
           <ion-button>Filtres</ion-button>
-          <ion-list class="filter-item">
-            <ion-item>
-              <ion-select
-                aria-label="Trier par"
-                interface="popover"
-                placeholder="Trier par"
-                @ionChange="handleOrderChange($event)"
-              >
-                <ion-select-option
-                  v-for="elem in order"
-                  :key="elem.id"
-                  :value="elem.id"
-                  >{{ elem.value }}</ion-select-option
-                >
-              </ion-select>
-            </ion-item>
-          </ion-list>
+          <div class="orderByParent">
+            <div class="orderBy">
+              <label>Trier par:</label>
+              <v-select :items="order" :model-value="orderBy" item-title="value" item-value="id"
+                @update:modelValue="changeOrder($event)"></v-select>
+            </div>
+          </div>
         </div>
       </div>
       <ion-segment @ionChange="handleChange($event)" value="all">
@@ -46,14 +30,8 @@
     </div>
 
     <ion-content color="light">
-      <ion-list
-        v-if="showExercises"
-        class="list-item"
-        :inset="true"
-        v-for="exercise in exercises"
-        :key="exercises.id"
-        @click="goPage(exercise.id)"
-      >
+      <ion-list v-if="showExercises" class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id"
+        @click="goPage(exercise.id)">
         <ion-item>
           <div class="exercice-img">
             <label>{{ exercise.name[0] }}</label>
@@ -62,13 +40,7 @@
           <ion-icon :icon="chevronForwardOutline"></ion-icon>
         </ion-item>
       </ion-list>
-      <ion-list
-        v-if="!showExercises"
-        class="list-item"
-        :inset="true"
-        v-for="exercise in exercises"
-        :key="exercises.id"
-      >
+      <ion-list v-if="!showExercises" class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id">
         <ion-item>
           <div class="exercice-img">
             <label>oui</label>
@@ -108,6 +80,7 @@ import { onMounted, ref } from "vue";
 import { chevronForwardOutline } from "ionicons/icons";
 import "./index.css";
 import router from "../../router";
+import { useRoute } from 'vue-router'
 
 const order = [
   { id: "orderByNameAsc", value: "Nom (Croissant)" },
@@ -120,9 +93,28 @@ const order = [
 ];
 
 const searchValue = ref("");
-const orderBy = ref("");
+const orderBy = ref({ id: "default", value: "Par défaut" });
 const showExercises = ref(true);
 const exercises: any = ref([]);
+
+const navRoute = useRoute()
+
+const changeOrder = (e: any) => {
+  let find = false
+  order.map((order) => {
+    if (order.id === e) {
+      orderBy.value = order;
+      find = true
+    }
+  })
+  if (!find) {
+    orderBy.value = { id: 'default', value: 'Par défaut' }
+  }
+  router.replace({
+    path: navRoute.path,
+    query: Object.assign({}, navRoute.query, { orderBy: e })
+  })
+}
 
 const goPage = (id: any) => {
   router.push({ name: "ExercisesView", params: { id: id } });
