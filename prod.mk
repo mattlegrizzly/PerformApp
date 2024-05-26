@@ -3,6 +3,7 @@ export $(shell sed 's/=.*//' config/.env.production)
 
 ENV=config/.env.production
 API=django
+PRJ=perform-app
 
 build:
 	@docker compose -f docker-compose.production.yml -p perform-app --env-file config/.env.production build --no-cache

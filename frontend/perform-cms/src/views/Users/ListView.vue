@@ -94,7 +94,7 @@ onMounted(() => {
   <NavMenu />
 
   <div class="mainWrapper">
-    <h1 class="listTitle">Tous les utilisateurs ({{usersCount}})</h1>
+    <h1 class="listTitle">Tous les utilisateurs test ({{usersCount}})</h1>
     <h5 class="underTitle">Retrouvez la liste de tous vos Utilisateurs</h5>
     <div class="headerList">
       <NavButton url="/users/add" text="Ajouter" prepend-icon="mdi-plus" />
