@@ -67,6 +67,8 @@ jobs:
           if [ "$(docker volume ls -q -f name=perform-app-vue-admin)" ]; then
                 docker volume rm perform-app-vue-admin
           fi
+          docker volume rm perform-app_caddy_config
+          docker volume rm perform-app_caddy_data
       - name: Build Updated Docker Compose Environment
         run: |
           make -f prod.mk build

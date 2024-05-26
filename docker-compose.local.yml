@@ -111,7 +111,6 @@ services:
             - caddy_config:/config
             - media:/srv/app/media
             - static:/srv/app/static
-            - build_admin:/var/www/admin/
 
 networks:
     perform-app_network:
