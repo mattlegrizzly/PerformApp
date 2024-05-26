@@ -30,11 +30,10 @@ DEBUG = True
 
 ADMIN_ENABLED = False
 ALLOWED_HOSTS=os.getenv("ALLOWED_HOSTS").split(",")
-#ALLOWED_HOSTS=['localhost']
+ALLOWED_HOSTS=['localhost']
 API_URL = os.getenv("API_URL")
 AUTH_USER_MODEL = "cms.User"
-#CORS_ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
-CORS_ALLOWED_ORIGINS = ['http://localhost:5174']
+CORS_ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS").split(",")
 DEBUG = bool(os.getenv("DEBUG"))
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LANGUAGE_CODE = "en-us"
@@ -69,7 +68,7 @@ SIMPLE_JWT = {
     'SIGNING_KEY': SECRET_KEY,
 }
 
-SENDGRID_API_KEY = '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'
+SENDGRID_API_KEY = os.getenv("SENDGRID_API")
 
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
