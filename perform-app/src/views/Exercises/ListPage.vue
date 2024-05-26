@@ -40,15 +40,18 @@
           @ionInput="handleSearchInput($event)"></ion-input>
         <div class="filter-div">
           <ion-button>Filtres</ion-button>
-          <div class="orderByParent">
-            <v-select :items="order" :model-value="orderBy" item-title="value" item-value="id"
-              @update:modelValue="changeOrder($event)"></v-select>
-            <div class="orderBy">
-            </div>
-          </div>
+          <ion-list class="filter-item">
+            <ion-item>
+              <ion-select aria-label="Trier par" interface="popover" placeholder="Trier par"
+                @ionChange="handleOrderChange($event)">
+                <ion-select-option v-for="elem in order" :key="elem.id" :value="elem.id">{{ elem.value
+                  }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
         </div>
       </div>
-      <v-tabs v-model="tab">
+      <v-tabs id="tabs-exercise" v-model="tab">
         <v-tab value="one">Tous les exercices</v-tab>
         <v-tab value="two">Mes favoris</v-tab>
       </v-tabs>
@@ -138,43 +141,37 @@ const exercises: any = ref([]);
 
 const navRoute = useRoute()
 
-const changeOrder = (e: any) => {
-  let find = false
-  order.map((order) => {
-    if (order.id === e) {
-      orderBy.value = order;
-      find = true
-    }
-  })
-  if (!find) {
-    orderBy.value = { id: 'default', value: 'Par défaut' }
-  }
-  router.replace({
-    path: navRoute.path,
-    query: Object.assign({}, navRoute.query, { orderBy: e })
-  })
-}
 
 const goPage = (id: any) => {
   router.push({ name: "ExercisesView", params: { id: id } });
 };
 
-const handleChange = (event: any) => {
-  if (event.detail.value == "all") {
-    showExercises.value = true;
-  } else {
-    showExercises.value = false;
-  }
-};
 
 const handleOrderChange = (event: any) => {
-  orderBy.value = event.detail.value;
+
   const option = {
     body: {},
     search: searchValue.value != "" ? searchValue.value : "",
-    orderBy: { id: event.detail.value },
+    orderBy: {},
   }; /* as IERequestOptions; */
   console.log(orderBy.value);
+  let find = false
+  order.map((order) => {
+    console.log(order)
+    if (order.id === event.detail.value) {
+      orderBy.value = order;
+      find = true
+
+    }
+  })
+  if (!find) {
+    orderBy.value = { id: 'default', value: 'Par défaut' }
+  }
+  option.orderBy = orderBy.value
+  router.replace({
+    path: navRoute.path,
+    query: Object.assign({}, navRoute.query, { orderBy: orderBy.value.id })
+  })
   /* if (orderBy.value) {
     option.orderBy = orderBy.value;
   }
