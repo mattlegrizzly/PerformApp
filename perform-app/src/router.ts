@@ -37,6 +37,10 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
+  {
+    path: '/login',
+    component: () => import("./views/Login/LoginPage.vue")
+  }
 ];
 
 const router = createRouter({
