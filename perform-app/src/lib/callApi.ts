@@ -142,12 +142,10 @@ const get = async (
 
   const headers = new Headers();
   if (authorization) {
-    let token = '';
-    store.get('user').then((res) => {
-      token = JSON.parse(res).access;
-      console.log(token)
-      headers.append("Authorization", `Bearer ${token}`);
-    })
+    const user = await store.get('user');
+    console.log(await user)
+    const access = await JSON.parse(user).access;
+    headers.append("Authorization", `Bearer ${access}`);
   }
 
   const request = new Request(url, {

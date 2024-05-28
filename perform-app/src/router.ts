@@ -53,7 +53,6 @@ const router = createRouter({
 
 const isLogin = async () => {
   const user = await store.get('user');
-  console.log('user ', await user)
   if (await user !== '' || await user) {
     return true;
   } else {
@@ -63,7 +62,6 @@ const isLogin = async () => {
 
 router.beforeEach(async (to, from, next) => {
   const isloggedin = await isLogin();
-  console.log(isloggedin)
   if (to.name !== 'login' && await !isloggedin) {
     console.log('return to login')
     next({
@@ -76,7 +74,6 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next();
   }
-  next();
 
 })
 
