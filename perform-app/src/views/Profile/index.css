@@ -1,0 +1,108 @@
+.container_home {
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 60px;
+}
+
+.profile_picture_div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.img_container {
+    width: 110px;
+    height: 110px;
+    border-radius: 100px;
+    border: 4px var(--primary-blue) solid;
+    overflow: hidden;
+}
+
+.profile_container_div {
+    width: 100%;
+    padding-left: var(--pd-l);
+    padding-right: var(--pd-r);
+}
+
+.profile_container_div h1 {
+    text-align: center;
+    color: black;
+    font-size: 26px;
+    font-weight: 900;
+}
+
+.div_container_info {
+    box-shadow: gray 0px 0px 10px 0px;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+
+.div_container_info h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0px;
+    margin-bottom: 10px;
+    padding: 0px;
+}
+
+.div_container_info ion-chip {
+    padding-left: 10px;
+    padding-right: 10px;
+    color: white;
+    background-color: var(--secondary-blue);
+}
+
+.users_infos {
+    display: flex;
+    justify-content: space-between;
+}
+
+.div_user_info {
+    width: 30%;
+}
+
+
+.div_user_info h3 {
+    margin-top: 0px;
+    text-decoration: underline;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.div_user_info p {
+    text-align: center;
+}
+
+.injurie_div {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+}
+
+.injurie_state {
+    width: 80px;
+    text-align: center;
+    padding-left: 10px;
+    color: white;
+    font-weight: 400;
+    padding-right: 10px;
+    border-radius: 10px;
+}
+
+.ip_class {
+    background-color: orange;
+}
+
+.nt_class {
+    background-color: red;
+}
+
+.tr_class {
+    background-color: green;
+}
