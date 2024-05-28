@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "@ionic/vue-router";
 import { RouteRecordRaw } from "vue-router";
 import NavMenu from "./components/NavBar/NavBar.vue";
+import { store } from "./store/store";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -39,6 +40,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/login',
+    name: 'login',
     component: () => import("./views/Login/LoginPage.vue")
   }
 ];
@@ -48,5 +50,34 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+const isLogin = async () => {
+  const user = await store.get('user');
+  console.log('user ', await user)
+  if (await user !== '' || await user) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+router.beforeEach(async (to, from, next) => {
+  const isloggedin = await isLogin();
+  console.log(isloggedin)
+  if (to.name !== 'login' && await !isloggedin) {
+    console.log('return to login')
+    next({
+      path: 'login',
+      replace: true
+    })
+  } else if (to.name == 'login' && await isloggedin) {
+    console.log('already login')
+    router.push('/')
+  } else {
+    next();
+  }
+  next();
+
+})
 
 export default router;
