@@ -11,7 +11,7 @@ class UsersFavExercisesSerializer(serializers.ModelSerializer):
         fields = ['user', 'fav_exercise']
 
 class UsersFavDetailedExercisesSerializer(serializers.ModelSerializer):
-    fav_exercises = ExerciseSerializer(many=True, read_only=False)
+    fav_exercise = ExerciseSerializer(many=False, read_only=False)
     class Meta:
         model = UsersFavExercises
         fields = ['user', 'fav_exercise']

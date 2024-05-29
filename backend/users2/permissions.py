@@ -35,10 +35,10 @@ class IsUserOrAdmin(permissions.BasePermission):
         # Si la méthode est une opération de lecture (GET)
         if request.method in permissions.SAFE_METHODS:
             # Si l'utilisateur est administrateur, autorisez l'accès
-            if request.user and request.user.is_superuser:
+            if request.user.id and request.user.is_superuser:
                 return True
             # Si l'utilisateur est authentifié mais pas administrateur, autorisez l'accès uniquement à ses propres infos
-            elif request.user and not request.user.is_superuser:
+            elif request.user.id and not request.user.is_superuser:
                 return True
             # Sinon, refusez l'accès
             else:
@@ -47,7 +47,7 @@ class IsUserOrAdmin(permissions.BasePermission):
         # Si la méthode est une opération de modification (POST, PUT, PATCH, DELETE),
         # vérifie si l'utilisateur est le même que celui fourni dans les données
         user_id = request.data.get('user')
-        if user_id and int(user_id) == request.user.id or request.user.is_superuser :
+        if user_id and int(user_id) == request.user or request.user.is_superuser :
             return True
 
         # Si l'utilisateur n'est ni admin ni le même que celui fourni dans les données, refusez l'accès

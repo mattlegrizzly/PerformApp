@@ -30,6 +30,7 @@ from .serializers import (
     UserSerializer,     
     UserDetailedSerializer,
     UsersFavExercisesSerializer, 
+    UsersFavDetailedExercisesSerializer,
     InjurieSerializer, 
     InjurieDetailedSerializer,
     WellnessSerializer, 
@@ -502,7 +503,7 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
 class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsUserOrAdmin]
     queryset = UsersFavExercises.objects.all()
-    serializer_class = UsersFavExercisesSerializer
+    serializer_class = UsersFavDetailedExercisesSerializer
     
     @extend_schema(
         tags=['Users Fav Exercises'],
