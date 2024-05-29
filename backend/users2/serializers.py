@@ -14,7 +14,7 @@ class UsersFavDetailedExercisesSerializer(serializers.ModelSerializer):
     fav_exercise = ExerciseSerializer(many=False, read_only=False)
     class Meta:
         model = UsersFavExercises
-        fields = ['user', 'fav_exercise']
+        fields = ["id",  'user', 'fav_exercise']
 
 class InjurieSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,7 +26,7 @@ class InjurieDetailedSerializer(serializers.ModelSerializer):
     zone = WorkZoneSerializer(many=False, read_only=False)
     class Meta:
         model = Injurie
-        fields = ['name', 'description', 'state', 'user', 'zone', 'date']
+        fields = ["id", 'name', 'description', 'state', 'user', 'zone', 'date']
 
 class WellnessSerializer(serializers.ModelSerializer):
     class Meta:
