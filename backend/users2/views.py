@@ -31,13 +31,14 @@ from .serializers import (
     UserDetailedSerializer,
     UsersFavExercisesSerializer, 
     InjurieSerializer, 
+    InjurieDetailedSerializer,
     WellnessSerializer, 
     LoginSerializer,
     LogoutSerializer,
     RefreshTokensSerializer,
     RegisterSerializer,
     SetPasswordSerializer)
-from users2.permissions import UserViewSetPermissions
+from users2.permissions import UserViewSetPermissions,IsUserOrAdmin
 from rest_framework.exceptions import (
     AuthenticationFailed,
     NotAuthenticated,
@@ -201,6 +202,7 @@ class AdminUserViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter]
+
     search_fields = ["email", "first_name", 'last_name']
     def get_schema_fields(self, path, method):
         fields = super().get_schema_fields(path, method)
@@ -375,7 +377,7 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["email", "first_name", 'last_name']
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [UserViewSetPermissions, permissions.IsAdminUser]
 
     @extend_schema(
         tags=['Admin - Users(all)'],
@@ -498,15 +500,18 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
 #------------------USERS FAV EXERCISES------------------
 # Users fav exercises ViewSet
 class UsersFavExercisesViewSet(viewsets.ModelViewSet):
-    permission_classes = [UserViewSetPermissions, permissions.IsAdminUser]
+    permission_classes = [IsUserOrAdmin]
     queryset = UsersFavExercises.objects.all()
     serializer_class = UsersFavExercisesSerializer
-
+    
     @extend_schema(
         tags=['Users Fav Exercises'],
         responses={200: "OK"}
     )
     def list(self, request, *args, **kwargs):
+        # Si l'utilisateur n'est pas administrateur, filtrer les objets pour n'afficher que ceux associés à l'utilisateur connecté
+        if not request.user.is_superuser:
+            self.queryset = self.queryset.filter(user=request.user)
         return super().list(request, *args, **kwargs)
     
     @extend_schema(
@@ -523,6 +528,17 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
         tags=['Users Fav Exercises'],
         responses={200: "OK"}
     )
+    @action(detail=False, methods=['get'], url_path="user/(?P<user_id>\d+)")
+    def exercise(self, request, *args, **kwargs):
+        user_id = kwargs.get('user_id')
+        queryset = self.queryset.filter(user=user_id)
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @extend_schema(
+        tags=['Users Fav Exercises'],
+        responses={200: "OK"}
+    )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
@@ -531,6 +547,13 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
         responses={201: "Created"}
     )
     def create(self, request, *args, **kwargs):
+        user_id = request.data.get('user')
+        exercise_id = request.data.get('fav_exercise')
+
+        if user_id and exercise_id:
+            if self.queryset.filter(user=user_id, fav_exercise=exercise_id).exists():
+                raise ValidationError("An entry with this user and exercise already exists.")
+
         return super().create(request, *args, **kwargs)
 
     @extend_schema(
@@ -557,9 +580,96 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
 #------------------USERS INJURIES------------------
 # Users Injuries ViewSet
 class InjurieViewSet(viewsets.ModelViewSet):
-    permission_classes = [UserViewSetPermissions]
+    permission_classes = [IsUserOrAdmin]
     queryset = Injurie.objects.all()
-    serializer_class = InjurieSerializer
+
+    def validate(self, data):
+        request = self.context.get('request')
+        if request and request.user:
+            user_id = data.get('user')
+            if user_id and user_id != request.user.id:
+                raise ValidationError("You cannot change the user to a different user ID.")
+        return data
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return InjurieSerializer
+        return InjurieDetailedSerializer
+
+    @extend_schema(
+        tags=['Users - Injuries'],
+        responses={200: "OK"}
+    )
+    def list(self, request, *args, **kwargs):
+        # Si l'utilisateur n'est pas administrateur, filtrer les objets pour n'afficher que ceux associés à l'utilisateur connecté
+        if not request.user.is_superuser:
+            self.queryset = self.queryset.filter(user=request.user)
+        return super().list(request, *args, **kwargs)
+    
+    @extend_schema(
+        tags=['Users - Injuries'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="user/(?P<user_id>\d+)")
+    def injurie(self, request, *args, **kwargs):
+        user_id = kwargs.get('user')
+        queryset = self.queryset.filter(user=user_id)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @extend_schema(
+        tags=['Users - Injuries'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_sports_user = self.get_latest()
+        serializer = self.get_serializer(latest_sports_user, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        tags=['Users - Injuries'],
+        responses={200: "OK"}
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users - Injuries'],
+        responses={201: "Created"}
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users - Injuries'],
+        responses={200: "OK"}
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users - Injuries'],
+        responses={200: "OK"}
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users - Injuries'],
+        responses={204: "No Content"}
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+"""     def perform_create(self, serializer):
+        user_id = serializer.validated_data.get('user').id
+        exercise_id = serializer.validated_data.get('exercise').id
+
+        if self.queryset.filter(user_id=user_id, exercise_id=exercise_id).exists():
+            raise ValidationError("An entry with this user and exercise already exists.")
+
+        serializer.save() """
 
 #------------------USERS WELLNESS------------------
 # Users Wellness ViewSet

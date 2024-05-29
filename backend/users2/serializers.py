@@ -6,16 +6,27 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 class UsersFavExercisesSerializer(serializers.ModelSerializer):
-    exercices = ExerciseSerializer(many=True, read_only=False)
     class Meta:
         model = UsersFavExercises
-        fields = ['exercices']
+        fields = ['user', 'fav_exercise']
+
+class UsersFavDetailedExercisesSerializer(serializers.ModelSerializer):
+    fav_exercises = ExerciseSerializer(many=True, read_only=False)
+    class Meta:
+        model = UsersFavExercises
+        fields = ['user', 'fav_exercise']
 
 class InjurieSerializer(serializers.ModelSerializer):
-    zone = WorkZoneSerializer(many=False, read_only=True)
     class Meta:
         model = Injurie
-        fields = ['name', 'description', 'state', 'user', 'zone']
+        fields = ['name', 'description', 'state', 'user', 'zone', 'date']
+
+
+class InjurieDetailedSerializer(serializers.ModelSerializer):
+    zone = WorkZoneSerializer(many=False, read_only=False)
+    class Meta:
+        model = Injurie
+        fields = ['name', 'description', 'state', 'user', 'zone', 'date']
 
 class WellnessSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,17 +34,12 @@ class WellnessSerializer(serializers.ModelSerializer):
         fields = ['sleep', 'hydratation', 'fatigue', 'pain', 'stress', 'date', 'user']
 
 class UserDetailedSerializer(serializers.ModelSerializer):
+    sports_user = SportsDetailedUserSerializer(many=True, read_only=False)
+    user_injuries = InjurieSerializer(many=True, read_only=False)
+    users_wellness = WellnessSerializer(many=True, read_only=False)
     class Meta:
         model = User
-        fields = [
-            "id",
-            "email",
-            "first_name",
-            "last_name",
-            "is_active",
-            "last_login",
-            "is_superuser",
-        ]
+        fields = [ 'id', 'email', 'first_name', 'last_name' , 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'users_wellness', 'is_superuser']
 
     def check_email_exists(self, email, new_email):
         if User.objects.exclude(email=email).filter(email=new_email).exists():
@@ -99,7 +105,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             size=self.validated_data["size"],
             last_name=self.validated_data["last_name"],
             first_name=self.validated_data["first_name"],
-            profile_picture=self.validated_data["profile_picture"],
+            profile_picture=self.validated_data.get("profile_picture", None),
         )
         password = self.validated_data["password"]
         user.set_password(password)

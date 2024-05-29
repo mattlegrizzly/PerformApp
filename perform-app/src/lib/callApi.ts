@@ -2,6 +2,8 @@ import type IERequestOptions from "../types/requet";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
 
+import { store } from "../store/store";
+
 const cookies = useCookies(["locale"]);
 
 const baseUrl = import.meta.env.VITE_API_URL + "";
@@ -140,8 +142,10 @@ const get = async (
 
   const headers = new Headers();
   if (authorization) {
-    const token = cookies.get("access");
-    headers.append("Authorization", `Bearer ${token}`);
+    const user = await store.get('user');
+    console.log(await user)
+    const access = await JSON.parse(user).access;
+    headers.append("Authorization", `Bearer ${access}`);
   }
 
   const request = new Request(url, {

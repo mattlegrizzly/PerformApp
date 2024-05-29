@@ -8,7 +8,7 @@
           <NavButton link="exercises" text="retour" back="back" />
           <ion-icon :icon="starOutline" size="large"></ion-icon>
         </div>
-        <h1 style="color: black; margin-top: 0px; margin-bottom: 10px">
+        <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
           {{ exercises.name }}
         </h1>
         <div class="info_wrapper">
@@ -34,7 +34,7 @@
         <v-tab value="one">Instructions</v-tab>
         <v-tab value="two">Muscles</v-tab>
       </v-tabs>
-      <div style="padding-top: 10px !important" class="perform-page">
+      <div style="padding-top: 10px !important" class="instructions">
 
         <v-card-text>
           <v-tabs-window v-model="tab">
@@ -52,15 +52,18 @@
                 </ion-item>
               </ion-list>
             </v-tabs-window-item>
-            <v-tabs-window-item value="two" style="display: flex;">
-              <div style="display: flex; width: 50%; justify-content: space-between">
+            <v-tabs-window-item value="two" style="display: flex; min-height: 300px;">
+              <div
+                style="display: flex; width: 50%; margin-top: 16px; justify-content: space-between; align-items: center">
                 <BodyComponent :height="'200'" :width="'100'" :viewOnly="'show'"
                   :muscleSelected="exercises.zone_exercises" />
               </div>
-              <div style="width: 45%">
-                <ion-list style="width: 100%" v-for="muscle of exercises.zone_exercises">
-                  <ion-item>
-                    {{ muscle.zone.name }}
+              <div style="width: 50%; display: flex; align-items: center">
+                <ion-list style="width: 100%" class="muscles_list">
+                  <ion-item style="background-color: transparent;" v-for="muscle of exercises.zone_exercises">
+                    <ion-label style="font-size: 14px;">
+                      {{ muscle.zone.name }}
+                    </ion-label>
                   </ion-item>
                 </ion-list>
               </div>

@@ -106,8 +106,6 @@ import {
   IonLabel,
   IonList,
   IonItem,
-  IonSegment,
-  IonSegmentButton,
   IonIcon,
   IonInput,
   IonContent,

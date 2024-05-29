@@ -114,8 +114,11 @@ ion-popover .popover-viewport {
     margin-right: 20px;
 }
 
+
+/* View Page */
 #tabs-exercise {
     margin-top: 10px;
+    box-shadow: lightgray 0px 8px 10px 0px;
 }
 
 #tabs-exercise button {
@@ -130,11 +133,15 @@ ion-popover .popover-viewport {
     color: white;
 }
 
-/* View Page */
 .info_wrapper {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+}
+
+#player {
+    width: 100%;
+    background-color: black;
 }
 
 .info_wrapper .info_exercise {
@@ -142,9 +149,23 @@ ion-popover .popover-viewport {
 }
 
 .info_wrapper .info_exercise ion-chip {
-    padding-left: 5px;
-    padding-right: 5px;
-    font-size: 10px !important;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 12px !important;
+}
+
+.instructions {
+    padding-left: calc(var(--pd-l) - 10px);
+    padding-right: calc(var(--pd-l) - 10px);
+}
+
+.instructions .v-card-text {
+    padding: 0px !important;
+}
+
+.instructions .v-window {
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .num_step {
@@ -167,4 +188,12 @@ ion-popover .popover-viewport {
 
 .info_wrapper h2 {
     margin-top: 0px;
+}
+
+.muscles_list {
+    background-color: transparent;
+}
+
+.muscles_list ion-item .item-native item-inner {
+    font-size: 10px !important;
 }

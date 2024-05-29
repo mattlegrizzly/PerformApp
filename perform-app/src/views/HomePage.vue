@@ -24,4 +24,5 @@
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage } from '@ionic/vue';
 import '@/assets/base.css'
 import '@/assets/main.css'
+
 </script>
