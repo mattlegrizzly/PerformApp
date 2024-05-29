@@ -533,6 +533,9 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     def exercise(self, request, *args, **kwargs):
         user_id = kwargs.get('user_id')
         queryset = self.queryset.filter(user=user_id)
+        exercise_id = request.query_params.get('exercise_id')
+        if exercise_id:
+            queryset = self.queryset.filter(fav_exercise=exercise_id)
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
