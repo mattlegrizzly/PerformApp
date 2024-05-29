@@ -10,7 +10,20 @@ class UsersFavExercisesSerializer(serializers.ModelSerializer):
         model = UsersFavExercises
         fields = ['user', 'fav_exercise']
 
+class UsersFavDetailedExercisesSerializer(serializers.ModelSerializer):
+    fav_exercises = ExerciseSerializer(many=True, read_only=False)
+    class Meta:
+        model = UsersFavExercises
+        fields = ['user', 'fav_exercise']
+
 class InjurieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Injurie
+        fields = ['name', 'description', 'state', 'user', 'zone', 'date']
+
+
+class InjurieDetailedSerializer(serializers.ModelSerializer):
+    zone = WorkZoneSerializer(many=False, read_only=False)
     class Meta:
         model = Injurie
         fields = ['name', 'description', 'state', 'user', 'zone', 'date']
@@ -92,7 +105,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             size=self.validated_data["size"],
             last_name=self.validated_data["last_name"],
             first_name=self.validated_data["first_name"],
-            profile_picture=self.validated_data["profile_picture"],
+            profile_picture=self.validated_data.get("profile_picture", None),
         )
         password = self.validated_data["password"]
         user.set_password(password)
