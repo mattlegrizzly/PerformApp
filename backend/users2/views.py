@@ -505,6 +505,12 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     queryset = UsersFavExercises.objects.all()
     serializer_class = UsersFavDetailedExercisesSerializer
     
+    def get_serializer_class(self):
+        print(self)
+        if self.action == 'POST':
+            return UsersFavDetailedExercisesSerializer
+        return UsersFavExercises
+    
     @extend_schema(
         tags=['Users Fav Exercises'],
         responses={200: "OK"}
@@ -553,12 +559,18 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         user_id = request.data.get('user')
         exercise_id = request.data.get('fav_exercise')
+        serializer = UsersFavDetailedExercisesSerializer
 
         if user_id and exercise_id:
+
             if self.queryset.filter(user=user_id, fav_exercise=exercise_id).exists():
                 raise ValidationError("An entry with this user and exercise already exists.")
-
-        return super().create(request, *args, **kwargs)
+            
+            serializer = UsersFavExercisesSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @extend_schema(
         tags=['Users Fav Exercises'],

@@ -47,7 +47,7 @@ class IsUserOrAdmin(permissions.BasePermission):
         # Si la méthode est une opération de modification (POST, PUT, PATCH, DELETE),
         # vérifie si l'utilisateur est le même que celui fourni dans les données
         user_id = request.data.get('user')
-        if user_id and int(user_id) == request.user or request.user.is_superuser :
+        if user_id and int(user_id) == request.user.id or request.user.is_superuser :
             return True
 
         # Si l'utilisateur n'est ni admin ni le même que celui fourni dans les données, refusez l'accès
