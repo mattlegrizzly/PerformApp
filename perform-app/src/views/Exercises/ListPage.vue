@@ -75,7 +75,7 @@
 
           <v-tabs-window-item value="two">
 
-            <ion-list class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id">
+            <ion-list class="list-item" :inset="true" v-for="exercise in exercises_fav" :key="exercises.id">
               <ion-item>
                 <div class="exercice-img">
                   <label>oui</label>
@@ -120,6 +120,8 @@ import { chevronForwardOutline } from "ionicons/icons";
 import "./index.css";
 import router from "../../router";
 import { useRoute } from 'vue-router'
+import { store } from "../../store/store";
+
 
 const order = [
   { id: "orderByNameAsc", value: "Nom (Croissant)" },
@@ -131,11 +133,13 @@ const order = [
   { id: "default", value: "Par défaut" },
 ];
 
+const user_id = ref(0);
 const tab = ref(null)
 const searchValue = ref("");
 const orderBy = ref({ id: "default", value: "Par défaut" });
 const showExercises = ref(true);
 const exercises: any = ref([]);
+const exercises_fav: any = ref([]);
 
 const navRoute = useRoute()
 
@@ -222,11 +226,25 @@ const handleSearchInput = (event: any) => {
 };
 
 onMounted(() => {
+  store.get('user').then((res) => {
+    user_id.value = JSON.parse(res).user.id;
+    get("/userfavexercises/user/" + user_id.value + "/", { body: {} }, true).then((res: any) => {
+      if (res.status > 300) {
+        console.log('no users')
+      } else {
+        console.log("res ", res)
+        exercises_fav.value = res.results;
+      }
+    });
+  })
+
   get("/exercises", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
     } else {
       exercises.value = res.results;
     }
   });
+
+
 });
 </script>

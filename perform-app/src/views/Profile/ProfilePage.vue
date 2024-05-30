@@ -13,7 +13,7 @@
       <div class="container_home">
         <div class="profile_picture_div">
           <div class="img_container">
-            <img :src="user ? api + user.profile_picture : ''" alt='profile'>
+            <img :src="user ? setPP() : ''" alt='profile'>
           </div>
         </div>
         <div class="profile_container_div">
@@ -126,6 +126,15 @@ const stateSet = (state: string) => {
   }
 }
 
+const setPP = () => {
+  if (user.value.profile_picture.includes(api.split('//')[1])) {
+
+    return user.value.profile_picture
+  } else {
+    return api + user.value.profile_picture
+  }
+}
+
 const stateSetClass = (state: string) => {
   switch (state) {
     case 'NT':
@@ -190,13 +199,15 @@ const load = () => {
 onMounted(async () => {
   console.log(injuries)
   let storeUser = await store.get('user')
-  user.value = JSON.parse(storeUser).user
-  console.log(user.value)
+  if (storeUser !== "") {
+    user.value = JSON.parse(storeUser).user
+    console.log(user.value)
+  }
 })
 
 onUpdated(() => {
   if (routes.name == "Profile") {
-    //load()
+    load()
   }
 })
 

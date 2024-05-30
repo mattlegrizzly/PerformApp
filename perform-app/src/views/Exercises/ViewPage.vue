@@ -6,7 +6,7 @@
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
           <NavButton link="exercises" text="retour" back="back" />
-          <ion-icon :icon="starOutline" size="large"></ion-icon>
+          <ion-icon @click="setFav" :icon="is_fav ? star : starOutline" size="large"></ion-icon>
         </div>
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
           {{ exercises.name }}
@@ -87,7 +87,7 @@ import {
   IonLabel,
   IonItem,
 } from "@ionic/vue";
-import { starOutline } from "ionicons/icons";
+import { starOutline, star } from "ionicons/icons";
 import "@/assets/base.css";
 import "@/assets/main.css";
 import { useRoute } from "vue-router";
@@ -102,7 +102,8 @@ const router = useRoute();
 const api_url = import.meta.env.VITE_API_URL;
 const tab = ref(null)
 import { ref, onMounted } from "vue";
-import { get } from "../../lib/callApi";
+import { get, post, del } from "../../lib/callApi";
+import { store } from "../../store/store";
 const exercises = ref({
   name: "",
   zone_exercises: [] as Muscle[],
@@ -111,6 +112,12 @@ const exercises = ref({
   material_exercise: [] as Material[],
   sports_exercise: [] as Sport[],
 });
+
+const id = ref(0);
+const user_id = ref(0);
+const is_fav = ref(false);
+const fav_id = ref(0);
+
 const handleChange = (event: any) => {
   if (event.detail.value == "all") {
     showExercises.value = true;
@@ -118,15 +125,58 @@ const handleChange = (event: any) => {
     showExercises.value = false;
   }
 };
+
 const showExercises = ref(true);
+
+const setFav = () => {
+  if (is_fav.value) {
+    del("/userfavexercises/" + fav_id.value + "/", true).then(
+      (res) => {
+        console.log(res)
+        is_fav.value = false;
+      }
+    )
+  } else {
+    post("/userfavexercises/", {
+      body: {
+        user: Number(user_id.value),
+        fav_exercise: Number(id.value)
+      }
+    }, true).then((res: any) => {
+      if (res.status > 300) {
+        console.log(res.status)
+      } else {
+        is_fav.value = true;
+        fav_id.value = res[0].id;
+
+      }
+    })
+  }
+}
+
+
 onMounted(() => {
-  const id = router.params.id;
-  get("/exercises/" + id + "/", { body: {} }, false).then((res: any) => {
+  id.value = Number(router.params.id);
+  store.get('user').then((res) => {
+    user_id.value = JSON.parse(res).user.id;
+    get("/userfavexercises/user/" + user_id.value + "/?exercise_id=" + Number(id.value), { body: {} }, true).then((res: any) => {
+      console.log('res of fav ', res.length)
+      if (res.status > 300 || res.length <= 0) {
+        is_fav.value = false;
+      } else {
+        fav_id.value = res[0].id;
+        is_fav.value = true;
+      }
+    })
+  })
+  get("/exercises/" + id.value + "/", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
     } else {
       exercises.value = res;
     }
     console.log(exercises.value);
   });
+
+
 });
 </script>
