@@ -10,7 +10,6 @@
   align-items: center;
 }
 
-
 .orderBy .v-field__field .v-field__input {
   padding: 0px !important;
   padding-left: 20px !important;
@@ -36,16 +35,30 @@
       <div class="perform-page">
         <h1 style="margin-top: 0px">Exercices</h1>
         <ion-label>Rechercher un exercice :</ion-label>
-        <ion-input id="search-input" fill="outline" slot="end" placeholder="Cherchez un exercice" shape="round"
-          @ionInput="handleSearchInput($event)"></ion-input>
+        <ion-input
+          id="search-input"
+          fill="outline"
+          slot="end"
+          placeholder="Cherchez un exercice"
+          shape="round"
+          @ionInput="handleSearchInput($event)"
+        ></ion-input>
         <div class="filter-div">
           <ion-button>Filtres</ion-button>
           <ion-list class="filter-item">
             <ion-item>
-              <ion-select aria-label="Trier par" interface="popover" placeholder="Trier par"
-                @ionChange="handleOrderChange($event)">
-                <ion-select-option v-for="elem in order" :key="elem.id" :value="elem.id">{{ elem.value
-                  }}</ion-select-option>
+              <ion-select
+                aria-label="Trier par"
+                interface="popover"
+                placeholder="Trier par"
+                @ionChange="handleOrderChange($event)"
+              >
+                <ion-select-option
+                  v-for="elem in order"
+                  :key="elem.id"
+                  :value="elem.id"
+                  >{{ elem.value }}</ion-select-option
+                >
               </ion-select>
             </ion-item>
           </ion-list>
@@ -61,8 +74,13 @@
       <v-card-text>
         <v-tabs-window v-model="tab">
           <v-tabs-window-item value="one">
-            <ion-list class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id"
-              @click="goPage(exercise.id)">
+            <ion-list
+              class="list-item"
+              :inset="true"
+              v-for="exercise in exercises"
+              :key="exercises.id"
+              @click="goPage(exercise.id)"
+            >
               <ion-item>
                 <div class="exercice-img">
                   <label>{{ exercise.name[0] }}</label>
@@ -74,29 +92,24 @@
           </v-tabs-window-item>
 
           <v-tabs-window-item value="two">
-
-            <ion-list class="list-item" :inset="true" v-for="exercise in exercises_fav" :key="exercises.id">
+            <ion-list
+              class="list-item"
+              :inset="true"
+              v-for="exercise in exercises_fav"
+              :key="exercises.id"
+              @click="goPage(exercise.fav_exercise.id)"
+            >
               <ion-item>
                 <div class="exercice-img">
-                  <label>oui</label>
+                  <label>{{ exercise.fav_exercise.name[0] }}</label>
                 </div>
-                <ion-label>oui</ion-label>
-                <ion-icon :icon="chevronForwardOutline"></ion-icon>
-              </ion-item>
-              <ion-item>
-                <div class="exercice-img">
-                  <label>{{ exercise.name[0] }}</label>
-                </div>
-                <ion-label>{{ exercise.name }}</ion-label>
+                <ion-label>{{ exercise.fav_exercise.name }}</ion-label>
                 <ion-icon :icon="chevronForwardOutline"></ion-icon>
               </ion-item>
             </ion-list>
           </v-tabs-window-item>
-
         </v-tabs-window>
       </v-card-text>
-
-
     </ion-content>
   </ion-page>
 </template>
@@ -115,13 +128,12 @@ import {
   IonButton,
 } from "@ionic/vue";
 import { get } from "../../lib/callApi";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUpdated } from "vue";
 import { chevronForwardOutline } from "ionicons/icons";
 import "./index.css";
 import router from "../../router";
-import { useRoute } from 'vue-router'
+import { useRoute } from "vue-router";
 import { store } from "../../store/store";
-
 
 const order = [
   { id: "orderByNameAsc", value: "Nom (Croissant)" },
@@ -134,46 +146,39 @@ const order = [
 ];
 
 const user_id = ref(0);
-const tab = ref(null)
+const tab = ref(null);
 const searchValue = ref("");
 const orderBy = ref({ id: "default", value: "Par défaut" });
-const showExercises = ref(true);
 const exercises: any = ref([]);
 const exercises_fav: any = ref([]);
 
-const navRoute = useRoute()
-
+const navRoute = useRoute();
 
 const goPage = (id: any) => {
   router.push({ name: "ExercisesView", params: { id: id } });
 };
 
-
 const handleOrderChange = (event: any) => {
-
   const option = {
     body: {},
     search: searchValue.value != "" ? searchValue.value : "",
     orderBy: {},
   }; /* as IERequestOptions; */
-  console.log(orderBy.value);
-  let find = false
+  let find = false;
   order.map((order) => {
-    console.log(order)
     if (order.id === event.detail.value) {
       orderBy.value = order;
-      find = true
-
+      find = true;
     }
-  })
+  });
   if (!find) {
-    orderBy.value = { id: 'default', value: 'Par défaut' }
+    orderBy.value = { id: "default", value: "Par défaut" };
   }
-  option.orderBy = orderBy.value
+  option.orderBy = orderBy.value;
   router.replace({
     path: navRoute.path,
-    query: Object.assign({}, navRoute.query, { orderBy: orderBy.value.id })
-  })
+    query: Object.assign({}, navRoute.query, { orderBy: orderBy.value.id }),
+  });
   /* if (orderBy.value) {
     option.orderBy = orderBy.value;
   }
@@ -216,27 +221,48 @@ const handleSearchInput = (event: any) => {
   if (sport_selected.value.length > 0) {
     option.sport_id = sport_selected.value;
   } */
+};
 
-  get("/exercises", option, false).then((res) => {
+const load = () => {
+  console.log("load");
+  get("/exercises/", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
     } else {
       exercises.value = res.results;
     }
   });
+  get("/userfavexercises/user/" + user_id.value + "/", { body: {} }, true).then(
+    (res: any) => {
+      if (res.status > 300 || res.length <= 0) {
+        exercises_fav.value = [];
+      } else {
+        exercises_fav.value = res;
+      }
+    }
+  );
 };
 
+onUpdated(() => {
+  if (navRoute.name == "Exercises") {
+    load();
+  }
+});
+
 onMounted(() => {
-  store.get('user').then((res) => {
+  store.get("user").then((res) => {
     user_id.value = JSON.parse(res).user.id;
-    get("/userfavexercises/user/" + user_id.value + "/", { body: {} }, true).then((res: any) => {
+    get(
+      "/userfavexercises/user/" + user_id.value + "/",
+      { body: {} },
+      true
+    ).then((res: any) => {
       if (res.status > 300) {
-        console.log('no users')
       } else {
-        console.log("res ", res)
-        exercises_fav.value = res.results;
+        console.log("res usrss fav ", res);
+        exercises_fav.value = res;
       }
     });
-  })
+  });
 
   get("/exercises", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
@@ -244,7 +270,5 @@ onMounted(() => {
       exercises.value = res.results;
     }
   });
-
-
 });
 </script>

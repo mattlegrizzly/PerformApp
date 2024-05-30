@@ -39,10 +39,10 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: '/login',
-    name: 'login',
-    component: () => import("./views/Login/LoginPage.vue")
-  }
+    path: "/login",
+    name: "login",
+    component: () => import("./views/Login/LoginPage.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -52,29 +52,26 @@ const router = createRouter({
 });
 
 const isLogin = async () => {
-  const user = await store.get('user');
-  if (await user !== '' || await user) {
+  const user = await store.get("user");
+  if ((await user) !== "" && (await user)) {
     return true;
   } else {
     return false;
   }
-}
+};
 
 router.beforeEach(async (to, from, next) => {
   const isloggedin = await isLogin();
-  if (to.name !== 'login' && await !isloggedin) {
-    console.log('return to login')
+  if (to.name !== "login" && (await !isloggedin)) {
     next({
-      path: 'login',
-      replace: true
-    })
-  } else if (to.name == 'login' && await isloggedin) {
-    console.log('already login')
-    router.push('/')
+      path: "login",
+      replace: true,
+    });
+  } else if (to.name == "login" && (await isloggedin)) {
+    router.push("/");
   } else {
     next();
   }
-
-})
+});
 
 export default router;

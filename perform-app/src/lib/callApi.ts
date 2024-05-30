@@ -138,13 +138,11 @@ const get = async (
   const relativeUrlString = "/api" + urlChunk;
   const url = new URL(relativeUrlString, baseUrl);
 
-  console.log("url ", url)
   handleParams(url, options);
 
   const headers = new Headers();
   if (authorization) {
-    const user = await store.get('user');
-    console.log(await user)
+    const user = await store.get("user");
     const access = await JSON.parse(user).access;
     headers.append("Authorization", `Bearer ${access}`);
   }
@@ -191,8 +189,7 @@ const post = async (
   handleParams(url, options);
 
   if (authorization) {
-    const user = await store.get('user');
-    console.log(await user)
+    const user = await store.get("user");
     const access = await JSON.parse(user).access;
     headers.append("Authorization", `Bearer ${access}`);
   }
@@ -250,8 +247,7 @@ const put = async (
   handleParams(url, options);
 
   if (authorization) {
-    const user = await store.get('user');
-    console.log(await user)
+    const user = await store.get("user");
     const access = await JSON.parse(user).access;
     headers.append("Authorization", `Bearer ${access}`);
   }
@@ -310,8 +306,7 @@ const patch = async (
   handleParams(url, options);
 
   if (authorization) {
-    const user = await store.get('user');
-    console.log(await user)
+    const user = await store.get("user");
     const access = await JSON.parse(user).access;
     headers.append("Authorization", `Bearer ${access}`);
   }
@@ -360,8 +355,7 @@ const del = async (urlChunk: any, authorization = true) => {
 
   headers.append("Content-Type", "application/json");
   if (authorization) {
-    const user = await store.get('user');
-    console.log(await user)
+    const user = await store.get("user");
     const access = await JSON.parse(user).access;
     headers.append("Authorization", `Bearer ${access}`);
   }
