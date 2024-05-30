@@ -16,25 +16,56 @@ const routes: Array<RouteRecordRaw> = [
         path: "home",
         name: "Home",
         component: () => import("./views/HomePage.vue"),
+        meta: {
+          transition: "fade",
+        },
       },
       {
         path: "profile",
         name: "Profile",
         component: () => import("./views/Profile/ProfilePage.vue"),
+        meta: {
+          transition: "fade",
+        },
+      },
+      {
+        path: "add_injurie",
+        name: "AddInjurie",
+        component: () => import("./views/Profile/AddInjuriePage.vue"),
+        meta: {
+          transition: "fade",
+        },
+      },
+      {
+        path: "list_injuries",
+        name: "ListInjuries",
+        component: () => import("./views/Profile/ListInjuriesPage.vue"),
+        meta: {
+          transition: "fade",
+        },
       },
       {
         path: "exercises",
         name: "Exercises",
         component: () => import("./views/Exercises/ListPage.vue"),
+        meta: {
+          transition: "fade",
+        },
       },
       {
         path: "exercises/:id",
         name: "ExercisesView",
         component: () => import("./views/Exercises/ViewPage.vue"),
+        meta: {
+          transition: "fade",
+        },
       },
       {
         path: "search",
         component: () => import("./views/SearchPage.vue"),
+        meta: {
+          transition: "fade",
+        },
       },
     ],
   },
@@ -61,6 +92,7 @@ const isLogin = async () => {
 };
 
 router.beforeEach(async (to, from, next) => {
+  console.log(from);
   const isloggedin = await isLogin();
   if (to.name !== "login" && (await !isloggedin)) {
     next({

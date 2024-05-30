@@ -3,7 +3,15 @@
 <template>
   <ion-page>
     <ion-content>
-      <div class="underTitle">Listen now content</div>
+      <div class="perform-page">
+        <div style="display: flex; justify-content: space-between">
+          <NavButton url="profile" text="Retour" back="back" />
+          <NavButton text="Enregistrer" :noIcon="true" />
+        </div>
+        <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
+          Toutes mes blessures
+        </h1>
+      </div>
     </ion-content>
   </ion-page>
 </template>

@@ -3,6 +3,34 @@
     z-index: 1;
 }
 
+.filter-div {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.filter-div ion-button {
+    width: 45%;
+    height: 40px;
+}
+
+.filter-div ion-list {
+    width: 45%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border: 1px solid #d4d4d4;
+}
+
+.filter-div ion-list ion-item {
+    display: flex;
+    align-items: center;
+    height: 40px !important;
+    min-height: 40px !important;
+    width: 100%;
+    height: 40px;
+}
 .list-item {
     margin-inline-start: var(--pd-l) !important;
     margin-inline-end: var(--pd-r) !important;
@@ -47,34 +75,7 @@ ion-segment-button ion-label {
     justify-content: space-between;
 }
 
-.filter-div {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-}
 
-.filter-div ion-button {
-    width: 45%;
-    height: 40px;
-}
-
-.filter-div ion-list {
-    width: 45%;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    border-radius: 5px;
-    border: 1px solid #d4d4d4;
-}
-
-.filter-div ion-list ion-item {
-    display: flex;
-    align-items: center;
-    height: 40px !important;
-    min-height: 40px !important;
-    width: 100%;
-    height: 40px;
-}
 
 ion-segment {
     display: flex;

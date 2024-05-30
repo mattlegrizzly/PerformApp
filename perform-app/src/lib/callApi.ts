@@ -49,7 +49,7 @@ const verifyToken = async () => {
 
 const handleParams = (url: URL, options: IERequestOptions) => {
   if (typeof options.search !== "undefined" && options && options.search) {
-    Object.keys(options.search).map((searchProperty: any) => {
+    Object.keys(options.search).map(() => {
       if (options.search) {
         url.searchParams.set("search", options.search);
       }
@@ -350,8 +350,6 @@ const del = async (urlChunk: any, authorization = true) => {
   const url = new URL(relativeUrlString, baseUrl);
 
   const headers = new Headers();
-
-  const token = cookies.get("access");
 
   headers.append("Content-Type", "application/json");
   if (authorization) {

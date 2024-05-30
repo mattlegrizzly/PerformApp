@@ -5,7 +5,7 @@
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
-          <NavButton link="exercises" text="retour" back="back" />
+          <NavButton href="/exercises" text="Retour" back="back" />
           <ion-icon
             @click="setFav"
             :icon="is_fav ? star : starOutline"
@@ -128,7 +128,8 @@ import {
   IonLabel,
   IonItem,
 } from "@ionic/vue";
-
+//@ts-expect-error
+import routerNav from "@/router";
 import { starOutline, star } from "ionicons/icons";
 //@ts-expect-error
 import NavButton from "../../components/NavButton/NavButton.vue";
@@ -182,7 +183,6 @@ const setFav = () => {
       },
       true
     ).then((res: any) => {
-      console.log(res);
       if (res.status > 300) {
       } else {
         is_fav.value = true;
@@ -204,7 +204,6 @@ onMounted(() => {
       { body: {} },
       true
     ).then((res: any) => {
-      console.log(res);
       if (res.status > 300 || res.length <= 0) {
         is_fav.value = false;
       } else {

@@ -53,13 +53,17 @@
         <div class="profile_container_div">
           <div class="div_container_info">
             <h2>Mes blessures</h2>
+            <NavButton
+              v-if="user.user_injuries.length == 0"
+              url="add_injurie"
+              text="Ajouter une blessure"
+              :noIcon="true"
+            />
             <ion-list>
-              <div class="injurie_div" v-for="injurie of injuries">
+              <div class="injurie_div" v-for="injurie of limitedItems()">
                 <ion-label>{{ injurie.zone.name }}</ion-label>
                 <ion-label>|</ion-label>
-                <ion-label>
-                  {{ injurie.date.toLocaleDateString("fr") }}</ion-label
-                >
+                <ion-label> {{ injurie.date }}</ion-label>
                 <ion-label>|</ion-label>
                 <ion-label
                   :class="stateSetClass(injurie.state)"
@@ -68,7 +72,18 @@
                 </ion-label>
                 <ion-icon :icon="chevronForwardOutline"></ion-icon>
               </div>
+              <ion-label
+                style="width: 100%; text-align: center; display: block"
+                v-if="user.user_injuries.length > 2"
+                >...</ion-label
+              >
             </ion-list>
+            <NavButton
+              v-if="user.user_injuries.length > 0"
+              url="list_injuries"
+              text="Voir toutes mes blessures"
+              :noIcon="true"
+            />
           </div>
         </div>
         <ion-button size="small" @click="disconnect"> Connexion </ion-button>
@@ -93,7 +108,10 @@ import { onMounted, onUpdated, ref } from "vue";
 import { get } from "../../lib/callApi";
 import { useRoute } from "vue-router";
 import "./index.css";
+//@ts-expect-error
 import type { Sport } from "@/types/types";
+//@ts-expect-error
+import NavButton from "../../components/NavButton/NavButton.vue";
 import { chevronForwardOutline } from "ionicons/icons";
 
 const api = import.meta.env.VITE_API_URL;
@@ -112,6 +130,11 @@ const user = ref({
   user_injuries: [],
   users_wellness: [],
 });
+
+function limitedItems(): any {
+  console.log("user ", user.value.user_injuries);
+  return user.value.user_injuries.slice(0, 2);
+}
 
 const stateSet = (state: string) => {
   switch (state) {
@@ -179,10 +202,11 @@ const disconnect = () => {
 };
 
 const load = () => {
+  console.log("user ", user.value);
   store.get("user").then((res) => {
     const json = JSON.parse(res);
     user.value = json.user;
-    get("/admin/users_all/" + user.value.id, {}, true).then((res) => {
+    get("/admin/users_all/" + user.value.id, { body: {} }, true).then((res) => {
       user.value = res;
       res;
       const userToSet = {
