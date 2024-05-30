@@ -36,7 +36,7 @@ class WellnessSerializer(serializers.ModelSerializer):
 
 class UserDetailedSerializer(serializers.ModelSerializer):
     sports_user = SportsDetailedUserSerializer(many=True, read_only=False)
-    user_injuries = InjurieSerializer(many=True, read_only=False)
+    user_injuries = InjurieDetailedSerializer(many=True, read_only=False)
     users_wellness = WellnessSerializer(many=True, read_only=False)
     class Meta:
         model = User
