@@ -502,13 +502,13 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
 # Users fav exercises ViewSet
 class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsUserOrAdmin]
-    queryset = UsersFavExercises.objects.all()
     serializer_class = UsersFavDetailedExercisesSerializer
+    queryset = UsersFavExercises.objects.all()
     
     def get_serializer_class(self):
         if self.action != 'create':
             return UsersFavDetailedExercisesSerializer
-        return UsersFavExercises
+        return UsersFavExercisesSerializer
     
     @extend_schema(
         tags=['Users Fav Exercises'],
@@ -557,7 +557,6 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         user_id = request.data.get('user')
         exercise_id = request.data.get('fav_exercise')
-        serializer = UsersFavDetailedExercisesSerializer
 
         if user_id and exercise_id:
 
@@ -568,7 +567,12 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            # Récupérer l'instance sauvegardée
+            instance = serializer.instance
+            # Utiliser le sérialiseur détaillé pour la réponse
+            detailed_serializer = UsersFavDetailedExercisesSerializer(instance)
+            
+            return Response(detailed_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @extend_schema(
         tags=['Users Fav Exercises'],
