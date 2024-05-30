@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "@ionic/vue-router";
 import { RouteRecordRaw } from "vue-router";
 import NavMenu from "./components/NavBar/NavBar.vue";
 import { store } from "./store/store";
-
+import { get, verifyToken, refresh } from "./lib/callApi";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -44,6 +44,15 @@ const routes: Array<RouteRecordRaw> = [
           transition: "fade",
         },
       },
+
+      {
+        path: "view_injuries/:id",
+        name: "ViewInjurie",
+        component: () => import("./views/Profile/ViewInjuriePage.vue"),
+        meta: {
+          transition: "fade",
+        },
+      },
       {
         path: "exercises",
         name: "Exercises",
@@ -76,6 +85,41 @@ const routes: Array<RouteRecordRaw> = [
   },
 ];
 
+const isLoggedIn = async () => {
+  try {
+    const res = await store.get('user');
+    const access = JSON.parse(res).access;
+    if (!access) return false;
+
+    const verifyResponse = await verifyToken();
+    console.log('verify ', verifyResponse);
+
+    if (verifyResponse.status > 300) {
+      if (verifyResponse.status === 401) {
+        const refreshResponse = await refresh();
+        if (refreshResponse.status > 300) {
+          store.remove('user');
+          return false;
+        }
+      } else {
+        store.remove('user');
+        return false;
+      }
+    }
+
+    const userResponse = await get('/admin/users_all/me/', { body: {} }, true);
+    await store.set('user', JSON.stringify(userResponse));
+    console.log(true);
+    return true;
+
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+
+
 const router = createRouter({
   // Use: createWebHistory(process.env.BASE_URL) in your app
   history: createWebHistory(),
@@ -92,8 +136,7 @@ const isLogin = async () => {
 };
 
 router.beforeEach(async (to, from, next) => {
-  console.log(from);
-  const isloggedin = await isLogin();
+  const isloggedin = await isLoggedIn() as any
   if (to.name !== "login" && (await !isloggedin)) {
     next({
       path: "login",
@@ -104,6 +147,7 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next();
   }
+
 });
 
 export default router;

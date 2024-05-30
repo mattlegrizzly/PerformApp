@@ -1,3 +1,4 @@
+//@ts-expect-error
 import type IERequestOptions from "../types/requet";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
@@ -9,12 +10,13 @@ const cookies = useCookies(["locale"]);
 const baseUrl = import.meta.env.VITE_API_URL + "";
 
 const verifyToken = async () => {
-  const access = cookies.get("access");
+
   const relativeUrlString = "/api/token/verify/";
   const url = new URL(relativeUrlString, baseUrl);
-
+  const user = await store.get("user");
+  const access = await JSON.parse(user).access;
   const body = JSON.stringify({
-    token: access,
+    token: await access,
   });
 
   const headers = new Headers();
@@ -94,34 +96,36 @@ const handleResponse = async (response: Response): Promise<any> => {
  * This function permits to refresh token and User in the store
  * @returns
  */
-/* const refresh = async () => {
-  const userStore = useUserStore();
-  const relativeUrlString = "/api/refresh_tokens/";
-  const url = new URL(relativeUrlString, baseUrl);
-  const refresh = userStore.refresh;
-  const body = {
-    refresh: refresh,
-  };
+const refresh = async () => {
+  store.get('user').then(async (res) => {
+    const refresh = JSON.parse(res).refresh;
+    const relativeUrlString = "/api/refresh_tokens/";
+    const url = new URL(relativeUrlString, baseUrl);
+    const body = {
+      refresh: refresh,
+    };
 
-  const headers = new Headers();
-  headers.append("Content-Type", "application/json");
-  const request = new Request(url, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(body),
-  });
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    const request = new Request(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
+    });
 
-  try {
-    const response = await fetch(request);
-    if (!response.ok) {
-      throw new Error("La requête a échoué");
+    try {
+      const response = await fetch(request);
+      if (!response.ok) {
+        throw new Error("La requête a échoué");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      throw new Error("Impossible de rafraîchir le token");
     }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error("Impossible de rafraîchir le token");
-  }
-}; */
+
+  })
+};
 
 /**
  * This function permits to do some get request with Fetch
@@ -366,4 +370,4 @@ const del = async (urlChunk: any, authorization = true) => {
   return fetch(request);
 };
 
-export { get, post, put, del, patch, /* refresh */ verifyToken };
+export { get, post, put, del, patch, refresh, verifyToken };

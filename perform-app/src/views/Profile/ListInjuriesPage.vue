@@ -12,30 +12,21 @@
           Liste de mes blessures
         </h1>
       </div>
-      <ion-list
-        lines="none"
-        style="
+      <ion-list lines="none" style="
           padding-left: var(--pd-l);
           padding-right: var(--pd-r);
           padding-top: 10px;
           padding-bottom: 10px;
-        "
-      >
-        <ion-item
-          class="injurie_div_info"
-          v-for="injurie of user.user_injuries"
-        >
-          <div class="injurie_div_parent">
+        ">
+        <ion-item class="injurie_div_info" v-for="injurie of user.user_injuries">
+          <div class="injurie_div_parent" @click="router.push('/view_injuries/' + injurie.id)" :key="injurie.id">
             <div class="injurie_info">
               <ion-label>{{ injurie.name }}</ion-label>
               <ion-label>{{ injurie.date }}</ion-label>
             </div>
             <div class="injurie_info">
               <ion-label>{{ injurie.zone.name }}</ion-label>
-              <ion-label
-                :class="stateSetClass(injurie.state)"
-                class="injurie_state"
-                >{{ stateSet(injurie.state) }}
+              <ion-label :class="stateSetClass(injurie.state)" class="injurie_state">{{ stateSet(injurie.state) }}
               </ion-label>
             </div>
           </div>
@@ -69,7 +60,7 @@ import type { Sport } from "@/types/types";
 import { useRoute } from "vue-router";
 import { store } from "../../store/store";
 import { IEInjury } from "../../types/allType";
-
+import router from '../../router'
 import "./index.css";
 
 const routes = useRoute();
