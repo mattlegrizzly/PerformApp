@@ -506,8 +506,7 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     serializer_class = UsersFavDetailedExercisesSerializer
     
     def get_serializer_class(self):
-        print(self)
-        if self.action == 'POST':
+        if self.action != 'create':
             return UsersFavDetailedExercisesSerializer
         return UsersFavExercises
     
@@ -516,7 +515,6 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def list(self, request, *args, **kwargs):
-        # Si l'utilisateur n'est pas administrateur, filtrer les objets pour n'afficher que ceux associés à l'utilisateur connecté
         if not request.user.is_superuser:
             self.queryset = self.queryset.filter(user=request.user)
         return super().list(request, *args, **kwargs)
