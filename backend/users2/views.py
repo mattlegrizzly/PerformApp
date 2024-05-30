@@ -502,7 +502,7 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
 # Users fav exercises ViewSet
 class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsUserOrAdmin]
-    serializer_class = UsersFavExercisesSerializer
+    serializer_class = UsersFavDetailedExercisesSerializer
     queryset = UsersFavExercises.objects.all()
     
     def get_serializer_class(self):
