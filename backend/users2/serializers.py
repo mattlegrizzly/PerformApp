@@ -17,7 +17,6 @@ class UsersFavDetailedExercisesSerializer(serializers.ModelSerializer):
         fields = ["id",  'user', 'fav_exercise']
 
 class InjurieSerializer(serializers.ModelSerializer):
-    zone = WorkZoneSerializer(many=False, read_only=False)
     class Meta:
         model = Injurie
         fields = ['name', 'description', 'state', 'user', 'zone', 'date']
