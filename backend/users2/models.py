@@ -107,7 +107,7 @@ class UsersFavExercises(models.Model):
 
 class Injurie(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=256, default="Rien à signaler")
+    description = models.CharField(max_length=256, default="Rien à signaler", null=True)
     state = models.CharField(choices=State.choices , default=State.not_treated, max_length=2)
     date = models.DateField(null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_injuries")
