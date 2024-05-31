@@ -30,7 +30,13 @@
         <ion-tab-button href="/profile" tab="profile">
           <ion-icon
             :name="
-              isRouteActive(['Profile', 'AddInjurie', 'ListInjuries'])
+              isRouteActive([
+                'Profile',
+                'AddInjurie',
+                'ListInjuries',
+                'EditInjurie',
+                'ViewInjurie',
+              ])
                 ? 'profile-selected'
                 : 'profile'
             "

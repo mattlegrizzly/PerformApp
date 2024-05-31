@@ -28,6 +28,15 @@ const routes: Array<RouteRecordRaw> = [
           transition: "fade",
         },
       },
+
+      {
+        path: "edit_profile",
+        name: "EditProfile",
+        component: () => import("./views/Profile/EditProfilePage.vue"),
+        meta: {
+          transition: "fade",
+        },
+      },
       {
         path: "add_injurie",
         name: "AddInjurie",
@@ -44,11 +53,18 @@ const routes: Array<RouteRecordRaw> = [
           transition: "fade",
         },
       },
-
       {
         path: "view_injuries/:id",
         name: "ViewInjurie",
         component: () => import("./views/Profile/ViewInjuriePage.vue"),
+        meta: {
+          transition: "fade",
+        },
+      },
+      {
+        path: "edit_injurie/:id",
+        name: "EditInjurie",
+        component: () => import("./views/Profile/EditInjuriePage.vue"),
         meta: {
           transition: "fade",
         },
@@ -76,6 +92,14 @@ const routes: Array<RouteRecordRaw> = [
           transition: "fade",
         },
       },
+
+      {
+        path: "conditions",
+        component: () => import("./views/ConditionsPage.vue"),
+        meta: {
+          transition: "fade",
+        },
+      },
     ],
   },
   {
@@ -87,38 +111,36 @@ const routes: Array<RouteRecordRaw> = [
 
 const isLoggedIn = async () => {
   try {
-    const res = await store.get('user');
+    const res = await store.get("user");
     const access = JSON.parse(res).access;
     if (!access) return false;
 
     const verifyResponse = await verifyToken();
-    console.log('verify ', verifyResponse);
+    console.log("verify ", verifyResponse);
 
     if (verifyResponse.status > 300) {
       if (verifyResponse.status === 401) {
-        const refreshResponse = await refresh();
+        const refreshResponse = refresh();
+        console.log("refresh oui", refreshResponse);
         if (refreshResponse.status > 300) {
-          store.remove('user');
+          store.remove("user");
           return false;
         }
       } else {
-        store.remove('user');
+        store.remove("user");
         return false;
       }
     }
-
-    const userResponse = await get('/admin/users_all/me/', { body: {} }, true);
-    await store.set('user', JSON.stringify(userResponse));
+    console.log("resresh");
+    const userResponse = await get("/admin/users_all/me/", { body: {} }, true);
+    await store.set("user", JSON.stringify(userResponse));
     console.log(true);
     return true;
-
   } catch (error) {
     console.log(error);
     return false;
   }
 };
-
-
 
 const router = createRouter({
   // Use: createWebHistory(process.env.BASE_URL) in your app
@@ -136,7 +158,7 @@ const isLogin = async () => {
 };
 
 router.beforeEach(async (to, from, next) => {
-  const isloggedin = await isLoggedIn() as any
+  const isloggedin = (await isLoggedIn()) as any;
   if (to.name !== "login" && (await !isloggedin)) {
     next({
       path: "login",
@@ -147,7 +169,6 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next();
   }
-
 });
 
 export default router;

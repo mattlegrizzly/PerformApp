@@ -5,28 +5,43 @@
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
-          <NavButton url="profile" text="Retour" back="back" />
+          <NavButton url="profile" text="Retour" :back="back" />
           <NavButton url="add_injurie" text="Ajouter" :noIcon="true" />
         </div>
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
           Liste de mes blessures
         </h1>
       </div>
-      <ion-list lines="none" style="
+      <ion-list
+        lines="none"
+        style="
           padding-left: var(--pd-l);
           padding-right: var(--pd-r);
           padding-top: 10px;
           padding-bottom: 10px;
-        ">
-        <ion-item class="injurie_div_info" v-for="injurie of user.user_injuries">
-          <div class="injurie_div_parent" @click="router.push('/view_injuries/' + injurie.id)" :key="injurie.id">
+        "
+      >
+        <ion-item
+          class="injurie_div_info"
+          v-for="injurie of user.user_injuries"
+        >
+          <div
+            class="injurie_div_parent"
+            @click="router.push('/view_injuries/' + injurie.id)"
+            :key="injurie.id"
+          >
             <div class="injurie_info">
               <ion-label>{{ injurie.name }}</ion-label>
-              <ion-label>{{ injurie.date }}</ion-label>
+              <ion-label>{{
+                new Date(injurie.date).toLocaleString("fr").split(" ")[0]
+              }}</ion-label>
             </div>
             <div class="injurie_info">
               <ion-label>{{ injurie.zone.name }}</ion-label>
-              <ion-label :class="stateSetClass(injurie.state)" class="injurie_state">{{ stateSet(injurie.state) }}
+              <ion-label
+                :class="stateSetClass(injurie.state)"
+                class="injurie_state"
+                >{{ stateSet(injurie.state) }}
               </ion-label>
             </div>
           </div>
@@ -60,10 +75,11 @@ import type { Sport } from "@/types/types";
 import { useRoute } from "vue-router";
 import { store } from "../../store/store";
 import { IEInjury } from "../../types/allType";
-import router from '../../router'
+import router from "../../router";
 import "./index.css";
 
 const routes = useRoute();
+const back = ref("back");
 
 const user = ref({
   age: 0,
@@ -111,20 +127,16 @@ const load = () => {
   store.get("user").then((res) => {
     const json = JSON.parse(res);
     user.value = json.user;
-    get("/admin/users_all/" + user.value.id, { body: {} }, true).then((res) => {
-      user.value = res;
-      res;
-      const userToSet = {
-        user: res,
-        access: json.access,
-        refresh: json.refresh,
-      };
-      store.set("user", JSON.stringify(userToSet));
+    get("/injuries/?user=" + user.value.id, { body: {} }, true).then((res) => {
+      user.value.user_injuries = res.results;
     });
   });
 };
 
 onMounted(async () => {
+  if (routes.query.edit) {
+    back.value = "";
+  }
   let storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
@@ -132,7 +144,7 @@ onMounted(async () => {
 });
 
 onUpdated(() => {
-  if (routes.name == "Profile") {
+  if (routes.name == "ListInjuries") {
     load();
   }
 });

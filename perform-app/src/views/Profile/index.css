@@ -78,6 +78,7 @@
 }
 
 .injurie_div {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     padding-top: 5px;
@@ -186,6 +187,26 @@ ion-popover {
     --width: cover;
 }
 
+.buttons_user {
+    display: flex;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.buttons_user ion-button {
+    width: 100%;
+    margin-bottom: 15px;
+    height: 40px;
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.buttons_user ion-button span {
+    margin-left: 10px;
+}
+
+
 /** Injuries list **/
 .injurie_info {
     display: flex;
@@ -225,4 +246,32 @@ ion-popover {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/** Injuries Show **/
+.injuriy_info {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    flex-wrap: wrap;
+    border: 1px solid #d4d4d4;
+    border-radius: 20px;
+    margin-top: 20px;
+    box-shadow: 0px 4px 8px #d4d4d4;
+}
+
+.injury_item {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.injury_item:last-child {
+    border-bottom: none;
 }

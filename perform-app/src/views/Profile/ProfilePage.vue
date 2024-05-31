@@ -51,19 +51,30 @@
           </div>
         </div>
         <div class="profile_container_div">
-          <div class="div_container_info">
-            <h2>Mes blessures</h2>
+          <div
+            class="div_container_info"
+            style="display: flex; justify-content: center; flex-wrap: wrap"
+          >
+            <h2 style="text-align: left; width: 100%">Mes blessures</h2>
             <NavButton
               v-if="user.user_injuries.length == 0"
               url="add_injurie"
               text="Ajouter une blessure"
               :noIcon="true"
             />
-            <ion-list>
-              <div class="injurie_div" v-for="injurie of limitedItems()">
+            <ion-list style="width: 100%">
+              <div
+                class="injurie_div"
+                @click="router.push('/view_injuries/' + injurie.id)"
+                v-for="injurie of limitedItems()"
+              >
                 <ion-label>{{ injurie.zone.name }}</ion-label>
                 <ion-label>|</ion-label>
-                <ion-label> {{ injurie.date }}</ion-label>
+                <ion-label>
+                  {{
+                    new Date(injurie.date).toLocaleString("fr").split(" ")[0]
+                  }}</ion-label
+                >
                 <ion-label>|</ion-label>
                 <ion-label
                   :class="stateSetClass(injurie.state)"
@@ -79,14 +90,42 @@
               >
             </ion-list>
             <NavButton
+              class="custom_nav"
               v-if="user.user_injuries.length > 0"
               url="list_injuries"
               text="Voir toutes mes blessures"
               :noIcon="true"
             />
           </div>
+          <v-divider :thickness="3"></v-divider>
+          <div class="buttons_user">
+            <NavButton
+              class="custom_nav"
+              url="edit_profile"
+              text="Editer mon profil"
+              :icon="pencil"
+            />
+            <NavButton
+              class="custom_nav"
+              url="list_injuries"
+              text="Nous contacter"
+              :icon="mail"
+            />
+            <NavButton
+              class="custom_nav"
+              url="conditions"
+              text="Nos conditions générales d'utilisations"
+              :icon="documentText"
+            />
+            <NavButton
+              class="custom_nav"
+              url="list_injuries"
+              text="Déconnexion"
+              :icon="logOut"
+              :color="'light'"
+            />
+          </div>
         </div>
-        <ion-button size="small" @click="disconnect"> Connexion </ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -96,7 +135,6 @@
 import {
   IonContent,
   IonPage,
-  IonButton,
   IonChip,
   IonList,
   IonIcon,
@@ -112,7 +150,13 @@ import "./index.css";
 import type { Sport } from "@/types/types";
 //@ts-expect-error
 import NavButton from "../../components/NavButton/NavButton.vue";
-import { chevronForwardOutline } from "ionicons/icons";
+import {
+  chevronForwardOutline,
+  pencil,
+  mail,
+  documentText,
+  logOut,
+} from "ionicons/icons";
 
 const api = import.meta.env.VITE_API_URL;
 const routes = useRoute();
@@ -223,6 +267,22 @@ onMounted(async () => {
   let storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
+  }
+
+  const ionSelect = document.querySelectorAll(".custom_nav");
+  console.log(ionSelect);
+  if (ionSelect === null) return;
+  for (const elem of ionSelect) {
+    const shadowRoot = elem.shadowRoot;
+    if (shadowRoot === null) return;
+    console.log(shadowRoot);
+    const style = document.createElement("style");
+    style.textContent = `
+        .button-inner {
+        justify-content: flex-start !important;
+        }
+    `;
+    shadowRoot.appendChild(style);
   }
 });
 

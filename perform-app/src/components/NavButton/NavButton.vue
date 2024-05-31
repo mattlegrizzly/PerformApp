@@ -4,7 +4,7 @@ import { IonButton, IonIcon } from "@ionic/vue";
 import { chevronBackOutline } from "ionicons/icons";
 import { onMounted, ref } from "vue";
 
-const props = defineProps(["url", "text", "back", "noIcon"]);
+const props = defineProps(["url", "text", "back", "noIcon", "icon", "color"]);
 
 const noIconYes = ref(false);
 const nav = () => {
@@ -19,7 +19,7 @@ const nav = () => {
   }
 };
 onMounted(() => {
-  console.log(props);
+  console.log("props ", props.color, props.color === "light");
   if (props.noIcon == true) {
     noIconYes.value = true;
   } else {
@@ -27,11 +27,24 @@ onMounted(() => {
   }
 });
 </script>
-<style lang=""></style>
+<style>
+.light_button {
+  color: var(--primary-blue);
+  border: 1px solid var(--primary-blue);
+  border-radius: 10px;
+}
+</style>
 
 <template lang="">
-  <ion-button size="small" @click="nav">
-    <ion-icon v-if="noIconYes == false" :icon="chevronBackOutline"></ion-icon>
+  <ion-button
+    :fill="props.color ? 'outline' : 'solid'"
+    size="small"
+    @click="nav"
+  >
+    <ion-icon
+      v-if="noIconYes == false"
+      :icon="icon ? icon : chevronBackOutline"
+    ></ion-icon>
     {{ props.text }}
   </ion-button>
 </template>
