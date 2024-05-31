@@ -600,6 +600,7 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
 class InjurieViewSet(viewsets.ModelViewSet):
     permission_classes = [IsUserOrAdmin]
     queryset = Injurie.objects.all()
+    serializer_class = InjurieDetailedSerializer
 
     def validate(self, data):
         request = self.context.get('request')
@@ -610,7 +611,7 @@ class InjurieViewSet(viewsets.ModelViewSet):
         return data
     
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update':
             return InjurieSerializer
         return InjurieDetailedSerializer
 
@@ -657,7 +658,15 @@ class InjurieViewSet(viewsets.ModelViewSet):
         responses={201: "Created"}
     )
     def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+        serializer = InjurieSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+         # Récupérer l'instance sauvegardée
+        instance = serializer.instance
+        # Utiliser le sérialiseur détaillé pour la réponse
+        detailed_serializer = InjurieDetailedSerializer(instance)
+        return Response(detailed_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @extend_schema(
         tags=['Users - Injuries'],

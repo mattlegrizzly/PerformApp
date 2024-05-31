@@ -17,7 +17,6 @@ class UsersFavDetailedExercisesSerializer(serializers.ModelSerializer):
         fields = ["id",  'user', 'fav_exercise']
 
 class InjurieSerializer(serializers.ModelSerializer):
-    zone = WorkZoneSerializer(many=False, read_only=False)
     class Meta:
         model = Injurie
         fields = ['name', 'description', 'state', 'user', 'zone', 'date']
@@ -50,7 +49,7 @@ class UserDetailedSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     sports_user = SportsDetailedUserSerializer(many=True, read_only=False)
-    user_injuries = InjurieSerializer(many=True, read_only=False)
+    user_injuries = InjurieDetailedSerializer(many=True, read_only=False)
     users_wellness = WellnessSerializer(many=True, read_only=False)
     class Meta:
         model = User
