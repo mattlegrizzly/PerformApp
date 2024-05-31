@@ -115,7 +115,6 @@ onMounted(() => {
   if (routerNav.query.edit) {
     back.value = "";
     urlReturn.value += "?edit=true";
-    console.log(urlReturn);
   }
   get("/injuries/" + id.value + "/", { body: {} }, true).then((res) => {
     if (res.status > 300) {

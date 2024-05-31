@@ -123,7 +123,6 @@ const stateSetClass = (state: string) => {
 };
 
 const load = () => {
-  console.log("user ", user.value);
   store.get("user").then((res) => {
     const json = JSON.parse(res);
     user.value = json.user;

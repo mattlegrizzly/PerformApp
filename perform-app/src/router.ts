@@ -116,12 +116,10 @@ const isLoggedIn = async () => {
     if (!access) return false;
 
     const verifyResponse = await verifyToken();
-    console.log("verify ", verifyResponse);
 
     if (verifyResponse.status > 300) {
       if (verifyResponse.status === 401) {
         const refreshResponse = refresh();
-        console.log("refresh oui", refreshResponse);
         if (refreshResponse.status > 300) {
           store.remove("user");
           return false;
@@ -131,10 +129,8 @@ const isLoggedIn = async () => {
         return false;
       }
     }
-    console.log("resresh");
     const userResponse = await get("/admin/users_all/me/", { body: {} }, true);
     await store.set("user", JSON.stringify(userResponse));
-    console.log(true);
     return true;
   } catch (error) {
     console.log(error);

@@ -98,7 +98,6 @@ const handleResponse = async (response: Response): Promise<any> => {
 const refresh = async () => {
   store.get("user").then(async (res) => {
     const refresh = JSON.parse(res).refresh;
-    console.log("resf refresh ", refresh);
     const relativeUrlString = "/api/refresh_tokens/";
     const url = new URL(relativeUrlString, baseUrl);
     const body = {
@@ -119,7 +118,6 @@ const refresh = async () => {
         throw new Error("La requête a échoué");
       }
       const data = await response.json();
-      console.log("data ", data);
       return data;
     } catch (error) {
       throw new Error("Impossible de rafraîchir le token");
@@ -205,6 +203,7 @@ const post = async (
     Object.entries(options.body).forEach(([key, value]) => {
       formData.append(key as string, value as string);
     });
+
     body = formData;
   } else {
     body = JSON.stringify(options.body);

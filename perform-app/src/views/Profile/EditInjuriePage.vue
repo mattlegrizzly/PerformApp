@@ -146,7 +146,6 @@ const injury = ref({
 });
 
 const handleInput = (name: string, value: string) => {
-  console.log(name, value);
   switch (name) {
     case "name":
       injury.value.name = value;
@@ -244,7 +243,6 @@ onMounted(async () => {
     }
   });
   const ionSelect = document.querySelectorAll(".custom-ion-select");
-  console.log(ionSelect);
   if (ionSelect === null) return;
   for (const elem of ionSelect) {
     const shadowRoot = elem.shadowRoot;

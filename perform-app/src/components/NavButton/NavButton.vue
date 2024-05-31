@@ -14,12 +14,10 @@ const nav = () => {
   if (props.back == "back") {
     router.back(props.url);
   } else {
-    console.log(props.url);
     router.push(props.url);
   }
 };
 onMounted(() => {
-  console.log("props ", props.color, props.color === "light");
   if (props.noIcon == true) {
     noIconYes.value = true;
   } else {

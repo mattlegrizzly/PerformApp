@@ -176,7 +176,6 @@ const user = ref({
 });
 
 function limitedItems(): any {
-  console.log("user ", user.value.user_injuries);
   return user.value.user_injuries.slice(0, 2);
 }
 
@@ -246,7 +245,6 @@ const disconnect = () => {
 };
 
 const load = () => {
-  console.log("user ", user.value);
   store.get("user").then((res) => {
     const json = JSON.parse(res);
     user.value = json.user;
@@ -270,12 +268,10 @@ onMounted(async () => {
   }
 
   const ionSelect = document.querySelectorAll(".custom_nav");
-  console.log(ionSelect);
   if (ionSelect === null) return;
   for (const elem of ionSelect) {
     const shadowRoot = elem.shadowRoot;
     if (shadowRoot === null) return;
-    console.log(shadowRoot);
     const style = document.createElement("style");
     style.textContent = `
         .button-inner {

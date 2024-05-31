@@ -170,7 +170,6 @@ const addInjurie = () => {
     },
     true
   ).then((res) => {
-    console.log(res);
     if (res.status > 300) {
     } else {
       router.push("/list_injuries");
@@ -201,7 +200,6 @@ onMounted(async () => {
     user.value = JSON.parse(storeUser).user;
   }
   const ionSelect = document.querySelectorAll(".custom-ion-select");
-  console.log(ionSelect);
   if (ionSelect === null) return;
   for (const elem of ionSelect) {
     const shadowRoot = elem.shadowRoot;

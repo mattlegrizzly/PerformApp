@@ -62,7 +62,6 @@ import "../../assets/base.css";
 const route = useRoute();
 
 const isRouteActive = (routeName: string[]) => {
-  console.log(route.name, routeName);
   if (route.name) return routeName.includes(route.name?.toString());
 };
 </script>

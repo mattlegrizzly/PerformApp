@@ -224,7 +224,6 @@ const handleSearchInput = (event: any) => {
 };
 
 const load = () => {
-  console.log("load");
   get("/exercises/", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
     } else {
@@ -258,7 +257,6 @@ onMounted(() => {
     ).then((res: any) => {
       if (res.status > 300) {
       } else {
-        console.log("res usrss fav ", res);
         exercises_fav.value = res;
       }
     });
