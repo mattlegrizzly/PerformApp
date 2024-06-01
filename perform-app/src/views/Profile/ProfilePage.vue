@@ -119,7 +119,7 @@
             />
             <NavButton
               class="custom_nav"
-              url="list_injuries"
+              @click="disconnect"
               text="Déconnexion"
               :icon="logOut"
               :color="'light'"
