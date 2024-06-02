@@ -22,6 +22,7 @@ from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 from rest_framework.permissions import AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.viewsets import ViewSet
+from datetime import datetime, timedelta
 import jwt
 from backend.settings import SIMPLE_JWT
 from rest_framework import filters, mixins, status, viewsets, pagination
@@ -34,6 +35,7 @@ from .serializers import (
     InjurieSerializer, 
     InjurieDetailedSerializer,
     WellnessSerializer, 
+    WellnessDetailedSerializer,
     LoginSerializer,
     LogoutSerializer,
     RefreshTokensSerializer,
@@ -701,6 +703,115 @@ class InjurieViewSet(viewsets.ModelViewSet):
 #------------------USERS WELLNESS------------------
 # Users Wellness ViewSet
 class WellnessViewSet(viewsets.ModelViewSet):
-    permission_classes = [UserViewSetPermissions, permissions.IsAdminUser]
+    permission_classes = [IsUserOrAdmin, permissions.IsAdminUser]
     queryset = Wellness.objects.all()
-    serializer_class = WellnessSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return WellnessSerializer
+        return WellnessDetailedSerializer
+
+    def validate(self, data):
+        request = self.context.get('request')
+        if request and request.user:
+            user_id = data.get('user')
+            if user_id and user_id != request.user.id:
+                raise ValidationError("You cannot change the user to a different user ID.")
+        return data
+
+    def perform_create(self, serializer):
+        date = serializer.validated_data.get('date')
+        if Wellness.objects.filter(date=date).exists():
+            raise ValidationError("An entry with this date already exists.")
+        serializer.save()
+
+    @extend_schema(
+        tags=['Users - Wellness'],
+        responses={200: "OK"}
+    )
+    def list(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            self.queryset = self.queryset.filter(user=request.user)
+        return super().list(request, *args, **kwargs)
+    
+    @extend_schema(
+        tags=['Users - Wellness'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="latest")
+    def latest(self, request):
+        latest_wellness_user = self.queryset.order_by('date').last()
+        serializer = self.get_serializer(latest_wellness_user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        tags=['Users - Wellness'],
+        responses={200: "OK"}
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users - Wellness'],
+        responses={201: "Created"}
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users - Wellness'],
+        responses={200: "OK"}
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users - Wellness'],
+        responses={200: "OK"}
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['Users - Wellness'],
+        responses={204: "No Content"}
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+    @extend_schema(
+        tags=['Users - Wellness'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="user/(?P<user_id>\d+)/week")
+    def week_wellness(self, request, user_id, *args, **kwargs):
+        date_str = request.query_params.get('date')
+        try:
+            input_date = datetime.strptime(date_str, '%Y-%m-%d')
+        except (ValueError, TypeError):
+            return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+        print(input_date)
+        start_week = input_date - timedelta(days=input_date.weekday())  # Lundi
+        end_week = start_week + timedelta(days=6)  # Dimanche
+
+        queryset = self.queryset.filter(user=user_id, date__range=[start_week, end_week])
+        wellness_data = {w.date: w for w in queryset}
+        
+        week_data = []
+        for i in range(7):
+            current_date = start_week + timedelta(days=i)
+            print(wellness_data)
+            if current_date.date() in wellness_data:
+                week_data.append(wellness_data[current_date.date()])
+            else:
+                week_data.append(Wellness(
+                    user_id=user_id,
+                    date=current_date.date(),
+                    hydratation=None,
+                    sleep=None,
+                    stress=None,
+                    fatigue=None,
+                    pain=None
+                ))
+
+        serializer = self.get_serializer(week_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
