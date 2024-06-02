@@ -22,6 +22,7 @@ ion-range {
   --bar-border-radius: 8px;
   --knob-size: 10px;
 }
+
 .example-content {
   display: flex;
   align-items: center;
@@ -123,10 +124,9 @@ ion-range {
 }
 
 .range_container p {
-  font-size: 4px !important;
+  font-size: 10px !important;
   text-align: center;
   color: #aeaeae;
-  transform: scale(0.7);
 }
 
 .divs_range {
@@ -146,11 +146,7 @@ ion-range {
     <ion-content>
       <div class="home_div">
         <div class="header_img">
-          <img
-            width="200px"
-            src="@/assets/logo_perform_bandeau.png"
-            alt="logo"
-          />
+          <img width="200px" src="@/assets/logo_perform_bandeau.png" alt="logo" />
         </div>
         <div class="block_100">
           <div class="div_info">
@@ -163,11 +159,7 @@ ion-range {
             </p>
           </div>
           <div class="profile_picture">
-            <img
-              :src="user ? setPP() : ''"
-              alt="profile"
-              style="height: 80px; border-radius: 50%"
-            />
+            <img :src="user ? setPP() : ''" alt="profile" style="height: 80px; border-radius: 50%" />
           </div>
         </div>
         <div class="block_100">
@@ -198,154 +190,237 @@ ion-range {
         <div class="split_div">
           <div class="block_50">
             <h3>Welness</h3>
+            <ion-modal ref="modal" trigger="open-modal">
+              <ion-content>
+                <div style="
+                    padding: 20px 20px 5px 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  ">
+                  <h3 style="font-size: 13px; margin: 0px">
+                    Saissiez le welness du jour :
+                  </h3>
+                  <ion-icon style="
+                      color: red;
+                      border: 1px solid red;
+                      border-radius: 5px;
+                    " @click="dismiss" :icon="close" />
+                </div>
+                <div class="divs_range">
+                  <div id="pain_range">
+                    <div class="range_div">
+                      <ion-label class="title_range">Douleurs</ion-label>
+                      <div class="range_container">
+                        <p>Journée<br />douloureuse</p>
+                        <p>
+                          Aucune<br />
+                          douleur
+                        </p>
+                      </div>
+                    </div>
+                    <div class="range_inner">
+                      <ion-range :value="welness.pain" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                        :min="0" :max="10" @ionChange="onIonChange($event, 'pain')"></ion-range>
+                    </div>
+                  </div>
+                  <div id="sleep_range">
+                    <div class="range_div">
+                      <ion-label class="title_range">Sommeil</ion-label>
+                      <div class="range_container">
+                        <p>Mauvais<br />sommeil</p>
+                        <p>
+                          Très bon<br />
+                          sommeil
+                        </p>
+                      </div>
+                    </div>
+                    <div class="range_inner">
+                      <ion-range :value="welness.sleep" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                        :min="0" :max="10" @ionChange="onIonChange($event, 'sleep')"></ion-range>
+                    </div>
+                  </div>
+                  <div id="stress_range">
+                    <div class="range_div">
+                      <ion-label class="title_range">Stress</ion-label>
+                      <div class="range_container">
+                        <p>Journée<br />stressante</p>
+                        <p>
+                          Journée<br />
+                          détendue
+                        </p>
+                      </div>
+                    </div>
+                    <div class="range_inner">
+                      <ion-range :value="welness.stress" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                        :min="0" :max="10" @ionChange="onIonChange($event, 'stress')"></ion-range>
+                    </div>
+                  </div>
+                  <div id="fatigue_range">
+                    <div class="range_div">
+                      <ion-label class="title_range">Fatigue</ion-label>
+                      <div class="range_container">
+                        <p>Très<br />fatigué</p>
+                        <p>
+                          Je pète<br />
+                          la forme
+                        </p>
+                      </div>
+                    </div>
+                    <div class="range_inner">
+                      <ion-range aria-label="Range with ticks" :ticks="true" :snaps="true" :min="0" :max="10"
+                        :value="welness.fatigue" @ionChange="onIonChange($event, 'fatigue')"></ion-range>
+                    </div>
+                  </div>
+                  <div id="hydratation_range">
+                    <div class="range_div">
+                      <ion-label class="title_range">Hydratation</ion-label>
+                      <div class="range_container">
+                        <p>- de<br />1L</p>
+                        <p>
+                          + de<br />
+                          3L
+                        </p>
+                      </div>
+                    </div>
+                    <div class="range_inner">
+                      <ion-range aria-label="Range with ticks" :ticks="true" :snaps="true" :value="welness.hydratation"
+                        :min="0" :max="10" @ionChange="onIonChange($event, 'hydratation')"></ion-range>
+                    </div>
+                  </div>
+                  <div style="display: flex; justify-content: center">
+                    <ion-button v-if="wellnessNot" @click="postWelness"> Enregistrer </ion-button>
+                    <ion-button v-else @click="patchWelness"> Editer </ion-button>
+                  </div>
+                </div>
+              </ion-content>
+            </ion-modal>
+            <ion-modal ref="modalStats" trigger="open-modal-stats">
+              <ion-content>
+                <div style="
+                    padding: 20px 20px 5px 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                  ">
+                  <h3>Satistiques :</h3>
+                  <ion-icon style="
+                      color: red;
+                      border: 1px solid red;
+                      border-radius: 5px;
+                    " @click="dismiss" :icon="close" />
+                </div>
+                <div style="
+                    padding: 0px 20px 5px 20px;
+                ">
+                  <h4 style="width: 100%; margin-top:0px; text-align: center;">Semaine du 26/03 au 3/03</h4>
+                  <div style="width:100%; display:flex; justify-content: space-between">
+                    <ion-button fill="outline" style="font-size: 8px">
+                      < Semaine précédente</ion-button>
+                        <ion-button fill="outline" style="font-size: 8px">
+                          Semaine suivante ></ion-button>
+                  </div>
+                  <div style="width: 300px;"><canvas id="acquisitions"></canvas></div>
+                </div>
+              </ion-content>
+            </ion-modal>
+
             <div v-if="wellnessNot">
               <p style="text-align: center; margin-top: 10px; font-size: 16px">
                 Saissiez votre welness du jour !
-                <ion-button id="open-modal" expand="block"
-                  >Open Modal</ion-button
-                >
+                <ion-button id="open-modal" expand="block">Saisir le wellness</ion-button>
 
-                <ion-modal ref="modal" trigger="open-modal">
-                  <ion-content>
-                    <div
-                      style="
-                        padding: 20px 20px 5px 20px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                      "
-                    >
-                      <h3 style="font-size: 13px; margin: 0px">
-                        Saissiez le welness du jour :
-                      </h3>
-                      <ion-icon
-                        style="
-                          color: red;
-                          border: 1px solid red;
-                          border-radius: 5px;
-                        "
-                        @click="dismiss"
-                        :icon="close"
-                      />
-                    </div>
-                    <div class="divs_range">
-                      <div id="pain_range">
-                        <div class="range_div">
-                          <ion-label class="title_range">Douleurs</ion-label>
-                          <div class="range_container">
-                            <p>Journée<br />douloureuse</p>
-                            <p>
-                              Aucune<br />
-                              douleur
-                            </p>
-                          </div>
-                        </div>
-                        <div class="range_inner">
-                          <ion-range
-                            aria-label="Range with ticks"
-                            :ticks="true"
-                            :snaps="true"
-                            :min="0"
-                            :max="10"
-                            @ionChange="onIonChange($event, 'pain')"
-                          ></ion-range>
-                        </div>
-                      </div>
-                      <div id="sleep_range">
-                        <div class="range_div">
-                          <ion-label class="title_range">Sommeil</ion-label>
-                          <div class="range_container">
-                            <p>Mauvais<br />sommeil</p>
-                            <p>
-                              Très bon<br />
-                              sommeil
-                            </p>
-                          </div>
-                        </div>
-                        <div class="range_inner">
-                          <ion-range
-                            aria-label="Range with ticks"
-                            :ticks="true"
-                            :snaps="true"
-                            :min="0"
-                            :max="10"
-                            @ionChange="onIonChange($event, 'sleep')"
-                          ></ion-range>
-                        </div>
-                      </div>
-                      <div id="stress_range">
-                        <div class="range_div">
-                          <ion-label class="title_range">Stress</ion-label>
-                          <div class="range_container">
-                            <p>Journée<br />stressante</p>
-                            <p>
-                              Journée<br />
-                              détendue
-                            </p>
-                          </div>
-                        </div>
-                        <div class="range_inner">
-                          <ion-range
-                            aria-label="Range with ticks"
-                            :ticks="true"
-                            :snaps="true"
-                            :min="0"
-                            :max="10"
-                            @ionChange="onIonChange($event, 'stress')"
-                          ></ion-range>
-                        </div>
-                      </div>
-                      <div id="fatigue_range">
-                        <div class="range_div">
-                          <ion-label class="title_range">Fatigue</ion-label>
-                          <div class="range_container">
-                            <p>Très<br />fatigué</p>
-                            <p>
-                              Je pète<br />
-                              la forme
-                            </p>
-                          </div>
-                        </div>
-                        <div class="range_inner">
-                          <ion-range
-                            aria-label="Range with ticks"
-                            :ticks="true"
-                            :snaps="true"
-                            :min="0"
-                            :max="10"
-                            @ionChange="onIonChange($event, 'fatigue')"
-                          ></ion-range>
-                        </div>
-                      </div>
-                      <div id="hydratation_range">
-                        <div class="range_div">
-                          <ion-label class="title_range">Hydratation</ion-label>
-                          <div class="range_container">
-                            <p>- de<br />1L</p>
-                            <p>
-                              + de<br />
-                              3L
-                            </p>
-                          </div>
-                        </div>
-                        <div class="range_inner">
-                          <ion-range
-                            aria-label="Range with ticks"
-                            :ticks="true"
-                            :snaps="true"
-                            :min="0"
-                            :max="10"
-                            @ionChange="onIonChange($event, 'hydratation')"
-                          ></ion-range>
-                        </div>
-                      </div>
-                      <div style="display: flex; justify-content: center">
-                        <ion-button> Enregistrer </ion-button>
-                      </div>
-                    </div>
-                  </ion-content>
-                </ion-modal>
               </p>
+            </div>
+            <div v-else>
+              <div class="divs_range">
+                <div id="pain_range">
+                  <div class="range_div">
+                    <ion-label class="title_range">Douleurs</ion-label>
+                    <div class="range_container">
+                      <p>Journée<br />douloureuse</p>
+                      <p>
+                        Aucune<br />
+                        douleur
+                      </p>
+                    </div>
+                  </div>
+                  <div class="range_inner">
+                    <ion-range disabled :value="welness.pain" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                      :min="0" :max="10" @ionChange="onIonChange($event, 'pain')"></ion-range>
+                  </div>
+                </div>
+                <div id="sleep_range">
+                  <div class="range_div">
+                    <ion-label class="title_range">Sommeil</ion-label>
+                    <div class="range_container">
+                      <p>Mauvais<br />sommeil</p>
+                      <p>
+                        Très bon<br />
+                        sommeil
+                      </p>
+                    </div>
+                  </div>
+                  <div class="range_inner">
+                    <ion-range disabled :value="welness.sleep" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                      :min="0" :max="10" @ionChange="onIonChange($event, 'sleep')"></ion-range>
+                  </div>
+                </div>
+                <div id="stress_range">
+                  <div class="range_div">
+                    <ion-label class="title_range">Stress</ion-label>
+                    <div class="range_container">
+                      <p>Journée<br />stressante</p>
+                      <p>
+                        Journée<br />
+                        détendue
+                      </p>
+                    </div>
+                  </div>
+                  <div class="range_inner">
+                    <ion-range disabled :value="welness.stress" aria-label="Range with ticks" :ticks="true"
+                      :snaps="true" :min="0" :max="10" @ionChange="onIonChange($event, 'stress')"></ion-range>
+                  </div>
+                </div>
+                <div id="fatigue_range">
+                  <div class="range_div">
+                    <ion-label class="title_range">Fatigue</ion-label>
+                    <div class="range_container">
+                      <p>Très<br />fatigué</p>
+                      <p>
+                        Je pète<br />
+                        la forme
+                      </p>
+                    </div>
+                  </div>
+                  <div class="range_inner">
+                    <ion-range disabled aria-label="Range with ticks" :ticks="true" :snaps="true" :min="0" :max="10"
+                      :value="welness.fatigue" @ionChange="onIonChange($event, 'fatigue')"></ion-range>
+                  </div>
+                </div>
+                <div id="hydratation_range">
+                  <div class="range_div">
+                    <ion-label class="title_range">Hydratation</ion-label>
+                    <div class="range_container">
+                      <p>- de<br />1L</p>
+                      <p>
+                        + de<br />
+                        3L
+                      </p>
+                    </div>
+                  </div>
+                  <div class="range_inner">
+                    <ion-range disabled aria-label="Range with ticks" :ticks="true" :snaps="true"
+                      :value="welness.hydratation" :min="0" :max="10"
+                      @ionChange="onIonChange($event, 'hydratation')"></ion-range>
+                  </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center">
+                  <ion-button fill="outline" @click="showStats">Satistiques</ion-button>
+                  <ion-button @click="modal.$el.present()">Editer</ion-button>
+                </div>
+              </div>
             </div>
           </div>
           <div class="block_50">
@@ -361,32 +436,40 @@ ion-range {
 
 <script setup lang="ts">
 import {
-  IonButtons,
   IonButton,
+  IonRange,
+  IonIcon,
   IonModal,
-  IonItem,
-  IonList,
-  IonAvatar,
-  IonImg,
   IonLabel,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonPage,
 } from "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";
-import { ref, onMounted, onUpdated } from "vue";
+import { ref, onMounted, onUpdated, hydrate } from "vue";
 import { store } from "@/store/store";
 import { get } from "@/lib/callApi";
 import routes from "@/router";
 import type { Sport } from "@/types";
 import { close, save } from "ionicons/icons";
+import { patch, post } from "../lib/callApi";
+import Chart from 'chart.js/auto';
+
 const api = import.meta.env.VITE_API_URL;
 
 const wellnessNot = ref(true);
 
+const welness = ref({
+  sleep: 0,
+  stress: 0,
+  hydratation: 0,
+  pain: 0,
+  fatigue: 0,
+  id: 4
+} as any)
+
 const modal = ref(null);
+const modalStats = ref(null);
 
 const dismiss = () => {
   console.log(modal.value);
@@ -408,8 +491,96 @@ const user = ref({
   users_wellness: [],
 });
 
+const setLongDate = (date: any) => {
+  const year = date.getFullYear();
+  const months = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDay() + 1).padStart(2, '0');
+  const longDate = `${year}-${months}-${day}`
+  return longDate
+}
+
+const postWelness = async () => {
+
+  post('/wellness/', {
+    body: {
+      sleep: welness.value.sleep,
+      hydratation: welness.value.hydratation,
+      fatigue: welness.value.fatigue,
+      pain: welness.value.pain,
+      stress: welness.value.stress,
+      user: user.value.id,
+      date: setLongDate(new Date(Date.now()))
+    },
+
+  }, true).then(async (res) => {
+    if (res.status > 301) {
+      console.log('error')
+    } else {
+      const userResponse = await get("/admin/users_all/me/", { body: {} }, true);
+      await store.set("user", JSON.stringify(userResponse));
+
+      dismiss();
+    }
+  })
+}
+
+const showStats = async () => {
+  modalStats.value.$el.present();
+  const data = [
+    { year: 2010, count: 10 },
+    { year: 2011, count: 20 },
+    { year: 2012, count: 15 },
+    { year: 2013, count: 25 },
+    { year: 2014, count: 22 },
+    { year: 2015, count: 30 },
+    { year: 2016, count: 28 },
+  ];
+
+  console.log(await document.getElementById('acquisitions'))
+
+  new Chart(
+    document.getElementById('acquisitions'),
+    {
+      type: 'bar',
+      data: {
+        labels: data.map(row => row.year),
+        datasets: [
+          {
+            label: 'Acquisitions by year',
+            data: data.map(row => row.count)
+          }
+        ]
+      }
+    }
+  );
+}
+const patchWelness = async () => {
+
+  patch('/wellness/' + welness.value.id + '/', {
+    body: {
+      sleep: welness.value.sleep,
+      hydratation: welness.value.hydratation,
+      fatigue: welness.value.fatigue,
+      pain: welness.value.pain,
+      stress: welness.value.stress,
+    },
+
+  }, true).then(async (res) => {
+    if (res.status > 301) {
+      console.log('error')
+    } else {
+      const userResponse = await get("/admin/users_all/me/", { body: {} }, true);
+      await store.set("user", JSON.stringify(userResponse));
+
+      dismiss();
+    }
+  })
+}
+
 const onIonChange = ({ detail }, name) => {
   console.log("ionChange emitted value: ", detail.value, " name ", name);
+  welness.value[name] = detail.value;
+  console.log(welness.value[name])
 };
 
 const setPP = () => {
@@ -426,22 +597,42 @@ const load = () => {
     user.value = json.user;
     get("/admin/users_all/" + user.value.id, { body: {} }, true).then((res) => {
       user.value = res;
-      res;
       const userToSet = {
         user: res,
         access: json.access,
         refresh: json.refresh,
       };
       store.set("user", JSON.stringify(userToSet));
+      user.value.users_wellness.map((welnessItem) => {
+        console.log('load ', welnessItem.date == setLongDate(new Date(Date.now())))
+        if (welnessItem.date == setLongDate(new Date(Date.now()))) {
+          wellnessNot.value = false;
+          welness.value = welnessItem;
+          welness.value.id = 4;
+          console.log(welness.value)
+        }
+      })
     });
   });
 };
 
 onMounted(async () => {
+
+
   let storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
   }
+
+  user.value.users_wellness.map((welnessItem) => {
+    console.log(welnessItem.date == setLongDate(new Date(Date.now())))
+    if (welnessItem.date == setLongDate(new Date(Date.now()))) {
+      wellnessNot.value = false;
+      welness.value = welnessItem;
+      welness.value.id = 4;
+      console.log(welness.value)
+    }
+  })
 
   const ionSelect = document.querySelectorAll(".custom_nav");
   if (ionSelect === null) return;
