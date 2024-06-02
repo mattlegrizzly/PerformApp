@@ -154,11 +154,7 @@ ion-range {
     <ion-content>
       <div class="home_div">
         <div class="header_img">
-          <img
-            width="200px"
-            src="@/assets/logo_perform_bandeau.png"
-            alt="logo"
-          />
+          <img width="200px" src="@/assets/logo_perform_bandeau.png" alt="logo" />
         </div>
         <div class="block_100">
           <div class="div_info">
@@ -171,11 +167,7 @@ ion-range {
             </p>
           </div>
           <div class="profile_picture">
-            <img
-              :src="user ? setPP() : ''"
-              alt="profile"
-              style="height: 80px; border-radius: 50%"
-            />
+            <img :src="user ? setPP() : ''" alt="profile" style="height: 80px; border-radius: 50%" />
           </div>
         </div>
         <div class="block_100">
@@ -208,26 +200,20 @@ ion-range {
             <h3>Welness</h3>
             <ion-modal ref="modal" trigger="open-modal">
               <ion-content>
-                <div
-                  style="
+                <div style="
                     padding: 20px 20px 5px 20px;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                  "
-                >
+                  ">
                   <h3 style="font-size: 13px; margin: 0px">
                     Saissiez le welness du jour :
                   </h3>
-                  <ion-icon
-                    style="
+                  <ion-icon style="
                       color: red;
                       border: 1px solid red;
                       border-radius: 5px;
-                    "
-                    @click="dismiss"
-                    :icon="close"
-                  />
+                    " @click="dismiss" :icon="close" />
                 </div>
                 <div class="divs_range">
                   <div id="pain_range">
@@ -242,15 +228,8 @@ ion-range {
                       </div>
                     </div>
                     <div class="range_inner">
-                      <ion-range
-                        :value="welness.pain"
-                        aria-label="Range with ticks"
-                        :ticks="true"
-                        :snaps="true"
-                        :min="0"
-                        :max="10"
-                        @ionChange="onIonChange($event, 'pain')"
-                      ></ion-range>
+                      <ion-range :value="welness.pain" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                        :min="0" :max="10" @ionChange="onIonChange($event, 'pain')"></ion-range>
                     </div>
                   </div>
                   <div id="sleep_range">
@@ -265,15 +244,8 @@ ion-range {
                       </div>
                     </div>
                     <div class="range_inner">
-                      <ion-range
-                        :value="welness.sleep"
-                        aria-label="Range with ticks"
-                        :ticks="true"
-                        :snaps="true"
-                        :min="0"
-                        :max="10"
-                        @ionChange="onIonChange($event, 'sleep')"
-                      ></ion-range>
+                      <ion-range :value="welness.sleep" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                        :min="0" :max="10" @ionChange="onIonChange($event, 'sleep')"></ion-range>
                     </div>
                   </div>
                   <div id="stress_range">
@@ -288,15 +260,8 @@ ion-range {
                       </div>
                     </div>
                     <div class="range_inner">
-                      <ion-range
-                        :value="welness.stress"
-                        aria-label="Range with ticks"
-                        :ticks="true"
-                        :snaps="true"
-                        :min="0"
-                        :max="10"
-                        @ionChange="onIonChange($event, 'stress')"
-                      ></ion-range>
+                      <ion-range :value="welness.stress" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                        :min="0" :max="10" @ionChange="onIonChange($event, 'stress')"></ion-range>
                     </div>
                   </div>
                   <div id="fatigue_range">
@@ -311,15 +276,8 @@ ion-range {
                       </div>
                     </div>
                     <div class="range_inner">
-                      <ion-range
-                        aria-label="Range with ticks"
-                        :ticks="true"
-                        :snaps="true"
-                        :min="0"
-                        :max="10"
-                        :value="welness.fatigue"
-                        @ionChange="onIonChange($event, 'fatigue')"
-                      ></ion-range>
+                      <ion-range aria-label="Range with ticks" :ticks="true" :snaps="true" :min="0" :max="10"
+                        :value="welness.fatigue" @ionChange="onIonChange($event, 'fatigue')"></ion-range>
                     </div>
                   </div>
                   <div id="hydratation_range">
@@ -334,15 +292,8 @@ ion-range {
                       </div>
                     </div>
                     <div class="range_inner">
-                      <ion-range
-                        aria-label="Range with ticks"
-                        :ticks="true"
-                        :snaps="true"
-                        :value="welness.hydratation"
-                        :min="0"
-                        :max="10"
-                        @ionChange="onIonChange($event, 'hydratation')"
-                      ></ion-range>
+                      <ion-range aria-label="Range with ticks" :ticks="true" :snaps="true" :value="welness.hydratation"
+                        :min="0" :max="10" @ionChange="onIonChange($event, 'hydratation')"></ion-range>
                     </div>
                   </div>
                   <div style="display: flex; justify-content: center">
@@ -356,58 +307,42 @@ ion-range {
                 </div>
               </ion-content>
             </ion-modal>
-            <ion-modal
-              class="static-modal"
-              ref="modalStats"
-              trigger="open-modal-stats"
-            >
+            <ion-modal class="static-modal" ref="modalStats">
               <ion-content>
-                <div
-                  style="
+                <div style="
                     padding: 20px 20px 5px 20px;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     flex-wrap: wrap;
-                  "
-                >
+                  ">
                   <h3>Satistiques :</h3>
-                  <ion-icon
-                    style="
+                  <ion-icon style="
                       color: red;
                       border: 1px solid red;
                       border-radius: 5px;
-                    "
-                    @click="dismiss"
-                    :icon="close"
-                  />
+                    " @click="modalStats.$el.dismiss()" :icon="close" />
                 </div>
                 <div style="padding: 0px 20px 5px 20px">
                   <h4 style="width: 100%; margin-top: 0px; text-align: center">
-                    Semaine du 26/03 au 3/03
+                    Semaine du {{ new Date(weekWelnessTemp[0].date).getDate() + '/' + (new
+                      Date(weekWelnessTemp[0].date).getMonth() + 1)
+                    }}
+                    au {{ new Date(weekWelnessTemp[6].date).getDate() + '/' + (new
+                      Date(weekWelnessTemp[6].date).getMonth() + 1) }}
                   </h4>
-                  <div
-                    style="
+                  <div style="
                       width: 100%;
                       display: flex;
                       justify-content: space-between;
-                    "
-                  >
-                    <ion-button fill="outline" style="font-size: 8px">
-                      < Semaine précédente</ion-button
-                    >
-                    <ion-button fill="outline" style="font-size: 8px">
-                      Semaine suivante ></ion-button
-                    >
+                    ">
+                    <ion-button @click="setPreviousWeek" fill="outline" style="font-size: 8px">
+                      < Semaine précédente</ion-button>
+                        <ion-button @click="setNexWeek" fill="outline" style="font-size: 8px">
+                          Semaine suivante ></ion-button>
                   </div>
-                  <div style="">
-                    <canvas
-                      width="400px"
-                      height="300px"
-                      min="0"
-                      max="10"
-                      id="acquisitions"
-                    ></canvas>
+                  <div>
+                    <canvas width="300px" height="200px" min="0" max="10" id="acquisitions"></canvas>
                   </div>
                 </div>
               </ion-content>
@@ -416,9 +351,7 @@ ion-range {
             <div v-if="wellnessNot">
               <p style="text-align: center; margin-top: 10px; font-size: 16px">
                 Saissiez votre welness du jour !
-                <ion-button id="open-modal" expand="block"
-                  >Saisir le wellness</ion-button
-                >
+                <ion-button id="open-modal" expand="block">Saisir le wellness</ion-button>
               </p>
             </div>
             <div v-else>
@@ -435,16 +368,8 @@ ion-range {
                     </div>
                   </div>
                   <div class="range_inner">
-                    <ion-range
-                      disabled
-                      :value="welness.pain"
-                      aria-label="Range with ticks"
-                      :ticks="true"
-                      :snaps="true"
-                      :min="0"
-                      :max="10"
-                      @ionChange="onIonChange($event, 'pain')"
-                    ></ion-range>
+                    <ion-range disabled :value="welness.pain" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                      :min="0" :max="10" @ionChange="onIonChange($event, 'pain')"></ion-range>
                   </div>
                 </div>
                 <div id="sleep_range">
@@ -459,16 +384,8 @@ ion-range {
                     </div>
                   </div>
                   <div class="range_inner">
-                    <ion-range
-                      disabled
-                      :value="welness.sleep"
-                      aria-label="Range with ticks"
-                      :ticks="true"
-                      :snaps="true"
-                      :min="0"
-                      :max="10"
-                      @ionChange="onIonChange($event, 'sleep')"
-                    ></ion-range>
+                    <ion-range disabled :value="welness.sleep" aria-label="Range with ticks" :ticks="true" :snaps="true"
+                      :min="0" :max="10" @ionChange="onIonChange($event, 'sleep')"></ion-range>
                   </div>
                 </div>
                 <div id="stress_range">
@@ -483,16 +400,8 @@ ion-range {
                     </div>
                   </div>
                   <div class="range_inner">
-                    <ion-range
-                      disabled
-                      :value="welness.stress"
-                      aria-label="Range with ticks"
-                      :ticks="true"
-                      :snaps="true"
-                      :min="0"
-                      :max="10"
-                      @ionChange="onIonChange($event, 'stress')"
-                    ></ion-range>
+                    <ion-range disabled :value="welness.stress" aria-label="Range with ticks" :ticks="true"
+                      :snaps="true" :min="0" :max="10" @ionChange="onIonChange($event, 'stress')"></ion-range>
                   </div>
                 </div>
                 <div id="fatigue_range">
@@ -507,16 +416,8 @@ ion-range {
                     </div>
                   </div>
                   <div class="range_inner">
-                    <ion-range
-                      disabled
-                      aria-label="Range with ticks"
-                      :ticks="true"
-                      :snaps="true"
-                      :min="0"
-                      :max="10"
-                      :value="welness.fatigue"
-                      @ionChange="onIonChange($event, 'fatigue')"
-                    ></ion-range>
+                    <ion-range disabled aria-label="Range with ticks" :ticks="true" :snaps="true" :min="0" :max="10"
+                      :value="welness.fatigue" @ionChange="onIonChange($event, 'fatigue')"></ion-range>
                   </div>
                 </div>
                 <div id="hydratation_range">
@@ -531,28 +432,17 @@ ion-range {
                     </div>
                   </div>
                   <div class="range_inner">
-                    <ion-range
-                      disabled
-                      aria-label="Range with ticks"
-                      :ticks="true"
-                      :snaps="true"
-                      :value="welness.hydratation"
-                      :min="0"
-                      :max="10"
-                      @ionChange="onIonChange($event, 'hydratation')"
-                    ></ion-range>
+                    <ion-range disabled aria-label="Range with ticks" :ticks="true" :snaps="true"
+                      :value="welness.hydratation" :min="0" :max="10"
+                      @ionChange="onIonChange($event, 'hydratation')"></ion-range>
                   </div>
                 </div>
-                <div
-                  style="
+                <div style="
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: center;
-                  "
-                >
-                  <ion-button fill="outline" @click="showStats"
-                    >Satistiques</ion-button
-                  >
+                  ">
+                  <ion-button fill="outline" @click="showStats">Satistiques</ion-button>
                   <ion-button @click="modal.$el.present()">Editer</ion-button>
                 </div>
               </div>
@@ -581,7 +471,7 @@ import {
 } from "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";
-import { ref, onMounted, onUpdated, hydrate } from "vue";
+import { ref, onMounted, onUpdated, nextTick, markRaw } from "vue";
 import { store } from "@/store/store";
 import { get } from "@/lib/callApi";
 import routes from "@/router";
@@ -593,6 +483,11 @@ import Chart from "chart.js/auto";
 const api = import.meta.env.VITE_API_URL;
 
 const wellnessNot = ref(true);
+
+const weekWelness: any = ref([])
+const weekWelnessTemp: any = ref([])
+
+const tempDate: any = ref(new Date(Date.now()));
 
 const welness = ref({
   sleep: 0,
@@ -606,10 +501,6 @@ const welness = ref({
 const modal = ref(null);
 const modalStats = ref(null);
 
-const dismiss = () => {
-  console.log(modal.value);
-  modal.value.$el.dismiss();
-};
 
 const user = ref({
   age: 0,
@@ -626,10 +517,14 @@ const user = ref({
   users_wellness: [],
 });
 
+const dismiss = () => {
+  modal.value.$el.dismiss();
+};
+
 const setLongDate = (date: any) => {
   const year = date.getFullYear();
   const months = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDay() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   const longDate = `${year}-${months}-${day}`;
   return longDate;
 };
@@ -651,7 +546,6 @@ const postWelness = async () => {
     true
   ).then(async (res) => {
     if (res.status > 301) {
-      console.log("error");
     } else {
       const userResponse = await get(
         "/admin/users_all/me/",
@@ -659,113 +553,163 @@ const postWelness = async () => {
         true
       );
       await store.set("user", JSON.stringify(userResponse));
-
+      //SET LE SERIALIZER DE WELLNESS EN DETAILER POUR STOCKER LE WELLNESS CORRECTEMENT + SET WELLNESSNOT A FALSE
       dismiss();
     }
   });
 };
 
+const chart = ref(null)
 const showStats = async () => {
   modalStats.value.$el.present();
-  const data = [
-    {
-      date: "2024-06-01",
-      sleep: 8,
-      fatigue: 3,
-      hydratation: 7,
-      pain: 2,
-      stress: 5,
-    },
-    {
-      date: "2024-06-02",
-      sleep: 7,
-      fatigue: 4,
-      hydratation: 6,
-      pain: 3,
-      stress: 6,
-    },
-    {
-      date: "2024-06-03",
-      sleep: 6,
-      fatigue: 5,
-      hydratation: 5,
-      pain: 4,
-      stress: 4,
-    },
-    {
-      date: "2024-06-04",
-      sleep: 9,
-      fatigue: 2,
-      hydratation: 8,
-      pain: 1,
-      stress: 3,
-    },
-    {
-      date: "2024-06-05",
-      sleep: 5,
-      fatigue: 6,
-      hydratation: 4,
-      pain: 5,
-      stress: 7,
-    },
-    {
-      date: "2024-06-06",
-      sleep: 7,
-      fatigue: 3,
-      hydratation: 6,
-      pain: 2,
-      stress: 4,
-    },
-    {
-      date: "2024-06-07",
-      sleep: 8,
-      fatigue: 2,
-      hydratation: 7,
-      pain: 1,
-      stress: 5,
-    },
-  ];
-
+  weekWelnessTemp.value = weekWelness.value;
   setTimeout(() => {
-    console.log(document.getElementById("acquisitions"));
-    new Chart(document.getElementById("acquisitions"), {
+    const chartObj = new Chart(document.getElementById('acquisitions'), {
       type: "line",
       data: {
-        labels: data.map((elem) => elem.date),
+        labels: ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'],
         datasets: [
           {
-            label: "Sleep",
-            data: data.map((elem) => elem.sleep),
+            label: "Sommeil",
+            data: weekWelness.value.map((elem) => elem.sleep),
           },
           {
-            label: "Pain",
-            data: data.map((elem) => elem.pain),
+            label: "Douleurs",
+            data: weekWelness.value.map((elem) => elem.pain),
           },
           {
             label: "Stress",
-            data: data.map((elem) => elem.stress),
+            data: weekWelness.value.map((elem) => elem.stress),
           },
           {
             label: "Hydratation",
-            data: data.map((elem) => elem.hydratation),
+            data: weekWelness.value.map((elem) => elem.hydratation),
           },
           {
             label: "Fatigue",
-            data: data.map((elem) => elem.fatigue),
+            data: weekWelness.value.map((elem) => elem.fatigue),
           },
         ],
       },
       options: {
+        spanGaps: true,
         scales: {
           y: {
             min: 0,
             max: 10,
           },
         },
+        fullSize: true
       },
     });
+    chart.value = markRaw(chartObj);
   }, 100);
 };
+
+const setPreviousWeek = () => {
+  const newDate = new Date(tempDate.value);
+  newDate.setDate(newDate.getDate() - 7);
+  tempDate.value = newDate;
+
+  get('/wellness/user/' + user.value.id + '/week?date=' + setLongDate(tempDate.value), { body: {} }, true)
+    .then((res) => {
+      weekWelnessTemp.value = JSON.parse(JSON.stringify(res));
+      chart.value.destroy()
+      const chartObj = new Chart(document.getElementById('acquisitions'), {
+        type: "line",
+        data: {
+          labels: ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'],
+          datasets: [
+            {
+              label: "Sommeil",
+              data: weekWelnessTemp.value.map((elem) => elem.sleep),
+            },
+            {
+              label: "Douleurs",
+              data: weekWelnessTemp.value.map((elem) => elem.pain),
+            },
+            {
+              label: "Stress",
+              data: weekWelnessTemp.value.map((elem) => elem.stress),
+            },
+            {
+              label: "Hydratation",
+              data: weekWelnessTemp.value.map((elem) => elem.hydratation),
+            },
+            {
+              label: "Fatigue",
+              data: weekWelnessTemp.value.map((elem) => elem.fatigue),
+            },
+          ],
+        },
+        options: {
+          spanGaps: true,
+          scales: {
+            y: {
+              min: 0,
+              max: 10,
+            },
+          },
+          fullSize: true
+        },
+      });
+      chart.value = markRaw(chartObj);
+    })
+    .catch((error) => {
+      console.error('Erreur lors de la récupération des données:', error);
+    });
+};
+
+
+const setNexWeek = () => {
+  const newDate = new Date(tempDate.value);
+  newDate.setDate(newDate.getDate() + 7);
+  tempDate.value = newDate
+  get('/wellness/user/' + user.value.id + '/week?date=' + setLongDate(newDate), { body: {} }, true).then((res: any) => {
+    weekWelnessTemp.value = JSON.parse(JSON.stringify(res));
+    chart.value.destroy()
+    const chartObj = new Chart(document.getElementById('acquisitions'), {
+      type: "line",
+      data: {
+        labels: ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'],
+        datasets: [
+          {
+            label: "Sommeil",
+            data: weekWelnessTemp.value.map((elem) => elem.sleep),
+          },
+          {
+            label: "Douleurs",
+            data: weekWelnessTemp.value.map((elem) => elem.pain),
+          },
+          {
+            label: "Stress",
+            data: weekWelnessTemp.value.map((elem) => elem.stress),
+          },
+          {
+            label: "Hydratation",
+            data: weekWelnessTemp.value.map((elem) => elem.hydratation),
+          },
+          {
+            label: "Fatigue",
+            data: weekWelnessTemp.value.map((elem) => elem.fatigue),
+          },
+        ],
+      },
+      options: {
+        spanGaps: true,
+        scales: {
+          y: {
+            min: 0,
+            max: 10,
+          },
+        },
+        fullSize: true
+      },
+    });
+    chart.value = markRaw(chartObj);
+  })
+}
+
 const patchWelness = async () => {
   patch(
     "/wellness/" + welness.value.id + "/",
@@ -796,9 +740,7 @@ const patchWelness = async () => {
 };
 
 const onIonChange = ({ detail }, name) => {
-  console.log("ionChange emitted value: ", detail.value, " name ", name);
   welness.value[name] = detail.value;
-  console.log(welness.value[name]);
 };
 
 const setPP = () => {
@@ -822,15 +764,10 @@ const load = () => {
       };
       store.set("user", JSON.stringify(userToSet));
       user.value.users_wellness.map((welnessItem) => {
-        console.log(
-          "load ",
-          welnessItem.date == setLongDate(new Date(Date.now()))
-        );
+
         if (welnessItem.date == setLongDate(new Date(Date.now()))) {
           wellnessNot.value = false;
           welness.value = welnessItem;
-          welness.value.id = 4;
-          console.log(welness.value);
         }
       });
     });
@@ -843,15 +780,20 @@ onMounted(async () => {
     user.value = JSON.parse(storeUser).user;
   }
 
-  user.value.users_wellness.map((welnessItem) => {
-    console.log(welnessItem.date == setLongDate(new Date(Date.now())));
-    if (welnessItem.date == setLongDate(new Date(Date.now()))) {
-      wellnessNot.value = false;
-      welness.value = welnessItem;
-      welness.value.id = 4;
-      console.log(welness.value);
-    }
-  });
+  get('/wellness/user/' + user.value.id + '/week?date=' + setLongDate(new Date(Date.now())), { body: {} }, true).then((res: any) => {
+    res.map((welnessItem) => {
+      if (welnessItem.date == setLongDate(new Date(Date.now()))) {
+        if (welnessItem.sleep !== null) {
+          wellnessNot.value = false;
+          welness.value = welnessItem;
+        }
+      }
+    });
+
+    weekWelness.value = res;
+    weekWelnessTemp.value = res;
+  })
+
 
   const ionSelect = document.querySelectorAll(".custom_nav");
   if (ionSelect === null) return;
