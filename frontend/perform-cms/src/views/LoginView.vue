@@ -94,6 +94,7 @@ h2 {
   display: flex;
   flex-wrap: wrap;
 }
+
 .inputFormDiv span,
 input {
   width: 100%;
