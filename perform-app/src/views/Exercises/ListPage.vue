@@ -56,16 +56,30 @@ ion-modal {
       <div class="perform-page">
         <h1 style="margin-top: 0px">Exercices</h1>
         <ion-label>Rechercher un exercice :</ion-label>
-        <ion-input id="search-input" fill="outline" slot="end" placeholder="Cherchez un exercice" shape="round"
-          @ionInput="handleSearchInput($event)"></ion-input>
+        <ion-input
+          id="search-input"
+          fill="outline"
+          slot="end"
+          placeholder="Cherchez un exercice"
+          shape="round"
+          @ionInput="handleSearchInput($event)"
+        ></ion-input>
         <div class="filter-div">
           <ion-button @click="showFilter">Filtres</ion-button>
           <ion-list class="filter-item">
             <ion-item>
-              <ion-select aria-label="Trier par" interface="popover" placeholder="Trier par"
-                @ionChange="handleOrderChange($event)">
-                <ion-select-option v-for="elem in order" :key="elem.id" :value="elem.id">{{ elem.value
-                  }}</ion-select-option>
+              <ion-select
+                aria-label="Trier par"
+                interface="popover"
+                placeholder="Trier par"
+                @ionChange="handleOrderChange($event)"
+              >
+                <ion-select-option
+                  v-for="elem in order"
+                  :key="elem.id"
+                  :value="elem.id"
+                  >{{ elem.value }}</ion-select-option
+                >
               </ion-select>
             </ion-item>
           </ion-list>
@@ -73,23 +87,36 @@ ion-modal {
       </div>
       <ion-modal class="static-modal" ref="filterModal">
         <ion-content>
-          <div style="
-                    padding: 20px 20px 5px 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    flex-wrap: wrap;
-                  ">
-            <h3> FILTRER </h3>
+          <div
+            style="
+              padding: 20px 20px 5px 20px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              flex-wrap: wrap;
+            "
+          >
+            <h3>FILTRER</h3>
             <div class="input-div">
               <h4>Sports :</h4>
               <ion-list>
                 <ion-item>
-                  <ion-select @ionChange="updateSelectedSports" class="custom-ion-select" :value="sports_selected"
-                    aria-label="Fruit" placeholder="Selectionner vos sports" :multiple="true"
-                    :compareWith="compareWith">
-                    <ion-select-option v-for="(sport, index) in sports" :value="{ id: sport.id, name: sport.name }"
-                      :key="sport.id" aria-selected="true">{{ sport.name }}</ion-select-option>
+                  <ion-select
+                    @ionChange="updateSelectedSports"
+                    class="custom-ion-select"
+                    :value="sports_selected"
+                    aria-label="Sports"
+                    placeholder="Selectionner vos sports"
+                    :multiple="true"
+                    :compareWith="compareWith"
+                  >
+                    <ion-select-option
+                      v-for="(sport, index) in sports"
+                      :value="{ id: sport.id, name: sport.name }"
+                      :key="sport.id"
+                      aria-selected="true"
+                      >{{ sport.name }}</ion-select-option
+                    >
                   </ion-select>
                 </ion-item>
               </ion-list>
@@ -99,20 +126,25 @@ ion-modal {
             </div>
             <div class="input-div">
               <h4>Muscles :</h4>
-              <div style="
+              <div
+                style="
                   display: flex;
                   width: 100%;
                   margin-top: 16px;
                   justify-content: space-between;
                   align-items: center;
-                ">
-                <BodyComponent :height="'300'" :width="'300'" :viewOnly="'edit'"
-                  :muscleSelected="exercises.zone_exercises" :setMuscleSelected='setMuscleSelected' />
+                "
+              >
+                <BodyComponent
+                  :height="'300'"
+                  :width="'300'"
+                  :viewOnly="'edit'"
+                  :muscleSelected="muscle_selected"
+                  :setMuscleSelected="setMuscleSelected"
+                />
               </div>
               <div class="input-div">
-                <ion-button @click="filterExercice">
-                  Filtrer
-                </ion-button>
+                <ion-button @click="filterExercice"> Filtrer </ion-button>
               </div>
             </div>
           </div>
@@ -128,8 +160,13 @@ ion-modal {
       <v-card-text>
         <v-tabs-window v-model="tab">
           <v-tabs-window-item value="one">
-            <ion-list class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id"
-              @click="goPage(exercise.id)">
+            <ion-list
+              class="list-item"
+              :inset="true"
+              v-for="exercise in exercises"
+              :key="exercises.id"
+              @click="goPage(exercise.id)"
+            >
               <ion-item>
                 <div class="exercice-img">
                   <label>{{ exercise.name[0] }}</label>
@@ -141,8 +178,13 @@ ion-modal {
           </v-tabs-window-item>
 
           <v-tabs-window-item value="two">
-            <ion-list class="list-item" :inset="true" v-for="exercise in exercises_fav" :key="exercises.id"
-              @click="goPage(exercise.fav_exercise.id)">
+            <ion-list
+              class="list-item"
+              :inset="true"
+              v-for="exercise in exercises_fav"
+              :key="exercises.id"
+              @click="goPage(exercise.fav_exercise.id)"
+            >
               <ion-item>
                 <div class="exercice-img">
                   <label>{{ exercise.fav_exercise.name[0] }}</label>
@@ -170,7 +212,7 @@ import {
   IonSelect,
   IonSelectOption,
   IonButton,
-  IonModal
+  IonModal,
 } from "@ionic/vue";
 import { get } from "../../lib/callApi";
 import { onMounted, ref, onUpdated } from "vue";
@@ -199,10 +241,10 @@ const searchValue = ref("");
 const orderBy = ref({ id: "default", value: "Par défaut" });
 const exercises: any = ref([]);
 const exercises_fav: any = ref([]);
-const sports = ref([] as Sport[])
+const sports = ref([] as Sport[]);
 const sports_selected = ref([] as Sport[]);
 const navRoute = useRoute();
-const muscles = ref([] as Muscle[])
+const muscles = ref([] as Muscle[]);
 const muscle_selected = ref([] as Muscle[]);
 
 const compareWith = (o1, o2) => {
@@ -214,24 +256,26 @@ const goPage = (id: any) => {
 };
 
 const setMuscleSelected = (key: string, action: string) => {
-  if (action === 'add') {
+  if (action === "add") {
     const findKey =
       muscle_selected.value.filter(function (element: string) {
-        return element === key
-      }).length == 0
+        console.log("element ", element);
+        return element.code === key;
+      }).length == 0;
     if (findKey) {
-      muscle_selected.value.push(key)
+      muscle_selected.value.push({ zone: { code: key } });
     }
   } else {
     // Trouver l'index de la valeur à supprimer
-    var index = muscle_selected.value.indexOf(key)
+    var index = muscle_selected.value.indexOf(key);
 
     if (index !== -1) {
       // Supprimer la valeur à l'index trouvé
-      muscle_selected.value.splice(index, 1)
+      muscle_selected.value.splice(index, 1);
     }
   }
-}
+  console.log("set muscle ", muscle_selected.value);
+};
 
 const handleOrderChange = (event: any) => {
   const option = {
@@ -275,47 +319,47 @@ const handleOrderChange = (event: any) => {
   });
 };
 
-const jointByComa = (array: Array<string | Sport>, name: string = '') => {
-  let stringWithCommas = ''
+const jointByComa = (array: Array<string | Sport>, name: string = "") => {
+  let stringWithCommas = "";
   for (let i = 0; i < array.length; i++) {
-    if (name == 'sport') {
-      stringWithCommas += array[i].id
-
+    if (name == "sport") {
+      stringWithCommas += array[i].id;
+    } else if (name == "muscle") {
+      stringWithCommas += array[i].zone.code;
     } else {
-      stringWithCommas += array[i]
+      stringWithCommas += array[i];
     }
     if (i < array.length - 1) {
-      stringWithCommas += ', '
+      stringWithCommas += ",";
     }
   }
-  return stringWithCommas
-}
+  return stringWithCommas;
+};
 
 const filterExercice = () => {
   //showFilter.value = false
-  const option = {} as any
+  const option = {} as any;
   /*   if (materials_id_filter.value.length > 0) {
       option.material_id = jointByComa(materials_id_filter.value)
     } */
-  console.log(muscle_selected.value)
-  console.log(sports_selected.value)
+  console.log("fitler muscle ", muscle_selected.value);
   if (muscle_selected.value.length > 0) {
-    option.workzone_code = jointByComa(muscle_selected.value)
+    option.workzone_code = jointByComa(muscle_selected.value, "muscle");
   } else {
-    option.workzone_code = ''
+    option.workzone_code = "";
   }
   if (sports_selected.value.length > 0) {
-    option.sport_id = jointByComa(sports_selected.value, 'sport')
+    option.sport_id = jointByComa(sports_selected.value, "sport");
   } else {
-    option.sport_id = ""
+    option.sport_id = "";
   }
   router.replace({
     path: navRoute.path,
-    query: Object.assign({}, navRoute.query, option)
-  })
-  getExercises()
+    query: Object.assign({}, navRoute.query, option),
+  });
+  getExercises();
   filterModal.value.$el.dismiss();
-}
+};
 
 const getExercises = async () => {
   const option = {
@@ -325,10 +369,10 @@ const getExercises = async () => {
     /*     search: {
           name: ''
         }, */
-    orderBy: { id: 'default', value: 'Par défaut' }
-  } as any
+    orderBy: { id: "default", value: "Par défaut" },
+  } as any;
   if (orderBy.value) {
-    option.orderBy = orderBy.value
+    option.orderBy = orderBy.value;
   }
   /*  if (searchValue.value !== '') {
      option.search = {
@@ -341,30 +385,40 @@ const getExercises = async () => {
     } */
 
   if (sports_selected.value.length > 0) {
-    option.sport_id = jointByComa(sports_selected.value, 'sport')
+    option.sport_id = jointByComa(sports_selected.value, "sport");
   }
 
   if (muscle_selected.value.length > 0) {
-    option.workzone_code = jointByComa(muscle_selected.value)
+    option.workzone_code = jointByComa(muscle_selected.value);
   }
 
-  get('/admin/exercises', option).then((res) => {
+  get("/admin/exercises", option).then((res) => {
     if (res.status > 300) {
       /* error_message.value = res.data
       alertErr.value = true
       error_title.value = 'Error while retrieve exercises' */
     } else {
-      exercises.value = res.results
+      exercises.value = res.results;
       /*       exercisesCount.value = res.count
             pagination.value = Math.ceil(exercisesCount.value / itemsPerPage.value) */
     }
-  })
-}
+  });
+};
 
 const showFilter = () => {
+  console.log(muscle_selected.value);
+  console.log(navRoute.query.workzone_code);
+  const mucsle_temp = navRoute.query.workzone_code
+    ? navRoute.query.workzone_code.split(",")
+    : [];
+  console.log(mucsle_temp);
+  muscle_selected.value = mucsle_temp.map((muscle) => {
+    return { zone: { code: muscle } };
+  });
+  console.log(muscle_selected.value);
   setTimeout(() => {
     const ionSelect = document.querySelectorAll(".custom-ion-select");
-    console.log(ionSelect)
+    console.log(ionSelect);
     if (ionSelect === null) return;
     for (const elem of ionSelect) {
       const shadowRoot = elem.shadowRoot;
@@ -378,13 +432,13 @@ const showFilter = () => {
       `;
       shadowRoot.appendChild(style);
     }
-  }, 100)
+  }, 100);
   filterModal.value.$el.present();
-}
+};
 
 const updateSelectedSports = (change) => {
   sports_selected.value = change.detail.value;
-  console.log(sports_selected.value)
+  console.log(sports_selected.value);
 };
 
 const handleSearchInput = (event: any) => {
@@ -470,6 +524,5 @@ onMounted(() => {
       muscles.value = res.results;
     }
   });
-
 });
 </script>
