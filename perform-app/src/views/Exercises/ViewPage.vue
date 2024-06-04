@@ -6,11 +6,7 @@
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
           <NavButton href="/exercises" text="Retour" back="back" />
-          <ion-icon
-            @click="setFav"
-            :icon="is_fav ? star : starOutline"
-            size="large"
-          ></ion-icon>
+          <ion-icon @click="setFav" :icon="is_fav ? star : starOutline" size="large"></ion-icon>
         </div>
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
           {{ exercises.name }}
@@ -18,34 +14,18 @@
         <div class="info_wrapper">
           <div class="info_exercise">
             <h2>Matériels :</h2>
-            <ion-chip
-              v-for="element of exercises.material_exercise"
-              color="primary"
-              >{{ element.material.name }}</ion-chip
-            >
+            <ion-chip v-for="element of exercises.material_exercise" color="primary">{{ element.material.name
+              }}</ion-chip>
           </div>
           <div class="info_exercise">
             <h2>Sports :</h2>
-            <ion-chip
-              v-for="element of exercises.sports_exercise"
-              color="primary"
-              >{{ element.sport.name }}</ion-chip
-            >
+            <ion-chip v-for="element of exercises.sports_exercise" color="primary">{{ element.sport.name }}</ion-chip>
           </div>
         </div>
       </div>
       <div class="imageDiv">
-        <video
-          ref="videoController"
-          id="player"
-          playsinline
-          data-poster="/path/to/poster.jpg"
-          height="250"
-          autoplay
-          hideControl
-          loop
-          clickToPlay
-        >
+        <video ref="videoController" id="player" playsinline data-poster="/path/to/poster.jpg" height="250" autoplay
+          hideControl loop clickToPlay>
           <source :src="api_url + exercises.video" type="video/mp4" />
           <source :src="api_url + exercises.video" type="video/webm" />
         </video>
@@ -58,18 +38,11 @@
         <v-card-text>
           <v-tabs-window v-model="tab">
             <v-tabs-window-item value="one">
-              <ion-list
-                v-if="showExercises"
-                class="list-item"
-                style="
+              <ion-list v-if="showExercises" class="list-item" style="
                   height: 45px;
                   margin-left: 0px !important;
                   margin-right: 0px !important;
-                "
-                :inset="true"
-                v-for="(step, index) in exercises.steps_exercise"
-                :key="step.id"
-              >
+                " :inset="true" v-for="(step, index) in exercises.steps_exercise" :key="step.id">
                 <ion-item class="step_info">
                   <div class="num_step">
                     {{ index + 1 }}
@@ -78,32 +51,20 @@
                 </ion-item>
               </ion-list>
             </v-tabs-window-item>
-            <v-tabs-window-item
-              value="two"
-              style="display: flex; min-height: 300px"
-            >
-              <div
-                style="
+            <v-tabs-window-item value="two" style="display: flex; min-height: 300px">
+              <div style="
                   display: flex;
                   width: 50%;
                   margin-top: 16px;
                   justify-content: space-between;
                   align-items: center;
-                "
-              >
-                <BodyComponent
-                  :height="'200'"
-                  :width="'100'"
-                  :viewOnly="'show'"
-                  :muscleSelected="exercises.zone_exercises"
-                />
+                ">
+                <BodyComponent :height="'200'" :width="'100'" :viewOnly="'show'"
+                  :muscleSelected="exercises.zone_exercises" />
               </div>
               <div style="width: 50%; display: flex; align-items: center">
                 <ion-list style="width: 100%" class="muscles_list">
-                  <ion-item
-                    style="background-color: transparent"
-                    v-for="muscle of exercises.zone_exercises"
-                  >
+                  <ion-item style="background-color: transparent" v-for="muscle of exercises.zone_exercises">
                     <ion-label style="font-size: 14px">
                       {{ muscle.zone.name }}
                     </ion-label>
@@ -133,7 +94,6 @@ import routerNav from "@/router";
 import { starOutline, star } from "ionicons/icons";
 //@ts-expect-error
 import NavButton from "../../components/NavButton/NavButton.vue";
-//@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
 
 import type { Step, Muscle, Material, Sport } from "../../types/allType";
@@ -198,9 +158,9 @@ onMounted(() => {
     user_id.value = JSON.parse(res).user.id;
     get(
       "/userfavexercises/user/" +
-        user_id.value +
-        "/?exercise_id=" +
-        Number(id.value),
+      user_id.value +
+      "/?exercise_id=" +
+      Number(id.value),
       { body: {} },
       true
     ).then((res: any) => {

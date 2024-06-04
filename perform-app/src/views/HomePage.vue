@@ -475,7 +475,7 @@ import { ref, onMounted, onUpdated, nextTick, markRaw } from "vue";
 import { store } from "@/store/store";
 import { get } from "@/lib/callApi";
 import routes from "@/router";
-import type { Sport } from "@/types";
+import type { Sport } from "@/types/types";
 import { close, save } from "ionicons/icons";
 import { patch, post } from "../lib/callApi";
 import Chart from "chart.js/auto";
