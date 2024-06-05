@@ -87,7 +87,6 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def latest(self, request):
-        print('latest')
         latest_recipes = self.get_latest()
         serializer = self.serializer_class(latest_recipes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK) 

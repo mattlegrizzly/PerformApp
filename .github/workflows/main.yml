@@ -65,10 +65,10 @@ jobs:
           docker ps -a -q --filter "volume=perform-app_caddy_config" | xargs -r docker rm -f
           if [ "$(docker volume ls -q -f name=perform-app_caddy_config)" ]; then
             docker volume rm perform-app_caddy_config
+          fi
           docker ps -a -q --filter "volume=perform-app_build_admin" | xargs -r docker rm -f
           if [ "$(docker volume ls -q -f name=perform-app_build_admin)" ]; then
                 docker volume rm perform-app_build_admin
-          fi
           fi
           if [ "$(docker volume ls -q -f name=perform-app_caddy_data)" ]; then
             docker volume rm perform-app_caddy_data

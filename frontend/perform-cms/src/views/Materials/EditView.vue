@@ -141,8 +141,14 @@ onMounted(() => {
           label="Photo du matériel"
           prepend-icon="mdi-camera"
           variant="filled"
+          accept="image/png, image/jpeg, image/bmp"
           v-model="image_url"
           @change="onChangeInput($event)"
+          @click:clear="
+            () => {
+              image_src = null
+            }
+          "
         ></v-file-input>
       </div>
       <div class="imageDiv">

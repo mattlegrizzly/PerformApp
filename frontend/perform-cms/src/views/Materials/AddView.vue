@@ -13,8 +13,8 @@ const image_src = ref('')
 
 const alertErr = ref(false)
 const alertSuc = ref(false)
-const error_message = ref('')
 const success_message = ref('error')
+const error_message = ref('')
 
 const closePopup = () => {
   alertErr.value = false
@@ -23,7 +23,11 @@ const closePopup = () => {
 
 const onChangeInput = (e: any) => {
   const file = e.target.files[0]
-  if (!file) return
+  console.log('file ', file)
+  if (!file) {
+    image_url.value = ''
+    return
+  }
 
   image_url.value = file
   // Convertir l'image en URL de données
@@ -128,9 +132,15 @@ const sendData = (quitForm: boolean) => {
         <v-file-input
           label="Photo du matériel"
           prepend-icon="mdi-camera"
+          accept="image/png, image/jpeg, image/bmp"
           variant="filled"
           v-model="image_url"
           @change="onChangeInput($event)"
+          @click:clear="
+            () => {
+              image_src = null
+            }
+          "
         ></v-file-input>
       </div>
       <div class="imageDiv">

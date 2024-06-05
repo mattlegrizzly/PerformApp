@@ -86,7 +86,6 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
             elif order == "orderByDateDesc":
                 queryset = self.queryset.order_by("-created_at")
         else:
-            print('oder by id')
             queryset = self.queryset.order_by("id")
 
         # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
@@ -338,7 +337,6 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
 
         if muscles_ids != "" and isinstance(muscles_ids, str):
             muscles_list = muscles_ids.split(",")
-            print(muscles_list)
             obj = self.get_object()
             if obj.muscles_ids != muscles_list:
                 new_muscles = WorkZone.objects.filter(code__in=muscles_list)

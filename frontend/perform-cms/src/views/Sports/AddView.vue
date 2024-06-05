@@ -41,7 +41,7 @@ const sendData = (quitForm: boolean) => {
         name.value = ''
         description.value = ''
         if (quitForm) {
-          router.push('/materials')
+          router.push('/sports')
         } else {
           success_message.value = 'Vous avez ajoutez : ' + res.name
           alertSuc.value = true

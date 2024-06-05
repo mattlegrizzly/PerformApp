@@ -118,7 +118,7 @@ const sendData = async () => {
         res = post('/admin/exercisezones/', sportToPush, true)
       })
 
-      router.push('/exercises/show/' + id + '/?edit=true')
+      router.push('/exercises')
     }
   })
 }
@@ -208,7 +208,7 @@ onMounted(() => {
           prepend-icon="mdi-video"
           variant="filled"
           type="file"
-          accept="video/*"
+          accept="video/mp4"
           v-model="video_url"
           @update:modelValue="onChangeInput($event)"
         ></v-file-input>

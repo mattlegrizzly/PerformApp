@@ -19,6 +19,8 @@ const alertErr = ref(false)
 const error_title = ref('')
 const error_message = ref('')
 
+const api_url = import.meta.env.VITE_API_URL
+
 const exercises = ref({})
 
 const materials: any = ref({})
@@ -317,8 +319,9 @@ onMounted(async () => {
               <v-row dense>
                 <v-col v-for="material in materials" :key="material.id" cols="12" sm="4">
                   <v-card @click="addMaterialFilter(material.id)">
+                    {{ console.log(material.pictures) }}
                     <v-img
-                      :src="material.pictures"
+                      :src="api_url + material.pictures"
                       class="align-end"
                       :gradient="
                         materials_id_filter.includes(material.id)
@@ -332,9 +335,7 @@ onMounted(async () => {
                       <v-icon
                         :icon="materials_id_filter.includes(material.id) ? 'mdi-check' : ''"
                       ></v-icon>
-                      <v-card-title class="textTitleCard">{{
-                        material.name + ' ' + material.id
-                      }}</v-card-title>
+                      <v-card-title class="textTitleCard">{{ material.name }}</v-card-title>
                     </v-img>
                   </v-card>
                 </v-col>

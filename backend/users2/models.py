@@ -6,7 +6,6 @@ from exercise.models import Exercise, WorkZone
 from datetime import datetime
 
 def upload_to(instance, filename):
-    print(instance)
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     ext = filename.split('.')[-1]  # Récupérer l'extension du fichier
     filename_edit = f"user_{instance.email}_{timestamp}.{ext}"
@@ -121,3 +120,13 @@ class Wellness(models.Model):
     pain = models.IntegerField(null=False, default=0, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_wellness')
     date = models.DateField(null=False)
+
+class PasswordChangeLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    id_user_edited = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_who_edit")
+    date_modified = models.DateTimeField(auto_now_add=True)
+    old_password = models.CharField(max_length=128)
+    new_password = models.CharField(max_length=128)
+
+    def __str__(self):
+        return f"Password change for {self.user.email} on {self.date_modified}"

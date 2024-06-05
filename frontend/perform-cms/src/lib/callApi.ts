@@ -83,6 +83,7 @@ const handleParams = (url: URL, options: IERequestOptions) => {
 
 const handleResponse = async (response: Response): Promise<any> => {
   const data = await response.json()
+  console.log('data ', data)
   if (response.status > 300) {
     return {
       status: response.status,
@@ -155,7 +156,7 @@ const get = async (
     headers: headers
   })
   const response = await fetch(request)
-  if (await response.status > 301) {
+  if ((await response.status) > 301) {
     return {
       status: response.status,
       data: response.statusText
@@ -214,10 +215,11 @@ const post = async (
   })
 
   const response = await fetch(request)
-  if (await response.status > 301) {
+  if ((await response.status) > 301) {
+    const error = await response.json()
     return {
       status: response.status,
-      data: response.statusText
+      data: error.detail
     }
   } else {
     return handleResponse(response)
@@ -271,7 +273,7 @@ const put = async (
   })
 
   const response = await fetch(request)
-  if (await response.status > 301) {
+  if ((await response.status) > 301) {
     return {
       status: response.status,
       data: response.statusText
@@ -329,7 +331,7 @@ const patch = async (
   })
 
   const response = await fetch(request)
-  if (await response.status > 301) {
+  if ((await response.status) > 301) {
     return {
       status: response.status,
       data: response.statusText
@@ -337,7 +339,6 @@ const patch = async (
   } else {
     return handleResponse(response)
   }
-
 }
 
 /**

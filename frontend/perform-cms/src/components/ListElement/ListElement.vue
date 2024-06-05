@@ -30,11 +30,18 @@ const navigate = (index) => {
               cover
               :src="value"
             ></v-img>
-            <div v-else>{{ value }}</div>
+
+            <div v-else>
+              <div v-if="i == 0">
+                {{ index + 1 }}
+              </div>
+              <div v-else>
+                {{ value }}
+              </div>
+            </div>
           </td>
         </template>
       </tr>
     </tbody>
   </v-table>
 </template>
-
