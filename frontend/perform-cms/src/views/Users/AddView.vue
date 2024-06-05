@@ -180,6 +180,7 @@ onMounted(() => {
           prepend-icon="mdi-camera"
           variant="filled"
           v-model="image_url"
+          accept="image/png, image/jpeg, image/bmp"
           @change="onChangeInput($event)"
           @click:clear="
             () => {

@@ -227,6 +227,7 @@ onMounted(() => {
           label="Photo de profil utilisateur"
           prepend-icon="mdi-camera"
           variant="filled"
+          accept="image/png, image/jpeg, image/bmp"
           v-model="image_url"
           @change="onChangeInput($event)"
           @click:clear="

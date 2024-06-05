@@ -132,6 +132,7 @@ const sendData = (quitForm: boolean) => {
         <v-file-input
           label="Photo du matériel"
           prepend-icon="mdi-camera"
+          accept="image/png, image/jpeg, image/bmp"
           variant="filled"
           v-model="image_url"
           @change="onChangeInput($event)"
