@@ -69,7 +69,6 @@ jobs:
           if [ "$(docker volume ls -q -f name=perform-app_build_admin)" ]; then
                 docker volume rm perform-app_build_admin
           fi
-          fi
           if [ "$(docker volume ls -q -f name=perform-app_caddy_data)" ]; then
             docker volume rm perform-app_caddy_data
           fi
