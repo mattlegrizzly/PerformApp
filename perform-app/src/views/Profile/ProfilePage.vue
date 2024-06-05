@@ -13,7 +13,25 @@
       <div class="container_home">
         <div class="profile_picture_div">
           <div class="img_container">
-            <img :src="user ? setPP() : ''" alt="profile" />
+            <div
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 2rem;
+                font-weight: bold;
+                color: var(--primary-blue);
+                background-color: white;
+                border-radius: 50%;
+                width: 100%;
+                height: 100%;
+                text-transform: capitalize;
+              "
+              v-if="setPP() == ''"
+            >
+              {{ user.first_name[0] }}
+            </div>
+            <img v-else :src="user ? setPP() : ''" alt="profile" />
           </div>
         </div>
         <div class="profile_container_div">
@@ -193,10 +211,21 @@ const stateSet = (state: string) => {
 };
 
 const setPP = () => {
-  if (user.value.profile_picture.includes(api.split("//")[1])) {
+  if (
+    user.value.profile_picture &&
+    user.value.profile_picture.includes(api.split("//")[1])
+  ) {
+    console.log(user.value.profile_picture);
     return user.value.profile_picture;
   } else {
-    return api + user.value.profile_picture;
+    if (
+      user.value.profile_picture === null ||
+      user.value.profile_picture === ""
+    ) {
+      return "";
+    } else {
+      return api + user.value.profile_picture;
+    }
   }
 };
 

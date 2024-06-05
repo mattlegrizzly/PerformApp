@@ -140,7 +140,7 @@ ion-modal {
                   :width="'300'"
                   :viewOnly="'edit'"
                   :muscleSelected="muscle_selected"
-                  :setMuscleSelected="setMuscleSelected"
+                  :setMuscleSelected="setMuscleSelectedView"
                 />
               </div>
               <div class="input-div">
@@ -255,24 +255,30 @@ const goPage = (id: any) => {
   router.push({ name: "ExercisesView", params: { id: id } });
 };
 
-const setMuscleSelected = (key: string, action: string) => {
+const setMuscleSelectedView = (key: string, action: string) => {
+  console.log("oui");
   if (action === "add") {
     const findKey =
       muscle_selected.value.filter(function (element: string) {
         console.log("element ", element);
         return element.code === key;
       }).length == 0;
+    console.log("findKey ", findKey);
     if (findKey) {
       muscle_selected.value.push({ zone: { code: key } });
     }
   } else {
     // Trouver l'index de la valeur à supprimer
     var index = muscle_selected.value.indexOf(key);
-
-    if (index !== -1) {
-      // Supprimer la valeur à l'index trouvé
-      muscle_selected.value.splice(index, 1);
-    }
+    muscle_selected.value.map((muscle) => {
+      if (muscle.zone.code === key) {
+        index = muscle_selected.value.indexOf(muscle);
+      }
+      if (index !== -1) {
+        // Supprimer la valeur à l'index trouvé
+        muscle_selected.value.splice(index, 1);
+      }
+    });
   }
   console.log("set muscle ", muscle_selected.value);
 };
@@ -323,9 +329,10 @@ const jointByComa = (array: Array<string | Sport>, name: string = "") => {
   let stringWithCommas = "";
   for (let i = 0; i < array.length; i++) {
     if (name == "sport") {
-      stringWithCommas += array[i].id;
+      stringWithCommas += String(array[i].id);
     } else if (name == "muscle") {
-      stringWithCommas += array[i].zone.code;
+      console.log("array[i] ", array[i]);
+      stringWithCommas += String(array[i].zone.code);
     } else {
       stringWithCommas += array[i];
     }
@@ -333,6 +340,7 @@ const jointByComa = (array: Array<string | Sport>, name: string = "") => {
       stringWithCommas += ",";
     }
   }
+  console.log("string ", stringWithCommas);
   return stringWithCommas;
 };
 
@@ -389,7 +397,7 @@ const getExercises = async () => {
   }
 
   if (muscle_selected.value.length > 0) {
-    option.workzone_code = jointByComa(muscle_selected.value);
+    option.workzone_code = jointByComa(muscle_selected.value, "muscle");
   }
 
   get("/admin/exercises", option).then((res) => {
@@ -463,6 +471,13 @@ const handleSearchInput = (event: any) => {
   if (sport_selected.value.length > 0) {
     option.sport_id = sport_selected.value;
   } */
+
+  get("/exercises/", option, false).then((res) => {
+    if (res.status > 300) {
+    } else {
+      exercises.value = res.results;
+    }
+  });
 };
 
 const load = () => {

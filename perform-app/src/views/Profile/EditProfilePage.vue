@@ -87,7 +87,7 @@ ion-chip {
             <ion-label>Photo de profil : </ion-label>
             <div class="profile_image">
               <div class="img_div">
-                <ion-img :src="fileToDisplay" @click="triggerFileInput"></ion-img>
+                <ion-img :src="fileToDisplay != '' ? fileToDisplay: 'https://static.vecteezy.com/system/resources/previews/004/968/473/original/upload-or-add-a-picture-jpg-file-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-etc-vector.jpg'" @click="triggerFileInput"></ion-img>
               </div>
               <input type="file" accept="image/*" ref="fileInput" @change="handleFileChange"
                 style="display: none"></input>
@@ -201,6 +201,8 @@ const user = ref({
   sports_user: [] as Sport[],
 });
 
+const sports_user_temp = ref([] as Sport[]);
+const sports = ref([] as Sport[]);
 
 const fileToDisplay = ref('');
 const fileToSend = ref(null);
@@ -228,6 +230,9 @@ const editProfile = () => {
   const inPlus = [];
   const inMinus = [];
   const equivalent = [];
+  if(sports_user_temp.value.length === 0){
+    sports_user_temp.value = [];
+  }
   // Vérifier les éléments en plus dans newArray
   for (const newItem of sports_user_temp.value) {
     const matchInBase = findById(user.value.sports_user, newItem.id);
@@ -280,6 +285,7 @@ const handleFileChange = (event) => {
   if (file) {
     const reader = new FileReader();
     reader.onload = (e) => {
+      console.log('e.target.result', e.target.result)
       fileToDisplay.value = e.target.result as string;
       fileToSend.value = file;
     };
@@ -298,8 +304,7 @@ const updateSelectedSports = (change) => {
   sports_user_temp.value = change.detail.value;
 };
 
-const sports_user_temp = ref([] as Sport[]);
-const sports = ref([] as Sport[]);
+
 
 onMounted(async () => {
   let storeUser = await store.get("user");
@@ -335,7 +340,7 @@ const load = () => {
   store.get("user").then((res) => {
     const json = JSON.parse(res);
     user.value = json.user;
-    fileToDisplay.value = api + user.value.profile_picture;
+    if(user.value.profile_picture !== null) fileToDisplay.value = api + user.value.profile_picture;
   });
   get("/sports", { body: {} }, false).then((res) => {
     if (res.status > 300) {
