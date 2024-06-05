@@ -13,8 +13,8 @@ const image_src = ref('')
 
 const alertErr = ref(false)
 const alertSuc = ref(false)
-const error_message = ref('')
 const success_message = ref('error')
+const error_message = ref('')
 
 const closePopup = () => {
   alertErr.value = false

@@ -24,13 +24,11 @@ const sendData = () => {
   }
   post('/login/', requestOptions)
     .then((response) => {
+      console.log('response ', response)
       if (response.status > 300) {
-        const keys = Object.keys(response.data)
-        for (let i = 0; i < keys.length; i++) {
-          error_message.value += keys[i] + ' : ' + response.data[keys[i]] + '\n\n'
-        }
+        error_message.value = response.data
         alertErr.value = true
-        error_title.value = 'Modification Error'
+        error_title.value = 'Erreur de login'
       } else {
         userStore.setUser(response.user)
         var date = new Date()
@@ -43,6 +41,7 @@ const sendData = () => {
     })
     .catch((error) => {
       if (error.message) {
+        console.log('error ', error)
         error_message.value = error.message
       } else {
         error_title.value = 'Connexion error'

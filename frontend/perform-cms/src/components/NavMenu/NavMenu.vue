@@ -12,7 +12,7 @@
         <a v-on:click.stop.prevent="routerMove('/sports')">Sports</a>
       </nav>
       <div class="buttonWrapper">
-        <button @click="deconnectUser">Disconnect</button>
+        <button @click="deconnectUser">Se déconnecter</button>
       </div>
     </div>
   </header>

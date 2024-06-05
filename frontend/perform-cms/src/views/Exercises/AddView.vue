@@ -118,7 +118,7 @@ const sendData = async () => {
         res = post('/admin/exercisezones/', sportToPush, true)
       })
 
-      router.push('/exercises/show/' + id + '/?edit=true')
+      router.push('/exercises')
     }
   })
 }
