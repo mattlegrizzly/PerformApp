@@ -5,10 +5,10 @@
         <img class="logo" :src="image" />
       </div>
       <nav>
-        <a v-on:click.stop.prevent="routerMove('/')">Home</a>
-        <a v-on:click.stop.prevent="routerMove('/users')">Users</a>
+        <a v-on:click.stop.prevent="routerMove('/')">Accueil</a>
+        <a v-on:click.stop.prevent="routerMove('/users')">Utilisateurs</a>
         <a v-on:click.stop.prevent="routerMove('/exercises')">Exercices</a>
-        <a v-on:click.stop.prevent="routerMove('/materials')">Materials</a>
+        <a v-on:click.stop.prevent="routerMove('/materials')">Matériels</a>
         <a v-on:click.stop.prevent="routerMove('/sports')">Sports</a>
       </nav>
       <div class="buttonWrapper">

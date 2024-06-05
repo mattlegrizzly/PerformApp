@@ -40,7 +40,8 @@ from .serializers import (
     LogoutSerializer,
     RefreshTokensSerializer,
     RegisterSerializer,
-    SetPasswordSerializer)
+    SetPasswordSerializer,
+    PasswordChangeLogSerializer)
 from users2.permissions import UserViewSetPermissions,IsUserOrAdmin
 from rest_framework.exceptions import (
     AuthenticationFailed,
@@ -50,6 +51,10 @@ from rest_framework.exceptions import (
     PermissionDenied,
     ValidationError,
 )
+
+from django.contrib.auth.hashers import make_password
+
+from users2.models import PasswordChangeLog
 
 import os
 
@@ -88,13 +93,9 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
                 subject='Perform App Registration',
                 html_content= f'Hello,\n\nYour account has been created successfully. Here are your credentials:\n\nEmail: {user.email}\nPassword: {request.data.get("password")}\n\nThank you for registering!')
             
-            print ('api ' , os.getenv("SENDGRID_API"))
             try:
                 sg = SendGridAPIClient(os.getenv("SENDGRID_API"))
                 response = sg.send(message)
-                print(response.status_code)
-                print(response.body)
-                print(response.headers)
             except Exception as e:
                 print('error ', e)
             return Response(data=serialized_user.data, status=status.HTTP_201_CREATED)
@@ -228,8 +229,12 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     @method_decorator(csrf_exempt)
     def get_queryset(self):
-        authenticated_user = self.request.user
-        queryset = User.objects.filter(email=authenticated_user)
+        if(self.request.user.is_superuser == True) :
+            queryset = User.objects.filter(id=self.kwargs.get('pk'))
+        else: 
+            authenticated_user = self.request.user
+            queryset = User.objects.filter(email=authenticated_user)
+
 
         return queryset
 
@@ -239,7 +244,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     @method_decorator(csrf_exempt)
     def retrieve(self, request, pk):
         try:
-            print(self.request.user) 
             user = self.get_queryset().get(pk=pk)
             serializer = UserDetailedSerializer(user)
 
@@ -348,12 +352,23 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=["patch"])
     def set_password(self, request, pk):
         try:
-            user = self.get_queryset().get(pk=pk)
+            if request.user.is_superuser == True :
+                user = self.get_queryset().get(pk=pk)
+            else :
+                user = self.get_queryset().get(pk=pk) 
+            
 
             if request.user.is_authenticated:
                 serializer = SetPasswordSerializer(data=request.data)
 
                 if serializer.is_valid():
+                    PasswordChangeLog.objects.create(
+                        id_user_edited=request.user,
+                        user=user,
+                        old_password=user.password,
+                        new_password=make_password(request.data.get("password"))
+                    )
+
                     user.set_password(request.data.get("password"))
                     user.save()
 
@@ -756,7 +771,15 @@ class WellnessViewSet(viewsets.ModelViewSet):
         responses={201: "Created"}
     )
     def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+        serializer = WellnessSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+         # Récupérer l'instance sauvegardée
+        instance = serializer.instance
+        # Utiliser le sérialiseur détaillé pour la réponse
+        detailed_serializer = WellnessDetailedSerializer(instance)
+        return Response(detailed_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @extend_schema(
         tags=['Users - Wellness'],
@@ -789,7 +812,6 @@ class WellnessViewSet(viewsets.ModelViewSet):
             input_date = datetime.strptime(date_str, '%Y-%m-%d')
         except (ValueError, TypeError):
             return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
-        print(input_date)
         start_week = input_date - timedelta(days=input_date.weekday())  # Lundi
         end_week = start_week + timedelta(days=6)  # Dimanche
 
@@ -799,7 +821,6 @@ class WellnessViewSet(viewsets.ModelViewSet):
         week_data = []
         for i in range(7):
             current_date = start_week + timedelta(days=i)
-            print(wellness_data)
             if current_date.date() in wellness_data:
                 week_data.append(wellness_data[current_date.date()])
             else:
@@ -815,3 +836,20 @@ class WellnessViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(week_data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class PasswordChangeLogViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = PasswordChangeLog.objects.all()
+    serializer_class = PasswordChangeLogSerializer
+    permission_classes = [IsAuthenticated, IsUserOrAdmin]
+
+    @action(detail=False, methods=['get'], url_path='user/(?P<id>[^/.]+)')
+    def retrieve_user_logs(self, request, id=None):
+        user_logs = self.queryset.filter(user_id=id)
+        serializer = self.get_serializer(user_logs, many=True)
+        return Response(serializer.data)
+    
+    def list(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            # Si l'utilisateur n'est pas un super-admin, filtrer les logs par l'utilisateur connecté
+            self.queryset = self.queryset.filter(user=request.user)
+        return super().list(request, *args, **kwargs)

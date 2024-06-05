@@ -9,8 +9,7 @@ import router from '@/router'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import type { Step, IEUserData } from '@/types/types'
 
-const user : any = ref({
-})
+const user: any = ref({})
 
 const alertErr = ref(false)
 const alertSuc = ref(false)
@@ -18,9 +17,9 @@ const error_message = ref('')
 const success_message = ref('error')
 
 const gender = ref([
-  {id : 'male', value : "Homme"},
-  {id : 'female', value : "Femme"},
-  {id : 'other', value : "Autre"}
+  { id: 'male', value: 'Homme' },
+  { id: 'female', value: 'Femme' },
+  { id: 'other', value: 'Autre' }
 ])
 const image_url = ref('')
 const image_src = ref('')
@@ -182,6 +181,11 @@ onMounted(() => {
           variant="filled"
           v-model="image_url"
           @change="onChangeInput($event)"
+          @click:clear="
+            () => {
+              image_src = null
+            }
+          "
         ></v-file-input>
       </div>
       <div class="imageDiv">

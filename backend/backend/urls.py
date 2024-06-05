@@ -28,7 +28,7 @@ from drf_yasg import openapi
 from django.conf import settings
 from django.conf.urls.static import static
 
-from users2.views import LoginViewset, LogoutViewset, RefreshTokensViewset, RegisterViewset
+from users2.views import LoginViewset, LogoutViewset, RefreshTokensViewset, RegisterViewset, PasswordChangeLogViewSet
 from users2.views import AdminUserViewSet, UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet, AdminUsersAllViewSet
 
 from sport.views import ( SportViewSet, SportsUserViewSet)
@@ -83,6 +83,7 @@ router.register('admin/materials', AdminMaterialViewSet ,basename="admin_materia
 router.register('exercises', ExerciseViewSet, basename='exercises')
 router.register('admin/exercises', AdminExerciseViewSet, basename='admin_exercises')
 
+router.register('changelogpwd', PasswordChangeLogViewSet, basename='changelog')
 
 router.register('exercisesteps', ExerciseStepViewSet, basename='steps')
 router.register('admin/steps', AdminExerciseStepViewSet, basename='admin_steps')

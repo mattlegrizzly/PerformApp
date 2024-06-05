@@ -6,8 +6,7 @@ from datetime import datetime
 def upload_to_video(instance, filename):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     ext = filename.split('.')[-1]  # Récupérer l'extension du fichier
-    filename_edit = f"exercice_{instance.id}_{timestamp}.{ext}"
-    print(instance)
+    filename_edit = f'exercice_{instance.name.replace(" ", "_")}_{timestamp}.{ext}'
     return 'video/{filename}'.format(filename=filename_edit)
 
 def upload_to(instance, filename):

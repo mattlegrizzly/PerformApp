@@ -229,6 +229,11 @@ onMounted(() => {
           variant="filled"
           v-model="image_url"
           @change="onChangeInput($event)"
+          @click:clear="
+            () => {
+              image_src = null
+            }
+          "
         ></v-file-input>
       </div>
       <div class="imageDiv">

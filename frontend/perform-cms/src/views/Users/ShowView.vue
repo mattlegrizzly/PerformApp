@@ -8,7 +8,7 @@ import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 
 const router = useRoute()
-const user : any = ref({})
+const user: any = ref({})
 const gender = ref([
   { id: 'male', value: 'Homme' },
   { id: 'female', value: 'Femme' },
@@ -58,8 +58,19 @@ onMounted(() => {
       :alertValue="alertErr"
     />
     <div class="headerBtns">
-      <NavButton class="returnBtn" :text="'Retour'" :url="'/users'" :back="back" prepend-icon="mdi-arrow-left" />
-      <NavButton class="editBtn" :text="'Modifier'" :url="'/users/edit/' + user.id" prepend-icon="mdi-pencil" />
+      <NavButton
+        class="returnBtn"
+        :text="'Retour'"
+        :url="'/users'"
+        :back="back"
+        prepend-icon="mdi-arrow-left"
+      />
+      <NavButton
+        class="editBtn"
+        :text="'Modifier'"
+        :url="'/users/edit/' + user.id"
+        prepend-icon="mdi-pencil"
+      />
     </div>
     <h1>Carte de l'utilisateur : {{ user === undefined ? '' : user.email }}</h1>
     <h3 class="showTitle">Nom et prénom</h3>
@@ -86,7 +97,7 @@ onMounted(() => {
     <p>
       {{ userGender }}
     </p>
-    <h2 class="showTitle">Sports</h2>
+    <h2 class="showTitle">Photo de profil</h2>
     <v-chip-group v-for="(element, index) in user.sports_user" :key="index">
       <v-chip>{{ element.sport.name }}</v-chip>
     </v-chip-group>

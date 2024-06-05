@@ -23,7 +23,11 @@ const closePopup = () => {
 
 const onChangeInput = (e: any) => {
   const file = e.target.files[0]
-  if (!file) return
+  console.log('file ', file)
+  if (!file) {
+    image_url.value = ''
+    return
+  }
 
   image_url.value = file
   // Convertir l'image en URL de données
@@ -131,6 +135,11 @@ const sendData = (quitForm: boolean) => {
           variant="filled"
           v-model="image_url"
           @change="onChangeInput($event)"
+          @click:clear="
+            () => {
+              image_src = null
+            }
+          "
         ></v-file-input>
       </div>
       <div class="imageDiv">

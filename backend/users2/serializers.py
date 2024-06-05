@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, UsersFavExercises, Injurie, Wellness
+from .models import User, UsersFavExercises, Injurie, Wellness, PasswordChangeLog
 from sport.serializers import SportsDetailedUserSerializer
 from exercise.serializers import ExerciseSerializer, WorkZoneSerializer
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
@@ -125,3 +125,8 @@ class SetPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["password"]
+
+class PasswordChangeLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PasswordChangeLog
+        fields = ['date_modified', 'user', 'id_user_edited', 'old_password', 'new_password']

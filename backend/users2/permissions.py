@@ -5,7 +5,6 @@ from .models import User
 
 class UserViewSetPermissions(permissions.BasePermission):
     def has_permission(self, request: Request, view):
-        print(request)
         # If trying to create a User, OK
         if request.method == "POST":
             return True
