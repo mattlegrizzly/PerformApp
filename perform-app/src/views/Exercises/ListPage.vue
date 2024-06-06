@@ -56,30 +56,16 @@ ion-modal {
       <div class="perform-page">
         <h1 style="margin-top: 0px">Exercices</h1>
         <ion-label>Rechercher un exercice :</ion-label>
-        <ion-input
-          id="search-input"
-          fill="outline"
-          slot="end"
-          placeholder="Cherchez un exercice"
-          shape="round"
-          @ionInput="handleSearchInput($event)"
-        ></ion-input>
+        <ion-input id="search-input" fill="outline" slot="end" placeholder="Cherchez un exercice" shape="round"
+          @ionInput="handleSearchInput($event)"></ion-input>
         <div class="filter-div">
           <ion-button @click="showFilter">Filtres</ion-button>
           <ion-list class="filter-item">
             <ion-item>
-              <ion-select
-                aria-label="Trier par"
-                interface="popover"
-                placeholder="Trier par"
-                @ionChange="handleOrderChange($event)"
-              >
-                <ion-select-option
-                  v-for="elem in order"
-                  :key="elem.id"
-                  :value="elem.id"
-                  >{{ elem.value }}</ion-select-option
-                >
+              <ion-select aria-label="Trier par" interface="popover" placeholder="Trier par"
+                @ionChange="handleOrderChange($event)">
+                <ion-select-option v-for="elem in order" :key="elem.id" :value="elem.id">{{ elem.value
+                  }}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-list>
@@ -87,61 +73,58 @@ ion-modal {
       </div>
       <ion-modal class="static-modal" ref="filterModal">
         <ion-content>
-          <div
-            style="
+          <div style="
               padding: 20px 20px 5px 20px;
               display: flex;
               align-items: center;
               justify-content: space-between;
               flex-wrap: wrap;
-            "
-          >
+            ">
             <h3>FILTRER</h3>
             <div class="input-div">
               <h4>Sports :</h4>
               <ion-list>
                 <ion-item>
-                  <ion-select
-                    @ionChange="updateSelectedSports"
-                    class="custom-ion-select"
-                    :value="sports_selected"
-                    aria-label="Sports"
-                    placeholder="Selectionner vos sports"
-                    :multiple="true"
-                    :compareWith="compareWith"
-                  >
-                    <ion-select-option
-                      v-for="(sport, index) in sports"
-                      :value="{ id: sport.id, name: sport.name }"
-                      :key="sport.id"
-                      aria-selected="true"
-                      >{{ sport.name }}</ion-select-option
-                    >
+                  <ion-select @ionChange="updateSelectedSports" class="custom-ion-select" :value="sports_selected"
+                    aria-label="Sports" placeholder="Selectionner vos sports" :multiple="true"
+                    :compareWith="compareWith">
+                    <ion-select-option v-for="(sport) in sports" :value="{ id: sport.id, name: sport.name }"
+                      :key="sport.id" aria-selected="true">{{ sport.name }}</ion-select-option>
                   </ion-select>
                 </ion-item>
               </ion-list>
             </div>
             <div class="input-div">
               <h4>Matériels :</h4>
+              <v-row style="display : flex; flex-wrap: wrap; justify-content: center" dense>
+                <v-col style="width: 30%; flex: none" v-for="material in materials" :key="material.id" cols="12" sm="4">
+                  <v-card @click="addMaterialFilter(material.id)">
+                    <v-img :src="material.pictures" class="align-end" :gradient="findMaterial(material)
+                      ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)'
+                      : 'to bottom, rgba(0,0,0,.05), rgba(0,0,0,.1'
+                      " height="80px" cover aspect-ratio="1">
+                      <v-icon :icon="findMaterial(material) ? 'mdi-check' : ''"></v-icon>
+                    </v-img>
+                    <v-card-title
+                      style="font-size: 12px; height: 40px; display: flex; justify-content: center; align-items: center; white-space: normal !important; padding: 5px; text-align: center"
+                      class="textTitleCard">{{
+                        material.name
+                      }}</v-card-title>
+                  </v-card>
+                </v-col>
+              </v-row>
             </div>
             <div class="input-div">
               <h4>Muscles :</h4>
-              <div
-                style="
+              <div style="
                   display: flex;
                   width: 100%;
                   margin-top: 16px;
                   justify-content: space-between;
                   align-items: center;
-                "
-              >
-                <BodyComponent
-                  :height="'300'"
-                  :width="'300'"
-                  :viewOnly="'edit'"
-                  :muscleSelected="muscle_selected"
-                  :setMuscleSelected="setMuscleSelectedView"
-                />
+                ">
+                <BodyComponent :height="'300'" :width="'300'" :viewOnly="'edit'" :muscleSelected="muscle_selected"
+                  :setMuscleSelected="setMuscleSelectedView" />
               </div>
               <div class="input-div">
                 <ion-button @click="filterExercice"> Filtrer </ion-button>
@@ -160,13 +143,8 @@ ion-modal {
       <v-card-text>
         <v-tabs-window v-model="tab">
           <v-tabs-window-item value="one">
-            <ion-list
-              class="list-item"
-              :inset="true"
-              v-for="exercise in exercises"
-              :key="exercises.id"
-              @click="goPage(exercise.id)"
-            >
+            <ion-list class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id"
+              @click="goPage(exercise.id)">
               <ion-item>
                 <div class="exercice-img">
                   <label>{{ exercise.name[0] }}</label>
@@ -178,13 +156,8 @@ ion-modal {
           </v-tabs-window-item>
 
           <v-tabs-window-item value="two">
-            <ion-list
-              class="list-item"
-              :inset="true"
-              v-for="exercise in exercises_fav"
-              :key="exercises.id"
-              @click="goPage(exercise.fav_exercise.id)"
-            >
+            <ion-list class="list-item" :inset="true" v-for="exercise in exercises_fav" :key="exercises.id"
+              @click="goPage(exercise.fav_exercise.id)">
               <ion-item>
                 <div class="exercice-img">
                   <label>{{ exercise.fav_exercise.name[0] }}</label>
@@ -221,8 +194,10 @@ import "./index.css";
 import router from "../../router";
 import { useRoute } from "vue-router";
 import { store } from "../../store/store";
-import { Muscle, Sport } from "@/types/types";
+import { Muscle, Sport, Material } from "../../types/types";
+//@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
+import IERequestOptions from "../../types/request";
 
 const order = [
   { id: "orderByNameAsc", value: "Nom (Croissant)" },
@@ -236,7 +211,7 @@ const order = [
 
 const user_id = ref(0);
 const tab = ref(null);
-const filterModal = ref(null);
+const filterModal = ref(null) as any;
 const searchValue = ref("");
 const orderBy = ref({ id: "default", value: "Par défaut" });
 const exercises: any = ref([]);
@@ -246,8 +221,20 @@ const sports_selected = ref([] as Sport[]);
 const navRoute = useRoute();
 const muscles = ref([] as Muscle[]);
 const muscle_selected = ref([] as Muscle[]);
+const materials = ref([] as Material[])
+const materials_selected = ref([] as Material[])
 
-const compareWith = (o1, o2) => {
+const findMaterial = (material: any) => {
+  let findMaterial = false;
+  materials_selected.value.map((elem) => {
+    if (elem === material.id) {
+      findMaterial = true
+    }
+  })
+  return findMaterial
+}
+
+const compareWith = (o1: any, o2: any) => {
   return o1 && o2 ? o1.id === o2.id : o1 === o2;
 };
 
@@ -256,39 +243,45 @@ const goPage = (id: any) => {
 };
 
 const setMuscleSelectedView = (key: string, action: string) => {
-  console.log("oui");
   if (action === "add") {
     const findKey =
-      muscle_selected.value.filter(function (element: string) {
-        console.log("element ", element);
-        return element.code === key;
+      muscle_selected.value.filter(function (element: Muscle) {
+        return element.zone.code === key;
       }).length == 0;
-    console.log("findKey ", findKey);
     if (findKey) {
-      muscle_selected.value.push({ zone: { code: key } });
+      muscle_selected.value.push({ zone: { name: '', code: key } });
     }
   } else {
-    // Trouver l'index de la valeur à supprimer
-    var index = muscle_selected.value.indexOf(key);
+    let index = muscle_selected.value.indexOf(key as any);
     muscle_selected.value.map((muscle) => {
       if (muscle.zone.code === key) {
         index = muscle_selected.value.indexOf(muscle);
       }
       if (index !== -1) {
-        // Supprimer la valeur à l'index trouvé
         muscle_selected.value.splice(index, 1);
       }
     });
   }
-  console.log("set muscle ", muscle_selected.value);
 };
+
+const addMaterialFilter = (id: any) => {
+  const findKey =
+    materials_selected.value.filter(function (element: any) {
+      return element === id
+    }).length == 0
+  if (findKey) {
+    materials_selected.value.push(id)
+  } else {
+    const index = materials_selected.value.indexOf(id)
+    materials_selected.value.splice(index, 1)
+  }
+}
 
 const handleOrderChange = (event: any) => {
   const option = {
     body: {},
-    search: searchValue.value != "" ? searchValue.value : "",
-    orderBy: {},
-  }; /* as IERequestOptions; */
+    orderBy: { id: "default", value: "Par défaut" },
+  } as IERequestOptions;
   let find = false;
   order.map((order) => {
     if (order.id === event.detail.value) {
@@ -304,18 +297,19 @@ const handleOrderChange = (event: any) => {
     path: navRoute.path,
     query: Object.assign({}, navRoute.query, { orderBy: orderBy.value.id }),
   });
-  /* if (orderBy.value) {
-    option.orderBy = orderBy.value;
-  }
-  if (materials_id_filter.value.length > 0) {
-    option.material_id = materials_id_filter.value;
+  if (materials_selected.value.length > 0) {
+    option.material_id = jointByComa(materials_selected.value)
   }
   if (muscle_selected.value.length > 0) {
-    option.workzone_code = muscle_selected.value;
+    option.workzone_code = jointByComa(muscle_selected.value, "muscle");
+  } else {
+    option.workzone_code = "";
   }
-  if (sport_selected.value.length > 0) {
-    option.sport_id = sport_selected.value;
-  } */
+  if (sports_selected.value.length > 0) {
+    option.sport_id = jointByComa(sports_selected.value, "sport");
+  } else {
+    option.sport_id = "";
+  }
 
   get("/exercises/", option, false).then((res) => {
     if (res.status > 300) {
@@ -325,18 +319,21 @@ const handleOrderChange = (event: any) => {
   });
 };
 
-const jointByComa = (array: Array<string | Sport>, name: string = "") => {
+const jointByComa = (arrayPass: string[] | Sport[] | Muscle[], name: string = "") => {
   let stringWithCommas = "";
-  for (let i = 0; i < array.length; i++) {
+  for (let i = 0; i < arrayPass.length; i++) {
     if (name == "sport") {
+      let array = arrayPass as Sport[]
       stringWithCommas += String(array[i].id);
     } else if (name == "muscle") {
+      let array = arrayPass as Muscle[]
+
       console.log("array[i] ", array[i]);
       stringWithCommas += String(array[i].zone.code);
     } else {
-      stringWithCommas += array[i];
+      stringWithCommas += arrayPass[i];
     }
-    if (i < array.length - 1) {
+    if (i < arrayPass.length - 1) {
       stringWithCommas += ",";
     }
   }
@@ -345,12 +342,10 @@ const jointByComa = (array: Array<string | Sport>, name: string = "") => {
 };
 
 const filterExercice = () => {
-  //showFilter.value = false
   const option = {} as any;
-  /*   if (materials_id_filter.value.length > 0) {
-      option.material_id = jointByComa(materials_id_filter.value)
-    } */
-  console.log("fitler muscle ", muscle_selected.value);
+  if (materials_selected.value.length > 0) {
+    option.material_id = jointByComa(materials_selected.value)
+  }
   if (muscle_selected.value.length > 0) {
     option.workzone_code = jointByComa(muscle_selected.value, "muscle");
   } else {
@@ -364,40 +359,38 @@ const filterExercice = () => {
   router.replace({
     path: navRoute.path,
     query: Object.assign({}, navRoute.query, option),
+  }).then(() => {
+    console.log('filter')
+    getExercises();
+    if (filterModal.value) filterModal.value.$el.dismiss();
   });
-  getExercises();
-  filterModal.value.$el.dismiss();
 };
 
 const getExercises = async () => {
   const option = {
     body: {},
-    /*     itemsPerPage: itemsPerPage.value.toString(),
-        page: page.value.toString(), */
-    /*     search: {
-          name: ''
-        }, */
     orderBy: { id: "default", value: "Par défaut" },
-  } as any;
+  } as IERequestOptions;
   if (orderBy.value) {
     option.orderBy = orderBy.value;
   }
-  /*  if (searchValue.value !== '') {
-     option.search = {
-       name: searchValue.value
-     }
-   } */
-
-  /*   if (materials_id_filter.value.length > 0) {
-      option.material_id = jointByComa(materials_id_filter.value)
-    } */
-
-  if (sports_selected.value.length > 0) {
-    option.sport_id = jointByComa(sports_selected.value, "sport");
+  if (searchValue.value !== '') {
+    option.search = searchValue.value
   }
 
-  if (muscle_selected.value.length > 0) {
-    option.workzone_code = jointByComa(muscle_selected.value, "muscle");
+  const wk_zone = navRoute.query.workzone_code
+  const mat_id = navRoute.query.material_id
+  const sport_id = navRoute.query.sport_id
+  if (mat_id && mat_id != '') {
+    option.material_id = String(mat_id)
+  }
+
+  if (sport_id && sport_id != '') {
+    option.sport_id = String(sport_id)
+  }
+
+  if (wk_zone && wk_zone != "") {
+    option.workzone_code = String(wk_zone);
   }
 
   get("/admin/exercises", option).then((res) => {
@@ -406,6 +399,7 @@ const getExercises = async () => {
       alertErr.value = true
       error_title.value = 'Error while retrieve exercises' */
     } else {
+      console.log('exercises')
       exercises.value = res.results;
       /*       exercisesCount.value = res.count
             pagination.value = Math.ceil(exercisesCount.value / itemsPerPage.value) */
@@ -414,14 +408,12 @@ const getExercises = async () => {
 };
 
 const showFilter = () => {
-  console.log(muscle_selected.value);
-  console.log(navRoute.query.workzone_code);
-  const mucsle_temp = navRoute.query.workzone_code
-    ? navRoute.query.workzone_code.split(",")
+  const work_zone = navRoute.query.workzone_code as string
+  const mucsle_temp = work_zone
+    ? work_zone.split(",")
     : [];
-  console.log(mucsle_temp);
   muscle_selected.value = mucsle_temp.map((muscle) => {
-    return { zone: { code: muscle } };
+    return { zone: { name: '', code: muscle } };
   });
   console.log(muscle_selected.value);
   setTimeout(() => {
@@ -444,49 +436,18 @@ const showFilter = () => {
   filterModal.value.$el.present();
 };
 
-const updateSelectedSports = (change) => {
+const updateSelectedSports = (change: any) => {
   sports_selected.value = change.detail.value;
   console.log(sports_selected.value);
 };
 
 const handleSearchInput = (event: any) => {
   searchValue.value = event.target.value;
-  const option = {
-    body: {},
-    search: event.target.value,
-    orderBy: {
-      id: "",
-    },
-  }; /* as IERequestOptions; */
-  if (orderBy.value) {
-    option.orderBy = orderBy.value;
-  }
-  /*
-  if (materials_id_filter.value.length > 0) {
-    option.material_id = materials_id_filter.value;
-  }
-  if (muscle_selected.value.length > 0) {
-    option.workzone_code = muscle_selected.value;
-  }
-  if (sport_selected.value.length > 0) {
-    option.sport_id = sport_selected.value;
-  } */
-
-  get("/exercises/", option, false).then((res) => {
-    if (res.status > 300) {
-    } else {
-      exercises.value = res.results;
-    }
-  });
+  getExercises()
 };
 
 const load = () => {
-  get("/exercises/", { body: {} }, false).then((res: any) => {
-    if (res.status > 300) {
-    } else {
-      exercises.value = res.results;
-    }
-  });
+  getExercises();
   get("/userfavexercises/user/" + user_id.value + "/", { body: {} }, true).then(
     (res: any) => {
       if (res.status > 300 || res.length <= 0) {
@@ -499,6 +460,7 @@ const load = () => {
 };
 
 onUpdated(() => {
+  console.log('redirect from ', navRoute)
   if (navRoute.name == "Exercises") {
     load();
   }
@@ -513,30 +475,43 @@ onMounted(() => {
       true
     ).then((res: any) => {
       if (res.status > 300) {
+        console.log('error ', res.status);
       } else {
         exercises_fav.value = res;
       }
     });
   });
 
-  get("/exercises", { body: {} }, false).then((res: any) => {
+  get("/exercises/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
+      console.log('error ', res.status);
     } else {
-      exercises.value = res.results;
+      exercises.value = res;
     }
   });
 
-  get("/sports", { body: {} }, false).then((res: any) => {
+  get("/sports/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
+      console.log('error ', res.status);
     } else {
-      sports.value = res.results;
+      sports.value = res;
     }
   });
 
-  get("/workzones", { body: {} }, false).then((res: any) => {
+  get("/materials/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
+      console.log('error ', res.status);
+
     } else {
-      muscles.value = res.results;
+      materials.value = res
+    }
+  })
+
+  get("/workzones/all", { body: {} }, false).then((res: any) => {
+    if (res.status > 300) {
+      console.log('error ', res.status);
+    } else {
+      muscles.value = res;
     }
   });
 });

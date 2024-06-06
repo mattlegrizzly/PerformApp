@@ -14,6 +14,7 @@ const nav = () => {
   if (props.back == "back") {
     router.back(props.url);
   } else {
+    console.log('url ', props.url)
     router.push(props.url);
   }
 };

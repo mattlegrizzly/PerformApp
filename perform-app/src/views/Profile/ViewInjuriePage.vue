@@ -6,11 +6,7 @@
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
           <NavButton :url="urlReturn" text="Retour" :back="back" />
-          <NavButton
-            @click="router.push('/edit_injurie/' + routerNav.params.id)"
-            text="Editer"
-            :noIcon="true"
-          />
+          <NavButton @click="router.push('/edit_injurie/' + routerNav.params.id)" text="Editer" :noIcon="true" />
         </div>
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
           {{ injury.name }}
@@ -30,23 +26,18 @@
             </p>
           </div>
           <div class="injury_item">
-            <ion-label
-              :class="stateSetClass(injury.state)"
-              class="injurie_state"
-              >{{ stateSet(injury.state) }}</ion-label
-            >
+            <ion-label :class="stateSetClass(injury.state)" class="injurie_state">{{ stateSet(injury.state)
+              }}</ion-label>
           </div>
         </div>
-        <div
-          style="
+        <div style="
             display: flex;
             width: 100%;
             margin-top: 40px;
             justify-content: center;
             align-items: center;
-          "
-        >
-          <BodyComponent :height="'300'" :width="'200'" :viewOnly="'show'" />
+          ">
+          <BodyComponent :muscleSelected="[{ zone: injury.zone }]" :height="'300'" :width="'200'" :viewOnly="'edit'" />
         </div>
       </div>
     </ion-content>
@@ -59,19 +50,18 @@ import NavButton from "../../components/NavButton/NavButton.vue";
 import { ref, onMounted, onUpdated } from "vue";
 import { useRoute } from "vue-router";
 import router from "../../router";
-
 //@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
-
 import "@/assets/base.css";
 import "@/assets/main.css";
 import { get } from "../../lib/callApi";
-import { Injurie } from "../../types/types";
 
 import "./index.css";
 
 const back = ref("back");
 const urlReturn = ref("/list_injuries");
+const array_muscle = ref([]);
+
 
 const stateSet = (state: string) => {
   switch (state) {
@@ -106,7 +96,9 @@ const injury = ref({
   description: "",
   state: "",
   date: "",
-  zone: "",
+  zone: {
+    name: " "
+  },
 });
 const id = ref(0);
 
@@ -120,6 +112,7 @@ onMounted(() => {
     if (res.status > 300) {
     } else {
       injury.value = res;
+
     }
   });
 });
@@ -130,6 +123,7 @@ const load = () => {
     if (res.status > 300) {
     } else {
       injury.value = res;
+      console.log(array_muscle.value)
     }
   });
 };

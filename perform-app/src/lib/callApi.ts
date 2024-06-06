@@ -1,11 +1,7 @@
 //@ts-expect-error
 import type IERequestOptions from "../types/requet";
 
-import { useCookies } from "@vueuse/integrations/useCookies";
-
 import { store } from "../store/store";
-
-const cookies = useCookies(["locale"]);
 
 const baseUrl = import.meta.env.VITE_API_URL + "";
 

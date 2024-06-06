@@ -13,23 +13,14 @@
         </h1>
         <div class="input_injurie">
           <ion-label>Nom de la blessure</ion-label>
-          <ion-input
-            label-placement="stacked"
-            fill="outline"
-            :value="injury.name"
-            @ion-change="handleInput('name', $event.detail.value)"
-            placeholder="Déchirure du quadriceps"
-          ></ion-input>
+          <ion-input label-placement="stacked" fill="outline" :value="injury.name"
+            @ion-change="handleInput('name', $event.detail.value)" placeholder="Déchirure du quadriceps"></ion-input>
         </div>
         <div class="input_injurie">
           <ion-label>Description de la blessure</ion-label>
 
-          <ion-textarea
-            :value="injury.description"
-            variant="outlined"
-            placeholder="Décrivez votre blessure"
-            @ion-change="handleInput('description', $event.detail.value)"
-          >
+          <ion-textarea :value="injury.description" variant="outlined" placeholder="Décrivez votre blessure"
+            @ion-change="handleInput('description', $event.detail.value)">
           </ion-textarea>
         </div>
 
@@ -38,68 +29,40 @@
 
           <ion-list class="filter-item">
             <ion-item>
-              <ion-select
-                interface="popover"
-                placeholder="Zone de la blessure"
-                class="custom-ion-select"
-                :toggle-icon="chevronDownOutline"
-                justify="space-between"
-                :value="injury.zone.code"
-                @ion-change="handleInput('zone', $event.detail.value)"
-              >
-                <ion-select-option
-                  v-for="elem in muscles"
-                  :key="elem.code"
-                  :value="elem.code"
-                  >{{ elem.name }}</ion-select-option
-                >
+              <ion-select interface="popover" placeholder="Zone de la blessure" class="custom-ion-select"
+                :toggle-icon="chevronDownOutline" justify="space-between" :value="injury.zone.code"
+                @ion-change="handleInput('zone', $event.detail.value)">
+                <ion-select-option v-for="elem in muscles" :key="elem.code" :value="elem.code">{{ elem.name
+                  }}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-list>
         </div>
         <div class="input_injurie">
           <ion-label>Date de la blessure</ion-label>
-          <ion-input
-            type="date"
-            label-placement="stacked"
-            fill="outline"
-            placeholder="2021-09-01"
-            :value="injury.date"
-            @ion-change="handleInput('date', $event.detail.value)"
-          ></ion-input>
+          <ion-input type="date" label-placement="stacked" fill="outline" placeholder="2021-09-01" :value="injury.date"
+            @ion-change="handleInput('date', $event.detail.value)"></ion-input>
         </div>
         <div class="input_injurie">
           <ion-label>Etat de la blessure</ion-label>
           <ion-list class="filter-item">
             <ion-item>
-              <ion-select
-                :value="injury.state"
-                interface="popover"
-                placeholder="Etat de la blessure"
-                class="custom-ion-select"
-                :toggle-icon="chevronDownOutline"
-                justify="space-between"
-                @ion-change="handleInput('state', $event.detail.value)"
-              >
-                <ion-select-option
-                  v-for="elem in injuries_state"
-                  :key="elem.code"
-                  :value="elem.code"
-                  >{{ elem.name }}</ion-select-option
-                >
+              <ion-select :value="injury.state" interface="popover" placeholder="Etat de la blessure"
+                class="custom-ion-select" :toggle-icon="chevronDownOutline" justify="space-between"
+                @ion-change="handleInput('state', $event.detail.value)">
+                <ion-select-option v-for="elem in injuries_state" :key="elem.code" :value="elem.code">{{ elem.name
+                  }}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-list>
         </div>
-        <div
-          style="
+        <div style="
             display: flex;
             width: 100%;
             margin-top: 16px;
             justify-content: center;
             align-items: center;
-          "
-        >
+          ">
           <BodyComponent :height="'200'" :width="'100'" :viewOnly="'show'" />
         </div>
       </div>
@@ -122,30 +85,33 @@ import {
 import "@/assets/base.css";
 import "@/assets/main.css";
 import { chevronDownOutline } from "ionicons/icons";
-//@ts-expect-error
 import NavButton from "../../components/NavButton/NavButton.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUpdated } from "vue";
 import { get, patch } from "../../lib/callApi";
-import type { Muscles } from "../../types/allType";
 import "./index.css";
 //@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
 import { store } from "../../store/store";
 import router from "../../router";
 import { useRoute } from "vue-router";
-import { onUpdated } from "vue";
 
 const navRoute = useRoute();
 
 const injury = ref({
+  id: "",
   name: "",
   description: "",
-  zone: "",
+  zone: {
+    name: "",
+    code: ""
+  },
   date: "",
+  user: '',
   state: "",
-});
+}) as any;
 
-const handleInput = (name: string, value: string) => {
+const handleInput = (name: string, valuePass: string | undefined | null) => {
+  const value = valuePass as string
   switch (name) {
     case "name":
       injury.value.name = value;
@@ -205,7 +171,7 @@ const injuries_state = ref([
   },
 ]);
 
-const muscles = ref([] as Muscles[]);
+const muscles = ref([] as any);
 
 const load = () => {
   store.get("user").then((res) => {

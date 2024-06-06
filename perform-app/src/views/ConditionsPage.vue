@@ -55,18 +55,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent } from "vue";
 import NavButton from "../components/NavButton/NavButton.vue";
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
 } from "@ionic/vue";
 </script>
 

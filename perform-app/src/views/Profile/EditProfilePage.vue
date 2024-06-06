@@ -87,7 +87,9 @@ ion-chip {
             <ion-label>Photo de profil : </ion-label>
             <div class="profile_image">
               <div class="img_div">
-                <ion-img :src="fileToDisplay != '' ? fileToDisplay: 'https://static.vecteezy.com/system/resources/previews/004/968/473/original/upload-or-add-a-picture-jpg-file-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-etc-vector.jpg'" @click="triggerFileInput"></ion-img>
+                <ion-img
+                  :src="fileToDisplay != '' ? fileToDisplay : 'https://static.vecteezy.com/system/resources/previews/004/968/473/original/upload-or-add-a-picture-jpg-file-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-etc-vector.jpg'"
+                  @click="triggerFileInput"></ion-img>
               </div>
               <input type="file" accept="image/*" ref="fileInput" @change="handleFileChange"
                 style="display: none"></input>
@@ -131,7 +133,7 @@ ion-chip {
               <ion-item>
                 <ion-select @ionChange="updateSelectedSports" class="custom-ion-select" :value="sports_user_temp"
                   aria-label="Fruit" placeholder="Selectionner vos sports" :multiple="true" :compareWith="compareWith">
-                  <ion-select-option v-for="(sport, index) in sports" :value="{ id: sport.id, name: sport.name }"
+                  <ion-select-option v-for="(sport) in sports" :value="{ id: sport.id, name: sport.name }"
                     :key="sport.id" aria-selected="true">{{ sport.name }}</ion-select-option>
                 </ion-select>
               </ion-item>
@@ -170,21 +172,23 @@ import "@/assets/base.css";
 import "@/assets/main.css";
 import { store } from "../../store/store";
 import router from "../../router";
-import { Sport } from "../../types/allType";
+import { Sport } from "../../types/types";
 import { useRoute } from "vue-router";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { get, patch, del, post } from "../../lib/callApi";
 import "./index.css";
-import ProfilePage from "./ProfilePage.vue";
+
 const routes = useRoute();
 
 const fileInput = ref(null);
 
-const handleInput = (key: string, value: string) => {
+const handleInput = (key: string, valuePass: string | null | undefined) => {
+  const value = valuePass as String;
+  //@ts-expect-error
   user.value[key] = value;
 };
 
-const compareWith = (o1, o2) => {
+const compareWith = (o1: any, o2: any) => {
   return o1 && o2 ? o1.id === o2.id : o1 === o2;
 };
 
@@ -208,8 +212,8 @@ const fileToDisplay = ref('');
 const fileToSend = ref(null);
 
 
-function findById(array, id) {
-  console.log(array)
+function findById(array: any, id: string | number | Sport) {
+  //@ts-expect-error
   return array.find(item => item.id === id);
 }
 
@@ -225,12 +229,13 @@ const editProfile = () => {
 
   };
   if (fileToSend.value) {
+    //@ts-expect-error
     userEdit['profile_picture'] = fileToSend.value;
   }
   const inPlus = [];
   const inMinus = [];
   const equivalent = [];
-  if(sports_user_temp.value.length === 0){
+  if (sports_user_temp.value.length === 0) {
     sports_user_temp.value = [];
   }
   // Vérifier les éléments en plus dans newArray
@@ -245,6 +250,7 @@ const editProfile = () => {
 
   // Vérifier les éléments en moins dans baseArray
   for (const baseItem of user.value.sports_user) {
+    //@ts-expect-error
     const matchInNew = findById(sports_user_temp.value, baseItem.sport.id);
     if (!matchInNew) {
       inMinus.push(baseItem);
@@ -278,29 +284,32 @@ const editProfile = () => {
 const api = import.meta.env.VITE_API_URL;
 
 const triggerFileInput = () => {
-  fileInput.value.click();
+  //@ts-expect-error
+  if (fileInput.value) fileInput.value.click();
 };
-const handleFileChange = (event) => {
+const handleFileChange = (event: any) => {
   const file = event.target.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      console.log('e.target.result', e.target.result)
-      fileToDisplay.value = e.target.result as string;
-      fileToSend.value = file;
-    };
-    reader.readAsDataURL(file);
+      if (e.target) {
+        console.log('e.target.result', e.target.result)
+        fileToDisplay.value = e.target.result as string;
+        fileToSend.value = file;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 };
 
-const removeSport = (event) => {
+const removeSport = (event: any) => {
   sports_user_temp.value = sports_user_temp.value.filter(
     (sport) => sport.id !== Number(event.target.id)
   );
 
 };
 
-const updateSelectedSports = (change) => {
+const updateSelectedSports = (change: any) => {
   sports_user_temp.value = change.detail.value;
 };
 
@@ -311,6 +320,7 @@ onMounted(async () => {
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
     user.value.sports_user.map((sport) => {
+      //@ts-expect-error
       sports_user_temp.value.push(sport.sport);
     });
   }
@@ -340,7 +350,7 @@ const load = () => {
   store.get("user").then((res) => {
     const json = JSON.parse(res);
     user.value = json.user;
-    if(user.value.profile_picture !== null) fileToDisplay.value = api + user.value.profile_picture;
+    if (user.value.profile_picture !== null) fileToDisplay.value = api + user.value.profile_picture;
   });
   get("/sports", { body: {} }, false).then((res) => {
     if (res.status > 300) {
