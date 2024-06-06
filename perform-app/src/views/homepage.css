@@ -1,0 +1,226 @@
+ion-modal {
+    --height: 70%;
+    --width: 80%;
+    --border-radius: 16px;
+    --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  
+.div_info h1 {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.div_info p {
+    font-size: 12px;
+}
+
+  .static-modal {
+    --height: 50%;
+    --width: 100%;
+    --border-radius: 16px;
+    --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  
+  ion-modal::part(backdrop) {
+    background: rgba(209, 213, 219);
+    opacity: 1;
+  }
+  
+  ion-modal ion-toolbar {
+    --background: rgb(14 116 144);
+    --color: white;
+  }
+  
+  ion-range {
+    --bar-height: 2px;
+    --bar-border-radius: 8px;
+    --knob-size: 10px;
+  }
+  
+  .example-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .home_div {
+    margin-left: var(--pd-l);
+    margin-right: var(--pd-r);
+  }
+  
+  .header_img {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+  }
+  
+  .block_100 {
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+    width: auto;
+    align-items: center;
+    align-items: center;
+    border: 0.5px solid #e0e0e0;
+    padding: 10px;
+    box-shadow: 0 0 10px #e0e0e0;
+    border-radius: 10px;
+  }
+
+  .wellness_100 {
+    flex-wrap: wrap;
+  }
+
+  .wellness_100_hidden {
+    overflow: hidden;
+    height: 20px;
+  }
+  
+  .block_50 {
+    width: 42% !important;
+    margin-top: 20px;
+    width: auto;
+    align-items: flex-start;
+    border: 0.5px solid #e0e0e0;
+    padding: 20px 10px 10px 10px;
+    box-shadow: 0 0 10px #e0e0e0;
+    border-radius: 10px;
+    flex-wrap: wrap;
+  }
+
+  .block_100 h3 {
+    margin-top: 0px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 0px;
+    width: 100%;
+  }
+
+   
+  .block_100 h4 {
+    margin-top: 5px;
+    font-style: italic;
+    font-size: 12px;
+    color: #aeaeae;
+    font-weight: 400;
+    margin-bottom: 0px;
+    width: 100%;
+  }
+  
+  .div_info {
+    width: 70%;
+    text-wrap: wrap;
+  }
+  
+  .users_infos {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+  }
+
+  .div_user_info p{
+    font-size: 12px !important;
+  }
+  
+  .users_infos h3 {
+    margin-top: 0px;
+    width: 100;
+    text-decoration: underline;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 700;
+  }
+  
+  .profile_picture {
+    width: 80px;
+    height: 80px;
+    border-radius: 100px;
+    border: 2px var(--primary-blue) solid;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile_picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .div_user_info p {
+    text-align: center;
+  }
+  
+  .split_div {
+    display: flex;
+    justify-content: space-between;
+    width: auto;
+  }
+  
+  .range_div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .range_div .title_range {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .range_container_show {
+    height: auto !important;
+  }
+  .range_container {
+    height: 30px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .display_flex {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .show_divs_range {
+    padding: 0px !important;
+    width: 100%;
+  }
+
+  .show_divs_range_hidden {
+    display: none;
+  }
+
+  .show_divs_range ion-label {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .show_range_inner {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+  .range_container p {
+    font-size: 10px !important;
+    text-align: center;
+    color: #aeaeae;
+  }
+  
+  .divs_range {
+    padding: 0px 10px 10px 10px;
+  }
+  
+  .range_inner {
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    padding-left: 20px;
+    padding-right: 20px;
+  }

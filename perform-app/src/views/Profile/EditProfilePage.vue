@@ -172,7 +172,7 @@ import "@/assets/base.css";
 import "@/assets/main.css";
 import { store } from "../../store/store";
 import router from "../../router";
-import { Sport } from "../../types/types";
+import { Sport } from "../../types/allTypes";
 import { useRoute } from "vue-router";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { get, patch, del, post } from "../../lib/callApi";

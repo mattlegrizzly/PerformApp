@@ -83,8 +83,8 @@
   line-height: 1.6;
   font-family:
     'Montserrat' !important;
+    font-size: 12px;
 }
-
 h1 {
   color: var(--primary-blue);
   font-weight: 700;

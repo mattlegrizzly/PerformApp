@@ -25,7 +25,6 @@ dist-ssr
 
 .idea/
 dist/
-types/
 .sourcemaps
 xcuserdata/
 node_modules/
@@ -53,3 +52,6 @@ capacitor-build.log
 # Carthage and Carthage-built binaries
 Carthage
 *.xcframework.zip
+
+resources/ios/**/*
+resources/android/**/*

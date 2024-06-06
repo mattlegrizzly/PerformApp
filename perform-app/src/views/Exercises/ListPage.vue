@@ -56,16 +56,30 @@ ion-modal {
       <div class="perform-page">
         <h1 style="margin-top: 0px">Exercices</h1>
         <ion-label>Rechercher un exercice :</ion-label>
-        <ion-input id="search-input" fill="outline" slot="end" placeholder="Cherchez un exercice" shape="round"
-          @ionInput="handleSearchInput($event)"></ion-input>
+        <ion-input
+          id="search-input"
+          fill="outline"
+          slot="end"
+          placeholder="Cherchez un exercice"
+          shape="round"
+          @ionInput="handleSearchInput($event)"
+        ></ion-input>
         <div class="filter-div">
           <ion-button @click="showFilter">Filtres</ion-button>
           <ion-list class="filter-item">
             <ion-item>
-              <ion-select aria-label="Trier par" interface="popover" placeholder="Trier par"
-                @ionChange="handleOrderChange($event)">
-                <ion-select-option v-for="elem in order" :key="elem.id" :value="elem.id">{{ elem.value
-                  }}</ion-select-option>
+              <ion-select
+                aria-label="Trier par"
+                interface="popover"
+                placeholder="Trier par"
+                @ionChange="handleOrderChange($event)"
+              >
+                <ion-select-option
+                  v-for="elem in order"
+                  :key="elem.id"
+                  :value="elem.id"
+                  >{{ elem.value }}</ion-select-option
+                >
               </ion-select>
             </ion-item>
           </ion-list>
@@ -73,58 +87,106 @@ ion-modal {
       </div>
       <ion-modal class="static-modal" ref="filterModal">
         <ion-content>
-          <div style="
+          <div
+            style="
               padding: 20px 20px 5px 20px;
               display: flex;
               align-items: center;
               justify-content: space-between;
               flex-wrap: wrap;
-            ">
+            "
+          >
             <h3>FILTRER</h3>
             <div class="input-div">
               <h4>Sports :</h4>
               <ion-list>
                 <ion-item>
-                  <ion-select @ionChange="updateSelectedSports" class="custom-ion-select" :value="sports_selected"
-                    aria-label="Sports" placeholder="Selectionner vos sports" :multiple="true"
-                    :compareWith="compareWith">
-                    <ion-select-option v-for="(sport) in sports" :value="{ id: sport.id, name: sport.name }"
-                      :key="sport.id" aria-selected="true">{{ sport.name }}</ion-select-option>
+                  <ion-select
+                    @ionChange="updateSelectedSports"
+                    class="custom-ion-select"
+                    :value="sports_selected"
+                    aria-label="Sports"
+                    placeholder="Selectionner vos sports"
+                    :multiple="true"
+                    :compareWith="compareWith"
+                  >
+                    <ion-select-option
+                      v-for="sport in sports"
+                      :value="{ id: sport.id, name: sport.name }"
+                      :key="sport.id"
+                      aria-selected="true"
+                      >{{ sport.name }}</ion-select-option
+                    >
                   </ion-select>
                 </ion-item>
               </ion-list>
             </div>
             <div class="input-div">
               <h4>Matériels :</h4>
-              <v-row style="display : flex; flex-wrap: wrap; justify-content: center" dense>
-                <v-col style="width: 30%; flex: none" v-for="material in materials" :key="material.id" cols="12" sm="4">
+              <v-row
+                style="display: flex; flex-wrap: wrap; justify-content: center"
+                dense
+              >
+                <v-col
+                  style="width: 30%; flex: none"
+                  v-for="material in materials"
+                  :key="material.id"
+                  cols="12"
+                  sm="4"
+                >
                   <v-card @click="addMaterialFilter(material.id)">
-                    <v-img :src="material.pictures" class="align-end" :gradient="findMaterial(material)
-                      ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)'
-                      : 'to bottom, rgba(0,0,0,.05), rgba(0,0,0,.1'
-                      " height="80px" cover aspect-ratio="1">
-                      <v-icon :icon="findMaterial(material) ? 'mdi-check' : ''"></v-icon>
+                    <v-img
+                      :src="material.pictures"
+                      class="align-end"
+                      :gradient="
+                        findMaterial(material)
+                          ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)'
+                          : 'to bottom, rgba(0,0,0,.05), rgba(0,0,0,.1'
+                      "
+                      height="80px"
+                      cover
+                      aspect-ratio="1"
+                    >
+                      <v-icon
+                        :icon="findMaterial(material) ? 'mdi-check' : ''"
+                      ></v-icon>
                     </v-img>
                     <v-card-title
-                      style="font-size: 12px; height: 40px; display: flex; justify-content: center; align-items: center; white-space: normal !important; padding: 5px; text-align: center"
-                      class="textTitleCard">{{
-                        material.name
-                      }}</v-card-title>
+                      style="
+                        font-size: 12px;
+                        height: 40px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        white-space: normal !important;
+                        padding: 5px;
+                        text-align: center;
+                      "
+                      class="textTitleCard"
+                      >{{ material.name }}</v-card-title
+                    >
                   </v-card>
                 </v-col>
               </v-row>
             </div>
             <div class="input-div">
               <h4>Muscles :</h4>
-              <div style="
+              <div
+                style="
                   display: flex;
                   width: 100%;
                   margin-top: 16px;
                   justify-content: space-between;
                   align-items: center;
-                ">
-                <BodyComponent :height="'300'" :width="'300'" :viewOnly="'edit'" :muscleSelected="muscle_selected"
-                  :setMuscleSelected="setMuscleSelectedView" />
+                "
+              >
+                <BodyComponent
+                  :height="'300'"
+                  :width="'300'"
+                  :viewOnly="'edit'"
+                  :muscleSelected="muscle_selected"
+                  :setMuscleSelected="setMuscleSelectedView"
+                />
               </div>
               <div class="input-div">
                 <ion-button @click="filterExercice"> Filtrer </ion-button>
@@ -143,26 +205,40 @@ ion-modal {
       <v-card-text>
         <v-tabs-window v-model="tab">
           <v-tabs-window-item value="one">
-            <ion-list class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id"
-              @click="goPage(exercise.id)">
+            <ion-list
+              class="list-item"
+              :inset="true"
+              v-for="exercise in exercises"
+              :key="exercises.id"
+              @click="goPage(exercise.id)"
+            >
               <ion-item>
                 <div class="exercice-img">
                   <label>{{ exercise.name[0] }}</label>
                 </div>
-                <ion-label>{{ exercise.name }}</ion-label>
+                <ion-label class="exercice_label">{{
+                  exercise.name
+                }}</ion-label>
                 <ion-icon :icon="chevronForwardOutline"></ion-icon>
               </ion-item>
             </ion-list>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="two">
-            <ion-list class="list-item" :inset="true" v-for="exercise in exercises_fav" :key="exercises.id"
-              @click="goPage(exercise.fav_exercise.id)">
+            <ion-list
+              class="list-item"
+              :inset="true"
+              v-for="exercise in exercises_fav"
+              :key="exercises.id"
+              @click="goPage(exercise.fav_exercise.id)"
+            >
               <ion-item>
                 <div class="exercice-img">
                   <label>{{ exercise.fav_exercise.name[0] }}</label>
                 </div>
-                <ion-label>{{ exercise.fav_exercise.name }}</ion-label>
+                <ion-label l class="exercice_label">{{
+                  exercise.fav_exercise.name
+                }}</ion-label>
                 <ion-icon :icon="chevronForwardOutline"></ion-icon>
               </ion-item>
             </ion-list>
@@ -194,7 +270,7 @@ import "./index.css";
 import router from "../../router";
 import { useRoute } from "vue-router";
 import { store } from "../../store/store";
-import { Muscle, Sport, Material } from "../../types/types";
+import { Muscle, Sport, Material } from "../../types/allTypes";
 //@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
 import IERequestOptions from "../../types/request";
@@ -221,18 +297,18 @@ const sports_selected = ref([] as Sport[]);
 const navRoute = useRoute();
 const muscles = ref([] as Muscle[]);
 const muscle_selected = ref([] as Muscle[]);
-const materials = ref([] as Material[])
-const materials_selected = ref([] as Material[])
+const materials = ref([] as Material[]);
+const materials_selected = ref([] as Material[]);
 
 const findMaterial = (material: any) => {
   let findMaterial = false;
   materials_selected.value.map((elem) => {
     if (elem === material.id) {
-      findMaterial = true
+      findMaterial = true;
     }
-  })
-  return findMaterial
-}
+  });
+  return findMaterial;
+};
 
 const compareWith = (o1: any, o2: any) => {
   return o1 && o2 ? o1.id === o2.id : o1 === o2;
@@ -249,7 +325,7 @@ const setMuscleSelectedView = (key: string, action: string) => {
         return element.zone.code === key;
       }).length == 0;
     if (findKey) {
-      muscle_selected.value.push({ zone: { name: '', code: key } });
+      muscle_selected.value.push({ zone: { name: "", code: key } });
     }
   } else {
     let index = muscle_selected.value.indexOf(key as any);
@@ -267,21 +343,17 @@ const setMuscleSelectedView = (key: string, action: string) => {
 const addMaterialFilter = (id: any) => {
   const findKey =
     materials_selected.value.filter(function (element: any) {
-      return element === id
-    }).length == 0
+      return element === id;
+    }).length == 0;
   if (findKey) {
-    materials_selected.value.push(id)
+    materials_selected.value.push(id);
   } else {
-    const index = materials_selected.value.indexOf(id)
-    materials_selected.value.splice(index, 1)
+    const index = materials_selected.value.indexOf(id);
+    materials_selected.value.splice(index, 1);
   }
-}
+};
 
 const handleOrderChange = (event: any) => {
-  const option = {
-    body: {},
-    orderBy: { id: "default", value: "Par défaut" },
-  } as IERequestOptions;
   let find = false;
   order.map((order) => {
     if (order.id === event.detail.value) {
@@ -292,43 +364,20 @@ const handleOrderChange = (event: any) => {
   if (!find) {
     orderBy.value = { id: "default", value: "Par défaut" };
   }
-  option.orderBy = orderBy.value;
-  router.replace({
-    path: navRoute.path,
-    query: Object.assign({}, navRoute.query, { orderBy: orderBy.value.id }),
-  });
-  if (materials_selected.value.length > 0) {
-    option.material_id = jointByComa(materials_selected.value)
-  }
-  if (muscle_selected.value.length > 0) {
-    option.workzone_code = jointByComa(muscle_selected.value, "muscle");
-  } else {
-    option.workzone_code = "";
-  }
-  if (sports_selected.value.length > 0) {
-    option.sport_id = jointByComa(sports_selected.value, "sport");
-  } else {
-    option.sport_id = "";
-  }
-
-  get("/exercises/", option, false).then((res) => {
-    if (res.status > 300) {
-    } else {
-      exercises.value = res.results;
-    }
-  });
+  getExercises();
 };
 
-const jointByComa = (arrayPass: string[] | Sport[] | Muscle[], name: string = "") => {
+const jointByComa = (
+  arrayPass: string[] | Sport[] | Muscle[],
+  name: string = ""
+) => {
   let stringWithCommas = "";
   for (let i = 0; i < arrayPass.length; i++) {
     if (name == "sport") {
-      let array = arrayPass as Sport[]
-      stringWithCommas += String(array[i].id);
+      let array = arrayPass as Sport[];
+      stringWithCommas += String(array[i].sport.id);
     } else if (name == "muscle") {
-      let array = arrayPass as Muscle[]
-
-      console.log("array[i] ", array[i]);
+      let array = arrayPass as Muscle[];
       stringWithCommas += String(array[i].zone.code);
     } else {
       stringWithCommas += arrayPass[i];
@@ -337,14 +386,15 @@ const jointByComa = (arrayPass: string[] | Sport[] | Muscle[], name: string = ""
       stringWithCommas += ",";
     }
   }
-  console.log("string ", stringWithCommas);
   return stringWithCommas;
 };
 
 const filterExercice = () => {
   const option = {} as any;
   if (materials_selected.value.length > 0) {
-    option.material_id = jointByComa(materials_selected.value)
+    option.material_id = jointByComa(materials_selected.value);
+  } else {
+    option.material_id = "";
   }
   if (muscle_selected.value.length > 0) {
     option.workzone_code = jointByComa(muscle_selected.value, "muscle");
@@ -356,14 +406,16 @@ const filterExercice = () => {
   } else {
     option.sport_id = "";
   }
-  router.replace({
-    path: navRoute.path,
-    query: Object.assign({}, navRoute.query, option),
-  }).then(() => {
-    console.log('filter')
-    getExercises();
-    if (filterModal.value) filterModal.value.$el.dismiss();
-  });
+  router
+    .replace({
+      path: navRoute.path,
+      query: Object.assign({}, navRoute.query, option),
+    })
+    .then(() => {
+      console.log("filter");
+      getExercises();
+      if (filterModal.value) filterModal.value.$el.dismiss();
+    });
 };
 
 const getExercises = async () => {
@@ -374,46 +426,38 @@ const getExercises = async () => {
   if (orderBy.value) {
     option.orderBy = orderBy.value;
   }
-  if (searchValue.value !== '') {
-    option.search = searchValue.value
+  if (searchValue.value !== "") {
+    option.search = searchValue.value;
   }
 
-  const wk_zone = navRoute.query.workzone_code
-  const mat_id = navRoute.query.material_id
-  const sport_id = navRoute.query.sport_id
-  if (mat_id && mat_id != '') {
-    option.material_id = String(mat_id)
+  const wk_zone = navRoute.query.workzone_code;
+  const mat_id = navRoute.query.material_id;
+  const sport_id = navRoute.query.sport_id;
+  if (mat_id && mat_id != "") {
+    option.material_id = String(mat_id);
   }
 
-  if (sport_id && sport_id != '') {
-    option.sport_id = String(sport_id)
+  if (sport_id && sport_id != "") {
+    option.sport_id = String(sport_id);
   }
 
   if (wk_zone && wk_zone != "") {
     option.workzone_code = String(wk_zone);
   }
 
-  get("/admin/exercises", option).then((res) => {
+  get("/exercises/all", option).then((res) => {
     if (res.status > 300) {
-      /* error_message.value = res.data
-      alertErr.value = true
-      error_title.value = 'Error while retrieve exercises' */
     } else {
-      console.log('exercises')
-      exercises.value = res.results;
-      /*       exercisesCount.value = res.count
-            pagination.value = Math.ceil(exercisesCount.value / itemsPerPage.value) */
+      exercises.value = res;
     }
   });
 };
 
 const showFilter = () => {
-  const work_zone = navRoute.query.workzone_code as string
-  const mucsle_temp = work_zone
-    ? work_zone.split(",")
-    : [];
+  const work_zone = navRoute.query.workzone_code as string;
+  const mucsle_temp = work_zone ? work_zone.split(",") : [];
   muscle_selected.value = mucsle_temp.map((muscle) => {
-    return { zone: { name: '', code: muscle } };
+    return { zone: { name: "", code: muscle } };
   });
   console.log(muscle_selected.value);
   setTimeout(() => {
@@ -443,7 +487,7 @@ const updateSelectedSports = (change: any) => {
 
 const handleSearchInput = (event: any) => {
   searchValue.value = event.target.value;
-  getExercises()
+  getExercises();
 };
 
 const load = () => {
@@ -460,7 +504,7 @@ const load = () => {
 };
 
 onUpdated(() => {
-  console.log('redirect from ', navRoute)
+  console.log("redirect from ", navRoute);
   if (navRoute.name == "Exercises") {
     load();
   }
@@ -475,7 +519,7 @@ onMounted(() => {
       true
     ).then((res: any) => {
       if (res.status > 300) {
-        console.log('error ', res.status);
+        console.log("error ", res.status);
       } else {
         exercises_fav.value = res;
       }
@@ -484,7 +528,7 @@ onMounted(() => {
 
   get("/exercises/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
-      console.log('error ', res.status);
+      console.log("error ", res.status);
     } else {
       exercises.value = res;
     }
@@ -492,7 +536,7 @@ onMounted(() => {
 
   get("/sports/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
-      console.log('error ', res.status);
+      console.log("error ", res.status);
     } else {
       sports.value = res;
     }
@@ -500,16 +544,15 @@ onMounted(() => {
 
   get("/materials/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
-      console.log('error ', res.status);
-
+      console.log("error ", res.status);
     } else {
-      materials.value = res
+      materials.value = res;
     }
-  })
+  });
 
   get("/workzones/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
-      console.log('error ', res.status);
+      console.log("error ", res.status);
     } else {
       muscles.value = res;
     }
