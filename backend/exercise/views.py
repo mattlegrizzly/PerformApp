@@ -4,12 +4,19 @@ from .serializers import MaterialSerializer, ExerciseSerializer, ExerciseStepSer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from rest_framework.response import Response
 from rest_framework import filters, mixins, status, viewsets, pagination
+from rest_framework.decorators import action
 
 #------------------MATERIAL------------------
 # List/Get ViewSet
 class MaterialViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
+    
+    @action(detail=False, methods=['get'], url_path="all")
+    def all(self, request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 #------------------EXERCISE------------------
 # List/Get ViewSet
@@ -19,6 +26,12 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "materials__name", "sports__name"]
 
+    @action(detail=False, methods=['get'], url_path="all")
+    def all(self, request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
     def get_queryset(self):
         queryset = Exercise.objects.all()
         return queryset
@@ -124,4 +137,10 @@ class ExerciseZoneViewSet(viewsets.ReadOnlyModelViewSet):
 class WorkZoneViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = WorkZone.objects.all()
     serializer_class = WorkZoneSerializer
+    
+    @action(detail=False, methods=['get'], url_path="all")
+    def all(self, request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
