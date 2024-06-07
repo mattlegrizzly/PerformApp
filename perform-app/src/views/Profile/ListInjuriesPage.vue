@@ -12,24 +12,14 @@
           Liste de mes blessures
         </h1>
       </div>
-      <ion-list
-        lines="none"
-        style="
+      <ion-list lines="none" style="
           padding-left: var(--pd-l);
           padding-right: var(--pd-r);
           padding-top: 10px;
           padding-bottom: 10px;
-        "
-      >
-        <ion-item
-          class="injurie_div_info"
-          v-for="injurie of user.user_injuries"
-        >
-          <div
-            class="injurie_div_parent"
-            @click="router.push('/view_injuries/' + injurie.id)"
-            :key="injurie.id"
-          >
+        ">
+        <ion-item class="injurie_div_info" v-for="injurie of user.user_injuries">
+          <div class="injurie_div_parent" @click="router.push('/view_injuries/' + injurie.id)" :key="injurie.id">
             <div class="injurie_info">
               <ion-label>{{ injurie.name }}</ion-label>
               <ion-label>{{
@@ -38,10 +28,7 @@
             </div>
             <div class="injurie_info">
               <ion-label>{{ injurie.zone.name }}</ion-label>
-              <ion-label
-                :class="stateSetClass(injurie.state)"
-                class="injurie_state"
-                >{{ stateSet(injurie.state) }}
+              <ion-label :class="stateSetClass(injurie.state)" class="injurie_state">{{ stateSet(injurie.state) }}
               </ion-label>
             </div>
           </div>
@@ -62,6 +49,7 @@ import {
   IonLabel,
   IonIcon,
   IonItem,
+  onIonViewWillEnter,
 } from "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";
@@ -120,29 +108,17 @@ const stateSetClass = (state: string) => {
   }
 };
 
-const load = () => {
-  store.get("user").then((res) => {
-    const json = JSON.parse(res);
-    user.value = json.user;
-    get("/injuries/?user=" + user.value.id, { body: {} }, true).then((res) => {
-      user.value.user_injuries = res.results;
-    });
-  });
-};
 
-onMounted(async () => {
+onIonViewWillEnter(async () => {
   if (routes.query.edit) {
     back.value = "";
   }
   let storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
-  }
-});
-
-onUpdated(() => {
-  if (routes.name == "ListInjuries") {
-    load();
+    get("/injuries/?user=" + user.value.id, { body: {} }, true).then((res) => {
+      user.value.user_injuries = res.results;
+    });
   }
 });
 </script>

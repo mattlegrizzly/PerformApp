@@ -22,10 +22,12 @@
 
 .filter-div ion-list {
     width: 45%;
-    height: 33px !important;
-    min-height: 33px !important;
+    height: 35px !important;
+    min-height: 35px !important;
     display: flex;
     align-items: center;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
     border-radius: 5px;
     border: 1px solid #d4d4d4;
 }
@@ -38,6 +40,7 @@
     min-height: 35px !important;
     width: 100%;
 }
+
 .list-item {
     margin-inline-start: var(--pd-l) !important;
     margin-inline-end: var(--pd-r) !important;

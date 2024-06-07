@@ -25,10 +25,10 @@
                 width: 100%;
                 height: 100%;
                 text-transform: capitalize;
-              " v-if="setPP() == ''">
+              " v-if="profilePicture == ''">
               {{ user.first_name[0] }}
             </div>
-            <img v-else :src="user ? setPP() : ''" alt="profile" />
+            <img v-else :src="profilePicture" alt="profile" />
           </div>
         </div>
         <div class="profile_container_div">
@@ -112,10 +112,11 @@ import {
   IonList,
   IonIcon,
   IonLabel,
+  onIonViewWillEnter,
 } from "@ionic/vue";
 import { store } from "../../store/store";
 import router from "../../router";
-import { onMounted, onUpdated, ref } from "vue";
+import { onMounted, onUpdated, ref, computed } from "vue";
 import { get } from "../../lib/callApi";
 import { useRoute } from "vue-router";
 import "./index.css";
@@ -162,13 +163,12 @@ const stateSet = (state: string) => {
   }
 };
 
-const setPP = () => {
+const profilePicture = computed(() => {
   if (
     user.value.profile_picture &&
     user.value.profile_picture.includes(api.split("//")[1])
   ) {
-    console.log(user.value.profile_picture);
-    return user.value.profile_picture;
+    return user.value.profile_picture.replace('http', 'https');
   } else {
     if (
       user.value.profile_picture === null ||
@@ -179,7 +179,7 @@ const setPP = () => {
       return api + user.value.profile_picture;
     }
   }
-};
+});
 
 const stateSetClass = (state: string) => {
   switch (state) {
@@ -200,24 +200,8 @@ const disconnect = () => {
   });
 };
 
-const load = () => {
-  store.get("user").then((res) => {
-    const json = JSON.parse(res);
-    user.value = json.user;
-    get("/admin/users_all/" + user.value.id, { body: {} }, true).then((res) => {
-      user.value = res;
-      res;
-      const userToSet = {
-        user: res,
-        access: json.access,
-        refresh: json.refresh,
-      };
-      store.set("user", JSON.stringify(userToSet));
-    });
-  });
-};
 
-onMounted(async () => {
+onIonViewWillEnter(async () => {
   let storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
@@ -238,9 +222,4 @@ onMounted(async () => {
   }
 });
 
-onUpdated(() => {
-  if (routes.name == "Profile") {
-    load();
-  }
-});
 </script>

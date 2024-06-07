@@ -1,9 +1,9 @@
 <script setup>
-import router from "@/router";
 import { IonButton, IonIcon } from "@ionic/vue";
 import { chevronBackOutline } from "ionicons/icons";
 import { onMounted, ref } from "vue";
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const props = defineProps(["url", "text", "back", "noIcon", "icon", "color"]);
 
 const noIconYes = ref(false);
@@ -14,7 +14,6 @@ const nav = () => {
   if (props.back == "back") {
     router.back(props.url);
   } else {
-    console.log('url ', props.url)
     router.push(props.url);
   }
 };

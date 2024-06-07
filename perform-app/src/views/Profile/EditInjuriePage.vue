@@ -31,7 +31,7 @@
             <ion-item>
               <ion-select interface="popover" placeholder="Zone de la blessure" class="custom-ion-select"
                 :toggle-icon="chevronDownOutline" justify="space-between" :value="injury.zone.code"
-                @ion-change="handleInput('zone', $event.detail.value)">
+                @click="setIonSize()" @ion-change="handleInput('zone', $event.detail.value)">
                 <ion-select-option v-for="elem in muscles" :key="elem.code" :value="elem.code">{{ elem.name
                   }}</ion-select-option>
               </ion-select>
@@ -49,7 +49,7 @@
             <ion-item>
               <ion-select :value="injury.state" interface="popover" placeholder="Etat de la blessure"
                 class="custom-ion-select" :toggle-icon="chevronDownOutline" justify="space-between"
-                @ion-change="handleInput('state', $event.detail.value)">
+                @click="setIonSize()" @ion-change="handleInput('state', $event.detail.value)">
                 <ion-select-option v-for="elem in injuries_state" :key="elem.code" :value="elem.code">{{ elem.name
                   }}</ion-select-option>
               </ion-select>
@@ -81,6 +81,7 @@ import {
   IonInput,
   IonTextarea,
   IonLabel,
+  onIonViewWillEnter
 } from "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";
@@ -133,6 +134,37 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
 
 const user = ref({} as any);
 const id = ref(0);
+
+const setIonSize = () => {
+  const popover = document.querySelectorAll("ion-popover");
+  console.log('popover ', popover)
+  if (popover === null) return;
+  for (const elem of popover) {
+    const shadowRoot = elem.shadowRoot;
+    if (shadowRoot === null) return;
+    console.log('shadow root selectpopover ', shadowRoot)
+    const style = document.createElement("style");
+    style.textContent = `
+      .popover-content {
+            margin-left: 9px;
+            margin-top: 20px;
+      }
+
+    `;
+    shadowRoot.appendChild(style);
+    const stylePopover = document.createElement("style");
+    stylePopover.textContent = `
+      .sc-ion-select-popover-md-h {
+            left : 10px;
+            margin-top : 10px;
+            width: calc(100vw - 40px);
+      }
+
+    `;
+    elem.appendChild(stylePopover);
+  }
+}
+
 const addInjurie = () => {
   patch(
     "/injuries/" + id.value + "/",
@@ -173,28 +205,8 @@ const injuries_state = ref([
 
 const muscles = ref([] as any);
 
-const load = () => {
-  store.get("user").then((res) => {
-    const storeUser = res;
-    if (storeUser !== "") {
-      user.value = JSON.parse(storeUser).user;
-      get("/injuries/" + id.value + "/", { body: {} }, true).then((res) => {
-        if (res.status > 300) {
-        } else {
-          injury.value = res;
-        }
-      });
-    }
-  });
-};
 
-onUpdated(() => {
-  if (navRoute.name == "EditInjurie") {
-    load();
-  }
-});
-
-onMounted(async () => {
+onIonViewWillEnter(async () => {
   id.value = Number(navRoute.params.id);
   store.get("user").then((res) => {
     const storeUser = res;
@@ -213,15 +225,18 @@ onMounted(async () => {
   for (const elem of ionSelect) {
     const shadowRoot = elem.shadowRoot;
     if (shadowRoot === null) return;
+    console.log('shadow root ', shadowRoot)
     const style = document.createElement("style");
     style.textContent = `
         .select-wrapper-inner {
         width: 100%; /* Ajustez cette valeur selon vos besoins */
         justify-content: space-between;
       }
+
     `;
     shadowRoot.appendChild(style);
   }
+
   get("/workzones", { body: {} }, false).then((res) => {
     console.log(res);
     muscles.value = res.results;

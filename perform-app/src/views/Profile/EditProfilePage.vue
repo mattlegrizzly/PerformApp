@@ -33,8 +33,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-left: 40px;
-  padding-right: 40px !important;
   width: auto;
 }
 
@@ -42,8 +40,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 200px;
-  height: 200px;
+  width: 130px;
+  height: 130px;
 }
 
 
@@ -138,14 +136,14 @@ ion-chip {
                 </ion-select>
               </ion-item>
             </ion-list>
-            <div style="margin-top: 10px">
+            <div style="margin-top: 10px; margin-bottom: 10px">
               <ion-chip :icon="close" v-for="sport of sports_user_temp" color="primary">
                 <ion-icon :id="sport.id" :icon="close" @click="removeSport"></ion-icon>
                 <ion-label>{{ sport.name }}</ion-label>
               </ion-chip>
             </div>
           </div>
-          <NavButton text="Enregistrer" @click="editProfile" />
+          <NavButton style="margin-bottom: 10px" text="Enregistrer" @click="editProfile" />
         </div>
       </div>
     </ion-content>
@@ -164,7 +162,8 @@ import {
   IonSelectOption,
   IonImg,
   IonIcon,
-  IonChip
+  IonChip,
+  onIonViewWillEnter
 } from "@ionic/vue";
 import { ref, onMounted, onUpdated } from "vue";
 import { close } from "ionicons/icons";
@@ -303,8 +302,11 @@ const handleFileChange = (event: any) => {
 };
 
 const removeSport = (event: any) => {
+  const id = Number(event.target.id)
   sports_user_temp.value = sports_user_temp.value.filter(
-    (sport) => sport.id !== Number(event.target.id)
+    (sport) => {
+      Number(sport.id) !== id
+    }
   );
 
 };
@@ -313,12 +315,11 @@ const updateSelectedSports = (change: any) => {
   sports_user_temp.value = change.detail.value;
 };
 
-
-
-onMounted(async () => {
+onIonViewWillEnter(async () => {
   let storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
+    if (user.value.profile_picture !== null) fileToDisplay.value = api + user.value.profile_picture;
     user.value.sports_user.map((sport) => {
       //@ts-expect-error
       sports_user_temp.value.push(sport.sport);
@@ -343,26 +344,6 @@ onMounted(async () => {
       }
     `;
     shadowRoot.appendChild(style);
-  }
-});
-
-const load = () => {
-  store.get("user").then((res) => {
-    const json = JSON.parse(res);
-    user.value = json.user;
-    if (user.value.profile_picture !== null) fileToDisplay.value = api + user.value.profile_picture;
-  });
-  get("/sports", { body: {} }, false).then((res) => {
-    if (res.status > 300) {
-    } else {
-      sports.value = res.results;
-    }
-  });
-};
-
-onUpdated(() => {
-  if (routes.name == "EditProfile") {
-    load();
   }
 });
 </script>

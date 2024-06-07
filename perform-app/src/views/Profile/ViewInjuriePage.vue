@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonContent, IonPage, IonLabel } from "@ionic/vue";
+import { IonContent, IonPage, IonLabel, onIonViewWillEnter } from "@ionic/vue";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { ref, onMounted, onUpdated } from "vue";
 import { useRoute } from "vue-router";
@@ -102,7 +102,7 @@ const injury = ref({
 });
 const id = ref(0);
 
-onMounted(() => {
+onIonViewWillEnter(() => {
   id.value = Number(routerNav.params.id);
   if (routerNav.query.edit) {
     back.value = "";
@@ -117,20 +117,4 @@ onMounted(() => {
   });
 });
 
-const load = () => {
-  id.value = Number(routerNav.params.id);
-  get("/injuries/" + id.value + "/", { body: {} }, true).then((res) => {
-    if (res.status > 300) {
-    } else {
-      injury.value = res;
-      console.log(array_muscle.value)
-    }
-  });
-};
-
-onUpdated(() => {
-  if (routerNav.name == "ViewInjurie") {
-    load();
-  }
-});
 </script>

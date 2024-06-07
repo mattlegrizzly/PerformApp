@@ -119,7 +119,7 @@ const isLoggedIn = async () => {
 
     if (verifyResponse.status > 300) {
       if (verifyResponse.status === 401) {
-        const refreshResponse = refresh() as any;
+        const refreshResponse = refresh();
         if (refreshResponse.status > 300) {
           store.remove("user");
           return false;
@@ -139,9 +139,19 @@ const isLoggedIn = async () => {
 };
 
 const router = createRouter({
+  // Use: createWebHistory(process.env.BASE_URL) in your app
   history: createWebHistory(),
   routes,
 });
+
+const isLogin = async () => {
+  const user = await store.get("user");
+  if ((await user) !== "" && (await user)) {
+    return true;
+  } else {
+    return false;
+  }
+};
 
 router.beforeEach(async (to, from, next) => {
   const isloggedin = (await isLoggedIn()) as any;
@@ -153,9 +163,6 @@ router.beforeEach(async (to, from, next) => {
   } else if (to.name == "login" && (await isloggedin)) {
     router.push("/");
   } else {
-    if (to.name == 'Exercises' && from.name == "ExercisesView") {
-      to.meta.transition = 'slide-left';
-    }
     next();
   }
 });

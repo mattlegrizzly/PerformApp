@@ -23,18 +23,24 @@ interface Step {
 }
 
 interface Sport {
-  sport: {
-    id: string;
-    name: string;
-  };
+  id: string;
+  name: string;
+}
+
+interface SportArray {
+  sport: Sport
 }
 
 interface Material {
-  material: {
-    id: string;
-    name: string;
-  };
+  pictures: string,
+  id: string;
+  name: string;
 }
+
+interface MaterialArray {
+  material: Material
+}
+
 
 interface Muscle {
   zone: {
@@ -77,4 +83,6 @@ export {
   Material,
   Injurie,
   Muscles,
+  MaterialArray,
+  SportArray
 };

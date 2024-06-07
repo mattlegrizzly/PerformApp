@@ -71,9 +71,6 @@ const vuetify = createVuetify({
     },
 })
 
-/* Theme variables */
-//import './theme/variables.css';
-
 const app = createApp(App).use(IonicVue).use(vuetify).use(router);
 
 router.isReady().then(() => {
