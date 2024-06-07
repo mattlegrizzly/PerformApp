@@ -32,8 +32,8 @@
               <ion-select interface="popover" placeholder="Zone de la blessure" class="custom-ion-select"
                 :toggle-icon="chevronDownOutline" justify="space-between"
                 @ion-change="handleInput('zone', $event.detail.value)">
-                <ion-select-option v-for="elem in muscles" :key="elem.zone.code" :value="elem.zone.code">{{
-                  elem.zone.name }}</ion-select-option>
+                <ion-select-option v-for="elem in muscles" :key="elem.code" :value="elem.code">{{
+                  elem.name }}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-list>
@@ -63,7 +63,7 @@
             justify-content: center;
             align-items: center;
           ">
-          <BodyComponent :height="'200'" :width="'100'" :viewOnly="'show'" />
+          <BodyComponent :muscleSelected="[{ zone: zone }]" :height="'200'" :width="'100'" :viewOnly="'show'" />
         </div>
       </div>
     </ion-content>
@@ -103,6 +103,7 @@ const state = ref("");
 
 const handleInput = (name: string, valuePass: string | undefined | null) => {
   let value = valuePass as string;
+  console.log(value)
   switch (name) {
     case "name":
       nameInjury.value = value;
@@ -122,6 +123,7 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
     case undefined:
       state.value = "";
   }
+  console.log('zone ', zone.value)
 };
 
 const user = ref({} as any);
@@ -184,9 +186,9 @@ onIonViewWillEnter(async () => {
     `;
     shadowRoot.appendChild(style);
   }
-  get("/workzones", { body: {} }, false).then((res) => {
+  get("/workzones/all", { body: {} }, false).then((res) => {
     console.log(res);
-    muscles.value = res.results;
+    muscles.value = res;
   });
 });
 </script>

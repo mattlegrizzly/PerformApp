@@ -68,7 +68,7 @@
                     Enregistrer
                   </ion-button>
                   <ion-button size="small" v-else @click="patchWelness">
-                    Editer
+                    Mettre à jour
                   </ion-button>
                 </div>
               </div>
@@ -85,7 +85,9 @@
                 <div class="week-navigation">
                   <ion-button @click="setPreviousWeek" fill="outline">
                     < Semaine précédente</ion-button>
-                      <ion-button @click="setNextWeek" fill="outline">Semaine suivante ></ion-button>
+                      <ion-button :disabled="getWeekNumber(new Date(Date.now())) == getWeekNumber(tempDate)"
+                        @click="setNextWeek" fill="outline">Semaine
+                        suivante ></ion-button>
                 </div>
                 <div>
                   <canvas width="300px" height="200px" min="0" max="10" id="acquisitions"></canvas>
@@ -335,6 +337,16 @@ const checkUserWellness = async () => {
     }
   });
 };
+
+function getWeekNumber(d: any) {
+  // Créer une copie de la date
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  //@ts-expect-error
+  let weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return weekNo;
+}
 
 onIonViewWillEnter(async () => {
   await loadUser();

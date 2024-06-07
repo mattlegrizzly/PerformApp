@@ -164,6 +164,7 @@ ion-popover .popover-viewport {
     padding-left: 10px;
     padding-right: 10px;
     font-size: 12px !important;
+    pointer-events: none;
 }
 
 .instructions {

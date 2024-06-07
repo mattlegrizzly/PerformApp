@@ -53,6 +53,7 @@
     padding-right: 10px;
     color: white;
     background-color: var(--secondary-blue);
+    pointer-events: none;
 }
 
 .users_infos {

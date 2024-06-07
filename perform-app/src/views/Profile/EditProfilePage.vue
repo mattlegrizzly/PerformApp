@@ -37,6 +37,7 @@
 }
 
 .profile_image {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -88,6 +89,7 @@ ion-chip {
                 <ion-img
                   :src="fileToDisplay != '' ? fileToDisplay : 'https://static.vecteezy.com/system/resources/previews/004/968/473/original/upload-or-add-a-picture-jpg-file-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-etc-vector.jpg'"
                   @click="triggerFileInput"></ion-img>
+                <ion-icon style="color:black; position: absolute; right: 0px;" :icon="pencil"></ion-icon>
               </div>
               <input type="file" accept="image/*" ref="fileInput" @change="handleFileChange"
                 style="display: none"></input>
@@ -166,7 +168,7 @@ import {
   onIonViewWillEnter
 } from "@ionic/vue";
 import { ref, onMounted, onUpdated } from "vue";
-import { close } from "ionicons/icons";
+import { close, pencil } from "ionicons/icons";
 import "@/assets/base.css";
 import "@/assets/main.css";
 import { store } from "../../store/store";
@@ -316,6 +318,7 @@ const updateSelectedSports = (change: any) => {
 };
 
 onIonViewWillEnter(async () => {
+
   let storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;

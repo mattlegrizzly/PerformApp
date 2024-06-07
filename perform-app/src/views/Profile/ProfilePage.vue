@@ -28,6 +28,7 @@
               " v-if="profilePicture == ''">
               {{ user.first_name[0] }}
             </div>
+
             <img v-else :src="profilePicture" alt="profile" />
           </div>
         </div>
@@ -93,7 +94,7 @@
           <v-divider :thickness="3"></v-divider>
           <div class="buttons_user">
             <NavButton class="custom_nav" url="edit_profile" text="Editer mon profil" :icon="pencil" />
-            <NavButton class="custom_nav" url="list_injuries" text="Nous contacter" :icon="mail" />
+            <NavButton class="custom_nav" href='mailto:contact@performapp.com' text="Nous contacter" :icon="mail" />
             <NavButton class="custom_nav" url="conditions" text="Nos conditions générales d'utilisations"
               :icon="documentText" />
             <NavButton class="custom_nav" @click="disconnect" text="Déconnexion" :icon="logOut" :color="'light'" />
