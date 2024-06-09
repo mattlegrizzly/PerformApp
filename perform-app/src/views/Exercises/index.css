@@ -125,6 +125,21 @@ ion-popover .popover-viewport {
     margin-right: 20px;
 }
 
+h6 {
+    font-size: 11px !important;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    color: #c8c7cc;
+    font-style: italic;
+}
+
+h6:first-child {
+    margin-bottom: 0px;
+}
+
+h4 {
+    margin-bottom: 5px;
+}
 
 /* View Page */
 #tabs-exercise {
@@ -132,7 +147,12 @@ ion-popover .popover-viewport {
     box-shadow: lightgray 0px 8px 10px 0px;
 }
 
+.v-tabs--density-default {
+    --v-tabs-height: 30px;
+}
+
 #tabs-exercise button {
+    height: 35px !important;
     text-transform: inherit;
     width: 50%;
     padding: 0px;
@@ -141,9 +161,12 @@ ion-popover .popover-viewport {
 }
 
 #tabs-exercise .v-tab--selected {
+    height: 35px !important;
     background-color: var(--primary-blue);
     color: white;
 }
+
+
 
 .info_wrapper {
     display: flex;
@@ -161,9 +184,9 @@ ion-popover .popover-viewport {
 }
 
 .info_wrapper .info_exercise ion-chip {
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 12px !important;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 8px !important;
     pointer-events: none;
 }
 
@@ -215,4 +238,9 @@ ion-popover .popover-viewport {
 
 .muscles_list ion-item .item-native item-inner {
     font-size: 10px !important;
+}
+
+.list-md.list-inset {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
 }

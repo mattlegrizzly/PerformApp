@@ -86,13 +86,22 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "search",
-        component: () => import("./views/SearchPage.vue"),
+        path: "stats",
+        name: "Statistics",
+        component: () => import("./views/StatsPage.vue"),
         meta: {
           transition: "fade",
         },
       },
 
+      {
+        path: "programs",
+        name: "Programs",
+        component: () => import("./views/ProgramsPage.vue"),
+        meta: {
+          transition: "fade",
+        },
+      },
       {
         path: "conditions",
         component: () => import("./views/ConditionsPage.vue"),
@@ -120,6 +129,7 @@ const isLoggedIn = async () => {
     if (verifyResponse.status > 300) {
       if (verifyResponse.status === 401) {
         const refreshResponse = refresh();
+        //@ts-expect-error
         if (refreshResponse.status > 300) {
           store.remove("user");
           return false;
@@ -144,15 +154,7 @@ const router = createRouter({
   routes,
 });
 
-const isLogin = async () => {
-  const user = await store.get("user");
-  if ((await user) !== "" && (await user)) {
-    return true;
-  } else {
-    return false;
-  }
-};
-
+//@ts-expect-error
 router.beforeEach(async (to, from, next) => {
   const isloggedin = (await isLoggedIn()) as any;
   if (to.name !== "login" && (await !isloggedin)) {

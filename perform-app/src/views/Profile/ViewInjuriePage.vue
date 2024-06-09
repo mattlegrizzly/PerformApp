@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { IonContent, IonPage, IonLabel, onIonViewWillEnter } from "@ionic/vue";
 import NavButton from "../../components/NavButton/NavButton.vue";
-import { ref, onMounted, onUpdated } from "vue";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
 import router from "../../router";
 //@ts-expect-error
@@ -61,7 +61,6 @@ import "./index.css";
 
 const back = ref("back");
 const urlReturn = ref("/list_injuries");
-const array_muscle = ref([]);
 
 
 const stateSet = (state: string) => {

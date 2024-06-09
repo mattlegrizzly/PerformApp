@@ -1,6 +1,6 @@
 #nav-menu-tab {
     background-color: var(--primary-blue) !important;
-    --background : none !important;
+    --background: none !important;
 }
 
 #nav-menu-tab * {
@@ -12,3 +12,8 @@ ion-icon {
     font-size: 22px;
 }
 
+#nav-menu-tab ion-label {
+    font-size: 7px;
+    margin-top: 4px;
+    color: white;
+}

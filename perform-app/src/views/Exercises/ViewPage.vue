@@ -1,34 +1,35 @@
-<style scoped></style>
-
 <template>
-  <ion-page style="background-color: white">
+  <ion-page data-page="ExerciseView" style="background-color: white">
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
           <NavButton url="/exercises" text="Retour" />
           <ion-icon @click="setFav" :icon="is_fav ? star : starOutline" size="large"></ion-icon>
         </div>
-        <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
+        <h1 style="color: black; margin-top: 5px; margin-bottom: 10px; font-size : 20px">
           {{ exercises.name }}
         </h1>
         <div class="info_wrapper">
           <div class="info_exercise">
-            <h2>Matériels :</h2>
+            <h2 style="font-size: 14px;">Matériels :</h2>
             <ion-chip v-for="element of exercises.material_exercise" color="primary">{{ element.material.name
               }}</ion-chip>
           </div>
           <div class="info_exercise">
-            <h2>Sports :</h2>
+            <h2 style="font-size: 14px;">Sports :</h2>
             <ion-chip v-for="element of exercises.sports_exercise" color="primary">{{ element.sport.name }}</ion-chip>
           </div>
         </div>
       </div>
-      <div v-if='showVideo' class="imageDiv">
-        <video ref="videoController" id="player" playsinline data-poster="/path/to/poster.jpg" height="190" autoplay
-          hideControl loop clickToPlay>
+      <div v-if='!loadVideo' class="imageDiv">
+        <video v-if="showVideo" ref="videoController" id="player" playsinline data-poster="/path/to/poster.jpg"
+          height="190" autoplay hideControl loop clickToPlay>
           <source :src="api_url + exercises.video" type="video/mp4" />
           <source :src="api_url + exercises.video" type="video/webm" />
         </video>
+      </div>
+      <div v-else style="width: 100%; height: 190px; display: flex; justify-content: center; align-items: center">
+        <v-progress-circular color="primary" indeterminate></v-progress-circular>
       </div>
       <v-tabs id="tabs-exercise" v-model="tab">
         <v-tab value="one">Instructions</v-tab>
@@ -51,7 +52,7 @@
                 </ion-item>
               </ion-list>
             </v-tabs-window-item>
-            <v-tabs-window-item value="two" style="display: flex; min-height: 300px">
+            <v-tabs-window-item value="two" style="display: flex; min-height: 250px">
               <div style="
                   display: flex;
                   width: 50%;
@@ -62,7 +63,7 @@
                 <BodyComponent :height="'200'" :width="'100'" :viewOnly="'show'"
                   :muscleSelected="exercises.zone_exercises" />
               </div>
-              <div style="width: 50%; display: flex; align-items: center">
+              <div style="width: 50%; padding-left:10px; display: flex; align-items: center">
                 <ion-list style="width: 100%" class="muscles_list">
                   <ion-item style="background-color: transparent" v-for="muscle of exercises.zone_exercises">
                     <ion-label style="font-size: 14px">
@@ -88,7 +89,6 @@ import {
   IonList,
   IonLabel,
   IonItem,
-  onIonViewDidLeave,
   onIonViewWillEnter,
   onIonViewWillLeave
 } from "@ionic/vue";
@@ -99,7 +99,7 @@ import { BodyComponent } from "perform-body-component-lib";
 import type { Step, Muscle } from "../../types/allTypes";
 
 import { useRoute } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { get, post, del } from "../../lib/callApi";
 import { store } from "../../store/store";
 
@@ -121,6 +121,7 @@ const exercises = ref({
 });
 
 const showVideo = ref(true);
+const loadVideo = ref(true);
 const id = ref(0);
 const user_id = ref(0);
 const is_fav = ref(false);
@@ -144,6 +145,7 @@ const setFav = () => {
       true
     ).then((res: any) => {
       if (res.status > 300) {
+        console.log('error')
       } else {
         is_fav.value = true;
         fav_id.value = res.id;
@@ -154,9 +156,11 @@ const setFav = () => {
 
 onIonViewWillLeave(() => {
   showVideo.value = false;
+  loadVideo.value = false;
 })
 
 onIonViewWillEnter(() => {
+  loadVideo.value = true;
   showVideo.value = true;
   id.value = Number(router.params.id);
   store.get("user").then((res) => {
@@ -179,9 +183,13 @@ onIonViewWillEnter(() => {
   });
   get("/exercises/" + id.value + "/", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
+      console.log('error')
     } else {
       exercises.value = res;
       console.log(exercises.value.zone_exercises);
+      setTimeout(() => {
+        loadVideo.value = false
+      }, 300)
     }
   });
 });

@@ -167,19 +167,16 @@ import {
   IonChip,
   onIonViewWillEnter
 } from "@ionic/vue";
-import { ref, onMounted, onUpdated } from "vue";
+import { ref } from "vue";
 import { close, pencil } from "ionicons/icons";
 import "@/assets/base.css";
 import "@/assets/main.css";
 import { store } from "../../store/store";
 import router from "../../router";
 import { Sport } from "../../types/allTypes";
-import { useRoute } from "vue-router";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { get, patch, del, post } from "../../lib/callApi";
 import "./index.css";
-
-const routes = useRoute();
 
 const fileInput = ref(null);
 
@@ -261,21 +258,25 @@ const editProfile = () => {
   for (const sport of inPlus) {
     post("/admin/sports_user/", { body: { user: user.value.id, sport: sport.id } }, true, true).then((res) => {
       if (res.status > 300) {
+        console.log('error')
       } else {
+        console.log('ok !')
       }
     });
   }
   for (const sport of inMinus) {
     del("/admin/sports_user/" + sport.id + "/").then((res) => {
       if (res.status > 300) {
+        console.log('error')
       } else {
-
+        console.log('ok !')
       }
     });
 
   }
   patch("/users/" + user.value.id + "/", { body: userEdit }, true, true).then((res) => {
     if (res.status > 300) {
+      console.log('error')
     } else {
       router.push('/profile');
     }
@@ -330,6 +331,7 @@ onIonViewWillEnter(async () => {
   }
   get("/sports", { body: {} }, false).then((res) => {
     if (res.status > 300) {
+      console.log('error')
     } else {
       sports.value = res.results;
     }

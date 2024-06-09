@@ -32,7 +32,7 @@ const infoArray = computed(() => {
 .div_user_info h3 {
     margin-top: 0px;
     text-decoration: underline;
-    font-size: 13px;
+    font-size: 10px;
     text-align: center;
     font-weight: 700;
 }

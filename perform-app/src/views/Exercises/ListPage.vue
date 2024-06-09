@@ -7,6 +7,11 @@ ion-modal {
     0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
+.list-md.list-inset {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
 .input-div {
   width: 100%;
 }
@@ -51,7 +56,7 @@ ion-modal {
 </style>
 
 <template>
-  <ion-page>
+  <ion-page data-page="Exercises">
     <div id="header-wrapper">
       <div class="perform-page">
         <h1 style="margin-top: 0px">Exercices</h1>
@@ -95,12 +100,13 @@ height: 85%;
             </div>
             <div class="input-div">
               <h4>Sports :</h4>
+              <h6>Sélectionnez les sports à filtrer</h6>
               <ion-list>
                 <ion-item>
                   <ion-select @ionChange="updateSelectedSports" class="custom-ion-select" :value="sports_selected"
                     aria-label="Sports" placeholder="Selectionner vos sports" :multiple="true"
                     :compareWith="compareWith">
-                    <ion-select-option v-for="sport in sports" :value="{ id: sport.id, name: sport.name }"
+                    <ion-select-option v-for="sport in sports" :value="{ sport: { id: sport.id, name: '' } }"
                       :key="sport.id" aria-selected="true">{{ sport.name }}</ion-select-option>
                   </ion-select>
                 </ion-item>
@@ -108,6 +114,7 @@ height: 85%;
             </div>
             <div class="input-div">
               <h4>Matériels :</h4>
+              <h6>Sélectionnez les matériels à filtrer</h6>
               <v-row style="display: flex; flex-wrap: wrap; justify-content: center" dense>
                 <v-col style="width: 30%; flex: none" v-for="material in materials" :key="material.id" cols="12" sm="4">
                   <v-card @click="addMaterialFilter(material.id)">
@@ -132,15 +139,11 @@ height: 85%;
                 </v-col>
               </v-row>
             </div>
-            <div class="input-div">
+            <div class="input-div" style="flex-wrap: wrap; justify-content: flex-start">
               <h4>Muscles :</h4>
-              <div style="
-                  display: flex;
-                  width: 100%;
-                  margin-top: 16px;
-                  justify-content: space-between;
-                  align-items: center;
-                ">
+              <h6>Sélectionnez les zones à cibler</h6>
+              <div style=" display: flex; width: 100%; margin-top: 16px; justify-content: space-between; align-items:
+              center; ">
                 <BodyComponent :height="'300'" :width="'300'" :viewOnly="'edit'" :muscleSelected="muscle_selected"
                   :setMuscleSelected="setMuscleSelectedView" />
               </div>
@@ -181,7 +184,7 @@ height: 85%;
               @click="goPage(exercise.fav_exercise.id)">
               <ion-item>
                 <div class="exercice-img">
-                  <label>{{ exercise.fav_exercise.name[0] }}</label>
+                  <ion-label>{{ exercise.fav_exercise.name[0] }}</ion-label>
                 </div>
                 <ion-label l class="exercice_label">{{
                   exercise.fav_exercise.name
@@ -212,7 +215,7 @@ import {
   onIonViewWillEnter
 } from "@ionic/vue";
 import { get } from "../../lib/callApi";
-import { onMounted, ref, onUpdated } from "vue";
+import { ref } from "vue";
 import { chevronForwardOutline, close } from "ionicons/icons";
 import "./index.css";
 import { useRoute, useRouter } from "vue-router";
@@ -260,7 +263,8 @@ const findMaterial = (material: any) => {
 };
 
 const compareWith = (o1: any, o2: any) => {
-  return o1 && o2 ? o1.id === o2.id : o1 === o2;
+  console.log(o1, ' ', o2)
+  return o1 && o2 ? o1.sport.id === o2.sport.id : o1 === o2;
 };
 
 const goPage = (id: any) => {
@@ -426,7 +430,7 @@ const showFilter = () => {
   const sport_id = navRoute.query.sport_id as string;
   const sport_temp = sport_id ? sport_id.split(",") : [];
   sports_selected.value = sport_temp.map((sport) => {
-    return { sport: { name: "", id: sport } };
+    return { sport: { name: "", id: Number(sport) } };
   });
 
   setTimeout(() => {

@@ -41,6 +41,8 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
+import { createAnimation } from '@ionic/core';
+
 // Enregistrement de l'icône
 addIcons({
     'profile': profile,
@@ -71,7 +73,100 @@ const vuetify = createVuetify({
     },
 })
 
-const app = createApp(App).use(IonicVue).use(vuetify).use(router);
+// Définir les animations
+const slideAnimation = (baseEl, opts) => {
+    const enteringEl = opts.enteringEl;
+    const leavingEl = opts.leavingEl;
+
+    const animation = createAnimation()
+        .addElement(enteringEl)
+        .duration(200)
+        .fromTo('transform', 'translateY(100%)', 'translateY(0)');
+
+    if (leavingEl) {
+        animation.addElement(leavingEl)
+            .duration(200)
+            .fromTo('transform', 'translateY(0)', 'translateY(-100%)');
+    }
+
+    return animation;
+};
+
+// Définir les animations
+const slideLeftAnimation = (baseEl, opts) => {
+    const enteringEl = opts.enteringEl;
+    const leavingEl = opts.leavingEl;
+
+    const animation = createAnimation()
+        .addElement(enteringEl)
+        .duration(200)
+        .fromTo('transform', 'translateX(100%)', 'translateX(0)');
+
+    if (leavingEl) {
+        animation.addElement(leavingEl)
+            .duration(200)
+            .fromTo('transform', 'translateX(0)', 'translateX(-100%)');
+    }
+
+    return animation;
+};
+
+// Définir les animations
+const slideRightAnimation = (baseEl, opts) => {
+    const enteringEl = opts.enteringEl;
+    const leavingEl = opts.leavingEl;
+
+    const animation = createAnimation()
+        .addElement(enteringEl)
+        .duration(100)
+        .fromTo('transform', 'translateX(-100%)', 'translateX(0)');
+
+    if (leavingEl) {
+        animation.addElement(leavingEl)
+            .duration(100)
+            .fromTo('transform', 'translateX(0)', 'translateX(100%)');
+    }
+
+    return animation;
+};
+
+const fadeAnimation = (baseEl, opts) => {
+    const enteringEl = opts.enteringEl;
+    const leavingEl = opts.leavingEl;
+
+    const animation = createAnimation()
+        .addElement(enteringEl)
+        .duration(100)
+        .fromTo('opacity', 0, 1);
+
+    if (leavingEl) {
+        animation.addElement(leavingEl)
+            .duration(100)
+            .fromTo('opacity', 1, 0);
+    }
+
+    return animation;
+};
+
+const app = createApp(App).use(vuetify).use(router);
+
+app.use(IonicVue, {
+    animated: true,
+    navAnimation: (baseEl, opts) => {
+        console.log('entering ', opts.enteringEl.getAttribute('data-page'))
+        console.log('leaving ', opts.leavingEl.getAttribute('data-page'))
+        // Utiliser des animations conditionnelles selon l'attribut data-page
+        if (opts.enteringEl.getAttribute('data-page') === 'Home') {
+            return slideAnimation(baseEl, opts);
+        } else if (opts.enteringEl.getAttribute('data-page') === "ExerciseView" && opts.leavingEl.getAttribute('data-page') === "Exercises") {
+            return slideLeftAnimation(baseEl, opts);
+        } else if (opts.leavingEl.getAttribute('data-page') === "ExerciseView" && opts.enteringEl.getAttribute('data-page') === "Exercises") {
+            return slideRightAnimation(baseEl, opts);
+        } else {
+            return slideAnimation(baseEl, opts)
+        }
+    }
+});
 
 router.isReady().then(() => {
     app.mount('#app');

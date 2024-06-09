@@ -18,6 +18,7 @@
 import { defineProps, defineEmits } from 'vue';
 import { IonLabel, IonRange } from '@ionic/vue';
 
+//@ts-expect-error
 const props = defineProps({
     id: {
         type: String,
@@ -55,7 +56,7 @@ const props = defineProps({
 
 const emits = defineEmits(['change']);
 
-const handleChange = (event) => {
+const handleChange = (event: any) => {
     emits('change', event);
 };
 </script>

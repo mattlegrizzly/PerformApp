@@ -1,7 +1,7 @@
 <style scoped></style>
 
 <template>
-  <ion-page>
+  <ion-page data-page="Home">
     <ion-content>
       <div class="home_div">
         <div class="header_img">
@@ -142,16 +142,14 @@ import {
 import "@/assets/base.css";
 import "@/assets/main.css";
 import "./homepage.css";
-import { ref, onMounted, computed, onUpdated, markRaw, onBeforeUnmount } from "vue";
+import { ref, computed, markRaw } from "vue";
 import { store } from "../store/store";
-import { useRoute } from "vue-router";
 import { close, chevronDownOutline, chevronUpOutline } from "ionicons/icons";
 import { patch, post, get } from "../lib/callApi";
 import UserInfo from "@/components/UserInfo/UserInfo.vue";
 import WellnessRange from "@/components/WellnessRange/WellnessRange.vue";
 import Chart from "chart.js/auto";
 
-const routes = useRoute();
 const api = import.meta.env.VITE_API_URL;
 
 const hideWelness = ref(false);
@@ -185,8 +183,6 @@ const user = ref({
   user_injuries: [],
   users_wellness: [],
 });
-
-const currentDate = computed(() => new Date(Date.now()).toLocaleString("fr").split(" ")[0]);
 
 const weekRange = computed(() => {
   const start = new Date(weekWelnessTemp.value[0].date);

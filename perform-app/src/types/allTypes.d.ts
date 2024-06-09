@@ -23,7 +23,7 @@ interface Step {
 }
 
 interface Sport {
-  id: string;
+  id: number;
   name: string;
 }
 

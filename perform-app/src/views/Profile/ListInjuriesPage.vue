@@ -1,5 +1,3 @@
-<style scoped></style>
-
 <template>
   <ion-page>
     <ion-content>
@@ -55,7 +53,7 @@ import "@/assets/base.css";
 import "@/assets/main.css";
 import { chevronForwardOutline } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
-import { onMounted, ref, onUpdated } from "vue";
+import { ref } from "vue";
 import { get } from "../../lib/callApi";
 import type { Sport } from "../../types/allTypes";
 import { useRoute } from "vue-router";

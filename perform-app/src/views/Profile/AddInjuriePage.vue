@@ -30,7 +30,7 @@
           <ion-list class="filter-item">
             <ion-item>
               <ion-select interface="popover" placeholder="Zone de la blessure" class="custom-ion-select"
-                :toggle-icon="chevronDownOutline" justify="space-between"
+                :toggle-icon="chevronDownOutline" justify="space-between" @click="setIonSize()"
                 @ion-change="handleInput('zone', $event.detail.value)">
                 <ion-select-option v-for="elem in muscles" :key="elem.code" :value="elem.code">{{
                   elem.name }}</ion-select-option>
@@ -48,7 +48,7 @@
           <ion-list class="filter-item">
             <ion-item>
               <ion-select interface="popover" placeholder="Etat de la blessure" class="custom-ion-select"
-                :toggle-icon="chevronDownOutline" justify="space-between"
+                :toggle-icon="chevronDownOutline" justify="space-between" @click="setIonSize()"
                 @ion-change="handleInput('state', $event.detail.value)">
                 <ion-select-option v-for="elem in injuries_state" :key="elem.code" :value="elem.code">{{ elem.name
                   }}</ion-select-option>
@@ -86,9 +86,9 @@ import "@/assets/base.css";
 import "@/assets/main.css";
 import { chevronDownOutline } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { get, post } from "../../lib/callApi";
-import type { Muscle } from "../../types/allTypes";
+import type { Muscles } from "../../types/allTypes";
 import "./index.css";
 //@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
@@ -128,6 +128,35 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
 
 const user = ref({} as any);
 
+const setIonSize = () => {
+  const popover = document.querySelectorAll("ion-popover");
+  console.log('popover ', popover)
+  if (popover === null) return;
+  for (const elem of popover) {
+    const shadowRoot = elem.shadowRoot;
+    if (shadowRoot === null) return;
+    console.log('shadow root selectpopover ', shadowRoot)
+    const style = document.createElement("style");
+    style.textContent = `
+      .popover-content {
+            margin-left: 9px;
+            margin-top: 20px;
+      }
+
+    `;
+    shadowRoot.appendChild(style);
+    const stylePopover = document.createElement("style");
+    stylePopover.textContent = `
+      .sc-ion-select-popover-md-h {
+            left : 10px;
+            width: calc(100vw - 40px);
+      }
+
+    `;
+    elem.appendChild(stylePopover);
+  }
+}
+
 const addInjurie = () => {
   post(
     "/injuries/",
@@ -165,7 +194,7 @@ const injuries_state = ref([
   },
 ]);
 
-const muscles = ref([] as Muscle[]);
+const muscles = ref([] as Muscles[]);
 
 onIonViewWillEnter(async () => {
   let storeUser = await store.get("user");

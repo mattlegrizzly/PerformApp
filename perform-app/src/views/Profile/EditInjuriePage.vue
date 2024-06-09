@@ -1,5 +1,3 @@
-<style scoped></style>
-
 <template>
   <ion-page>
     <ion-content>
@@ -87,7 +85,7 @@ import "@/assets/base.css";
 import "@/assets/main.css";
 import { chevronDownOutline } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
-import { onMounted, ref, onUpdated } from "vue";
+import { ref } from "vue";
 import { get, patch } from "../../lib/callApi";
 import "./index.css";
 //@ts-expect-error
@@ -156,7 +154,6 @@ const setIonSize = () => {
     stylePopover.textContent = `
       .sc-ion-select-popover-md-h {
             left : 10px;
-            margin-top : 10px;
             width: calc(100vw - 40px);
       }
 
@@ -182,6 +179,7 @@ const addInjurie = () => {
   ).then((res) => {
     console.log(res);
     if (res.status > 300) {
+      console.log('error')
     } else {
       router.push("/view_injuries/" + id.value + "/?edit=true");
     }
@@ -214,6 +212,7 @@ onIonViewWillEnter(async () => {
       user.value = JSON.parse(storeUser).user;
       get("/injuries/" + id.value + "/", { body: {} }, true).then((res) => {
         if (res.status > 300) {
+          console.log('error')
         } else {
           injury.value = res;
         }

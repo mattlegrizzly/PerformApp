@@ -117,9 +117,7 @@ import {
 } from "@ionic/vue";
 import { store } from "../../store/store";
 import router from "../../router";
-import { onMounted, onUpdated, ref, computed } from "vue";
-import { get } from "../../lib/callApi";
-import { useRoute } from "vue-router";
+import { ref, computed } from "vue";
 import "./index.css";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import {
@@ -131,7 +129,6 @@ import {
 } from "ionicons/icons";
 
 const api = import.meta.env.VITE_API_URL;
-const routes = useRoute();
 const user = ref({
   age: 0,
   weight: 0,
