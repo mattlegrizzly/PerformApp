@@ -178,7 +178,7 @@ class AdminSportsUserViewSet(viewsets.ModelViewSet):
     )
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = SportsUserDetailSerializer(instance)
+        serializer = SportsDetailedUserSerializer(instance)
         return Response(serializer.data)
 
     @extend_schema(

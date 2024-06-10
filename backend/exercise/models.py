@@ -2,12 +2,45 @@ from django.db import models
 from sport.models import Sport
 from typing import List
 from datetime import datetime
+from moviepy.editor import VideoFileClip
+from django.core.files.base import ContentFile
+from PIL import Image
+from io import BytesIO
 
 def upload_to_video(instance, filename):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     ext = filename.split('.')[-1]  # Récupérer l'extension du fichier
     filename_edit = f'exercice_{instance.name.replace(" ", "_")}_{timestamp}.{ext}'
     return 'video/{filename}'.format(filename=filename_edit)
+
+def upload_to_thumbnail(instance, filename):
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename_edit = f'exercice_{instance.name.replace(" ", "_")}_{timestamp}.jpg'
+    image_path = f'video/thumbnails/{filename_edit}'
+    
+    return image_path
+
+def generate_thumbnail(instance):
+    # Path where the video is saved
+    video_path = instance.video.path
+    
+    # Extract the thumbnail from the video
+    clip = VideoFileClip(video_path)
+    frame = clip.get_frame(1.0)  # Get frame at 1 second
+    
+    # Save the frame as an image
+    image_filename = upload_to_thumbnail(instance, instance.video.name)
+    image = Image.fromarray(frame)
+    buffer = BytesIO()
+    image.save(buffer, format="JPEG")
+    buffer.seek(0)
+    
+    # Save the image to the instance
+    instance.thumbnail.save(image_filename, ContentFile(buffer.read()), save=False)
+    
+    # Clean up the clip
+    clip.reader.close()
+    clip.audio.reader.close_proc()
 
 def upload_to(instance, filename):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -43,6 +76,26 @@ class Exercise(models.Model):
     materials = models.ManyToManyField(to=Material, through="exercise.ExerciseMaterial")
     sports = models.ManyToManyField(to=Sport, through="exercise.ExerciseSport")
     muscles = models.ManyToManyField(to=WorkZone, through="exercise.ExerciseZone")
+    thumbnail = models.ImageField(upload_to=upload_to_thumbnail, null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        # Supprimer l'ancienne vidéo et vignette si elles existent
+        if self.pk:  # Si l'objet existe déjà (mise à jour)
+            old_instance = self.__class__.objects.get(pk=self.pk)
+            if old_instance.video and old_instance.video.name != self.video.name:
+                old_instance.video.delete(save=False)
+            if old_instance.thumbnail and old_instance.thumbnail.name != self.thumbnail.name:
+                old_instance.thumbnail.delete(save=False)
+        
+        # Appel de la fonction pour sauvegarder la vidéo
+        super(Exercise, self).save(*args, **kwargs)
+        
+        # Générer la vignette après avoir sauvegardé la vidéo
+        if self.video:
+            generate_thumbnail(self)
+        
+        # Sauvegarder l'instance de nouveau pour inclure la vignette
+        super(Exercise, self).save(*args, **kwargs)
 
     @property
     def material_ids(self) -> List[int]:

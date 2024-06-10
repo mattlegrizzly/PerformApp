@@ -655,8 +655,30 @@ class InjurieViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         # Si l'utilisateur n'est pas administrateur, filtrer les objets pour n'afficher que ceux associés à l'utilisateur connecté
         if not request.user.is_superuser:
-            self.queryset = self.queryset.filter(user=request.user)
-        return super().list(request, *args, **kwargs)
+            queryset = self.queryset.filter(user=request.user)
+        if request.query_params.get("orderBy"):
+            # Appliquer l'ordre initial par id si nécessaire
+            order = request.query_params.get("orderBy")
+            if order == "orderByNameAsc":
+                queryset = self.queryset.order_by("state")
+            elif order == "orderByNameDesc":
+                queryset = self.queryset.order_by("-state")
+            elif order == "orderByIdAsc" or order == "default":
+                queryset = self.queryset.order_by("id")
+            elif order == "orderByIdDesc":
+                queryset = self.queryset.order_by("-id")
+            elif order == "orderByDateAsc":
+                queryset = self.queryset.order_by("created_at")
+            elif order == "orderByDateDesc":
+                queryset = self.queryset.order_by("-created_at")
+            else:
+                queryset = self.queryset.order_by("id")
+        else:
+            queryset = self.queryset.order_by("id")
+            # Filtrer le queryset
+                # Sinon, sérialiser le queryset complet
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
     
     @extend_schema(
         tags=['Users - Injuries'],
