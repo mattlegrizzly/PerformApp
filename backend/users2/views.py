@@ -239,6 +239,22 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
     @extend_schema(
+        tags=['Users'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="me")
+    def get_me(self, request):
+        try:
+            serializer = self.serializer_class(request.user)
+            auth_data = get_tokens_for_user(request.user)
+
+            return Response(
+                {"user": serializer.data, **auth_data},
+                status=status.HTTP_202_ACCEPTED,
+            )
+        except ObjectDoesNotExist:
+            raise PermissionDenied
+    @extend_schema(
         tags=["Users"],
     )
     @method_decorator(csrf_exempt)
@@ -639,8 +655,30 @@ class InjurieViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         # Si l'utilisateur n'est pas administrateur, filtrer les objets pour n'afficher que ceux associés à l'utilisateur connecté
         if not request.user.is_superuser:
-            self.queryset = self.queryset.filter(user=request.user)
-        return super().list(request, *args, **kwargs)
+            queryset = self.queryset.filter(user=request.user)
+        if request.query_params.get("orderBy"):
+            # Appliquer l'ordre initial par id si nécessaire
+            order = request.query_params.get("orderBy")
+            if order == "orderByNameAsc":
+                queryset = self.queryset.order_by("state")
+            elif order == "orderByNameDesc":
+                queryset = self.queryset.order_by("-state")
+            elif order == "orderByIdAsc" or order == "default":
+                queryset = self.queryset.order_by("id")
+            elif order == "orderByIdDesc":
+                queryset = self.queryset.order_by("-id")
+            elif order == "orderByDateAsc":
+                queryset = self.queryset.order_by("created_at")
+            elif order == "orderByDateDesc":
+                queryset = self.queryset.order_by("-created_at")
+            else:
+                queryset = self.queryset.order_by("id")
+        else:
+            queryset = self.queryset.order_by("id")
+            # Filtrer le queryset
+                # Sinon, sérialiser le queryset complet
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
     
     @extend_schema(
         tags=['Users - Injuries'],
