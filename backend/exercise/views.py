@@ -121,6 +121,8 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
             workzone_codes = [str(id) for ids in workzone_codes for id in ids.split(',')]
             queryset = self.queryset.filter(zone_exercises__zone__code__in=workzone_codes)
 
+        queryset = queryset.distinct()
+        
         # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
             self.pagination_class.page_size = request.query_params.get("itemsPerPage")

@@ -239,6 +239,22 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
     @extend_schema(
+        tags=['Users'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="me")
+    def get_me(self, request):
+        try:
+            serializer = self.serializer_class(request.user)
+            auth_data = get_tokens_for_user(request.user)
+
+            return Response(
+                {"user": serializer.data, **auth_data},
+                status=status.HTTP_202_ACCEPTED,
+            )
+        except ObjectDoesNotExist:
+            raise PermissionDenied
+    @extend_schema(
         tags=["Users"],
     )
     @method_decorator(csrf_exempt)
