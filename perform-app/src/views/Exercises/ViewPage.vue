@@ -3,7 +3,7 @@
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
-          <NavButton url="/exercises" text="Retour" />
+          <ion-button @click="navigateTo('Exercises', 'slide-left')">Retour</ion-button>
           <ion-icon @click="setFav" :icon="is_fav ? star : starOutline" size="large"></ion-icon>
         </div>
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px; font-size : 20px">
@@ -90,7 +90,8 @@ import {
   IonLabel,
   IonItem,
   onIonViewWillEnter,
-  onIonViewWillLeave
+  onIonViewWillLeave,
+  IonButton
 } from "@ionic/vue";
 import { starOutline, star } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
@@ -98,7 +99,7 @@ import NavButton from "../../components/NavButton/NavButton.vue";
 import { BodyComponent } from "perform-body-component-lib";
 import type { Step, Muscle } from "../../types/allTypes";
 
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import { get, post, del } from "../../lib/callApi";
 import { store } from "../../store/store";
@@ -109,6 +110,7 @@ import "perform-body-component-lib/style.css";
 import "./index.css";
 
 const router = useRoute();
+const routes = useRouter();
 const api_url = import.meta.env.VITE_API_URL;
 const tab = ref(null);
 const exercises = ref({
@@ -128,6 +130,12 @@ const is_fav = ref(false);
 const fav_id = ref(0);
 
 const showExercises = ref(true);
+
+const navigateTo = (to: any, animation: any) => {
+  console.log('to ', to, ' ', animation)
+  routes.push({ name: to, params: { animation: animation } });
+}
+
 const setFav = () => {
   if (is_fav.value) {
     del("/userfavexercises/" + fav_id.value + "/", true).then(() => {

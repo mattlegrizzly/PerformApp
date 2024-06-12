@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <ion-page data-page="edit-injuries">
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">

@@ -15,99 +15,63 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "home",
         name: "Home",
-        component: () => import("./views/HomePage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/HomePage.vue")
       },
       {
         path: "profile",
         name: "Profile",
-        component: () => import("./views/Profile/ProfilePage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/Profile/ProfilePage.vue")
       },
 
       {
         path: "edit_profile",
         name: "EditProfile",
-        component: () => import("./views/Profile/EditProfilePage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/Profile/EditProfilePage.vue")
       },
       {
         path: "add_injurie",
         name: "AddInjurie",
-        component: () => import("./views/Profile/AddInjuriePage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/Profile/AddInjuriePage.vue")
       },
       {
         path: "list_injuries",
         name: "ListInjuries",
-        component: () => import("./views/Profile/ListInjuriesPage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/Profile/ListInjuriesPage.vue")
       },
       {
         path: "view_injuries/:id",
         name: "ViewInjurie",
-        component: () => import("./views/Profile/ViewInjuriePage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/Profile/ViewInjuriePage.vue")
       },
       {
         path: "edit_injurie/:id",
         name: "EditInjurie",
-        component: () => import("./views/Profile/EditInjuriePage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/Profile/EditInjuriePage.vue")
       },
       {
         path: "exercises",
         name: "Exercises",
-        component: () => import("./views/Exercises/ListPage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/Exercises/ListPage.vue")
       },
       {
         path: "exercises/:id",
         name: "ExercisesView",
-        component: () => import("./views/Exercises/ViewPage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/Exercises/ViewPage.vue")
       },
       {
         path: "stats",
         name: "Statistics",
-        component: () => import("./views/StatsPage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/StatsPage.vue")
       },
 
       {
         path: "programs",
         name: "Programs",
-        component: () => import("./views/ProgramsPage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/ProgramsPage.vue")
       },
       {
         path: "conditions",
-        component: () => import("./views/ConditionsPage.vue"),
-        meta: {
-          transition: "fade",
-        },
+        component: () => import("./views/ConditionsPage.vue")
       },
     ],
   },
@@ -165,7 +129,14 @@ router.beforeEach(async (to, from, next) => {
   } else if (to.name == "login" && (await isloggedin)) {
     router.push("/");
   } else {
+    console.log(to.params)
+    if (to.params.animation) {
+      to.meta.animation = to.params.animation;
+    } else {
+      to.meta.animation = 'default-animation'; // Animation par défaut
+    }
     next();
+
   }
 });
 

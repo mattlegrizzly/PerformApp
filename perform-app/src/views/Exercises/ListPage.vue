@@ -53,13 +53,23 @@ ion-modal {
 
   width: 100%;
 }
+
+.input-fill-outline.sc-ion-input-md-h .input-outline-start.sc-ion-input-md {
+  border-width: 0px !important;
+  width: 0px !important;
+}
+
+
+.input-fill-outline.sc-ion-input-md-h .input-outline-end.sc-ion-input-md {
+  border-width: 0px !important;
+}
 </style>
 
 <template>
   <ion-page data-page="Exercises">
     <div id="header-wrapper">
       <div class="perform-page">
-        <h1 style="margin-top: 0px">Exercices</h1>
+        <h1 style="margin-top: 0px">Exercices ({{ countExercices }})</h1>
         <ion-label>Rechercher un exercice :</ion-label>
         <ion-input id="search-input" fill="outline" slot="end" placeholder="Cherchez un exercice" shape="round"
           @ionInput="handleSearchInput($event)"></ion-input>
@@ -165,11 +175,13 @@ height: 85%;
       <v-card-text>
         <v-tabs-window v-model="tab">
           <v-tabs-window-item value="one">
-            <ion-list class="list-item" :inset="true" v-for="exercise in exercises" :key="exercises.id"
-              @click="goPage(exercise.id)">
-              <ion-item>
-                <div class="exercice-img">
-                  <label>{{ exercise.name[0] }}</label>
+            <ion-list lines="none" class="parent-list" :inset="true">
+              <ion-item class="list-item" v-for="exercise in exercises" :key="exercise.id" @click="goPage(exercise.id)">
+                <div v-if="exercise.thumbnail == null" class="exercice-img">
+                  <ion-label>{{ exercise.name[0] }}</ion-label>
+                </div>
+                <div v-else class="exercice-thumbnail">
+                  <img :src="exercise.thumbnail" alt="Miniature de l'exercice" />
                 </div>
                 <ion-label class="exercice_label">{{
                   exercise.name
@@ -177,6 +189,9 @@ height: 85%;
                 <ion-icon :icon="chevronForwardOutline"></ion-icon>
               </ion-item>
             </ion-list>
+            <ion-infinite-scroll @ionInfinite="ionInfinite">
+              <ion-infinite-scroll-content></ion-infinite-scroll-content>
+            </ion-infinite-scroll>
           </v-tabs-window-item>
 
           <v-tabs-window-item value="two">
@@ -211,11 +226,14 @@ import {
   IonSelect,
   IonSelectOption,
   IonButton,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
   IonModal,
+  InfiniteScrollCustomEvent,
   onIonViewWillEnter
 } from "@ionic/vue";
 import { get } from "../../lib/callApi";
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { chevronForwardOutline, close } from "ionicons/icons";
 import "./index.css";
 import { useRoute, useRouter } from "vue-router";
@@ -243,7 +261,7 @@ const filterModal = ref(null) as any;
 const searchValue = ref("");
 const orderBy = ref({ id: "default", value: "Par défaut" });
 const exercises: any = ref([]);
-const exercises_fav: any = ref([]);
+const exercises_fav: any = reactive([]);
 const sports = ref([] as Sport[]);
 const sports_selected = ref([] as SportArray[]);
 const navRoute = useRoute();
@@ -251,6 +269,9 @@ const muscles = ref([] as Muscle[]);
 const muscle_selected = ref([] as Muscle[]);
 const materials = ref([] as Material[]);
 const materials_selected = ref([] as MaterialArray[]);
+const page = ref(0);
+const countExercices = ref(0);
+const pageMax = ref(1);
 
 const findMaterial = (material: any) => {
   let findMaterial = false;
@@ -261,6 +282,31 @@ const findMaterial = (material: any) => {
   });
   return findMaterial;
 };
+
+const generateItems = async (type: string) => {
+  if (type === "refresh") {
+    exercises.value = [];
+    page.value = 1;
+  } else {
+    page.value = page.value + 1;
+  }
+  getExercises().then((res) => {
+    console.log('res ', res)
+    if (res && res !== exercises.value) {
+      for (const element of res) {
+        exercises.value.push(element)
+        console.log('exercises ', exercises.value)
+      };
+    }
+  });
+}
+const ionInfinite = (ev: InfiniteScrollCustomEvent) => {
+  if (page.value < pageMax.value) {
+    generateItems('');
+  }
+  setTimeout(() => ev.target.complete(), 500);
+};
+
 
 const compareWith = (o1: any, o2: any) => {
   console.log(o1, ' ', o2)
@@ -322,11 +368,10 @@ const handleOrderChange = (event: any) => {
       find = true;
     }
   });
-  console.log(orderBy.value)
   if (!find) {
     orderBy.value = { id: "default", value: "Par défaut" };
   }
-  getExercises();
+  generateItems('refresh');
 };
 
 const jointByComa = (
@@ -376,44 +421,48 @@ const filterExercice = () => {
       query: Object.assign({}, navRoute.query, option),
     })
     .then(() => {
-      console.log("filter");
-      getExercises();
+      generateItems('refresh');
+
       if (filterModal.value) filterModal.value.$el.dismiss();
     });
 };
 
 const getExercises = async () => {
-  const option = {
-    body: {},
-  } as IERequestOptions;
-  if (orderBy.value) {
-    option.orderBy = orderBy.value;
-  }
-  if (searchValue.value !== "") {
-    option.search = searchValue.value;
-  }
-
-  const wk_zone = navRoute.query.workzone_code;
-  const mat_id = navRoute.query.material_id;
-  const sport_id = navRoute.query.sport_id;
-  if (mat_id && mat_id != "") {
-    option.material_id = String(mat_id);
-  }
-
-  if (sport_id && sport_id != "") {
-    option.sport_id = String(sport_id);
-  }
-
-  if (wk_zone && wk_zone != "") {
-    option.workzone_code = String(wk_zone);
-  }
-
-  get("/exercises/all", option).then((res) => {
-    if (res.status > 300) {
-    } else {
-      exercises.value = res;
+  console.log('get Exercises page :', page.value, ' pageMax ', pageMax.value)
+  if (page.value <= pageMax.value) {
+    const option = {
+      body: {},
+    } as IERequestOptions;
+    if (orderBy.value) {
+      option.orderBy = orderBy.value;
     }
-  });
+    if (searchValue.value !== "") {
+      option.search = searchValue.value;
+    }
+
+    const wk_zone = navRoute.query.workzone_code;
+    const mat_id = navRoute.query.material_id;
+    const sport_id = navRoute.query.sport_id;
+    if (mat_id && mat_id != "") {
+      option.material_id = String(mat_id);
+    }
+
+    if (sport_id && sport_id != "") {
+      option.sport_id = String(sport_id);
+    }
+
+    if (wk_zone && wk_zone != "") {
+      option.workzone_code = String(wk_zone);
+    }
+
+    const res = await get("/exercises/?page=" + page.value, option);
+    countExercices.value = await res.count
+    pageMax.value = Math.ceil(res.count / 10);
+    return res.results;
+  } else {
+    return {}
+  }
+
 };
 
 const showFilter = () => {
@@ -456,12 +505,13 @@ const updateSelectedSports = (change: any) => {
   sports_selected.value = change.detail.value;
 };
 
-const handleSearchInput = (event: any) => {
+const handleSearchInput = async (event: any) => {
+  console.log('handle search')
   searchValue.value = event.target.value;
-  getExercises();
+  generateItems('refresh');
 };
 
-onIonViewWillEnter(() => {
+onIonViewWillEnter(async () => {
   store.get("user").then((res) => {
     user_id.value = JSON.parse(res).user.id;
     get(
@@ -477,7 +527,8 @@ onIonViewWillEnter(() => {
     });
   });
 
-  getExercises();
+  generateItems('refresh');
+
 
   get("/sports/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {

@@ -1,7 +1,7 @@
 <style scoped></style>
 
 <template>
-  <ion-page>
+  <ion-page data-page="add-injuries">
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
@@ -80,7 +80,8 @@ import {
   IonSelectOption,
   IonInput,
   IonTextarea,
-  onIonViewWillEnter
+  onIonViewWillEnter,
+  IonLabel
 } from "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";

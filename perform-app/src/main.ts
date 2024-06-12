@@ -150,21 +150,33 @@ const fadeAnimation = (baseEl, opts) => {
 
 const app = createApp(App).use(vuetify).use(router);
 
+//Cet objet va permettre de définir les différentes animations en fonction de l'entrée (gauche) et la page de sortie (droite)
+const pageTransitions = {
+    'Home': slideAnimation,
+    'ExerciseView|Exercises': slideLeftAnimation,
+    'Exercises|ExerciseView': slideRightAnimation,
+    'list-injuries|profile': slideLeftAnimation,
+    'profile|list-injuries': slideRightAnimation,
+    'add-injuries|list-injuries': slideLeftAnimation,
+    'list-injuries|add-injuries': slideRightAnimation,
+    'show-injuries|list-injuries': slideLeftAnimation,
+    'list-injuries|show-injuries': slideRightAnimation,
+    'edit-injuries|show-injuries': slideLeftAnimation,
+    'show-injuries|edit-injuries': slideRightAnimation,
+};
+
+
 app.use(IonicVue, {
     animated: true,
-    navAnimation: (baseEl, opts) => {
-        console.log('entering ', opts.enteringEl.getAttribute('data-page'))
-        console.log('leaving ', opts.leavingEl.getAttribute('data-page'))
+    navAnimation: (baseEl: any, opts: any) => {
         // Utiliser des animations conditionnelles selon l'attribut data-page
-        if (opts.enteringEl.getAttribute('data-page') === 'Home') {
-            return slideAnimation(baseEl, opts);
-        } else if (opts.enteringEl.getAttribute('data-page') === "ExerciseView" && opts.leavingEl.getAttribute('data-page') === "Exercises") {
-            return slideLeftAnimation(baseEl, opts);
-        } else if (opts.leavingEl.getAttribute('data-page') === "ExerciseView" && opts.enteringEl.getAttribute('data-page') === "Exercises") {
-            return slideRightAnimation(baseEl, opts);
-        } else {
-            return slideAnimation(baseEl, opts)
-        }
+        const enteringPage = opts.enteringEl.getAttribute('data-page');
+        const leavingPage = opts.leavingEl?.getAttribute('data-page') || '';
+        const transitionKey = `${enteringPage}|${leavingPage}`;
+        //@ts-expect-error
+        const animationFunction = pageTransitions[transitionKey] || slideAnimation;
+
+        return animationFunction(baseEl, opts);
     }
 });
 

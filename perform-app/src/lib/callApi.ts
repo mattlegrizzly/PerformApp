@@ -83,7 +83,7 @@ const handleResponse = async (response: Response): Promise<any> => {
       data: data,
     };
   } else {
-    return data; // Retourne les données normalement si le token est valide
+    return data // Retourne les données normalement si le token est valide
   }
 };
 

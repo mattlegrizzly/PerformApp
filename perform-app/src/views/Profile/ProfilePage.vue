@@ -8,7 +8,7 @@
 </style>
 
 <template>
-  <ion-page>
+  <ion-page data-page="profile">
     <ion-content>
       <div class="container_home">
         <div class="profile_picture_div">

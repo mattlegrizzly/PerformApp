@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <ion-page data-page="list-injuries">
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
@@ -106,7 +106,6 @@ const stateSetClass = (state: string) => {
   }
 };
 
-
 onIonViewWillEnter(async () => {
   if (routes.query.edit) {
     back.value = "";
@@ -115,7 +114,7 @@ onIonViewWillEnter(async () => {
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
     get("/injuries/?user=" + user.value.id, { body: {} }, true).then((res) => {
-      user.value.user_injuries = res.results;
+      user.value.user_injuries = res;
     });
   }
 });

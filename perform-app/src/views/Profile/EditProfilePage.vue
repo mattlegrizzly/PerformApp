@@ -72,7 +72,7 @@ ion-chip {
 </style>
 
 <template>
-  <ion-page>
+  <ion-page data-page="edit-profile">
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">

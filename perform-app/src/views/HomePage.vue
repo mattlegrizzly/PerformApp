@@ -41,7 +41,7 @@
             <h3>Welness</h3>
             <ion-icon :icon="hideWelness ? chevronUpOutline : chevronDownOutline" />
           </div>
-          <ion-modal ref="modal" trigger="open-modal">
+          <ion-modal ref="modal">
             <ion-content>
               <div class="modal-header">
                 <h3>Saissiez le welness du jour :</h3>
@@ -213,12 +213,31 @@ const postWelness = async () => {
     },
   }, true);
 
-  if (response.status <= 301) {
+  if (!response.status) {
     const userResponse = await get("/admin/users_all/me/", { body: {} }, true);
     await store.set("user", JSON.stringify(userResponse));
     welness.value = response;
     wellnessNot.value = false;
-    dismiss();
+    modal.value.$el.dismiss();
+  }
+};
+
+
+const patchWelness = async () => {
+  const response = await patch(`/wellness/${welness.value.id}/`, {
+    body: {
+      sleep: welness.value.sleep,
+      hydratation: welness.value.hydratation,
+      fatigue: welness.value.fatigue,
+      pain: welness.value.pain,
+      stress: welness.value.stress,
+    },
+  }, true);
+  if (!response.status) {
+    const userResponse = await get("/admin/users_all/me/", { body: {} }, true);
+    await store.set("user", JSON.stringify(userResponse));
+    console.log(modal.value)
+    modal.value.$el.dismiss();
   }
 };
 
@@ -275,23 +294,6 @@ const createChart = (data: any) => {
   }));
 };
 
-const patchWelness = async () => {
-  const response = await patch(`/wellness/${welness.value.id}/`, {
-    body: {
-      sleep: welness.value.sleep,
-      hydratation: welness.value.hydratation,
-      fatigue: welness.value.fatigue,
-      pain: welness.value.pain,
-      stress: welness.value.stress,
-    },
-  }, true);
-
-  if (response.status <= 301) {
-    const userResponse = await get("/admin/users_all/me/", { body: {} }, true);
-    await store.set("user", JSON.stringify(userResponse));
-    dismiss();
-  }
-};
 
 const onIonChange = ({ detail }: any, name: any) => {
   welness.value[name] = detail.value;
@@ -327,7 +329,7 @@ const refreshUser = async () => {
 const checkUserWellness = async () => {
   const res = await get(`/wellness/user/${user.value.id}/week?date=${setLongDate(new Date())}`, { body: {} }, true);
   res.forEach((welnessItem: any) => {
-    if (welnessItem.date === setLongDate(new Date())) {
+    if (welnessItem.date === setLongDate(new Date()) && welnessItem.sleep != null) {
       wellnessNot.value = false;
       welness.value = welnessItem;
     }
