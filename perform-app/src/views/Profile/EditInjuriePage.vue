@@ -226,7 +226,7 @@ const injuries_state = ref([
 
 const muscles = ref([] as any);
 
-const setMuscle = (code: string, action: string) => {
+const setMuscle = (code: string) => {
   injury.value.zone = [{
     zone: {
       code: code,

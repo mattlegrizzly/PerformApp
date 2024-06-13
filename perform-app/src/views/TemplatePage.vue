@@ -21,7 +21,6 @@
 import { IonContent, IonPage } from "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";
-import { onBeforeUnmount, onMounted, onUpdated } from "vue";
 
 import { useRouter } from "vue-router";
 const router = useRouter()

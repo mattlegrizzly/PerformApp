@@ -91,7 +91,7 @@ import { chevronDownOutline } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { ref } from "vue";
 import { get, post } from "../../lib/callApi";
-import type { Muscles, Muscle } from "../../types/allTypes";
+import type { Muscles } from "../../types/allTypes";
 import "./index.css";
 //@ts-expect-error
 import { BodyComponent } from 'perform-body-component-lib'
@@ -167,7 +167,7 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
   }
 };
 
-const setMuscle = (code: string, action: string) => {
+const setMuscle = (code: string) => {
   muscleSelected.value = [{
     zone: {
       code: code,
