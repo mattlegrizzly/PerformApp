@@ -61,6 +61,10 @@ import { store } from "../../store/store";
 import { Injurie } from "../../types/allTypes";
 import router from "../../router";
 import "./index.css";
+import { stateSet, stateSetClass } from "../../lib/injurie";
+import { useErrorHandler } from '../../lib/useErrorHandler';
+
+const { triggerError } = useErrorHandler() as any;
 
 const routes = useRoute();
 const back = ref("back");
@@ -80,31 +84,6 @@ const user = ref({
   users_wellness: [],
 });
 
-const stateSet = (state: string) => {
-  switch (state) {
-    case "NT":
-      return "Non traité";
-    case "IP":
-      return "En cours";
-    case "TR":
-      return "Traité";
-    default:
-      return "Non traité";
-  }
-};
-
-const stateSetClass = (state: string) => {
-  switch (state) {
-    case "NT":
-      return "nt_class";
-    case "IP":
-      return "ip_class";
-    case "TR":
-      return "tr_class";
-    default:
-      return "";
-  }
-};
 
 onIonViewWillEnter(async () => {
   if (routes.query.edit) {
@@ -114,7 +93,11 @@ onIonViewWillEnter(async () => {
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
     get("/injuries/?user=" + user.value.id, { body: {} }, true).then((res) => {
-      user.value.user_injuries = res;
+      if (res.status > 301) {
+        triggerError('Erreur lors de la récupération des blessures');
+      } else {
+        user.value.user_injuries = res;
+      }
     });
   }
 });

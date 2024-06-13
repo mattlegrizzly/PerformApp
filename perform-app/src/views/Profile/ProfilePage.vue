@@ -71,7 +71,7 @@
             <h2 style="text-align: left; width: 100%">Mes blessures</h2>
             <NavButton v-if="user.user_injuries.length == 0" url="add_injurie" text="Ajouter une blessure"
               :noIcon="true" />
-            <ion-list style="width: 100%">
+            <ion-list class="injurie_list" style="width: 100%">
               <div class="injurie_div" @click="router.push('/view_injuries/' + injurie.id)"
                 v-for="injurie of limitedItems()">
                 <ion-label>{{ injurie.zone.name }}</ion-label>
@@ -120,6 +120,7 @@ import router from "../../router";
 import { ref, computed } from "vue";
 import "./index.css";
 import NavButton from "../../components/NavButton/NavButton.vue";
+import { stateSet, stateSetClass } from "../../lib/injurie";
 import {
   chevronForwardOutline,
   pencil,
@@ -143,25 +144,19 @@ const user = ref({
   user_injuries: [],
   users_wellness: [],
 });
-
+/**
+ * Retourne les deux premières blessures de l'utilisateur.
+ * @returns {any} - Les deux premières blessures de l'utilisateur.
+ */
 function limitedItems(): any {
   return user.value.user_injuries.slice(0, 2);
 }
 
-const stateSet = (state: string) => {
-  switch (state) {
-    case "NT":
-      return "Non traité";
-    case "IP":
-      return "En cours";
-    case "TR":
-      return "Traité";
-    default:
-      return "Non traité";
-  }
-};
-
-const profilePicture = computed(() => {
+/**
+ * Calcule l'URL de l'image de profil de l'utilisateur.
+ * @returns {string} - L'URL de l'image de profil, modifiée pour utiliser HTTPS si nécessaire.
+ */
+const profilePicture = computed((): string => {
   if (
     user.value.profile_picture &&
     user.value.profile_picture.includes(api.split("//")[1])
@@ -179,26 +174,20 @@ const profilePicture = computed(() => {
   }
 });
 
-const stateSetClass = (state: string) => {
-  switch (state) {
-    case "NT":
-      return "nt_class";
-    case "IP":
-      return "ip_class";
-    case "TR":
-      return "tr_class";
-    default:
-      return "";
-  }
-};
 
-const disconnect = () => {
+
+/**
+ * Déconnecte l'utilisateur et le redirige vers la page de connexion.
+ */
+const disconnect = (): void => {
   store.set("user", "").then(() => {
     router.push("/login");
   });
 };
 
-
+/**
+ * Exécute les actions nécessaires lors de l'entrée dans la vue.
+ */
 onIonViewWillEnter(async () => {
   let storeUser = await store.get("user");
   if (storeUser !== "") {

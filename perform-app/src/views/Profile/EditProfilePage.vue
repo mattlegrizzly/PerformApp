@@ -88,10 +88,16 @@ ion-chip {
               <div class="img_div">
                 <ion-img
                   :src="fileToDisplay != '' ? fileToDisplay : 'https://static.vecteezy.com/system/resources/previews/004/968/473/original/upload-or-add-a-picture-jpg-file-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-etc-vector.jpg'"
-                  @click="triggerFileInput"></ion-img>
+                  style="object-fit: cover;
+    overflow: hidden;
+    height: 130px;
+    width: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;" @click="triggerFileInput"></ion-img>
                 <ion-icon style="color:black; position: absolute; right: 0px;" :icon="pencil"></ion-icon>
               </div>
-              <input type="file" accept="image/*" ref="fileInput" @change="handleFileChange"
+              <input type="file" accept="image/*" id="fileINput" ref="fileInput" @change="handleFileChange"
                 style="display: none"></input>
             </div>
 
@@ -173,24 +179,33 @@ import "@/assets/base.css";
 import "@/assets/main.css";
 import { store } from "../../store/store";
 import router from "../../router";
-import { Sport } from "../../types/allTypes";
+import { Sport, IEUserData } from "../../types/allTypes";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { get, patch, del, post } from "../../lib/callApi";
 import "./index.css";
 
+import { useErrorHandler } from '../../lib/useErrorHandler';
+
+const { triggerError } = useErrorHandler() as any;
+
+const api = import.meta.env.VITE_API_URL;
 const fileInput = ref(null);
 
-const handleInput = (key: string, valuePass: string | null | undefined) => {
-  const value = valuePass as String;
-  //@ts-expect-error
-  user.value[key] = value;
-};
-
-const compareWith = (o1: any, o2: any) => {
-  return o1 && o2 ? o1.id === o2.id : o1 === o2;
-};
-
-const user = ref({
+/**
+ * Utilisateur avec ses propriétés et ses sports associés.
+ */
+const user = ref<{
+  age: number,
+  weight: number,
+  size: number,
+  email: string,
+  first_name: string,
+  gender: string,
+  id: number,
+  last_name: string,
+  profile_picture: string,
+  sports_user: Sport[],
+}>({
   age: 0,
   weight: 0,
   size: 0,
@@ -203,20 +218,45 @@ const user = ref({
   sports_user: [] as Sport[],
 });
 
-const sports_user_temp = ref([] as Sport[]);
-const sports = ref([] as Sport[]);
+const sports_user_temp = ref<Sport[]>([]);
+const sports = ref<Sport[]>([]);
+const fileToDisplay = ref<string>('');
+const fileToSend = ref<File | null>(null);
 
-const fileToDisplay = ref('');
-const fileToSend = ref(null);
+/**
+ * Gère l'entrée de l'utilisateur et met à jour la propriété correspondante.
+ * @param {string} key - La clé de l'objet utilisateur à mettre à jour.
+ * @param {string | null | undefined} valuePass - La valeur à affecter à la clé.
+ */
+const handleInput = (key: keyof IEUserData, valuePass: string | null | undefined): void => {
+  const value = valuePass as never;
+  user.value[key] = value;
+};
 
+/**
+ * Compare deux objets en fonction de leur propriété `id`.
+ * @param {any} o1 - Premier objet à comparer.
+ * @param {any} o2 - Deuxième objet à comparer.
+ * @returns {boolean} - Vrai si les objets ont le même `id`, sinon faux.
+ */
+const compareWith = (o1: any, o2: any): boolean => {
+  return o1 && o2 ? o1.id === o2.id : o1 === o2;
+};
 
-function findById(array: any, id: string | number | Sport) {
-  //@ts-expect-error
+/**
+ * Trouve un élément dans un tableau par son identifiant.
+ * @param {any[]} array - Tableau dans lequel chercher.
+ * @param {string | number | Sport} id - Identifiant de l'élément à trouver.
+ * @returns {any} - Élément trouvé ou undefined.
+ */
+function findById(array: any[], id: string | number | Sport): any {
   return array.find(item => item.id === id);
 }
 
-
-const editProfile = () => {
+/**
+ * Édite le profil de l'utilisateur et met à jour les sports associés.
+ */
+const editProfile = (): void => {
   const userEdit = {
     age: user.value.age,
     weight: user.value.weight,
@@ -224,131 +264,146 @@ const editProfile = () => {
     email: user.value.email,
     last_name: user.value.last_name,
     first_name: user.value.first_name,
-
-  };
+  } as any;
   if (fileToSend.value) {
-    //@ts-expect-error
     userEdit['profile_picture'] = fileToSend.value;
   }
-  const inPlus = [];
-  const inMinus = [];
-  const equivalent = [];
-  if (sports_user_temp.value.length === 0) {
-    sports_user_temp.value = [];
-  }
-  // Vérifier les éléments en plus dans newArray
+
+  const inPlus: Sport[] = [];
+  const inMinus: Sport[] = [];
+  const equivalent: Sport[] = [];
+
   for (const newItem of sports_user_temp.value) {
-    const matchInBase = findById(user.value.sports_user, newItem.id);
-    if (!matchInBase) {
-      inPlus.push(newItem);
-    } else {
-      equivalent.push(newItem);
+    let find = false;
+    for (const constSport of user.value.sports_user) {
+      //@ts-expect-error
+      if (newItem.id === constSport.sport.id) {
+        equivalent.push(newItem)
+        find = true;
+      }
+    }
+    if (!find) {
+      inPlus.push(newItem)
     }
   }
 
-  // Vérifier les éléments en moins dans baseArray
-  for (const baseItem of user.value.sports_user) {
-    //@ts-expect-error
+  user.value.sports_user.forEach((baseItem: any) => {
     const matchInNew = findById(sports_user_temp.value, baseItem.sport.id);
     if (!matchInNew) {
       inMinus.push(baseItem);
     }
-  }
+  });
 
-  for (const sport of inPlus) {
-    post("/admin/sports_user/", { body: { user: user.value.id, sport: sport.id } }, true, true).then((res) => {
+  inPlus.forEach(sport => {
+    post("/sports_user/", { body: { user: user.value.id, sport: sport.id } }, true, true).then((res) => {
       if (res.status > 300) {
-        console.log('error')
-      } else {
-        console.log('ok !')
+        triggerError('Erreur lors de l\'ajout du sport : ', sport.name);
       }
     });
-  }
-  for (const sport of inMinus) {
-    del("/admin/sports_user/" + sport.id + "/").then((res) => {
+  });
+
+  inMinus.forEach(sport => {
+    del("/sports_user/" + sport.id + "/").then((res) => {
       if (res.status > 300) {
-        console.log('error')
-      } else {
-        console.log('ok !')
+        triggerError('Erreur lors de la suppression du sport : ', sport.name);
       }
     });
+  });
 
-  }
   patch("/users/" + user.value.id + "/", { body: userEdit }, true, true).then((res) => {
     if (res.status > 300) {
-      console.log('error')
+      triggerError('Erreur lors de la modification, réessayez');
+
     } else {
       router.push('/profile');
     }
   });
 };
 
-const api = import.meta.env.VITE_API_URL;
 
+/**
+ * Déclenche l'entrée de fichier pour sélectionner un fichier.
+ */
 const triggerFileInput = () => {
   //@ts-expect-error
   if (fileInput.value) fileInput.value.click();
 };
-const handleFileChange = (event: any) => {
-  const file = event.target.files[0];
+
+/**
+ * Gère le changement de fichier pour l'upload de l'image de profil.
+ * @param {Event} event - Événement de changement de fichier.
+ */
+const handleFileChange = (event: Event): void => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      if (e.target) {
-        console.log('e.target.result', e.target.result)
-        fileToDisplay.value = e.target.result as string;
+      const result = e.target?.result;
+      if (result) {
+        fileToDisplay.value = result as string;
         fileToSend.value = file;
-      };
-      reader.readAsDataURL(file);
-    }
+      }
+    };
+    reader.readAsDataURL(file);
   }
 };
 
-const removeSport = (event: any) => {
-  const id = Number(event.target.id)
-  sports_user_temp.value = sports_user_temp.value.filter(
-    (sport) => {
-      Number(sport.id) !== id
-    }
-  );
-
+/**
+ * Supprime un sport de la liste temporaire de sports.
+ * @param {Event} event - Événement de suppression.
+ */
+const removeSport = (event: Event): void => {
+  const target = event.target as HTMLButtonElement;
+  const id = Number(target.id);
+  sports_user_temp.value = sports_user_temp.value.filter(sport => sport.id !== id);
 };
 
-const updateSelectedSports = (change: any) => {
+/**
+ * Met à jour les sports sélectionnés temporairement.
+ * @param {CustomEvent} change - Événement de changement de sélection.
+ */
+const updateSelectedSports = (change: CustomEvent): void => {
   sports_user_temp.value = change.detail.value;
 };
 
+/**
+ * Actions à exécuter lors de l'entrée dans la vue.
+ */
 onIonViewWillEnter(async () => {
-
-  let storeUser = await store.get("user");
+  sports_user_temp.value = [];
+  const storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
-    if (user.value.profile_picture !== null) fileToDisplay.value = api + user.value.profile_picture;
-    user.value.sports_user.map((sport) => {
-      //@ts-expect-error
+    if (user.value.profile_picture) {
+      fileToDisplay.value = api + user.value.profile_picture;
+    }
+    user.value.sports_user.forEach((sport: any) => {
       sports_user_temp.value.push(sport.sport);
     });
   }
+
   get("/sports", { body: {} }, false).then((res) => {
     if (res.status > 300) {
-      console.log('error')
+      triggerError('Erreur lors de la récupération des sports');
     } else {
       sports.value = res.results;
     }
   });
+
   const ionSelect = document.querySelectorAll(".custom-ion-select");
-  if (ionSelect === null) return;
-  for (const elem of ionSelect) {
+  ionSelect.forEach(elem => {
     const shadowRoot = elem.shadowRoot;
-    if (shadowRoot === null) return;
-    const style = document.createElement("style");
-    style.textContent = `
+    if (shadowRoot) {
+      const style = document.createElement("style");
+      style.textContent = `
         .select-wrapper-inner {
-        width: 100%; /* Ajustez cette valeur selon vos besoins */
-        justify-content: space-between;
-      }
-    `;
-    shadowRoot.appendChild(style);
-  }
+          width: 100%;
+          justify-content: space-between;
+        }
+      `;
+      shadowRoot.appendChild(style);
+    }
+  });
 });
 </script>

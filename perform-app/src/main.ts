@@ -74,7 +74,8 @@ const vuetify = createVuetify({
 })
 
 // Définir les animations
-const slideAnimation = (baseEl, opts) => {
+//@ts-expect-error
+const slideAnimation = (baseEl: any, opts: any) => {
     const enteringEl = opts.enteringEl;
     const leavingEl = opts.leavingEl;
 
@@ -93,7 +94,8 @@ const slideAnimation = (baseEl, opts) => {
 };
 
 // Définir les animations
-const slideLeftAnimation = (baseEl, opts) => {
+//@ts-expect-error
+const slideLeftAnimation = (baseEl: any, opts: any) => {
     const enteringEl = opts.enteringEl;
     const leavingEl = opts.leavingEl;
 
@@ -112,7 +114,8 @@ const slideLeftAnimation = (baseEl, opts) => {
 };
 
 // Définir les animations
-const slideRightAnimation = (baseEl, opts) => {
+//@ts-expect-error
+const slideRightAnimation = (baseEl: any, opts: any) => {
     const enteringEl = opts.enteringEl;
     const leavingEl = opts.leavingEl;
 
@@ -125,24 +128,6 @@ const slideRightAnimation = (baseEl, opts) => {
         animation.addElement(leavingEl)
             .duration(100)
             .fromTo('transform', 'translateX(0)', 'translateX(100%)');
-    }
-
-    return animation;
-};
-
-const fadeAnimation = (baseEl, opts) => {
-    const enteringEl = opts.enteringEl;
-    const leavingEl = opts.leavingEl;
-
-    const animation = createAnimation()
-        .addElement(enteringEl)
-        .duration(100)
-        .fromTo('opacity', 0, 1);
-
-    if (leavingEl) {
-        animation.addElement(leavingEl)
-            .duration(100)
-            .fromTo('opacity', 1, 0);
     }
 
     return animation;
@@ -163,6 +148,10 @@ const pageTransitions = {
     'list-injuries|show-injuries': slideRightAnimation,
     'edit-injuries|show-injuries': slideLeftAnimation,
     'show-injuries|edit-injuries': slideRightAnimation,
+    'profile|show-injuries': slideRightAnimation,
+    'show-injuries|profile': slideLeftAnimation,
+    'edit-profile|profile': slideLeftAnimation,
+    'profile|edit-profile': slideRightAnimation,
 };
 
 

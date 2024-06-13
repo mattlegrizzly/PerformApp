@@ -69,7 +69,14 @@ ion-modal {
   <ion-page data-page="Exercises">
     <div id="header-wrapper">
       <div class="perform-page">
-        <h1 style="margin-top: 0px">Exercices ({{ countExercices }})</h1>
+        <div v-if="searchValue === ''">
+          <h1 v-if="tab == 'one'" style="margin-top: 0px">Exercices ({{ countExercices }})</h1>
+          <h1 v-else style="margin-top: 0px">Exercices favoris ({{ countExercicesFav }})</h1>
+        </div>
+        <div v-else>
+          <h1 v-if="tab == 'one'" style="margin-top: 0px">Résultats de la recherche pour : {{ searchValue }} ({{
+            countExercices }})</h1>
+        </div>
         <ion-label>Rechercher un exercice :</ion-label>
         <ion-input id="search-input" fill="outline" slot="end" placeholder="Cherchez un exercice" shape="round"
           @ionInput="handleSearchInput($event)"></ion-input>
@@ -103,8 +110,10 @@ height: 85%;
                   align-items: center;
                   justify-content: space-between;
                 ">
-              <h3>
+              <h3 style="display:flex; align-items: center">
                 FILTRER
+                <ion-icon style='margin-left: 10px' @click="resetFilter" v-if="isFilter()"
+                  :icon="trashBinSharp"></ion-icon>
               </h3>
               <ion-icon style="color: red; border: 1px solid red; border-radius: 5px" @click="dismiss" :icon="close" />
             </div>
@@ -160,8 +169,12 @@ height: 85%;
             </div>
           </div>
           <div class="input-div"
-            style="position:fixed; margin-top: 20px; margin-bottom: 20px; justify-content: center; display: flex">
+            style="position:fixed; margin-top: 10px; margin-bottom: 10px; justify-content: space-around; display: flex">
             <ion-button @click="filterExercice"> Filtrer </ion-button>
+            <ion-button fill="outline" @click="() => {
+              resetFilter();
+              filterModal.$el.dismiss()
+            }"> Annuler </ion-button>
           </div>
         </ion-content>
       </ion-modal>
@@ -181,7 +194,7 @@ height: 85%;
                   <ion-label>{{ exercise.name[0] }}</ion-label>
                 </div>
                 <div v-else class="exercice-thumbnail">
-                  <img :src="exercise.thumbnail" alt="Miniature de l'exercice" />
+                  <img :src="exercise.thumbnail.replace('http', 'https')" alt="Miniature de l'exercice" />
                 </div>
                 <ion-label class="exercice_label">{{
                   exercise.name
@@ -195,18 +208,25 @@ height: 85%;
           </v-tabs-window-item>
 
           <v-tabs-window-item value="two">
-            <ion-list class="list-item" :inset="true" v-for="exercise in exercises_fav" :key="exercises.id"
-              @click="goPage(exercise.fav_exercise.id)">
-              <ion-item>
-                <div class="exercice-img">
-                  <ion-label>{{ exercise.fav_exercise.name[0] }}</ion-label>
+            <ion-list lines="none" class="parent-list" :inset="true">
+              <ion-item class="list-item" v-for="exercise in exercises_fav" :key="exercise.id"
+                @click="goPage(exercise.id)">
+                {{ console.log(exercise) }}
+                <div v-if="exercise.thumbnail == null" class="exercice-img">
+                  <ion-label>{{ exercise.name[0] }}</ion-label>
                 </div>
-                <ion-label l class="exercice_label">{{
-                  exercise.fav_exercise.name
+                <div v-else class="exercice-thumbnail">
+                  <img :src="getThumbnail(exercise.thumbnail)" alt="Miniature de l'exercice" />
+                </div>
+                <ion-label class="exercice_label">{{
+                  exercise.name
                 }}</ion-label>
                 <ion-icon :icon="chevronForwardOutline"></ion-icon>
               </ion-item>
             </ion-list>
+            <ion-infinite-scroll @ionInfinite="ionInfiniteFavorite">
+              <ion-infinite-scroll-content></ion-infinite-scroll-content>
+            </ion-infinite-scroll>
           </v-tabs-window-item>
         </v-tabs-window>
       </v-card-text>
@@ -233,8 +253,8 @@ import {
   onIonViewWillEnter
 } from "@ionic/vue";
 import { get } from "../../lib/callApi";
-import { reactive, ref } from "vue";
-import { chevronForwardOutline, close } from "ionicons/icons";
+import { ref } from "vue";
+import { chevronForwardOutline, close, trashBinSharp } from "ionicons/icons";
 import "./index.css";
 import { useRoute, useRouter } from "vue-router";
 import { store } from "../../store/store";
@@ -242,6 +262,9 @@ import { Muscle, Sport, Material, MaterialArray, SportArray } from "../../types/
 //@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
 import IERequestOptions from "../../types/request";
+import { useErrorHandler } from '../../lib/useErrorHandler';
+
+const { triggerError } = useErrorHandler() as any;
 
 const router = useRouter();
 
@@ -261,7 +284,7 @@ const filterModal = ref(null) as any;
 const searchValue = ref("");
 const orderBy = ref({ id: "default", value: "Par défaut" });
 const exercises: any = ref([]);
-const exercises_fav: any = reactive([]);
+const exercises_fav: any = ref([]);
 const sports = ref([] as Sport[]);
 const sports_selected = ref([] as SportArray[]);
 const navRoute = useRoute();
@@ -270,8 +293,25 @@ const muscle_selected = ref([] as Muscle[]);
 const materials = ref([] as Material[]);
 const materials_selected = ref([] as MaterialArray[]);
 const page = ref(0);
+const pageFav = ref(0);
 const countExercices = ref(0);
+const countExercicesFav = ref(0);
 const pageMax = ref(1);
+const pageMaxFav = ref(1);
+
+const isFilter = () => {
+  return (muscle_selected.value.length > 0 || materials_selected.value.length > 0 || sports_selected.value.length > 0)
+}
+
+const resetFilter = () => {
+  muscle_selected.value = [];
+  materials_selected.value = [];
+  sports_selected.value = [];
+}
+
+const getThumbnail = (path: string) => {
+  return import.meta.env.VITE_API_URL + path
+}
 
 const findMaterial = (material: any) => {
   let findMaterial = false;
@@ -287,19 +327,51 @@ const generateItems = async (type: string) => {
   if (type === "refresh") {
     exercises.value = [];
     page.value = 1;
+    console.log('refresh')
+    getExercises('').then((res) => {
+      console.log('res ', res)
+      exercises.value = res
+    });
   } else {
     page.value = page.value + 1;
+    getExercises('').then((res) => {
+      for (const elem of res) {
+        exercises.value.push(elem)
+      }
+    });
   }
-  getExercises().then((res) => {
-    console.log('res ', res)
-    if (res && res !== exercises.value) {
-      for (const element of res) {
-        exercises.value.push(element)
-        console.log('exercises ', exercises.value)
-      };
-    }
-  });
 }
+
+const generateItemsFav = async (type: string) => {
+  if (type === "refresh") {
+    exercises_fav.value = [];
+    pageFav.value = 1;
+    console.log('refresh')
+    getExercises('favorite').then((res) => {
+      console.log('set fav exo ', res)
+      exercises_fav.value = res
+    });
+  } else {
+    pageFav.value = pageFav.value + 1;
+    getExercises('favorite').then((res) => {
+      for (const elem of res) {
+        exercises_fav.value.push(elem)
+      }
+    });
+  }
+}
+
+
+
+const ionInfiniteFavorite = (ev: InfiniteScrollCustomEvent) => {
+  console.log(pageFav.value)
+  console.log(pageMaxFav.value)
+  if (pageFav.value < pageMaxFav.value) {
+    generateItemsFav('');
+  }
+  setTimeout(() => ev.target.complete(), 500);
+};
+
 const ionInfinite = (ev: InfiniteScrollCustomEvent) => {
   if (page.value < pageMax.value) {
     generateItems('');
@@ -371,7 +443,9 @@ const handleOrderChange = (event: any) => {
   if (!find) {
     orderBy.value = { id: "default", value: "Par défaut" };
   }
-  generateItems('refresh');
+  setTimeout(() => {
+    generateItems('refresh');
+  }, 500)
 };
 
 const jointByComa = (
@@ -427,43 +501,58 @@ const filterExercice = () => {
     });
 };
 
-const getExercises = async () => {
-  console.log('get Exercises page :', page.value, ' pageMax ', pageMax.value)
-  if (page.value <= pageMax.value) {
-    const option = {
-      body: {},
-    } as IERequestOptions;
-    if (orderBy.value) {
-      option.orderBy = orderBy.value;
-    }
-    if (searchValue.value !== "") {
-      option.search = searchValue.value;
-    }
+const getExercises = async (type: string) => {
+  pageMax.value = pageMax.value || 1;
+  pageMaxFav.value = pageMaxFav.value || 1;
 
-    const wk_zone = navRoute.query.workzone_code;
-    const mat_id = navRoute.query.material_id;
-    const sport_id = navRoute.query.sport_id;
-    if (mat_id && mat_id != "") {
-      option.material_id = String(mat_id);
-    }
+  const isFavorite = type === "favorite";
+  const pageTemp = isFavorite ? pageFav.value : page.value;
+  const pageMaxTemp = isFavorite ? pageMaxFav.value : pageMax.value;
 
-    if (sport_id && sport_id != "") {
-      option.sport_id = String(sport_id);
-    }
-
-    if (wk_zone && wk_zone != "") {
-      option.workzone_code = String(wk_zone);
-    }
-
-    const res = await get("/exercises/?page=" + page.value, option);
-    countExercices.value = await res.count
-    pageMax.value = Math.ceil(res.count / 10);
-    return res.results;
-  } else {
-    return {}
+  if (pageTemp > pageMaxTemp) {
+    return {};
   }
 
+  const option = {} as IERequestOptions;
+  if (orderBy.value) {
+    option.orderBy = orderBy.value;
+  }
+  if (searchValue.value) {
+    option.search = searchValue.value;
+  }
+
+  const { workzone_code, material_id, sport_id } = navRoute.query;
+
+  if (material_id) {
+    option.material_id = String(material_id);
+  }
+  if (sport_id) {
+    option.sport_id = String(sport_id);
+  }
+  if (workzone_code) {
+    option.workzone_code = String(workzone_code);
+  }
+
+  if (isFavorite) {
+    const res = await get(`/userfavexercises/user/${user_id.value}/`, option);
+    if (res.status > 301) {
+      triggerError('Erreur lors de la récupération des exercices favoris');
+    }
+    const favs = res.map((exo: any) => exo.fav_exercise);
+    countExercicesFav.value = favs.length;
+    pageMaxFav.value = Math.ceil(favs.length / 10);
+    return favs;
+  } else {
+    const res = await get(`/exercises/?page=${pageTemp}`, option);
+    if (res.status > 301) {
+      triggerError('Erreur lors de la récupération des exercices');
+    }
+    countExercices.value = res.count;
+    pageMax.value = Math.ceil(res.count / 10);
+    return res.results;
+  }
 };
+
 
 const showFilter = () => {
   const work_zone = navRoute.query.workzone_code as string;
@@ -506,25 +595,16 @@ const updateSelectedSports = (change: any) => {
 };
 
 const handleSearchInput = async (event: any) => {
-  console.log('handle search')
   searchValue.value = event.target.value;
   generateItems('refresh');
 };
 
 onIonViewWillEnter(async () => {
+  muscle_selected.value = [];
   store.get("user").then((res) => {
     user_id.value = JSON.parse(res).user.id;
-    get(
-      "/userfavexercises/user/" + user_id.value + "/",
-      { body: {} },
-      true
-    ).then((res: any) => {
-      if (res.status > 300) {
-        console.log("error ", res.status);
-      } else {
-        exercises_fav.value = res;
-      }
-    });
+    generateItemsFav('refresh');
+
   });
 
   generateItems('refresh');
@@ -532,7 +612,7 @@ onIonViewWillEnter(async () => {
 
   get("/sports/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
-      console.log("error ", res.status);
+      triggerError('Erreur lors de la récupération des sports');
     } else {
       sports.value = res;
     }
@@ -540,7 +620,7 @@ onIonViewWillEnter(async () => {
 
   get("/materials/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
-      console.log("error ", res.status);
+      triggerError('Erreur lors de la récupération des matériels');
     } else {
       materials.value = res;
     }
@@ -548,7 +628,7 @@ onIonViewWillEnter(async () => {
 
   get("/workzones/all", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
-      console.log("error ", res.status);
+      triggerError('Erreur lors de la récupération des muscles');
     } else {
       muscles.value = res;
     }

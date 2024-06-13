@@ -38,7 +38,7 @@
             justify-content: center;
             align-items: center;
           ">
-          <BodyComponent :muscleSelected="[{ zone: injury.zone }]" :height="'300'" :width="'200'" :viewOnly="'edit'" />
+          <BodyComponent :muscleSelected="[{ zone: injury.zone }]" :height="'300'" :width="'200'" :viewOnly="'show'" />
         </div>
       </div>
     </ion-content>
@@ -55,43 +55,16 @@ import router from "../../router";
 import { BodyComponent } from "perform-body-component-lib";
 import "@/assets/base.css";
 import "@/assets/main.css";
-import { get } from "../../lib/callApi";
-
 import "./index.css";
+import { get } from "../../lib/callApi";
+import { stateSet, stateSetClass } from "../../lib/injurie";
+import { useErrorHandler } from '../../lib/useErrorHandler';
 
-const back = ref("back");
-const urlReturn = ref("/list_injuries");
-
-
-const stateSet = (state: string) => {
-  switch (state) {
-    case "NT":
-      return "Non traité";
-    case "IP":
-      return "En cours";
-    case "TR":
-      return "Traité";
-    default:
-      return "Non traité";
-  }
-};
-
-const stateSetClass = (state: string) => {
-  switch (state) {
-    case "NT":
-      return "nt_class";
-    case "IP":
-      return "ip_class";
-    case "TR":
-      return "tr_class";
-    default:
-      return "";
-  }
-};
+const { triggerError } = useErrorHandler() as any;
 
 const routerNav = useRoute();
 
-const injury = ref({
+const injury = ref<{ name: string, description: string, state: string, date: string, zone: { name: string } }>({
   name: "",
   description: "",
   state: "",
@@ -100,8 +73,14 @@ const injury = ref({
     name: " "
   },
 });
-const id = ref(0);
+const id = ref<number>(0);
 
+const back = ref<string>("back");
+const urlReturn = ref<string>("/list_injuries");
+
+/**
+ * Exécute les actions nécessaires lors de l'entrée dans la vue.
+ */
 onIonViewWillEnter(() => {
   id.value = Number(routerNav.params.id);
   if (routerNav.query.edit) {
@@ -110,11 +89,12 @@ onIonViewWillEnter(() => {
   }
   get("/injuries/" + id.value + "/", { body: {} }, true).then((res) => {
     if (res.status > 300) {
+      triggerError('Erreur lors de la récupération des blessures');
     } else {
       injury.value = res;
-
     }
   });
 });
+
 
 </script>

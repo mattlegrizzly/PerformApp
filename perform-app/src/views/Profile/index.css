@@ -15,6 +15,9 @@
     height: 110px;
     border-radius: 100px;
     border: 4px var(--primary-blue) solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
 }
 
@@ -109,7 +112,7 @@
     background-color: green;
 }
 
-.list-item {
+.injurie_list .list_item {
     margin-inline-start: var(--pd-l) !important;
     margin-inline-end: var(--pd-r) !important;
     border-radius: 10px !important;
@@ -117,6 +120,10 @@
     display: flex;
     align-items: center;
     box-shadow: 0px 4px 8px #d4d4d4;
+}
+
+ion-img::part(image) {
+    object-fit: contain;
 }
 
 .filter-div {

@@ -3,7 +3,7 @@
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
-          <ion-button @click="navigateTo('Exercises', 'slide-left')">Retour</ion-button>
+          <NavButton url="/exercises" text="Retour" />
           <ion-icon @click="setFav" :icon="is_fav ? star : starOutline" size="large"></ion-icon>
         </div>
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px; font-size : 20px">
@@ -41,10 +41,14 @@
             <v-tabs-window-item value="one">
               <ion-list v-if="showExercises" class="list-item" style="
                   height: 45px;
-                  margin-left: 0px !important;
-                  margin-right: 0px !important;
-                " :inset="true" v-for="(step, index) in exercises.steps_exercise" :key="step.id">
-                <ion-item class="step_info">
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    display: flex;
+    flex-wrap: wrap;
+    height: auto;
+    margin-bottom: 20px;
+                " :inset="true">
+                <ion-item class="step_info" v-for="(step, index) in exercises.steps_exercise" :key="step.id">
                   <div class="num_step">
                     {{ index + 1 }}
                   </div>
@@ -91,7 +95,6 @@ import {
   IonItem,
   onIonViewWillEnter,
   onIonViewWillLeave,
-  IonButton
 } from "@ionic/vue";
 import { starOutline, star } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
@@ -99,7 +102,7 @@ import NavButton from "../../components/NavButton/NavButton.vue";
 import { BodyComponent } from "perform-body-component-lib";
 import type { Step, Muscle } from "../../types/allTypes";
 
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { ref } from "vue";
 import { get, post, del } from "../../lib/callApi";
 import { store } from "../../store/store";
@@ -109,8 +112,11 @@ import "@/assets/main.css";
 import "perform-body-component-lib/style.css";
 import "./index.css";
 
+import { useErrorHandler } from '../../lib/useErrorHandler';
+
+const { triggerError } = useErrorHandler() as any;
+
 const router = useRoute();
-const routes = useRouter();
 const api_url = import.meta.env.VITE_API_URL;
 const tab = ref(null);
 const exercises = ref({
@@ -130,11 +136,6 @@ const is_fav = ref(false);
 const fav_id = ref(0);
 
 const showExercises = ref(true);
-
-const navigateTo = (to: any, animation: any) => {
-  console.log('to ', to, ' ', animation)
-  routes.push({ name: to, params: { animation: animation } });
-}
 
 const setFav = () => {
   if (is_fav.value) {
@@ -182,6 +183,7 @@ onIonViewWillEnter(() => {
       true
     ).then((res: any) => {
       if (res.status > 300 || res.length <= 0) {
+        triggerError('Erreur lors de l\'ajout au favoris');
         is_fav.value = false;
       } else {
         fav_id.value = res[0].id;
@@ -191,7 +193,7 @@ onIonViewWillEnter(() => {
   });
   get("/exercises/" + id.value + "/", { body: {} }, false).then((res: any) => {
     if (res.status > 300) {
-      console.log('error')
+      triggerError('Erreur lors de l\'ajout au favoris');
     } else {
       exercises.value = res;
       console.log(exercises.value.zone_exercises);

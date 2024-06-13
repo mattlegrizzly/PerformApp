@@ -120,11 +120,15 @@ ion-popover .popover-viewport {
     width: 100%;
 }
 
+.list-item::part(native) {
+    padding-left: 5px !important;
+}
+
 .exercice-img {
     background-color: var(--primary-blue50);
     width: 45px;
     height: 45px;
-    border-radius: 30px;
+    border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -134,7 +138,7 @@ ion-popover .popover-viewport {
 .exercice-thumbnail {
     width: 45px;
     height: 45px;
-    border-radius: 30px;
+    border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -142,6 +146,10 @@ ion-popover .popover-viewport {
     overflow: hidden;
 }
 
+.list-md.list-inset {
+    margin: 0px;
+    margin-top: 15px;
+}
 
 .exercice-thumbnail img {
     object-fit: cover;

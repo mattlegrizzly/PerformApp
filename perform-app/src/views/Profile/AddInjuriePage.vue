@@ -63,7 +63,8 @@
             justify-content: center;
             align-items: center;
           ">
-          <BodyComponent :muscleSelected="[{ zone: zone }]" :height="'200'" :width="'100'" :viewOnly="'show'" />
+          <BodyComponent :muscleSelected="muscleSelected" :height="'300'" :width="'200'" :viewOnly="'edit'" />
+
         </div>
       </div>
     </ion-content>
@@ -89,22 +90,26 @@ import { chevronDownOutline } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { ref } from "vue";
 import { get, post } from "../../lib/callApi";
-import type { Muscles } from "../../types/allTypes";
+import type { Muscles, Muscle, SportArray } from "../../types/allTypes";
 import "./index.css";
 //@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
 import { store } from "../../store/store";
 import router from "../../router";
 
+import { useErrorHandler } from '../../lib/useErrorHandler';
+
+const { triggerError } = useErrorHandler() as any;
+
 const nameInjury = ref("");
 const description = ref("");
-const zone = ref("");
+const zone = ref<string>("");
 const date = ref("");
 const state = ref("");
+const muscleSelected = ref([] as Muscle[]);
 
 const handleInput = (name: string, valuePass: string | undefined | null) => {
   let value = valuePass as string;
-  console.log(value)
   switch (name) {
     case "name":
       nameInjury.value = value;
@@ -113,7 +118,16 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
       description.value = value;
       break;
     case "zone":
-      zone.value = value;
+      zone.value = ""
+      zone.value = value as string;
+      muscleSelected.value =
+        [{
+          zone: {
+            code: zone.value,
+            name: ''
+          }
+        }]
+
       break;
     case "date":
       date.value = value;
@@ -124,19 +138,16 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
     case undefined:
       state.value = "";
   }
-  console.log('zone ', zone.value)
 };
 
 const user = ref({} as any);
 
 const setIonSize = () => {
   const popover = document.querySelectorAll("ion-popover");
-  console.log('popover ', popover)
   if (popover === null) return;
   for (const elem of popover) {
     const shadowRoot = elem.shadowRoot;
     if (shadowRoot === null) return;
-    console.log('shadow root selectpopover ', shadowRoot)
     const style = document.createElement("style");
     style.textContent = `
       .popover-content {
@@ -174,6 +185,7 @@ const addInjurie = () => {
     true
   ).then((res) => {
     if (res.status > 300) {
+      triggerError('Erreur lors de la création de la blessure');
     } else {
       router.push("/list_injuries");
     }
@@ -217,8 +229,11 @@ onIonViewWillEnter(async () => {
     shadowRoot.appendChild(style);
   }
   get("/workzones/all", { body: {} }, false).then((res) => {
-    console.log(res);
-    muscles.value = res;
+    if (res.status > 301) {
+      triggerError('Erreur lors de la récupération des muscles');
+    } else {
+      muscles.value = res;
+    }
   });
 });
 </script>

@@ -93,6 +93,9 @@ import { BodyComponent } from "perform-body-component-lib";
 import { store } from "../../store/store";
 import router from "../../router";
 import { useRoute } from "vue-router";
+import { useErrorHandler } from '../../lib/useErrorHandler';
+
+const { triggerError } = useErrorHandler() as any;
 
 const navRoute = useRoute();
 
@@ -109,6 +112,11 @@ const injury = ref({
   state: "",
 }) as any;
 
+/**
+ * Gère les entrées de l'utilisateur et met à jour les propriétés de l'objet `injury` correspondant.
+ * @param {string} name - Le nom de la propriété à mettre à jour.
+ * @param {string | undefined | null} valuePass - La valeur à affecter à la propriété.
+ */
 const handleInput = (name: string, valuePass: string | undefined | null) => {
   const value = valuePass as string
   switch (name) {
@@ -133,14 +141,16 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
 const user = ref({} as any);
 const id = ref(0);
 
+
+/**
+ * Définit la taille des popovers `ion-popover`.
+ */
 const setIonSize = () => {
   const popover = document.querySelectorAll("ion-popover");
-  console.log('popover ', popover)
   if (popover === null) return;
   for (const elem of popover) {
     const shadowRoot = elem.shadowRoot;
     if (shadowRoot === null) return;
-    console.log('shadow root selectpopover ', shadowRoot)
     const style = document.createElement("style");
     style.textContent = `
       .popover-content {
@@ -161,7 +171,9 @@ const setIonSize = () => {
     elem.appendChild(stylePopover);
   }
 }
-
+/**
+ * Ajoute une blessure en utilisant l'API `patch` et redirige vers la page de vue des blessures.
+ */
 const addInjurie = () => {
   patch(
     "/injuries/" + id.value + "/",
@@ -177,15 +189,18 @@ const addInjurie = () => {
     },
     true
   ).then((res) => {
-    console.log(res);
     if (res.status > 300) {
-      console.log('error')
+      triggerError('Erreur lors de la modification de la blessure');
+
     } else {
       router.push("/view_injuries/" + id.value + "/?edit=true");
     }
   });
 };
 
+/**
+ * Actions à exécuter lors de l'entrée dans la vue.
+ */
 const injuries_state = ref([
   {
     code: "TR",
@@ -212,7 +227,7 @@ onIonViewWillEnter(async () => {
       user.value = JSON.parse(storeUser).user;
       get("/injuries/" + id.value + "/", { body: {} }, true).then((res) => {
         if (res.status > 300) {
-          console.log('error')
+          triggerError('Erreur lors de la récupération des blessures');
         } else {
           injury.value = res;
         }
@@ -224,7 +239,6 @@ onIonViewWillEnter(async () => {
   for (const elem of ionSelect) {
     const shadowRoot = elem.shadowRoot;
     if (shadowRoot === null) return;
-    console.log('shadow root ', shadowRoot)
     const style = document.createElement("style");
     style.textContent = `
         .select-wrapper-inner {
@@ -237,8 +251,11 @@ onIonViewWillEnter(async () => {
   }
 
   get("/workzones", { body: {} }, false).then((res) => {
-    console.log(res);
-    muscles.value = res.results;
+    if (res.status > 301) {
+      triggerError('Erreur lors de la récupération des muscles')
+    } else {
+      muscles.value = res.results;
+    }
   });
 });
 </script>
