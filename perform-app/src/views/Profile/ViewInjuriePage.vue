@@ -52,7 +52,7 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 import router from "../../router";
 //@ts-expect-error
-import { BodyComponent } from "perform-body-component-lib";
+import { BodyComponent } from 'perform-body-component-lib'
 import "@/assets/base.css";
 import "@/assets/main.css";
 import "./index.css";
@@ -64,15 +64,18 @@ const { triggerError } = useErrorHandler() as any;
 
 const routerNav = useRoute();
 
-const injury = ref<{ name: string, description: string, state: string, date: string, zone: { name: string } }>({
+const injury = ref({
   name: "",
   description: "",
   state: "",
   date: "",
-  zone: {
-    name: " "
-  },
-});
+  zone: [{
+    zone: {
+      name: "",
+      code: ""
+    }
+  }],
+}) as any;
 const id = ref<number>(0);
 
 const back = ref<string>("back");
@@ -83,6 +86,20 @@ const urlReturn = ref<string>("/list_injuries");
  */
 onIonViewWillEnter(() => {
   id.value = Number(routerNav.params.id);
+  injury.value = {
+    id: "",
+    name: "",
+    description: "",
+    zone: [{
+      zone: {
+        name: "",
+        code: ""
+      }
+    }],
+    date: "",
+    user: '',
+    state: "",
+  };
   if (routerNav.query.edit) {
     back.value = "";
     urlReturn.value += "?edit=true";

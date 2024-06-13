@@ -154,7 +154,7 @@ const setFav = () => {
       true
     ).then((res: any) => {
       if (res.status > 300) {
-        console.log('error')
+        triggerError('Erreur lors de l\'ajout au favoris');
       } else {
         is_fav.value = true;
         fav_id.value = res.id;
@@ -183,7 +183,7 @@ onIonViewWillEnter(() => {
       true
     ).then((res: any) => {
       if (res.status > 300 || res.length <= 0) {
-        triggerError('Erreur lors de l\'ajout au favoris');
+        triggerError('Erreur lors de la récupération des favoris');
         is_fav.value = false;
       } else {
         fav_id.value = res[0].id;
@@ -196,7 +196,6 @@ onIonViewWillEnter(() => {
       triggerError('Erreur lors de l\'ajout au favoris');
     } else {
       exercises.value = res;
-      console.log(exercises.value.zone_exercises);
       setTimeout(() => {
         loadVideo.value = false
       }, 300)

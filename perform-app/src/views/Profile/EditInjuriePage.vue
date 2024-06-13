@@ -28,7 +28,7 @@
           <ion-list class="filter-item">
             <ion-item>
               <ion-select interface="popover" placeholder="Zone de la blessure" class="custom-ion-select"
-                :toggle-icon="chevronDownOutline" justify="space-between" :value="injury.zone.code"
+                :toggle-icon="chevronDownOutline" justify="space-between" :value="injury.zone[0].zone.code"
                 @click="setIonSize()" @ion-change="handleInput('zone', $event.detail.value)">
                 <ion-select-option v-for="elem in muscles" :key="elem.code" :value="elem.code">{{ elem.name
                   }}</ion-select-option>
@@ -61,7 +61,8 @@
             justify-content: center;
             align-items: center;
           ">
-          <BodyComponent :height="'200'" :width="'100'" :viewOnly="'show'" />
+          <BodyComponent :setMuscleSelected="setMuscle" :muscleSelected="injury.zone" :height="'200'" :width="'100'"
+            :viewOnly="'edit'" />
         </div>
       </div>
     </ion-content>
@@ -89,7 +90,7 @@ import { ref } from "vue";
 import { get, patch } from "../../lib/callApi";
 import "./index.css";
 //@ts-expect-error
-import { BodyComponent } from "perform-body-component-lib";
+import { BodyComponent } from 'perform-body-component-lib'
 import { store } from "../../store/store";
 import router from "../../router";
 import { useRoute } from "vue-router";
@@ -103,10 +104,12 @@ const injury = ref({
   id: "",
   name: "",
   description: "",
-  zone: {
-    name: "",
-    code: ""
-  },
+  zone: [{
+    zone: {
+      name: "",
+      code: ""
+    }
+  }],
   date: "",
   user: '',
   state: "",
@@ -127,7 +130,12 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
       injury.value.description = value;
       break;
     case "zone":
-      injury.value.zone.code = value;
+      injury.value.zone = [{
+        zone: {
+          code: value,
+          name: ''
+        }
+      }];
       break;
     case "date":
       injury.value.date = value;
@@ -181,7 +189,7 @@ const addInjurie = () => {
       body: {
         name: injury.value.name,
         description: injury.value.description,
-        zone: injury.value.zone.code,
+        zone: injury.value.zone[0].zone.code,
         date: injury.value.date,
         state: injury.value.state,
         user: user.value.id,
@@ -218,9 +226,33 @@ const injuries_state = ref([
 
 const muscles = ref([] as any);
 
+const setMuscle = (code: string, action: string) => {
+  injury.value.zone = [{
+    zone: {
+      code: code,
+      name: ''
+    }
+  }];
+
+  console.log(injury.value.zone[0].zone.code)
+}
 
 onIonViewWillEnter(async () => {
   id.value = Number(navRoute.params.id);
+  injury.value = {
+    id: "",
+    name: "",
+    description: "",
+    zone: [{
+      zone: {
+        name: "",
+        code: ""
+      }
+    }],
+    date: "",
+    user: '',
+    state: "",
+  };
   store.get("user").then((res) => {
     const storeUser = res;
     if (storeUser !== "") {
@@ -230,6 +262,13 @@ onIonViewWillEnter(async () => {
           triggerError('Erreur lors de la récupération des blessures');
         } else {
           injury.value = res;
+          injury.value.zone = [{
+            zone: {
+              code: res.zone.code,
+              name: ''
+            }
+          }]
+          console.log(injury.value.zone[0].zone.code)
         }
       });
     }
@@ -250,11 +289,11 @@ onIonViewWillEnter(async () => {
     shadowRoot.appendChild(style);
   }
 
-  get("/workzones", { body: {} }, false).then((res) => {
+  get("/workzones/all", { body: {} }, false).then((res) => {
     if (res.status > 301) {
       triggerError('Erreur lors de la récupération des muscles')
     } else {
-      muscles.value = res.results;
+      muscles.value = res;
     }
   });
 });

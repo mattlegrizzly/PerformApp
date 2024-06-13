@@ -31,7 +31,7 @@
             <ion-item>
               <ion-select interface="popover" placeholder="Zone de la blessure" class="custom-ion-select"
                 :toggle-icon="chevronDownOutline" justify="space-between" @click="setIonSize()"
-                @ion-change="handleInput('zone', $event.detail.value)">
+                @ion-change="handleInput('zone', $event.detail.value)" :value="muscleSelected[0].zone.code">
                 <ion-select-option v-for="elem in muscles" :key="elem.code" :value="elem.code">{{
                   elem.name }}</ion-select-option>
               </ion-select>
@@ -63,7 +63,8 @@
             justify-content: center;
             align-items: center;
           ">
-          <BodyComponent :muscleSelected="muscleSelected" :height="'300'" :width="'200'" :viewOnly="'edit'" />
+          <BodyComponent :setMuscleSelected="setMuscle" :muscleSelected="muscleSelected" :height="'300'" :width="'200'"
+            :viewOnly="'edit'" />
 
         </div>
       </div>
@@ -93,7 +94,7 @@ import { get, post } from "../../lib/callApi";
 import type { Muscles, Muscle } from "../../types/allTypes";
 import "./index.css";
 //@ts-expect-error
-import { BodyComponent } from "perform-body-component-lib";
+import { BodyComponent } from 'perform-body-component-lib'
 import { store } from "../../store/store";
 import router from "../../router";
 
@@ -103,10 +104,14 @@ const { triggerError } = useErrorHandler() as any;
 
 const nameInjury = ref("");
 const description = ref("");
-const zone = ref<string>("");
 const date = ref("");
 const state = ref("");
-const muscleSelected = ref([] as Muscle[]);
+const muscleSelected = ref([{
+  zone: {
+    name: "",
+    code: ""
+  }
+}]);
 const muscles = ref([] as Muscles[]);
 const user = ref({} as any);
 
@@ -142,12 +147,10 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
       description.value = value;
       break;
     case "zone":
-      zone.value = ""
-      zone.value = value as string;
       muscleSelected.value =
         [{
           zone: {
-            code: zone.value,
+            code: value,
             name: ''
           }
         }]
@@ -163,6 +166,15 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
       state.value = "";
   }
 };
+
+const setMuscle = (code: string, action: string) => {
+  muscleSelected.value = [{
+    zone: {
+      code: code,
+      name: ''
+    }
+  }];
+}
 
 /**
  * Ajuste la taille et le style des éléments ion-popover.
@@ -204,7 +216,7 @@ const addInjurie = () => {
       body: {
         name: nameInjury.value,
         description: description.value,
-        zone: zone.value,
+        zone: muscleSelected.value[0].zone.code,
         date: date.value,
         state: state.value,
         user: user.value.id,

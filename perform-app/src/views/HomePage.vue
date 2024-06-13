@@ -430,7 +430,6 @@ onIonViewWillEnter(async () => {
     triggerError('Erreur lors de la récupération du wellness')
   } else {
     res.forEach((welnessItem: any) => {
-      console.log(welnessItem)
       if (welnessItem.date === setLongDate(new Date())) {
         if (welnessItem.sleep !== null) {
           wellnessNot.value = false;

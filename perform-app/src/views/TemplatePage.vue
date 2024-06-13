@@ -28,15 +28,4 @@ const router = useRouter()
 
 const goBack = () => router.push('/exercises')
 
-onMounted(() => {
-  console.log('mounter')
-})
-
-onUpdated(() => {
-  console.log('updated')
-})
-
-onBeforeUnmount(() => {
-  console.log('before unmount')
-})
 </script>

@@ -211,7 +211,6 @@ height: 85%;
             <ion-list lines="none" class="parent-list" :inset="true">
               <ion-item class="list-item" v-for="exercise in exercises_fav" :key="exercise.id"
                 @click="goPage(exercise.id)">
-                {{ console.log(exercise) }}
                 <div v-if="exercise.thumbnail == null" class="exercice-img">
                   <ion-label>{{ exercise.name[0] }}</ion-label>
                 </div>
@@ -259,8 +258,9 @@ import "./index.css";
 import { useRoute, useRouter } from "vue-router";
 import { store } from "../../store/store";
 import { Muscle, Sport, Material, MaterialArray, SportArray } from "../../types/allTypes";
+
 //@ts-expect-error
-import { BodyComponent } from "perform-body-component-lib";
+import { BodyComponent } from 'perform-body-component-lib'
 import IERequestOptions from "../../types/request";
 import { useErrorHandler } from '../../lib/useErrorHandler';
 
@@ -327,9 +327,7 @@ const generateItems = async (type: string) => {
   if (type === "refresh") {
     exercises.value = [];
     page.value = 1;
-    console.log('refresh')
     getExercises('').then((res) => {
-      console.log('res ', res)
       exercises.value = res
     });
   } else {
@@ -346,9 +344,7 @@ const generateItemsFav = async (type: string) => {
   if (type === "refresh") {
     exercises_fav.value = [];
     pageFav.value = 1;
-    console.log('refresh')
     getExercises('favorite').then((res) => {
-      console.log('set fav exo ', res)
       exercises_fav.value = res
     });
   } else {
@@ -364,8 +360,6 @@ const generateItemsFav = async (type: string) => {
 
 
 const ionInfiniteFavorite = (ev: InfiniteScrollCustomEvent) => {
-  console.log(pageFav.value)
-  console.log(pageMaxFav.value)
   if (pageFav.value < pageMaxFav.value) {
     generateItemsFav('');
   }
@@ -381,7 +375,6 @@ const ionInfinite = (ev: InfiniteScrollCustomEvent) => {
 
 
 const compareWith = (o1: any, o2: any) => {
-  console.log(o1, ' ', o2)
   return o1 && o2 ? o1.sport.id === o2.sport.id : o1 === o2;
 };
 
@@ -485,7 +478,6 @@ const filterExercice = () => {
   }
   if (sports_selected.value.length > 0) {
     option.sport_id = jointByComa(sports_selected.value, "sport");
-    console.log('option sport ', option.sport_id)
   } else {
     option.sport_id = "";
   }

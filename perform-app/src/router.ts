@@ -107,7 +107,6 @@ const isLoggedIn = async () => {
     await store.set("user", JSON.stringify(userResponse));
     return true;
   } catch (error) {
-    console.log(error);
     return false;
   }
 };
@@ -129,7 +128,6 @@ router.beforeEach(async (to, from, next) => {
   } else if (to.name == "login" && (await isloggedin)) {
     router.push("/");
   } else {
-    console.log(to.params)
     if (to.params.animation) {
       to.meta.animation = to.params.animation;
     } else {
