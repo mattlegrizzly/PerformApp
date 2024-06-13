@@ -69,6 +69,9 @@ const pwd = ref("");
 const email = ref("");
 const loading = ref(false);
 
+/**
+ * Fonction de connexion
+ */
 const connect = () => {
   loading.value = true;
   const options = {
@@ -94,10 +97,18 @@ const connect = () => {
   });
 };
 
+/**
+ * Fonction de modification de la value du mail
+ * @param event 
+ */
 const handleEmailInput = (event: any) => {
   email.value = event.target.value;
 };
 
+/**
+ * Fonction de modification de la value du mot de passe
+ * @param event 
+ */
 const handlePwdInput = (event: any) => {
   pwd.value = event.target.value;
 };

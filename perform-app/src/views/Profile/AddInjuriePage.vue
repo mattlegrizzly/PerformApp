@@ -90,7 +90,7 @@ import { chevronDownOutline } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { ref } from "vue";
 import { get, post } from "../../lib/callApi";
-import type { Muscles, Muscle, SportArray } from "../../types/allTypes";
+import type { Muscles, Muscle } from "../../types/allTypes";
 import "./index.css";
 //@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
@@ -107,7 +107,31 @@ const zone = ref<string>("");
 const date = ref("");
 const state = ref("");
 const muscleSelected = ref([] as Muscle[]);
+const muscles = ref([] as Muscles[]);
+const user = ref({} as any);
 
+
+const injuries_state = ref([
+  {
+    code: "TR",
+    name: "Soignée",
+  },
+  {
+    code: "NT",
+    name: "Pas soignée",
+  },
+  {
+    code: "IP",
+    name: "En cours",
+  },
+]);
+
+
+/**
+ * Handle input changes and update relevant reactive variables.
+ * @param {string} name - The name of the input.
+ * @param {string | undefined | null} valuePass - The value passed from the input.
+ */
 const handleInput = (name: string, valuePass: string | undefined | null) => {
   let value = valuePass as string;
   switch (name) {
@@ -140,8 +164,9 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
   }
 };
 
-const user = ref({} as any);
-
+/**
+ * Ajuste la taille et le style des éléments ion-popover.
+ */
 const setIonSize = () => {
   const popover = document.querySelectorAll("ion-popover");
   if (popover === null) return;
@@ -169,6 +194,9 @@ const setIonSize = () => {
   }
 }
 
+/**
+ * Ajoute une nouvelle blessure en envoyant une requête POST au serveur.
+ */
 const addInjurie = () => {
   post(
     "/injuries/",
@@ -192,23 +220,9 @@ const addInjurie = () => {
   });
 };
 
-const injuries_state = ref([
-  {
-    code: "TR",
-    name: "Soignée",
-  },
-  {
-    code: "NT",
-    name: "Pas soignée",
-  },
-  {
-    code: "IP",
-    name: "En cours",
-  },
-]);
-
-const muscles = ref([] as Muscles[]);
-
+/**
+ * Hook pour exécuter du code lorsque l'IonView est sur le point d'entrer et de devenir actif.
+ */
 onIonViewWillEnter(async () => {
   let storeUser = await store.get("user");
   if (storeUser !== "") {

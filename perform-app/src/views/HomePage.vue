@@ -303,7 +303,7 @@ const setNextWeek = async () => {
  * Fonction pour récupérer et afficher le wellness de la semaine de la date actuelle
  */
 const updateWeekWelness = async () => {
-  const res = await get(`/wellness/user/${user.value.user.id}/week?date=${setLongDate(tempDate.value)}`, { body: {} }, true);
+  const res = await get(`/wellness/user/${user.value.id}/week?date=${setLongDate(tempDate.value)}`, { body: {} }, true);
   if (res.status > 301) {
     triggerError('Erreur lors du changement de données')
   } else {
