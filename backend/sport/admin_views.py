@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 from rest_framework import filters, mixins, status, viewsets, pagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from utils.utils import get_ordered_queryset
 
 #------------------SPORT------------------
 # Admin ViewSet
@@ -22,23 +23,7 @@ class AdminSportViewSet(viewsets.ModelViewSet):
     def get(self, request):
         # Récupérez toutes les entités de votre modèle sans limite
         items = Sport.objects.all()        
-        if request.query_params.get("orderBy"):
-            # Appliquer l'ordre initial par id si nécessaire
-            order = request.query_params.get("orderBy")
-            if order == "orderByNameAsc":
-                items = self.queryset.order_by("name")
-            elif order == "orderByNameDesc":
-                items = self.queryset.order_by("-name")
-            elif order == "orderByIdAsc" or order == "default":
-                items = self.queryset.order_by("id")
-            elif order == "orderByIdDesc":
-                items = self.queryset.order_by("-id")
-            elif order == "orderByDateAsc":
-                items = self.queryset.order_by("created_at")
-            elif order == "orderByDateDesc":
-                items = self.queryset.order_by("-created_at")
-        else:
-            items = self.queryset.order_by("id")
+        get_ordered_queryset(self.queryset, self.request.query_params)
         # Sérialisez les données
         serializer = SportSerializer(items, many=True)
         # Retournez la réponse

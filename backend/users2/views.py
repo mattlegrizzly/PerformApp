@@ -127,7 +127,6 @@ class LoginViewset(mixins.CreateModelMixin, GenericViewSet):
 
             serialized_user = UserSerializer(user)
             auth_data = get_tokens_for_user(request.user)
-            is_admin = UserDetailedSerializer(user)
             return Response(
                 {"user": serialized_user.data, **auth_data},
                 status=status.HTTP_202_ACCEPTED,
@@ -677,8 +676,8 @@ class InjurieViewSet(viewsets.ModelViewSet):
             queryset = self.queryset.order_by("id")
             # Filtrer le queryset
                 # Sinon, sérialiser le queryset complet
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     @extend_schema(
         tags=['Users - Injuries'],
@@ -743,15 +742,6 @@ class InjurieViewSet(viewsets.ModelViewSet):
     )
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
-
-"""     def perform_create(self, serializer):
-        user_id = serializer.validated_data.get('user').id
-        exercise_id = serializer.validated_data.get('exercise').id
-
-        if self.queryset.filter(user_id=user_id, exercise_id=exercise_id).exists():
-            raise ValidationError("An entry with this user and exercise already exists.")
-
-        serializer.save() """
 
 #------------------USERS WELLNESS------------------
 # Users Wellness ViewSet
