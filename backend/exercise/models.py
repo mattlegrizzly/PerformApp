@@ -91,11 +91,9 @@ class Exercise(models.Model):
         super(Exercise, self).save(*args, **kwargs)
         
         # Générer la vignette après avoir sauvegardé la vidéo
-        if self.video:
+        if self.video and not self.thumbnail:
             generate_thumbnail(self)
-        
-        # Sauvegarder l'instance de nouveau pour inclure la vignette
-        super(Exercise, self).save(*args, **kwargs)
+            super(Exercise, self).save(update_fields=['thumbnail'])
 
     @property
     def material_ids(self) -> List[int]:
