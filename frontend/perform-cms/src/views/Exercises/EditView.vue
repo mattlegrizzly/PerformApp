@@ -53,10 +53,17 @@ const dataToRetrieve = [
   }
 ]
 
-const onChangeInput = (file: File) => {
-  exercise.value.video = file
-  video_src.value = URL.createObjectURL(file)
-  videoController.value.load()
+const onChangeInput = (file: Array<File>) => {
+  if (file[0]) {
+    exercise.value.video = file[0]
+    if (file[0] && file[0].type.startsWith('video/')) {
+      const videoURL = URL.createObjectURL(file[0]) // Créer un URL pour le fichier vidéo
+      video_src.value = videoURL
+      videoController.value.load()
+    } else {
+      console.error('Veuillez sélectionner un fichier vidéo valide.')
+    }
+  }
 }
 
 const sendData = async () => {
