@@ -65,13 +65,13 @@ class WorkZone(models.Model):
         return self.zone(self.zone)
 
 class Material(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     pictures = models.ImageField(upload_to=upload_to, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
 class Exercise(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     video = models.FileField(upload_to=upload_to_video, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
