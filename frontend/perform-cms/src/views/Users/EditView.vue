@@ -144,6 +144,7 @@ onMounted(() => {
 .inputFormDiv {
   width: 100% !important;
 }
+
 .return_btn {
   background-color: white !important;
   color: var(--primary-blue) !important;
@@ -165,7 +166,7 @@ onMounted(() => {
     border="start"
     close-label="Close Alert"
     color="error"
-    title="Erreur de connexion"
+    title="Erreur à l'édition de l'utilisateur"
     closable
     @click:close="closePopup"
   >

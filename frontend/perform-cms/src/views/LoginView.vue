@@ -18,6 +18,14 @@ const error_title = ref('')
 
 const userStore = useUserStore()
 
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alertErr.value = false
+  } else {
+
+  }
+}
+
 const sendData = () => {
   const requestOptions = {
     body: { email: email.value, password: password.value }
@@ -25,7 +33,11 @@ const sendData = () => {
   post('/login/', requestOptions)
     .then((response) => {
       if (response.status > 300) {
-        error_message.value = response.data
+        error_message.value = ""
+        const keys = Object.keys(response.data)
+        for (let i = 0; i < keys.length; i++) {
+          error_message.value += keys[i] + ' : ' + response.data[keys[i]] + '\n\n'
+        }
         alertErr.value = true
         error_title.value = 'Erreur de login'
       } else {
@@ -137,6 +149,7 @@ input {
     :type="'error'"
     :title="error_title"
     :alertValue="alertErr"
+    :setAlertValue="setAlertValue"
   />
   <div class="loginContent">
     <div class="logoContent">

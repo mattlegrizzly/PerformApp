@@ -6,6 +6,7 @@
       :type="'error'"
       :title="error_title"
       :alertValue="alertErr"
+      :setAlertValue="setAlertValue"
     />
     <div class="headerBtns">
       <NavButton
@@ -47,11 +48,19 @@ const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alertErr.value = false
+  } else {
+
+  }
+}
+
 const getSport = async () => {
   const id = router.params.sport_id
   const res = await get('/admin/sports/' + id + '/')
   if (res.status === 404) {
-    error_title.value = 'Error while retrieve Material id ' + id
+    error_title.value = 'Erreur à la récupération du Material avec pour id ' + id
     error_message.value = res.data.detail
     alertErr.value = true
   } else {

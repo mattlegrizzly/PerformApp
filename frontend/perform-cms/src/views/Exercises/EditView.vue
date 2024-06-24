@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import NavMenu from '../../components/NavMenu/NavMenu.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUpdated } from 'vue'
 import { useRoute } from 'vue-router'
 import '@/assets/base.css'
 import { get, post, put, patch, del } from '@/lib/callApi'
@@ -39,6 +39,14 @@ const video_src = ref('')
 const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
+
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alertErr.value = false
+  } else {
+
+  }
+}
 
 const dataToRetrieve = [
   {
@@ -86,12 +94,13 @@ const sendData = async () => {
   }
   patch('/admin/exercises/' + id + '/', option, true, isFormData).then((res) => {
     if (res.status > 300) {
+      console.log('res')
       const keys = Object.keys(res.data)
       for (let i = 0; i < keys.length; i++) {
         error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
       }
       alertErr.value = true
-      error_title.value = 'Modification Error'
+      error_title.value = 'Erreur à la modification'
       editing.value = false;
     } else {
       //router.push('/exercises/show/' + id + '/')
@@ -132,7 +141,6 @@ const sendData = async () => {
           res = patch('/admin/steps/' + elem.id + '/', options, true)
         }
       })
-      editing.value = false;
       router.push('/exercises/show/' + id + '/?edit=true')
     }
   })
@@ -231,6 +239,10 @@ const removeStep = async (id: number) => {
 onMounted(() => {
   getExercise()
 })
+
+onUpdated(() => {
+  editing.value = false;
+})
 </script>
 <style></style>
 
@@ -242,6 +254,7 @@ onMounted(() => {
       :type="'error'"
       :title="error_title"
       :alertValue="alertErr"
+      :setAlertValue="setAlertValue"
     />
     <div class="headerBtns">
       <NavButton
@@ -343,7 +356,7 @@ onMounted(() => {
       </div>
       <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une étape </v-btn>
       <div class="buttonWrapper">
-        <button @click="sendData(false)" :disabled="editing">{{editing ? 'Enregistrement..':'Modifier'}}</button>
+        <v-btn @click="sendData(false)" :disabled="editing">{{editing ? 'Enregistrement..':'Modifier'}}</v-btn>
       </div>
     </form>
   </div>

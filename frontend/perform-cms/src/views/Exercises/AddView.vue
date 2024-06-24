@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import NavMenu from '../../components/NavMenu/NavMenu.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUpdated } from 'vue'
 import '@/assets/base.css'
 import { get, post } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
@@ -20,6 +20,8 @@ const exercise: any = ref({
   name: ''
 })
 const steps_exercise: any = ref([])
+
+const adding = ref(false)
 
 const materials_selected = ref([])
 const sport_selected = ref([])
@@ -45,6 +47,14 @@ const dataToRetrieve = [
   }
 ]
 
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alertErr.value = false
+  } else {
+
+  }
+}
+
 const onChangeInput = (file: Array<File>) => {
   if (file[0]) {
     exercise.value.video = file[0]
@@ -59,6 +69,7 @@ const onChangeInput = (file: Array<File>) => {
 }
 
 const sendData = async () => {
+  adding.value = true
   const option = {
     body: {
       name: exercise.value.name,
@@ -70,13 +81,16 @@ const sendData = async () => {
     option.body.video = exercise.value.video
   }
   post('/admin/exercises/', option, true, true).then((res) => {
+    console.log('res ', res)
     if (res.status > 300) {
+      error_message.value = ""
       const keys = Object.keys(res.data)
       for (let i = 0; i < keys.length; i++) {
         error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
       }
       alertErr.value = true
-      error_title.value = 'Modification Error'
+      error_title.value = 'Erreur à l\'ajout'
+      adding.value = false;
     } else {
       const id = res.id
       router.push('/exercises/show/' + id + '/')
@@ -178,6 +192,10 @@ const setMuscle = (key: string, action: string) => {
 onMounted(() => {
   getExercise()
 })
+
+onUpdated(() => {
+  adding.value = false;
+})
 </script>
 <template lang="">
   <NavMenu />
@@ -187,6 +205,7 @@ onMounted(() => {
       :type="'error'"
       :title="error_title"
       :alertValue="alertErr"
+      :setAlertValue="setAlertValue"
     />
     <NavButton
       class="returnBack"
@@ -281,7 +300,7 @@ onMounted(() => {
       </div>
       <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une instruction</v-btn>
       <div class="buttonWrapper">
-        <button @click="sendData(false)">Ajouter</button>
+        <v-btn @click="sendData(false)" :disabled="adding">{{adding ? 'Ajout en cours...': 'Ajouter'}}</v-btn>
       </div>
     </form>
   </div>

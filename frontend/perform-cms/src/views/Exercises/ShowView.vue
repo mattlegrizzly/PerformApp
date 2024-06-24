@@ -10,7 +10,7 @@ import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
 import './exercises.css'
 import type { Muscle } from '@/types/types'
 
-const muscle_selected : any = ref([])
+const muscle_selected: any = ref([])
 
 const api_url = import.meta.env.VITE_API_URL
 
@@ -25,19 +25,26 @@ const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alertErr.value = false
+  } else {
+
+  }
+}
 
 const getExercises = async () => {
   const id = router.params.exercise_id
   const res = await get('/admin/exercises/' + id + '/')
   if (res.status === 404) {
-    error_title.value = 'Error while retrieve Exercise id ' + id
+    error_title.value = 'Erreur à la récupération de l\'exerecice pour id ' + id
     error_message.value = res.data.detail
     alertErr.value = true
   } else {
     exercise.value = await res
     const muscle_res = await res.zone_exercises
-    const temp_muscle : Array<String>= [];
-    muscle_res.map((muscle : Muscle) => {
+    const temp_muscle: Array<String> = [];
+    muscle_res.map((muscle: Muscle) => {
       temp_muscle.push(muscle.zone.code);
     })
     muscle_selected.value = temp_muscle
@@ -63,6 +70,7 @@ onMounted(() => {
       :type="'error'"
       :title="error_title"
       :alertValue="alertErr"
+      :setAlertValue="setAlertValue"
     />
     <div class="headerBtns">
       <NavButton

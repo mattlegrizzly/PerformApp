@@ -213,12 +213,15 @@ const post = async (
     body: body
   })
 
+
   const response = await fetch(request)
-  if ((await response.status) > 301) {
+  console.log(response)
+  if (await response.status > 301) {
     const error = await response.json()
+    console.log(error)
     return {
       status: response.status,
-      data: error.detail
+      data: error
     }
   } else {
     return handleResponse(response)

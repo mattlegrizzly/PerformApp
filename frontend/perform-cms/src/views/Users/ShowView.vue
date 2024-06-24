@@ -28,11 +28,19 @@ const id = ref(0)
 const alertSuc = ref(false)
 const success_message = ref('error')
 
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alertErr.value = false
+  } else {
+    alertSuc.value = false;
+  }
+}
+
 const getUser = async () => {
   id.value = Number(router.params.user_id)
   const res = await get('/admin/users_all/' + id.value + '/')
   if (res.status === 404) {
-    error_title.value = 'Error while retrieve Material id ' + id.value
+    error_title.value = 'Erreur à la récupération de l\'utilisateur avec pour id ' + id.value
     error_message.value = res.data.detail
     alertErr.value = true
   } else {
@@ -63,6 +71,7 @@ onMounted(() => {
       :type="'error'"
       :title="error_title"
       :alertValue="alertErr"
+      :setAlertValue="setAlertValue"
     />
     <v-alert
       :model-value="alertSuc"
@@ -100,7 +109,7 @@ onMounted(() => {
             ></v-btn>
           </template>
 
-          <template v-slot:default="{ isActive }">
+<template v-slot:default="{ isActive }">
             <v-card title="Modifier le mot de passe utilisateur">
               <v-card-text> </v-card-text>
               <div style="margin-left: 20px; margin-right: 20px">
@@ -148,42 +157,42 @@ onMounted(() => {
               </v-card-actions>
             </v-card>
           </template>
-        </v-dialog>
-      </div>
-    </div>
-    <h1>Carte de l'utilisateur : {{ user === undefined ? '' : user.email }}</h1>
-    <h3 class="showTitle">Nom et prénom</h3>
-    <p>
-      {{ user.last_name + ' ' + user.first_name }}
-    </p>
-    <h3 class="showTitle">Email</h3>
-    <p>
-      {{ user.email }}
-    </p>
-    <h3 class="showTitle">Age</h3>
-    <p>
-      {{ user.age }}
-    </p>
-    <h3 class="showTitle">Taille</h3>
-    <p>
-      {{ user.size }}
-    </p>
-    <h3 class="showTitle">Poids</h3>
-    <p>
-      {{ user.weight }}
-    </p>
-    <h3 class="showTitle">Genre</h3>
-    <p>
-      {{ userGender }}
-    </p>
-    <h2 class="showTitle">Photo de profil</h2>
-    <v-chip-group v-for="(element, index) in user.sports_user" :key="index">
-      <v-chip>{{ element.sport.name }}</v-chip>
-    </v-chip-group>
-    <div class="imageDiv">
-      <v-img :width="300" aspect-ratio="16/9" cover :src="user.profile_picture"></v-img>
-    </div>
-  </div>
+</v-dialog>
+</div>
+</div>
+<h1>Carte de l'utilisateur : {{ user === undefined ? '' : user.email }}</h1>
+<h3 class="showTitle">Nom et prénom</h3>
+<p>
+  {{ user.last_name + ' ' + user.first_name }}
+</p>
+<h3 class="showTitle">Email</h3>
+<p>
+  {{ user.email }}
+</p>
+<h3 class="showTitle">Age</h3>
+<p>
+  {{ user.age }}
+</p>
+<h3 class="showTitle">Taille</h3>
+<p>
+  {{ user.size }}
+</p>
+<h3 class="showTitle">Poids</h3>
+<p>
+  {{ user.weight }}
+</p>
+<h3 class="showTitle">Genre</h3>
+<p>
+  {{ userGender }}
+</p>
+<h2 class="showTitle">Photo de profil</h2>
+<v-chip-group v-for="(element, index) in user.sports_user" :key="index">
+  <v-chip>{{ element.sport.name }}</v-chip>
+</v-chip-group>
+<div class="imageDiv">
+  <v-img :width="300" aspect-ratio="16/9" cover :src="user.profile_picture"></v-img>
+</div>
+</div>
 </template>
 
 <style>

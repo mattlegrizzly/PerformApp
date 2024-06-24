@@ -100,7 +100,7 @@ const sendData = (quitForm: boolean) => {
       border="start"
       close-label="Close Alert"
       color="error"
-      title="Erreur de connexion"
+      title="Erreur d'ajout du matériel"
       closable
       @click:close="closePopup"
     >

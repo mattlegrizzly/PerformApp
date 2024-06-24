@@ -75,7 +75,7 @@ const sendData = (quitForm: boolean) => {
     border="start"
     close-label="Close Alert"
     color="error"
-    title="Erreur de connexion"
+    title="Erreur à l'ajout"
     closable
     @click:close="closePopup"
   >

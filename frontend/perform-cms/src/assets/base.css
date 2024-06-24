@@ -23,6 +23,14 @@
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
 }
 
+.v-alert {
+  position: fixed !important;
+  width: 98% !important;
+  z-index: 1 !important;
+  left: 0px !important;
+}
+
+
 /* semantic color variables for this project */
 :root {
   --color-background: var(--vt-c-white);
@@ -42,20 +50,20 @@
 
 /* colors defines for the performCMS */
 :root {
-  --primary-blue : #203864;
-  --primary-blue20 : #20386433;
-  --primary-blue50 : #20386483;
-  --secondary-blue : #2E57BF;
-  --primary-red : #BE0000;
-  --primary-red50 : #be000084;
-  --light-red : #EEA6A6;
-  --primary-green : #27BC3F;
-  --gold : #BC9227;
-  --wellness-color1 : #44A8EC;
-  --wellness-color2 : #A5DFDF;
-  --wellness-color3 : #CCB2FF;
-  --wellness-color4 : #FFB1C1;
-  --wellness-color5 : #FFE6AA;
+  --primary-blue: #203864;
+  --primary-blue20: #20386433;
+  --primary-blue50: #20386483;
+  --secondary-blue: #2E57BF;
+  --primary-red: #BE0000;
+  --primary-red50: #be000084;
+  --light-red: #EEA6A6;
+  --primary-green: #27BC3F;
+  --gold: #BC9227;
+  --wellness-color1: #44A8EC;
+  --wellness-color2: #A5DFDF;
+  --wellness-color3: #CCB2FF;
+  --wellness-color4: #FFB1C1;
+  --wellness-color5: #FFE6AA;
 
 }
 

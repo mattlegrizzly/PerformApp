@@ -18,6 +18,14 @@ const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alertErr.value = false
+  } else {
+
+  }
+}
+
 const sendData = async () => {
   const id = routerNav.params.sport_id
   const option = {
@@ -32,6 +40,7 @@ const sendData = async () => {
         error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
       }
       alertErr.value = true
+      error_title.value = "Erreur à la modification"
     } else {
       router.push('/sports/show/' + id + '/?edit=true')
     }
@@ -43,7 +52,7 @@ const getSport = async () => {
   try {
     const res = await get('/admin/sports/' + id + '/')
     if (res.status === 404) {
-      error_title.value = 'Error while retrieve sports id ' + id
+      error_title.value = 'Erreur à la récupération du sport avec id ' + id
       error_message.value = res.data.detail
       alertErr.value = true
     }
@@ -85,6 +94,7 @@ onMounted(() => {
       :type="'error'"
       :title="error_title"
       :alertValue="alertErr"
+      :setAlertValue="setAlertValue"
     />
     <div class="headerBtns">
       <NavButton class="returnBack" :text="'Retour'" :url="'/sports'" :back="'back'" />

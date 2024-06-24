@@ -83,6 +83,14 @@ const dataToRetrieve = [
 const navRoute = useRoute()
 const nameSearch = ref('')
 
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alertErr.value = false
+  } else {
+
+  }
+}
+
 const addMaterialFilter = (id: any) => {
   const findKey =
     materials_id_filter.value.filter(function (element: any) {
@@ -204,7 +212,7 @@ const getExercises = async () => {
     if (res.status > 300) {
       error_message.value = res.data
       alertErr.value = true
-      error_title.value = 'Error while retrieve exercises'
+      error_title.value = 'Erreur à la récupération des messages'
     } else {
       exercises.value = res.results
       exercisesCount.value = res.count
@@ -269,7 +277,7 @@ onMounted(async () => {
   dataToRetrieve.map(async (elem) => {
     const res = await get(elem.link, { body: {} }, true)
     if (res.status === 404) {
-      error_title.value = 'Error while retrieve Exercises'
+      error_title.value = 'Erreur à la récupération des exercices'
       error_message.value = res.data.detail
       alertErr.value = true
     } else {
@@ -288,6 +296,7 @@ onMounted(async () => {
     :type="'error'"
     :alertValue="alertErr"
     :message_alert="error_message"
+    :setAlertValue="setAlertValue"
   />
   <router-view>
     <div class="mainWrapper">

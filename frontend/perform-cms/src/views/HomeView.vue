@@ -21,6 +21,14 @@ const user = ref({
   user: {} as IEUserData
 } as IEUser)
 
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alert.value = false
+  } else {
+
+  }
+}
+
 const getUsers = async () => {
   await get('/admin/users_all/latest')
     .then((res) => {
@@ -91,12 +99,8 @@ onMounted(() => {
 <template>
   <NavMenu />
   <div class="mainWrapper">
-    <AlertComponents
-      :title="'Erreur de récupération des données'"
-      :type="'error'"
-      :alertValue="alert"
-      :message_alert="alertMessage"
-    />
+    <AlertComponents :title="'Erreur de récupération des données'" :type="'error'" :alertValue="alert"
+      :message_alert="alertMessage" :setAlertValue="setAlertValue" />
     <h1>
       Bienvenue
       {{ user?.user?.email === '' ? '' : user.user.last_name + ' ' + user.user.first_name }}
@@ -104,11 +108,8 @@ onMounted(() => {
     <div class="home-card">
       <div class="five-recents">
         <h2>Les 5 derniers utilisateurs inscrits</h2>
-        <ListElement
-          :headerTable="['Email', 'Nom', 'Prénom', 'Taille', 'Age', 'Genre']"
-          :contentTable="users"
-          :limitData="6"
-        />
+        <ListElement :headerTable="['Email', 'Nom', 'Prénom', 'Taille', 'Age', 'Genre']" :contentTable="users"
+          :limitData="6" />
       </div>
       <div class="five-recents">
         <h2>Les 5 derniers matériels inscrits</h2>

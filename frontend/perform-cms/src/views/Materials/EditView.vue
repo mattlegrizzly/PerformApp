@@ -19,6 +19,14 @@ const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
+const setAlertValue = (type: string) => {
+  if (type === "error") {
+    alertErr.value = false
+  } else {
+
+  }
+}
+
 const onChangeInput = (e: any) => {
   const file = e.target.files[0]
   if (!file) return
@@ -47,7 +55,7 @@ const sendData = async () => {
         error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
       }
       alertErr.value = true
-      error_title.value = 'Modification Error'
+      error_title.value = 'Erreur à la modification'
     } else {
       router.push('/materials/show/' + id + '/?edit=true')
     }
@@ -58,7 +66,7 @@ const getMaterial = async () => {
   const id = routerNav.params.material_id
   const res = await get('/admin/materials/' + id + '/')
   if (res.status === 404) {
-    error_title.value = 'Error while retrieve sports id ' + id
+    error_title.value = 'Error à la récupération du sport avec id ' + id
     error_message.value = res.data.detail
     alertErr.value = true
   } else {
@@ -115,6 +123,7 @@ onMounted(() => {
       :type="'error'"
       :title="error_title"
       :alertValue="alertErr"
+      :setAlertValue="setAlertValue"
     />
     <div class="headerBtns">
       <NavButton
