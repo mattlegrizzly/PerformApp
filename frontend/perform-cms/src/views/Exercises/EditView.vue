@@ -27,6 +27,8 @@ const videoController = ref(document.createElement('video'))
 const const_exercice: any = ref()
 const exercise: any = ref({})
 
+const editing = ref(false)
+
 const muscle_selected: any = ref([])
 const file = ref()
 const materials_selected = ref([])
@@ -68,6 +70,7 @@ const onChangeInput = (file: Array<File>) => {
 
 const sendData = async () => {
   const id = routerNav.params.exercise_id
+  editing.value = true;
   let isFormData = false
   const option = {
     body: {
@@ -89,6 +92,7 @@ const sendData = async () => {
       }
       alertErr.value = true
       error_title.value = 'Modification Error'
+      editing.value = false;
     } else {
       //router.push('/exercises/show/' + id + '/')
       let startStep = const_exercice.value.steps_exercise
@@ -128,7 +132,7 @@ const sendData = async () => {
           res = patch('/admin/steps/' + elem.id + '/', options, true)
         }
       })
-
+      editing.value = false;
       router.push('/exercises/show/' + id + '/?edit=true')
     }
   })
@@ -339,7 +343,7 @@ onMounted(() => {
       </div>
       <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une étape </v-btn>
       <div class="buttonWrapper">
-        <button @click="sendData(false)">Modifier</button>
+        <button @click="sendData(false)" :disabled="editing">{{editing ? 'Enregistrement..':'Modifier'}}</button>
       </div>
     </form>
   </div>
