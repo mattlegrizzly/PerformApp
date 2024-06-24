@@ -93,6 +93,7 @@ const sendData = async () => {
     isFormData = true
   }
   patch('/admin/exercises/' + id + '/', option, true, isFormData).then((res) => {
+    editing.value = true
     if (res.status > 300) {
       console.log('res')
       const keys = Object.keys(res.data)
@@ -238,10 +239,6 @@ const removeStep = async (id: number) => {
 
 onMounted(() => {
   getExercise()
-})
-
-onUpdated(() => {
-  editing.value = false;
 })
 </script>
 <style></style>

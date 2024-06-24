@@ -69,7 +69,9 @@ const onChangeInput = (file: Array<File>) => {
 }
 
 const sendData = async () => {
-  adding.value = true
+  adding.value = true;
+  console.log('adding ', adding.value)
+
   const option = {
     body: {
       name: exercise.value.name,
@@ -81,61 +83,63 @@ const sendData = async () => {
     option.body.video = exercise.value.video
   }
   post('/admin/exercises/', option, true, true).then((res) => {
-    console.log('res ', res)
-    if (res.status > 300) {
-      error_message.value = ""
-      const keys = Object.keys(res.data)
-      for (let i = 0; i < keys.length; i++) {
-        error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
+    setTimeout(() => {
+      if (res.status > 300) {
+        error_message.value = ""
+        const keys = Object.keys(res.data)
+        for (let i = 0; i < keys.length; i++) {
+          error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
+        }
+        alertErr.value = true
+        error_title.value = 'Erreur à l\'ajout'
+        adding.value = false;
+      } else {
+        const id = res.id
+        router.push('/exercises/show/' + id + '/')
+        steps_exercise.value.map((step: { text: string; id: number }) => {
+          const stepToPush = {
+            body: {
+              exercise: id,
+              text: step.text
+            }
+          }
+          res = post('/admin/steps/', stepToPush, true)
+        })
+
+        materials_selected.value.map((material) => {
+          const materialToPush = {
+            body: {
+              exercise: id,
+              material: material
+            }
+          }
+          res = post('/admin/exercisematerials/', materialToPush, true)
+        })
+
+        sport_selected.value.map((sport) => {
+          const sportToPush = {
+            body: {
+              exercise: id,
+              sport: sport
+            }
+          }
+          res = post('/admin/exercisesports/', sportToPush, true)
+        })
+
+        muscle_selected.value.map((muscle: any) => {
+          const sportToPush = {
+            body: {
+              exercise: id,
+              zone: muscle
+            }
+          }
+          res = post('/admin/exercisezones/', sportToPush, true)
+        })
+
+        router.push('/exercises')
       }
-      alertErr.value = true
-      error_title.value = 'Erreur à l\'ajout'
-      adding.value = false;
-    } else {
-      const id = res.id
-      router.push('/exercises/show/' + id + '/')
-      steps_exercise.value.map((step: { text: string; id: number }) => {
-        const stepToPush = {
-          body: {
-            exercise: id,
-            text: step.text
-          }
-        }
-        res = post('/admin/steps/', stepToPush, true)
-      })
+    }, 1000)
 
-      materials_selected.value.map((material) => {
-        const materialToPush = {
-          body: {
-            exercise: id,
-            material: material
-          }
-        }
-        res = post('/admin/exercisematerials/', materialToPush, true)
-      })
-
-      sport_selected.value.map((sport) => {
-        const sportToPush = {
-          body: {
-            exercise: id,
-            sport: sport
-          }
-        }
-        res = post('/admin/exercisesports/', sportToPush, true)
-      })
-
-      muscle_selected.value.map((muscle: any) => {
-        const sportToPush = {
-          body: {
-            exercise: id,
-            zone: muscle
-          }
-        }
-        res = post('/admin/exercisezones/', sportToPush, true)
-      })
-
-      router.push('/exercises')
-    }
   })
 }
 
@@ -193,9 +197,6 @@ onMounted(() => {
   getExercise()
 })
 
-onUpdated(() => {
-  adding.value = false;
-})
 </script>
 <template lang="">
   <NavMenu />
@@ -300,7 +301,7 @@ onUpdated(() => {
       </div>
       <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une instruction</v-btn>
       <div class="buttonWrapper">
-        <v-btn @click="sendData(false)" :disabled="adding">{{adding ? 'Ajout en cours...': 'Ajouter'}}</v-btn>
+        <v-btn @click="sendData(false)" :disabled="adding">{{adding ? 'Ajout en cours...' : 'Ajouter'}}</v-btn>
       </div>
     </form>
   </div>
