@@ -23,7 +23,7 @@ class AdminSportViewSet(viewsets.ModelViewSet):
     def get(self, request):
         # Récupérez toutes les entités de votre modèle sans limite
         items = Sport.objects.all()        
-        get_ordered_queryset(self.queryset, self.request.query_params)
+        items = get_ordered_queryset(self.queryset, self.request.query_params)
         # Sérialisez les données
         serializer = SportSerializer(items, many=True)
         # Retournez la réponse
@@ -51,23 +51,7 @@ class AdminSportViewSet(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         # Appliquer l'ordre initial par id si nécessaire
-        if request.query_params.get("orderBy"):
-            # Appliquer l'ordre initial par id si nécessaire
-            order = request.query_params.get("orderBy")
-            if order == "orderByNameAsc":
-                queryset = self.queryset.order_by("name")
-            elif order == "orderByNameDesc":
-                queryset = self.queryset.order_by("-name")
-            elif order == "orderByIdAsc" or order == "default":
-                queryset = self.queryset.order_by("id")
-            elif order == "orderByIdDesc":
-                queryset = self.queryset.order_by("-id")
-            elif order == "orderByDateAsc":
-                queryset = self.queryset.order_by("created_at")
-            elif order == "orderByDateDesc":
-                queryset = self.queryset.order_by("-created_at")
-        else:
-            queryset = self.queryset.order_by("id")
+        queryset = get_ordered_queryset(self.queryset, request.query_params)
 
         # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
