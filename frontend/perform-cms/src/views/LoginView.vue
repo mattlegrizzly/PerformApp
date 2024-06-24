@@ -24,7 +24,6 @@ const sendData = () => {
   }
   post('/login/', requestOptions)
     .then((response) => {
-      console.log('response ', response)
       if (response.status > 300) {
         error_message.value = response.data
         alertErr.value = true
@@ -41,7 +40,6 @@ const sendData = () => {
     })
     .catch((error) => {
       if (error.message) {
-        console.log('error ', error)
         error_message.value = error.message
       } else {
         error_title.value = 'Connexion error'

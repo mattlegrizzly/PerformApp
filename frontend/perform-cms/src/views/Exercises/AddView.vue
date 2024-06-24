@@ -46,13 +46,15 @@ const dataToRetrieve = [
 ]
 
 const onChangeInput = (file: Array<File>) => {
-  exercise.value.video = file[0]
-  if (file[0] && file[0].type.startsWith('video/')) {
-    const videoURL = URL.createObjectURL(file[0]) // Créer un URL pour le fichier vidéo
-    video_src.value = videoURL
-    videoController.value.load()
-  } else {
-    console.error('Veuillez sélectionner un fichier vidéo valide.')
+  if (file[0]) {
+    exercise.value.video = file[0]
+    if (file[0] && file[0].type.startsWith('video/')) {
+      const videoURL = URL.createObjectURL(file[0]) // Créer un URL pour le fichier vidéo
+      video_src.value = videoURL
+      videoController.value.load()
+    } else {
+      console.error('Veuillez sélectionner un fichier vidéo valide.')
+    }
   }
 }
 
@@ -209,6 +211,7 @@ onMounted(() => {
           variant="filled"
           type="file"
           accept="video/mp4"
+          multiple
           v-model="video_url"
           @update:modelValue="onChangeInput($event)"
         ></v-file-input>

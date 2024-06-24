@@ -319,7 +319,6 @@ onMounted(async () => {
               <v-row dense>
                 <v-col v-for="material in materials" :key="material.id" cols="12" sm="4">
                   <v-card @click="addMaterialFilter(material.id)">
-                    {{ console.log(material.pictures) }}
                     <v-img
                       :src="api_url + material.pictures"
                       class="align-end"

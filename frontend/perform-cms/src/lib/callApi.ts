@@ -83,7 +83,6 @@ const handleParams = (url: URL, options: IERequestOptions) => {
 
 const handleResponse = async (response: Response): Promise<any> => {
   const data = await response.json()
-  console.log('data ', data)
   if (response.status > 300) {
     return {
       status: response.status,

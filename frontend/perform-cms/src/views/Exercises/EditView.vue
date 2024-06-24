@@ -190,7 +190,6 @@ const getExercise = async () => {
   }
   dataToRetrieve.map(async (elem) => {
     const res = await get(elem.link, { body: {} }, true)
-    console.log(elem, ' res ', res)
     if (res.status === 404) {
       error_title.value = 'Error while retrieve materials'
       error_message.value = res.data.detail
@@ -265,6 +264,7 @@ onMounted(() => {
           type="file"
           accept="video/mp4"
           v-model="video_url"
+          multiple
           @update:modelValue="onChangeInput($event)"
         ></v-file-input>
       </div>

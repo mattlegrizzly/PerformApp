@@ -234,7 +234,6 @@ const setMuscle = (code: string) => {
     }
   }];
 
-  console.log(injury.value.zone[0].zone.code)
 }
 
 onIonViewWillEnter(async () => {
@@ -268,7 +267,6 @@ onIonViewWillEnter(async () => {
               name: ''
             }
           }]
-          console.log(injury.value.zone[0].zone.code)
         }
       });
     }
