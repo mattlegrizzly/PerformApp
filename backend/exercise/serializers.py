@@ -66,7 +66,7 @@ class ExerciseZoneDetailedSerializer(serializers.ModelSerializer):
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
-    steps_exercise = ExerciseStepDetailedSerializer(many=True, read_only=True)
+    steps_exercise = serializers.SerializerMethodField()
     material_exercise = ExerciseMaterialDetailedSerializer(many=True, read_only=True)
     sports_exercise = ExerciseSportDetailedSerializer(many=True, read_only=True)
     zone_exercises = ExerciseZoneDetailedSerializer(many=True, read_only=True)
@@ -74,6 +74,10 @@ class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exercise
         fields = ['id', 'name', 'video', 'thumbnail', 'steps_exercise', 'material_exercise', 'zone_exercises', 'sports_exercise', 'created_at']
+    
+    def get_steps_exercise(self, obj):
+        steps = obj.steps_exercise.order_by('id')
+        return ExerciseStepDetailedSerializer(steps, many=True, read_only=True).data
 
 
 
