@@ -23,24 +23,26 @@ def upload_to_thumbnail(instance, filename):
 def generate_thumbnail(instance):
     # Path where the video is saved
     video_path = instance.video.path
-    
-    # Extract the thumbnail from the video
-    clip = VideoFileClip(video_path)
-    frame = clip.get_frame(1.0)  # Get frame at 1 second
-    
-    # Save the frame as an image
-    image_filename = upload_to_thumbnail(instance, instance.video.name)
-    image = Image.fromarray(frame)
-    buffer = BytesIO()
-    image.save(buffer, format="JPEG")
-    buffer.seek(0)
-    
-    # Save the image to the instance
-    instance.thumbnail.save(image_filename, ContentFile(buffer.read()), save=False)
-    
-    # Clean up the clip
-    clip.reader.close()
-    clip.audio.reader.close_proc()
+
+    if (video_path):
+        # Extract the thumbnail from the video
+        clip = VideoFileClip(video_path)
+        frame = clip.get_frame(1.0)  # Get frame at 1 second
+        
+        # Save the frame as an image
+        image_filename = upload_to_thumbnail(instance, instance.video.name)
+        image = Image.fromarray(frame)
+        buffer = BytesIO()
+        image.save(buffer, format="JPEG")
+        buffer.seek(0)
+        
+        # Save the image to the instance
+        instance.thumbnail.save(image_filename, ContentFile(buffer.read()), save=False)
+        
+        # Clean up the clip
+        clip.reader.close()
+        if clip.audio:
+            clip.audio.reader.close_proc()
 
 def upload_to(instance, filename):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
