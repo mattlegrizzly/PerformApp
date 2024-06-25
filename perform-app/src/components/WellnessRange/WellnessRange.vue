@@ -1,7 +1,6 @@
 <template>
     <div :id="id">
         <div class="range_div">
-            <ion-label class="title_range">{{ title }}</ion-label>
             <div class="range_container">
                 <p>{{ descriptionStart }}</p>
                 <p>{{ descriptionEnd }}</p>
@@ -11,6 +10,7 @@
             <ion-range :value="value" :aria-label="title" :ticks="true" :snaps="true" :min="min" :max="max"
                 :disabled="disabled" @ionChange="handleChange"></ion-range>
         </div>
+        <ion-label style="text-align: center; width: 100%; display: block;" class="title_range">{{ title }}</ion-label>
     </div>
 </template>
 

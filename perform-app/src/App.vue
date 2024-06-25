@@ -1,6 +1,7 @@
 <template>
   <ion-app>
-    <ion-toast color="danger" :isOpen="showToast" :message="toastMessage" :duration="2000" />
+    <ion-toast color="danger" :isOpen="showToast" @didDismiss="setOpen(false)" :message="toastMessage"
+      :duration="2000" />
     <ion-router-outlet :animated="true">
       <router-view v-slot="{ Component }">
         <transition name="slide-left">
@@ -23,7 +24,9 @@ const triggerError = (message: string) => {
   toastMessage.value = message;
   showToast.value = true;
 };
-
+const setOpen = (state: boolean) => {
+  showToast.value = state;
+};
 provide('triggerError', triggerError);
 
 </script>

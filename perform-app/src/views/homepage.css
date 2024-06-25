@@ -232,7 +232,6 @@ ion-range {
 }
 
 .range_container {
-  height: 30px;
   display: flex;
   justify-content: space-between;
   width: 100%;

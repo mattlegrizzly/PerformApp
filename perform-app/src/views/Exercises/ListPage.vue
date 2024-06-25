@@ -271,8 +271,6 @@ const router = useRouter();
 const order = [
   { id: "orderByNameAsc", value: "Nom (Croissant)" },
   { id: "orderByNameDesc", value: "Nom (Décroissant)" },
-  { id: "orderByIdAsc", value: "Id (Croissant)" },
-  { id: "orderByIdDesc", value: "Id (Décroissant)" },
   { id: "orderByDateAsc", value: "Date (Croissant)" },
   { id: "orderByDateDesc", value: "Date (Décroissant)" },
   { id: "default", value: "Par défaut" },

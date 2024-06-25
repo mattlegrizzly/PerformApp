@@ -24,15 +24,6 @@
             <img v-else :src="profilePicture" alt="profile" class="profile_img" />
           </div>
         </div>
-        <div class="block_100">
-          <div class="users_infos">
-            <UserInfo title="Discipline(s)"
-              :info="user.sports_user.slice(0, 2).map((sport: any) => sport.sport.name)" />
-            <UserInfo title="Âge" :info="user.age + ' ans'" />
-            <UserInfo title="Poids" :info="user.weight + ' kg'" />
-            <UserInfo title="Taille" :info="user.size + ' cm'" />
-          </div>
-        </div>
         <div :class="hideWelness
           ? 'block_100 wellness_100 wellness_100_hidden'
           : 'block_100 wellness_100'
@@ -82,15 +73,16 @@
               </div>
               <div class="modal-body">
                 <h4>Semaine du {{ weekRange }}</h4>
+
+                <div>
+                  <canvas width="300px" height="200px" min="0" max="10" id="acquisitions"></canvas>
+                </div>
                 <div class="week-navigation">
                   <ion-button @click="setPreviousWeek" fill="outline">
                     < Semaine précédente</ion-button>
                       <ion-button :disabled="getWeekNumber(new Date(Date.now())) == getWeekNumber(tempDate)"
                         @click="setNextWeek" fill="outline">Semaine
                         suivante ></ion-button>
-                </div>
-                <div>
-                  <canvas width="300px" height="200px" min="0" max="10" id="acquisitions"></canvas>
                 </div>
               </div>
             </ion-content>
