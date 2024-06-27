@@ -140,7 +140,6 @@ import { ref, computed, markRaw } from "vue";
 import { store } from "../store/store";
 import { close, chevronDownOutline, chevronUpOutline } from "ionicons/icons";
 import { patch, post, get } from "../lib/callApi";
-import UserInfo from "@/components/UserInfo/UserInfo.vue";
 import WellnessRange from "@/components/WellnessRange/WellnessRange.vue";
 import Chart from "chart.js/auto";
 import { useErrorHandler } from '../lib/useErrorHandler';

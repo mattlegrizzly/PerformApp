@@ -20,6 +20,8 @@
 }
 
 .login-input {
+    border: 1px solid var(--ion-color-step-300, var(--ion-background-color-step-300, #b3b3b3));
+    --border-color : none !important;
     border-radius: 20px;
     height: 30px;
     min-height: 0px !important;
@@ -65,7 +67,9 @@
     font-style: italic;
 }
 
-.input-wrapper.sc-ion-input-md {
+.input-wrapper.sc-ion-input-md, .input-wrapper.sc-ion-input-ios{
     padding-left: 20px !important;
     padding-right: 20px !important;
 }
+
+.input-fill-outline.sc-ion-input-md-h   
