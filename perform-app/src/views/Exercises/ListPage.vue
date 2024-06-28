@@ -101,7 +101,7 @@ ion-modal {
               align-items: center;
               justify-content: space-between;
               flex-wrap: wrap;
-height: 85%;
+height: 83%;
     overflow: scroll;
             ">
             <div style="
@@ -171,10 +171,6 @@ height: 85%;
           <div class="input-div"
             style="position:fixed; margin-top: 10px; margin-bottom: 10px; justify-content: space-around; display: flex">
             <ion-button @click="filterExercice"> Filtrer </ion-button>
-            <ion-button fill="outline" @click="() => {
-              resetFilter();
-              filterModal.$el.dismiss()
-            }"> Annuler </ion-button>
           </div>
         </ion-content>
       </ion-modal>
@@ -305,6 +301,7 @@ const resetFilter = () => {
   muscle_selected.value = [];
   materials_selected.value = [];
   sports_selected.value = [];
+  generateItems('refresh')
 }
 
 const getThumbnail = (path: string) => {

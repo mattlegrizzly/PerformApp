@@ -123,7 +123,7 @@
 }
 
 ion-img::part(image) {
-    object-fit: contain;
+    object-fit: cover;
 }
 
 .filter-div {

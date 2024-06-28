@@ -144,14 +144,15 @@ ion-chip {
                 </ion-select>
               </ion-item>
             </ion-list>
-            <div style="margin-top: 10px; margin-bottom: 10px">
-              <ion-chip :icon="close" v-for="sport of sports_user_temp" color="primary">
+            <div style="margin-top: 10px;">
+              <ion-chip :icon="close" v-for="sport of sports_user_temp" style="margin-bottom: 5px" color="primary">
                 <ion-icon :id="sport.id" :icon="close" @click="removeSport"></ion-icon>
                 <ion-label>{{ sport.name }}</ion-label>
               </ion-chip>
             </div>
           </div>
-          <NavButton style="margin-bottom: 10px" text="Enregistrer" @click="editProfile" />
+          <NavButton style="margin-bottom: 10px" :text="loading ? 'Enregistrement en cours..' : 'Enregistrer'"
+            :noIcon="true" @click="editProfile" :disabled="loading" />
         </div>
       </div>
     </ion-content>
@@ -190,6 +191,8 @@ const { triggerError } = useErrorHandler() as any;
 
 const api = import.meta.env.VITE_API_URL;
 const fileInput = ref(null);
+
+const loading = ref(false);
 
 /**
  * Utilisateur avec ses propriétés et ses sports associés.
@@ -257,6 +260,7 @@ function findById(array: any[], id: string | number | Sport): any {
  * Édite le profil de l'utilisateur et met à jour les sports associés.
  */
 const editProfile = (): void => {
+  loading.value = true;
   const userEdit = {
     age: user.value.age,
     weight: user.value.weight,
@@ -371,6 +375,7 @@ const updateSelectedSports = (change: CustomEvent): void => {
  * Actions à exécuter lors de l'entrée dans la vue.
  */
 onIonViewWillEnter(async () => {
+  loading.value = false;
   sports_user_temp.value = [];
   const storeUser = await store.get("user");
   if (storeUser !== "") {

@@ -124,6 +124,12 @@ ion-popover .popover-viewport {
     padding-left: 5px !important;
 }
 
+#view_page::part(scroll) {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+}
+
 .exercice-img {
     background-color: var(--primary-blue50);
     width: 45px;
@@ -224,6 +230,7 @@ h4 {
 .instructions {
     padding-left: calc(var(--pd-l) - 10px);
     padding-right: calc(var(--pd-l) - 10px);
+    flex: 1;
 }
 
 .v-card-text {

@@ -4,9 +4,10 @@ import { chevronBackOutline } from "ionicons/icons";
 import { onMounted, ref } from "vue";
 import { useRouter } from 'vue-router';
 const router = useRouter();
-const props = defineProps(["url", "text", "back", "noIcon", "icon", "color"]);
+const props = defineProps(["url", "text", "back", "noIcon", "icon", "color", 'disabled']);
 
 const noIconYes = ref(false);
+const disabled = ref(false);
 const nav = () => {
   if (props.url == undefined) {
     return;
@@ -23,6 +24,7 @@ onMounted(() => {
   } else {
     noIconYes.value = false;
   }
+
 });
 </script>
 <style>
@@ -38,6 +40,7 @@ onMounted(() => {
     :fill="props.color ? 'outline' : 'solid'"
     size="small"
     @click="nav"
+    :disabled="props.disabled"
   >
     <ion-icon
       v-if="noIconYes == false"

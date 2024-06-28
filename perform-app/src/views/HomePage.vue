@@ -5,7 +5,7 @@
     <ion-content>
       <div class="home_div">
         <div class="header_img">
-          <img width="200px" src="@/assets/logo_perform_bandeau.png" alt="logo" />
+          <img width="200px" src="@/assets/logo_perform.png" alt="logo" />
         </div>
         <div class="block_100">
           <div class="div_info">

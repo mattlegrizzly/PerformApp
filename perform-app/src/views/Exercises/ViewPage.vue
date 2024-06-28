@@ -1,10 +1,10 @@
 <template>
   <ion-page data-page="ExerciseView" style="background-color: white">
-    <ion-content>
+    <ion-content id="view_page">
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
           <NavButton url="/exercises" text="Retour" />
-          <ion-icon @click="setFav" :icon="is_fav ? star : starOutline" size="large"></ion-icon>
+          <ion-icon @click="setFav" :icon="is_fav ? heart : heartOutline" size="large"></ion-icon>
         </div>
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px; font-size : 20px">
           {{ exercises.name }}
@@ -23,7 +23,7 @@
       </div>
       <div v-if='!loadVideo' class="imageDiv">
         <video v-if="showVideo" ref="videoController" id="player" playsinline data-poster="/path/to/poster.jpg"
-          height="190" autoplay hideControl loop clickToPlay>
+          width="100%" autoplay hideControl loop clickToPlay muted>
           <source :src="api_url + exercises.video" type="video/mp4" />
           <source :src="api_url + exercises.video" type="video/webm" />
         </video>
@@ -35,7 +35,7 @@
         <v-tab value="one">Instructions</v-tab>
         <v-tab value="two">Muscles</v-tab>
       </v-tabs>
-      <div style="padding-top: 10px !important" class="instructions">
+      <div style="padding-top: 10px !important ;flex: 1; overflow: scroll;" class="instructions">
         <v-card-text>
           <v-tabs-window v-model="tab">
             <v-tabs-window-item value="one">
@@ -60,7 +60,6 @@
               <div style="
                   display: flex;
                   width: 50%;
-                  margin-top: 16px;
                   justify-content: space-between;
                   align-items: center;
                 ">
@@ -96,7 +95,7 @@ import {
   onIonViewWillEnter,
   onIonViewWillLeave,
 } from "@ionic/vue";
-import { starOutline, star } from "ionicons/icons";
+import { heartOutline, heart } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
 //@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
