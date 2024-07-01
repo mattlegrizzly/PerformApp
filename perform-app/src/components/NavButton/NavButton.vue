@@ -45,6 +45,7 @@ onMounted(() => {
     <ion-icon
       v-if="noIconYes == false"
       :icon="icon ? icon : chevronBackOutline"
+      style="margin-right : 5px"
     ></ion-icon>
     {{ props.text }}
   </ion-button>

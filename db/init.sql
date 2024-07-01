@@ -52,7 +52,7 @@ SELECT 'Genoux', 'knee', 'AR', current_timestamp, current_timestamp
 WHERE NOT EXISTS (SELECT 1 FROM "exercise_workzone" WHERE code= 'knee');
 
 INSERT INTO "exercise_workzone" (name, code, zone, created_at, updated_at)
-SELECT 'Quadriceps Latérals', 'quadz2', 'MU', current_timestamp, current_timestamp
+SELECT 'Tenseurs du Fascia Lata', 'quadz2', 'MU', current_timestamp, current_timestamp
 WHERE NOT EXISTS (SELECT 1 FROM "exercise_workzone" WHERE code= 'quadz2');
 
 INSERT INTO "exercise_workzone" (name, code, zone, created_at, updated_at)
@@ -72,15 +72,11 @@ SELECT 'Rhomboides', 'rhomboids', 'MU', current_timestamp, current_timestamp
 WHERE NOT EXISTS (SELECT 1 FROM "exercise_workzone" WHERE code= 'rhomboids');
 
 INSERT INTO "exercise_workzone" (name, code, zone, created_at, updated_at)
-SELECT 'Deltoides Postérieures', 'deltoids_posterior', 'MU', current_timestamp, current_timestamp
-WHERE NOT EXISTS (SELECT 1 FROM "exercise_workzone" WHERE code= 'deltoids_posterior');
-
-INSERT INTO "exercise_workzone" (name, code, zone, created_at, updated_at)
 SELECT 'Triceps', 'triceps', 'MU', current_timestamp, current_timestamp
 WHERE NOT EXISTS (SELECT 1 FROM "exercise_workzone" WHERE code= 'triceps');
 
 INSERT INTO "exercise_workzone" (name, code, zone, created_at, updated_at)
-SELECT 'Grand Dorsaux', 'lats', 'MU', current_timestamp, current_timestamp
+SELECT 'Dorsaux', 'lats', 'MU', current_timestamp, current_timestamp
 WHERE NOT EXISTS (SELECT 1 FROM "exercise_workzone" WHERE code= 'lats');
 
 INSERT INTO "exercise_workzone" (name, code, zone, created_at, updated_at)

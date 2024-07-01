@@ -6,13 +6,13 @@
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
           <NavButton url="profile" text="Retour" back="back" />
-          <NavButton @click="addInjurie" text="Enregistrer" :noIcon="true" />
+          
         </div>
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
           Ajouter une blessure
         </h1>
         <div class="input_injurie">
-          <ion-label>Nom de la blessure</ion-label>
+          <ion-label>Nom de la blessure *</ion-label>
           <ion-input label-placement="stacked" fill="outline" @ion-change="handleInput('name', $event.detail.value)"
             placeholder="Déchirure du quadriceps"></ion-input>
         </div>
@@ -66,6 +66,9 @@
           <BodyComponent :setMuscleSelected="setMuscle" :muscleSelected="muscleSelected" :height="'300'" :width="'200'"
             :viewOnly="'edit'" />
 
+        </div>
+        <div>
+          <NavButton style="width: 100%; height: 40px; margin-top: 20px;" @click="addInjurie" text="Ajouter la blessure" :noIcon="true" />
         </div>
       </div>
     </ion-content>
@@ -227,7 +230,7 @@ const addInjurie = () => {
     if (res.status > 300) {
       triggerError('Erreur lors de la création de la blessure');
     } else {
-      router.push("/list_injuries");
+      router.push("/view_injuries/" + res.id + "/?edit=true")
     }
   });
 };

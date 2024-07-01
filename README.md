@@ -2,36 +2,53 @@
 
 This project is an back-end (api), cms and mobile app for the Perfom Enterprise.
 
-## Installation
+## Lancer le conteneur django en local pour dév
+
+(Il est important d'avoir déjà build les conteneurs dans docker desktop avec la comme `make up_build_dev`)
+
+- Placez-vous dans le dossier backend
+- Initiez la commande : poetry config virtualenvs.create false --local
+- Installez l'extension "Dev container" sur VSCode
+- Exécutez la commande "Open and rebuild container"
+- Dans le conteneur vérifiez la version de python avec "which python" et sélectionnez le bon python dans votre config de python debugger
+- Sélectionnez l'interpreteur pour Django File
+- Lancez le debugger
+- Codez dans le conteneur
+
+## Déploiement 
+
+Un github action des plugg
+
+## Installation - DEV
 
 ### Build
 
 ```bash
-make build
+make build_dev
 ```
 
 ### Up
 
 ```bash
-make up
+make up_dev
 ```
 
 ### Down
 
 ```bash
-make down
+make down_dev
 ```
 
 ### Make migrations
 
 ```bash
-make makemigrate
+make make_migrations_dev
 ```
 
 ### Migrate
 
 ```bash
-make migrate
+make migrate_dev
 ```
 
 ### Production containers need to be reset (Export db before this !!)
@@ -68,11 +85,13 @@ docker compose -f docker-compose.production.yml -p grizzlee-recipes --env-file c
 
 ## Lunch python env
 
-When you're currently developping use 
+When you're currently developping use
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
+
 ## Conventional commit
 
 Start all your commits by "[theme/project] : off the commit".
@@ -103,7 +122,3 @@ _Languages utilisés :_
 _Versions :_
 **Dernière version stable :** 0.0.0
 **Dernière version :** 0.0.0
-
-## Authors
-
-- **Mattéo ANDRE** _Developper_ (<https://github.com/mattlegrizzly>)

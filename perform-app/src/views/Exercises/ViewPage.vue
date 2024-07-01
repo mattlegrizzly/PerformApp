@@ -170,6 +170,7 @@ onIonViewWillLeave(() => {
 onIonViewWillEnter(() => {
   loadVideo.value = true;
   showVideo.value = true;
+  exercises.value.zone_exercises = []
   id.value = Number(router.params.id);
   store.get("user").then((res) => {
     user_id.value = JSON.parse(res).user.id;

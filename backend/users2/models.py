@@ -5,11 +5,13 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from exercise.models import Exercise, WorkZone
 from datetime import datetime
 
+
 def upload_to(instance, filename):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     ext = filename.split('.')[-1]  # Récupérer l'extension du fichier
     filename_edit = f"user_{instance.email}_{timestamp}.{ext}"
     return 'user/{filename}'.format(filename=filename_edit)
+
 
 class Manager(BaseUserManager):
     def create_user(self, first_name, last_name, email, password=None):
@@ -48,6 +50,7 @@ class Manager(BaseUserManager):
 
         return user
 
+
 class User(AbstractBaseUser):
     GENDER_CHOICES = [
         ('male', 'Male'),
@@ -57,12 +60,14 @@ class User(AbstractBaseUser):
     email = models.EmailField(_('email address'), unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
     size = models.IntegerField(null=True, blank=True)
+    weight = models.IntegerField(null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
     last_name = models.CharField(max_length=100, null=True, blank=True)
     first_name = models.CharField(max_length=100, null=True, blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
-    profile_picture = models.ImageField(upload_to=upload_to, blank=True, null=True)
+    profile_picture = models.ImageField(
+        upload_to=upload_to, blank=True, null=True)
     is_superuser = models.BooleanField(default=False, blank=False, null=False)
     is_active = models.BooleanField(default=True, blank=False, null=False)
     is_coach = models.BooleanField(default=False, blank=False, null=False)
@@ -70,9 +75,9 @@ class User(AbstractBaseUser):
     last_login = models.DateTimeField(default=None, null=True, blank=True)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
-    
+
     objects = Manager()
-    
+
     def __repr__(self):
         return str(self)
 
@@ -94,6 +99,7 @@ class User(AbstractBaseUser):
             f"is_superuser={self.is_superuser}, is_active={self.is_active}, last_login={self.last_login})"
         )
 
+
 class State(models.TextChoices):
     TREATED = 'TR', "Soignée"
     not_treated = 'NT', "Pas soignée"
@@ -104,13 +110,18 @@ class UsersFavExercises(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     fav_exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
 
+
 class Injurie(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=256, default="Rien à signaler", null=True)
-    state = models.CharField(choices=State.choices , default=State.not_treated, max_length=2)
+    description = models.CharField(
+        max_length=256, default="Rien à signaler", blank=True)
+    state = models.CharField(choices=State.choices,
+                             default=State.not_treated, max_length=2)
     date = models.DateField(null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_injuries")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="user_injuries")
     zone = models.ForeignKey(WorkZone, on_delete=models.CASCADE)
+
 
 class Wellness(models.Model):
     hydratation = models.IntegerField(null=False, default=0, blank=True)
@@ -118,12 +129,15 @@ class Wellness(models.Model):
     stress = models.IntegerField(null=False, default=0, blank=True)
     fatigue = models.IntegerField(null=False, default=0, blank=True)
     pain = models.IntegerField(null=False, default=0, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_wellness')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='users_wellness')
     date = models.DateField(null=False)
+
 
 class PasswordChangeLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    id_user_edited = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_who_edit")
+    id_user_edited = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="user_who_edit")
     date_modified = models.DateTimeField(auto_now_add=True)
     old_password = models.CharField(max_length=128)
     new_password = models.CharField(max_length=128)

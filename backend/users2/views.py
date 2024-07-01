@@ -51,7 +51,7 @@ from rest_framework.exceptions import (
     PermissionDenied,
     ValidationError,
 )
-
+from utils.utils import get_ordered_queryset
 from django.contrib.auth.hashers import make_password
 
 from users2.models import PasswordChangeLog
@@ -417,24 +417,7 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def list(self, request, *args, **kwargs):
-        if request.query_params.get("orderBy"):
-            # Appliquer l'ordre initial par id si nécessaire
-            order = request.query_params.get("orderBy")
-            if order == "orderByNameAsc":
-                queryset = self.queryset.order_by("name")
-            elif order == "orderByNameDesc":
-                queryset = self.queryset.order_by("-name")
-            elif order == "orderByIdAsc" or order == "default":
-                queryset = self.queryset.order_by("id")
-            elif order == "orderByIdDesc":
-                queryset = self.queryset.order_by("-id")
-            elif order == "orderByDateAsc":
-                queryset = self.queryset.order_by("created_at")
-            elif order == "orderByDateDesc":
-                queryset = self.queryset.order_by("-created_at")
-        else:
-            queryset = self.queryset.order_by("id")
-
+        queryset = get_ordered_queryset(self.queryset, request.query_params)
 
         # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
@@ -655,25 +638,7 @@ class InjurieViewSet(viewsets.ModelViewSet):
         # Si l'utilisateur n'est pas administrateur, filtrer les objets pour n'afficher que ceux associés à l'utilisateur connecté
         if not request.user.is_superuser:
             queryset = self.queryset.filter(user=request.user)
-        if request.query_params.get("orderBy"):
-            # Appliquer l'ordre initial par id si nécessaire
-            order = request.query_params.get("orderBy")
-            if order == "orderByNameAsc":
-                queryset = self.queryset.order_by("state")
-            elif order == "orderByNameDesc":
-                queryset = self.queryset.order_by("-state")
-            elif order == "orderByIdAsc" or order == "default":
-                queryset = self.queryset.order_by("id")
-            elif order == "orderByIdDesc":
-                queryset = self.queryset.order_by("-id")
-            elif order == "orderByDateAsc":
-                queryset = self.queryset.order_by("created_at")
-            elif order == "orderByDateDesc":
-                queryset = self.queryset.order_by("-created_at")
-            else:
-                queryset = self.queryset.order_by("id")
-        else:
-            queryset = self.queryset.order_by("id")
+        queryset = get_ordered_queryset(self.queryset,  request.query_params)
             # Filtrer le queryset
                 # Sinon, sérialiser le queryset complet
         serializer = self.get_serializer(queryset, many=True)

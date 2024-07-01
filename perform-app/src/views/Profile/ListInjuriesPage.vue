@@ -19,13 +19,17 @@
         <ion-item class="injurie_div_info" v-for="injurie of user.user_injuries">
           <div class="injurie_div_parent" @click="router.push('/view_injuries/' + injurie.id)" :key="injurie.id">
             <div class="injurie_info">
-              <ion-label>{{ injurie.name }}</ion-label>
+              <ion-label style="width: 65%;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+">{{ injurie.name }}</ion-label>
               <ion-label>{{
                 new Date(injurie.date).toLocaleString("fr").split(" ")[0]
               }}</ion-label>
             </div>
             <div class="injurie_info">
-              <ion-label>{{ injurie.zone.name }}</ion-label>
+              <ion-label style="font-style: italic;">{{ injurie.zone.name }}</ion-label>
               <ion-label :class="stateSetClass(injurie.state)" class="injurie_state">{{ stateSet(injurie.state) }}
               </ion-label>
             </div>

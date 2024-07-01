@@ -8,6 +8,8 @@ from .models import Material, Exercise, ExerciseStep, ExerciseMaterial, Exercise
 from .serializers import MaterialSerializer, ExerciseSerializer, ExerciseStepSerializer, ExerciseMaterialSerializer, ExerciseSportSerializer, ExerciseZoneSerializer, WorkZoneSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 
+from utils.utils import get_ordered_queryset
+
 #------------------MATERIAL------------------
 # Admin ViewSet
 class AdminMaterialViewSet(viewsets.ModelViewSet):
@@ -24,23 +26,7 @@ class AdminMaterialViewSet(viewsets.ModelViewSet):
     def get(self, request):
         items = Material.objects.all()
         
-        if request.query_params.get("orderBy"):
-            # Appliquer l'ordre initial par id si nécessaire
-            order = request.query_params.get("orderBy")
-            if order == "orderByNameAsc":
-                items = self.queryset.order_by("name")
-            elif order == "orderByNameDesc":
-                items = self.queryset.order_by("-name")
-            elif order == "orderByIdAsc" or order == "default":
-                items = self.queryset.order_by("id")
-            elif order == "orderByIdDesc":
-                items = self.queryset.order_by("-id")
-            elif order == "orderByDateAsc":
-                items = self.queryset.order_by("created_at")
-            elif order == "orderByDateDesc":
-                items = self.queryset.order_by("-created_at")
-        else:
-            items = self.queryset.order_by("id")
+        items = get_ordered_queryset(self.queryset, request.query_params)
         # Récupérez toutes les entités de votre modèle sans limite
         # Sérialisez les données
         serializer = MaterialSerializer(items, many=True)
@@ -196,23 +182,7 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         # Appliquer l'ordre initial par id si nécessaire
-        if request.query_params.get("orderBy"):
-            # Appliquer l'ordre initial par id si nécessaire
-            order = request.query_params.get("orderBy")
-            if order == "orderByNameAsc":
-                queryset = self.queryset.order_by("name")
-            elif order == "orderByNameDesc":
-                queryset = self.queryset.order_by("-name")
-            elif order == "orderByIdAsc" or order == "default":
-                queryset = self.queryset.order_by("id")
-            elif order == "orderByIdDesc":
-                queryset = self.queryset.order_by("-id")
-            elif order == "orderByDateAsc":
-                queryset = self.queryset.order_by("created_at")
-            elif order == "orderByDateDesc":
-                queryset = self.queryset.order_by("-created_at")
-        else:
-            queryset = self.queryset.order_by("id")
+        queryset = get_ordered_queryset(self.queryset, request.query_params)
 
         # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
@@ -301,53 +271,19 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
     )
     def update(self, request, *args, **kwargs):
         data = request.data
-        material_ids = data.get("material_ids", [])
-        if material_ids != "" and isinstance(material_ids, str):
-            materials_list = material_ids.split(",")
-            materials_list = [int(num) for num in materials_list]
-            obj = self.get_object()
-            if obj.material_ids != materials_list:
-                new_materials = Material.objects.filter(id__in=materials_list)
-                obj.materials.set(new_materials)
-                obj.save()
-        else :
-            obj = self.get_object()
-            if obj.material_ids != material_ids:
-                new_materials = Material.objects.filter(id__in=material_ids)
-                obj.materials.set(new_materials)
+        def update_relationships(obj, field_name, model, data_key, lookup_field='id'):
+            ids = data.get(data_key, [])
+            if ids != "" and isinstance(ids, str):
+                ids = [int(num) for num in ids.split(",")]
+            if list(getattr(obj, field_name).values_list(lookup_field, flat=True)) != ids:
+                new_items = model.objects.filter(**{f"{lookup_field}__in": ids})
+                getattr(obj, field_name).set(new_items)
                 obj.save()
 
-        sports_ids = data.get("sports_ids", [])
-        if sports_ids != "" and isinstance(sports_ids, str):
-            sports_list = sports_ids.split(",")
-            sports_list = [int(num) for num in sports_list]
-            obj = self.get_object()
-            if obj.sports_ids != sports_list:
-                new_sports = Sport.objects.filter(id__in=sports_list)
-                obj.sports.set(new_sports)
-                obj.save()
-        else :
-            obj = self.get_object()
-            if obj.sports_ids != sports_ids:
-                new_sports = Sport.objects.filter(id__in=sports_ids)
-                obj.sports.set(new_sports)
-                obj.save()
-
-        muscles_ids = data.get("muscles_id", [])
-
-        if muscles_ids != "" and isinstance(muscles_ids, str):
-            muscles_list = muscles_ids.split(",")
-            obj = self.get_object()
-            if obj.muscles_ids != muscles_list:
-                new_muscles = WorkZone.objects.filter(code__in=muscles_list)
-                obj.muscles.set(new_muscles)
-                obj.save()
-        else :
-            obj = self.get_object()
-            if obj.muscles_ids != muscles_ids:
-                new_muscles = WorkZone.objects.filter(code__in=muscles_ids)
-                obj.muscles.set(new_muscles)
-                obj.save()
+        obj = self.get_object()
+        update_relationships(obj, "materials", Material, "material_ids")
+        update_relationships(obj, "sports", Sport, "sports_ids")
+        update_relationships(obj, "muscles", WorkZone, "muscles_id", lookup_field='code')
         
         return super().update(request, *args, **kwargs)
 
@@ -736,19 +672,8 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
     def get(self, request):
         # Récupérez toutes les entités de votre modèle sans limite
         items = WorkZone.objects.all()        
-        if request.query_params.get("orderBy"):
-            # Appliquer l'ordre initial par id si nécessaire
-            order = request.query_params.get("orderBy")
-            if order == "orderByNameAsc":
-                items = self.queryset.order_by("name")
-            elif order == "orderByNameDesc":
-                items = self.queryset.order_by("-name")
-            elif order == "orderByDateAsc":
-                items = self.queryset.order_by("created_at")
-            elif order == "orderByDateDesc":
-                items = self.queryset.order_by("-created_at")
-        else:
-            items = self.queryset.order_by("created_at")
+        items = self.queryset.order_by("name")
+
         # Sérialisez les données
         serializer = WorkZoneSerializer(items, many=True)
         # Retournez la réponse

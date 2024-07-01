@@ -4,7 +4,6 @@
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
           <NavButton url="profile" text="Retour" back="back" />
-          <NavButton @click="addInjurie" text="Enregistrer" :noIcon="true" />
         </div>
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
           Modifier une blessure
@@ -64,6 +63,7 @@
           <BodyComponent :setMuscleSelected="setMuscle" :muscleSelected="injury.zone" :height="'200'" :width="'100'"
             :viewOnly="'edit'" />
         </div>
+        <NavButton style="width: 100%; height: 40px; margin-top: 20px;" @click="addInjurie" text="Enregistrer" :noIcon="true" />
       </div>
     </ion-content>
   </ion-page>

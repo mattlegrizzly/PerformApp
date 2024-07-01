@@ -13,7 +13,8 @@
       <div class="container_home">
         <div class="profile_picture_div">
           <div class="img_container">
-            <div style="
+            <div
+              style="
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -25,7 +26,9 @@
                 width: 100%;
                 height: 100%;
                 text-transform: capitalize;
-              " v-if="profilePicture == ''">
+              "
+              v-if="profilePicture == ''"
+            >
               {{ user.first_name[0] }}
             </div>
 
@@ -67,37 +70,87 @@
           </div>
         </div>
         <div class="profile_container_div">
-          <div class="div_container_info" style="display: flex; justify-content: center; flex-wrap: wrap">
+          <div
+            class="div_container_info"
+            style="display: flex; justify-content: center; flex-wrap: wrap"
+          >
             <h2 style="text-align: left; width: 100%">Mes blessures</h2>
-            <NavButton v-if="user.user_injuries.length == 0" url="add_injurie" text="Ajouter une blessure"
-              :noIcon="true" />
+            <NavButton
+              v-if="user.user_injuries.length == 0"
+              url="add_injurie"
+              text="Ajouter une blessure"
+              :noIcon="true"
+            />
             <ion-list class="injurie_list" style="width: 100%">
-              <div class="injurie_div" @click="router.push('/view_injuries/' + injurie.id)"
-                v-for="injurie of limitedItems()">
-                <ion-label>{{ injurie.zone.name }}</ion-label>
+              <div
+                class="injurie_div"
+                @click="router.push('/view_injuries/' + injurie.id)"
+                v-for="injurie of limitedItems()"
+              >
+                <ion-label
+                  style="
+                    width: 20%;
+                    text-wrap: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                  "
+                  >{{ injurie.zone.name }}</ion-label
+                >
                 <ion-label>|</ion-label>
                 <ion-label>
                   {{
                     new Date(injurie.date).toLocaleString("fr").split(" ")[0]
-                  }}</ion-label>
+                  }}</ion-label
+                >
                 <ion-label>|</ion-label>
-                <ion-label :class="stateSetClass(injurie.state)" class="injurie_state">{{ stateSet(injurie.state) }}
+                <ion-label
+                  :class="stateSetClass(injurie.state)"
+                  class="injurie_state"
+                  >{{ stateSet(injurie.state) }}
                 </ion-label>
                 <ion-icon :icon="chevronForwardOutline"></ion-icon>
               </div>
-              <ion-label style="width: 100%; text-align: center; display: block"
-                v-if="user.user_injuries.length > 2">...</ion-label>
+              <ion-label
+                style="width: 100%; text-align: center; display: block"
+                v-if="user.user_injuries.length > 2"
+                >...</ion-label
+              >
             </ion-list>
-            <NavButton class="custom_nav" v-if="user.user_injuries.length > 0" url="list_injuries"
-              text="Voir toutes mes blessures" :noIcon="true" />
+            <NavButton
+              class="custom_nav"
+              v-if="user.user_injuries.length > 0"
+              url="list_injuries"
+              text="Voir toutes mes blessures"
+              :noIcon="true"
+            />
           </div>
           <v-divider :thickness="3"></v-divider>
           <div class="buttons_user">
-            <NavButton class="custom_nav" url="edit_profile" text="Editer mon profil" :icon="pencil" />
-            <NavButton class="custom_nav" href='mailto:contact@performapp.com' text="Nous contacter" :icon="mail" />
-            <NavButton class="custom_nav" url="conditions" text="Nos conditions générales d'utilisations"
-              :icon="documentText" />
-            <NavButton class="custom_nav" @click="disconnect" text="Déconnexion" :icon="logOut" :color="'light'" />
+            <NavButton
+              class="custom_nav"
+              url="edit_profile"
+              text="Editer mon profil"
+              :icon="pencil"
+            />
+            <NavButton
+              class="custom_nav"
+              href="mailto:contact@performapp.com"
+              text="Nous contacter"
+              :icon="mail"
+            />
+            <NavButton
+              class="custom_nav"
+              url="conditions"
+              text="Nos conditions générales d'utilisations"
+              :icon="documentText"
+            />
+            <NavButton
+              class="custom_nav"
+              @click="disconnect"
+              text="Déconnexion"
+              :icon="logOut"
+              :color="'light'"
+            />
           </div>
         </div>
       </div>
@@ -161,7 +214,7 @@ const profilePicture = computed((): string => {
     user.value.profile_picture &&
     user.value.profile_picture.includes(api.split("//")[1])
   ) {
-    return user.value.profile_picture.replace('http', 'https');
+    return user.value.profile_picture.replace("http", "https");
   } else {
     if (
       user.value.profile_picture === null ||
@@ -173,8 +226,6 @@ const profilePicture = computed((): string => {
     }
   }
 });
-
-
 
 /**
  * Déconnecte l'utilisateur et le redirige vers la page de connexion.
@@ -208,5 +259,4 @@ onIonViewWillEnter(async () => {
     shadowRoot.appendChild(style);
   }
 });
-
 </script>

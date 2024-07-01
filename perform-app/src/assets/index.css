@@ -34,8 +34,17 @@
     --ring: 222.2 84% 4.9%;
  
     --radius: 0.5rem;
+  }
 
-    
+  @supports (-webkit-touch-callout: none) {
+  .ion-page {
+    --ion-safe-area-top : 30px;
+    padding-top: var(--ion-safe-area-top);
+  }
+}
+
+  #header-wrapper {
+    box-shadow: none !important;
   }
  
   .dark {

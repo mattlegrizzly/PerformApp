@@ -5,7 +5,7 @@
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
-          <NavButton :url="urlReturn" text="Retour" :back="back" />
+          <NavButton url="/list_injuries" text="Retour" back="" />
           <NavButton :disabled='injury.state == "TR"' @click="router.push('/edit_injurie/' + routerNav.params.id)"
             text="Editer" :noIcon="true" />
         </div>

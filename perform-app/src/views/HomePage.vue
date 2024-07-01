@@ -32,7 +32,7 @@
             <h3>Welness</h3>
             <ion-icon :icon="hideWelness ? chevronUpOutline : chevronDownOutline" />
           </div>
-          <ion-modal ref="modal">
+          <ion-modal ref="modal" id="set_wellness">
             <ion-content>
               <div class="modal-header">
                 <h3>Saissiez le welness du jour :</h3>
@@ -225,7 +225,7 @@ const postWelness = async () => {
   }, true);
 
   if (!response.status) {
-    const userResponse = await get("/admin/me/", { body: {} }, true);
+    const userResponse = await get("/me/", { body: {} }, true);
     if (userResponse.status > 301) {
       triggerError('Erreur lors de la récupération de l\'utilisateur');
     } else {
@@ -291,6 +291,14 @@ const setNextWeek = async () => {
 };
 
 /**
+ * Fonction pour convertir une date XXXX-XX-XX en JJ/MM
+ */
+const retrieveDayMonth = (date : string) => {
+  const dateSplit = date.split('-');
+  return dateSplit[2] + "/" + dateSplit[1]
+} 
+
+/**
  * Fonction pour récupérer et afficher le wellness de la semaine de la date actuelle
  */
 const updateWeekWelness = async () => {
@@ -313,7 +321,7 @@ const createChart = (data: any) => {
   chart.value = markRaw(new Chart(document.getElementById("acquisitions"), {
     type: "line",
     data: {
-      labels: ["lun", "mar", "mer", "jeu", "ven", "sam", "dim"],
+      labels: ["lun " + retrieveDayMonth(data[0].date), "mar " + retrieveDayMonth(data[1].date), "mer " + retrieveDayMonth(data[2].date), "jeu " + retrieveDayMonth(data[3].date), "ven " + retrieveDayMonth(data[4].date), "sam " + retrieveDayMonth(data[5].date), "dim " + retrieveDayMonth(data[6].date)],
       datasets: [
         { label: "Sommeil", data: data.map((elem: { sleep: any }) => elem.sleep) },
         { label: "Douleurs", data: data.map((elem: { pain: any }) => elem.pain) },

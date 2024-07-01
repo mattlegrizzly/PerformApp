@@ -43,7 +43,7 @@ class UserDetailedSerializer(serializers.ModelSerializer):
     user_injuries = InjurieDetailedSerializer(many=True, read_only=False)
     class Meta:
         model = User
-        fields = [ 'id', 'email', 'first_name', 'last_name' , 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries',  'is_superuser']
+        fields = [ 'id', 'email', 'first_name', 'last_name' , 'size', 'age','weight', 'gender', 'profile_picture', 'sports_user', 'user_injuries',  'is_superuser']
 
     def check_email_exists(self, email, new_email):
         if User.objects.exclude(email=email).filter(email=new_email).exists():
@@ -56,7 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
     user_injuries = InjurieDetailedSerializer(many=True, read_only=False)
     class Meta:
         model = User
-        fields = [ 'id', 'email', 'first_name', 'last_name' , 'size', 'age', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'is_superuser']
+        fields = [ 'id', 'email', 'first_name', 'last_name' , 'size', 'age', 'weight', 'gender', 'profile_picture', 'sports_user', 'user_injuries', 'is_superuser']
         extra_kwargs = {'password': {'write_only': True}}
 
     def check_email_exists(self, email, new_email):

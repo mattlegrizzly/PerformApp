@@ -32,14 +32,14 @@
     margin-top: 10px;
 }
 
-.input-div:last-of-type {
+.login_inputs.input-div:last-of-type {
     margin-top: 20px !important;
     align-items: center;
     display: flex;
     justify-content: center;
 }
 
-.input-div:last-of-type ion-button {
+.login_inputs.input-div:last-of-type ion-button {
     text-transform: none;
     font-weight: 100;
 }
@@ -67,9 +67,8 @@
     font-style: italic;
 }
 
-.input-wrapper.sc-ion-input-md, .input-wrapper.sc-ion-input-ios{
+.login-input.input-wrapper.sc-ion-input-md, .login-input.input-wrapper.sc-ion-input-ios{
     padding-left: 20px !important;
     padding-right: 20px !important;
 }
 
-.input-fill-outline.sc-ion-input-md-h   

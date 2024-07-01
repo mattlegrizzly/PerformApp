@@ -1,5 +1,5 @@
 
-def get_ordered_queryset(queryset, query_params):
+def get_ordered_queryset(queryset, query_params, type=""):
     order = query_params.get("orderBy")
     if order:
         if order == "orderByNameAsc":
@@ -14,4 +14,7 @@ def get_ordered_queryset(queryset, query_params):
             return queryset.order_by("created_at")
         elif order == "orderByDateDesc":
             return queryset.order_by("-created_at")
-    return queryset.order_by("id")
+    elif type == "muscle":
+        return queryset.order_by('name')
+    else:
+        return queryset.order_by("id")
