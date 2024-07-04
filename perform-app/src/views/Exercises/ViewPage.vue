@@ -28,7 +28,7 @@
           <source :src="api_url + exercises.video" type="video/webm" />
         </video>
       </div>
-      <div v-else style="width: 100%; height: 190px; display: flex; justify-content: center; align-items: center">
+      <div v-else style="width: 100%; height: 250px; display: flex; justify-content: center; align-items: center">
         <v-progress-circular color="primary" indeterminate></v-progress-circular>
       </div>
       <v-tabs id="tabs-exercise" v-model="tab">
@@ -198,7 +198,7 @@ onIonViewWillEnter(() => {
       exercises.value = res;
       setTimeout(() => {
         loadVideo.value = false
-      }, 300)
+      }, 500)
     }
   });
 });

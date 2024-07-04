@@ -91,6 +91,10 @@ h1 {
   font-size: 23px;
 }
 
+.ion-page {
+  padding-top: env(safe-area-inset-top);
+}
+
 body {
   min-height: 100vh;
   color: var(--primary-blue);

@@ -1,19 +1,11 @@
 #nav-menu-tab {
     background-color: var(--primary-blue) !important;
     --background: none !important;
+    padding-bottom: 5px;
 }
-
-@supports (-webkit-touch-callout: none) {
-    /* CSS specific to iOS devices */ 
-    #nav-menu-tab {
-    --ion-safe-bottom-area : 5px;
-    padding-bottom: var(--ion-safe-bottom-area);
-    }
-  }
 
 #nav-menu-tab * {
     background-color: var(--primary-blue) !important;
-
 }
 
 ion-icon {

@@ -4,6 +4,8 @@ import { IonicVue } from '@ionic/vue';
 import App from './App.vue';
 import router from './router';
 
+import i18n from './i18n';
+
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
 
@@ -42,6 +44,8 @@ import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
 import { createAnimation } from '@ionic/core';
+
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 // Enregistrement de l'icône
 addIcons({
@@ -169,6 +173,12 @@ app.use(IonicVue, {
     }
 });
 
+app.use(i18n)
+
 router.isReady().then(() => {
     app.mount('#app');
 });
+
+document.addEventListener('deviceready', () => {
+    ScreenOrientation.lock(ScreenOrientation.ORIENTATIONS.PORTRAIT);
+  }, false);

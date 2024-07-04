@@ -7,6 +7,11 @@
     font-size: 12px !important;
 }
 
+.static-modal h4 {
+    text-align: left;
+    margin-top: 10px;
+}
+
 .filter-div {
     display: flex;
     justify-content: space-between;

@@ -36,12 +36,9 @@
     --radius: 0.5rem;
   }
 
-  @supports (-webkit-touch-callout: none) {
   .ion-page {
-    --ion-safe-area-top : 30px;
-    padding-top: var(--ion-safe-area-top);
+    padding-top: env(safe-area-inset-bottom);
   }
-}
 
   #header-wrapper {
     box-shadow: none !important;

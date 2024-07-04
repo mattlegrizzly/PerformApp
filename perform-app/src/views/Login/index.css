@@ -67,8 +67,15 @@
     font-style: italic;
 }
 
-.login-input.input-wrapper.sc-ion-input-md, .login-input.input-wrapper.sc-ion-input-ios{
+.login-input .input-wrapper.sc-ion-input-md, .login-input.input-wrapper.sc-ion-input-ios{
     padding-left: 20px !important;
     padding-right: 20px !important;
 }
+
+.login-input.input-label-placement-start.sc-ion-input-ios-h .input-wrapper.sc-ion-input-ios{
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+
+
 

@@ -12,22 +12,22 @@
           Ajouter une blessure
         </h1>
         <div class="input_injurie">
-          <ion-label>Nom de la blessure *</ion-label>
-          <ion-input label-placement="stacked" fill="outline" @ion-change="handleInput('name', $event.detail.value)"
+          <ion-label :class="errorAdd && nameInjury == '' ? 'required_text' : ''">Nom de la blessure *</ion-label>
+          <ion-input label-placement="stacked" :class="errorAdd  && nameInjury == '' ? 'required_class' : ''" fill="outline" @ion-change="handleInput('name', $event.detail.value)"
             placeholder="Déchirure du quadriceps"></ion-input>
         </div>
         <div class="input_injurie">
           <ion-label>Description de la blessure</ion-label>
 
-          <ion-textarea variant="outlined" placeholder="Décrivez votre blessure"
+          <ion-textarea variant="outlined" color="danger"  placeholder="Décrivez votre blessure"
             @ion-change="handleInput('description', $event.detail.value)">
           </ion-textarea>
         </div>
 
         <div class="input_injurie">
-          <ion-label>Zone de la blessure</ion-label>
+          <ion-label :class="errorAdd && muscleSelected[0].zone.code == '' ? 'required_text' : ''">Zone de la blessure *</ion-label>
 
-          <ion-list class="filter-item">
+          <ion-list class="filter-item"  :class="errorAdd  && muscleSelected[0].zone.code == '' ? 'required_class' : ''">
             <ion-item>
               <ion-select interface="popover" placeholder="Zone de la blessure" class="custom-ion-select"
                 :toggle-icon="chevronDownOutline" justify="space-between" @click="setIonSize()"
@@ -39,13 +39,13 @@
           </ion-list>
         </div>
         <div class="input_injurie">
-          <ion-label>Date de la blessure</ion-label>
-          <ion-input type="date" label-placement="stacked" fill="outline" placeholder="2021-09-01"
+          <ion-label :class="errorAdd && date == '' ? 'required_text' : ''">Date de la blessure *</ion-label>
+          <ion-input :class="errorAdd  && date == '' ? 'required_class' : ''" type="date" label-placement="stacked" fill="outline" placeholder="2021-09-01"
             @ion-change="handleInput('date', $event.detail.value)"></ion-input>
         </div>
         <div class="input_injurie">
-          <ion-label>Etat de la blessure</ion-label>
-          <ion-list class="filter-item">
+          <ion-label :class="errorAdd && state == '' ? 'required_text' : ''">Etat de la blessure *</ion-label>
+          <ion-list :class="errorAdd && state == '' ? 'required_class' : ''" class="filter-item">
             <ion-item>
               <ion-select interface="popover" placeholder="Etat de la blessure" class="custom-ion-select"
                 :toggle-icon="chevronDownOutline" justify="space-between" @click="setIonSize()"
@@ -68,7 +68,7 @@
 
         </div>
         <div>
-          <NavButton style="width: 100%; height: 40px; margin-top: 20px;" @click="addInjurie" text="Ajouter la blessure" :noIcon="true" />
+          <NavButton style="width: 100%; height: 40px; margin-top: 20px;" @click="addInjurie" :disabled="adding" :text="adding ? 'Ajout en cours': 'Ajouter la blessure'" :noIcon="true" />
         </div>
       </div>
     </ion-content>
@@ -103,6 +103,8 @@ import router from "../../router";
 
 import { useErrorHandler } from '../../lib/useErrorHandler';
 
+const errorAdd = ref(false); 
+
 const { triggerError } = useErrorHandler() as any;
 
 const nameInjury = ref("");
@@ -118,6 +120,7 @@ const muscleSelected = ref([{
 const muscles = ref([] as Muscles[]);
 const user = ref({} as any);
 
+const adding = ref(false);
 
 const injuries_state = ref([
   {
@@ -213,6 +216,7 @@ const setIonSize = () => {
  * Ajoute une nouvelle blessure en envoyant une requête POST au serveur.
  */
 const addInjurie = () => {
+  adding.value = true;
   post(
     "/injuries/",
     {
@@ -229,8 +233,12 @@ const addInjurie = () => {
   ).then((res) => {
     if (res.status > 300) {
       triggerError('Erreur lors de la création de la blessure');
+      errorAdd.value = true;
+      adding.value = false;
     } else {
       router.push("/view_injuries/" + res.id + "/?edit=true")
+      errorAdd.value = false;
+
     }
   });
 };
@@ -239,6 +247,7 @@ const addInjurie = () => {
  * Hook pour exécuter du code lorsque l'IonView est sur le point d'entrer et de devenir actif.
  */
 onIonViewWillEnter(async () => {
+  adding.value = false;
   let storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;

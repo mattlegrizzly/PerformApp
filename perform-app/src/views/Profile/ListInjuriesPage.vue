@@ -96,7 +96,7 @@ onIonViewWillEnter(async () => {
   let storeUser = await store.get("user");
   if (storeUser !== "") {
     user.value = JSON.parse(storeUser).user;
-    get("/injuries/?user=" + user.value.id, { body: {} }, true).then((res) => {
+    get("/injuries/user/" + user.value.id +"/", { body: {} }, true).then((res) => {
       if (res.status > 301) {
         triggerError('Erreur lors de la récupération des blessures');
       } else {

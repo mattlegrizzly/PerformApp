@@ -298,10 +298,11 @@ const isFilter = () => {
 }
 
 const resetFilter = () => {
+  console.log("oui refresh")
   muscle_selected.value = [];
   materials_selected.value = [];
   sports_selected.value = [];
-  generateItems('refresh')
+  filterExercice();
 }
 
 const getThumbnail = (path: string) => {
@@ -319,6 +320,7 @@ const findMaterial = (material: any) => {
 };
 
 const generateItems = async (type: string) => {
+  console.log('generates refresh')
   if (type === "refresh") {
     exercises.value = [];
     page.value = 1;

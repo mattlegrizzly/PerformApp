@@ -1,7 +1,7 @@
 <style scoped></style>
 
 <template>
-  <ion-page data-page="Home">
+  <ion-page style="padding-top: 0px !important" data-page="Home">
     <ion-content>
       <div class="home_div">
         <div class="header_img">
@@ -21,16 +21,26 @@
             <div v-if="!profilePicture" class="profile_placeholder">
               {{ user.first_name[0] }}
             </div>
-            <img v-else :src="profilePicture" alt="profile" class="profile_img" />
+            <img
+              v-else
+              :src="profilePicture"
+              alt="profile"
+              class="profile_img"
+            />
           </div>
         </div>
-        <div :class="hideWelness
-          ? 'block_100 wellness_100 wellness_100_hidden'
-          : 'block_100 wellness_100'
-          ">
+        <div
+          :class="
+            hideWelness
+              ? 'block_100 wellness_100 wellness_100_hidden'
+              : 'block_100 wellness_100'
+          "
+        >
           <div class="display_flex" @click="hideWelness = !hideWelness">
             <h3>Welness</h3>
-            <ion-icon :icon="hideWelness ? chevronUpOutline : chevronDownOutline" />
+            <ion-icon
+              :icon="hideWelness ? chevronUpOutline : chevronDownOutline"
+            />
           </div>
           <ion-modal ref="modal" id="set_wellness">
             <ion-content>
@@ -39,22 +49,60 @@
                 <ion-icon class="close-icon" @click="dismiss" :icon="close" />
               </div>
               <div class="divs_range">
-                <WellnessRange id="pain_range" title="Douleurs" :value="welness.pain" :min="0" :max="10"
-                  descriptionStart="Journée douloureuse" descriptionEnd="Aucune douleur"
-                  @change="onIonChange($event, 'pain')" />
-                <WellnessRange id="sleep_range" title="Sommeil" :value="welness.sleep" :min="0" :max="10"
-                  descriptionStart="Mauvais sommeil" descriptionEnd="Très bon sommeil"
-                  @change="onIonChange($event, 'sleep')" />
-                <WellnessRange id="stress_range" title="Stress" :value="welness.stress" :min="0" :max="10"
-                  descriptionStart="Journée stressante" descriptionEnd="Journée détendue"
-                  @change="onIonChange($event, 'stress')" />
-                <WellnessRange id="fatigue_range" title="Fatigue" :value="welness.fatigue" :min="0" :max="10"
-                  descriptionStart="Très fatigué" descriptionEnd="Je pète la forme"
-                  @change="onIonChange($event, 'fatigue')" />
-                <WellnessRange id="hydratation_range" title="Hydratation" :value="welness.hydratation" :min="0"
-                  :max="10" descriptionStart="- de 1L" descriptionEnd="+ de 3L"
-                  @change="onIonChange($event, 'hydratation')" />
-                <div class="display_flex" style="justify-content: center; margin-top: 10px">
+                <WellnessRange
+                  id="pain_range"
+                  title="Douleurs"
+                  :value="welness.pain"
+                  :min="0"
+                  :max="10"
+                  descriptionStart="Journée douloureuse"
+                  descriptionEnd="Aucune douleur"
+                  @change="onIonChange($event, 'pain')"
+                />
+                <WellnessRange
+                  id="sleep_range"
+                  title="Sommeil"
+                  :value="welness.sleep"
+                  :min="0"
+                  :max="10"
+                  descriptionStart="Mauvais sommeil"
+                  descriptionEnd="Très bon sommeil"
+                  @change="onIonChange($event, 'sleep')"
+                />
+                <WellnessRange
+                  id="stress_range"
+                  title="Stress"
+                  :value="welness.stress"
+                  :min="0"
+                  :max="10"
+                  descriptionStart="Journée stressante"
+                  descriptionEnd="Journée détendue"
+                  @change="onIonChange($event, 'stress')"
+                />
+                <WellnessRange
+                  id="fatigue_range"
+                  title="Fatigue"
+                  :value="welness.fatigue"
+                  :min="0"
+                  :max="10"
+                  descriptionStart="Très fatigué"
+                  descriptionEnd="Je pète la forme"
+                  @change="onIonChange($event, 'fatigue')"
+                />
+                <WellnessRange
+                  id="hydratation_range"
+                  title="Hydratation"
+                  :value="welness.hydratation"
+                  :min="0"
+                  :max="10"
+                  descriptionStart="- de 1L"
+                  descriptionEnd="+ de 3L"
+                  @change="onIonChange($event, 'hydratation')"
+                />
+                <div
+                  class="display_flex"
+                  style="justify-content: center; margin-top: 10px"
+                >
                   <ion-button v-if="wellnessNot" @click="postWelness">
                     Enregistrer
                   </ion-button>
@@ -68,21 +116,57 @@
           <ion-modal class="static-modal" ref="modalStats">
             <ion-content>
               <div class="modal-header">
-                <h3>Satistiques :</h3>
-                <ion-icon class="close-icon" @click="modalStats ? modalStats.$el.dismiss() : ''" :icon="close" />
+                <ion-icon
+                  class="close-icon"
+                  @click="modalStats ? modalStats.$el.dismiss() : ''"
+                  :icon="close"
+                />
+                <div style=" width:100%; display:  flex;  margin-top : 10px; justify-content: space-between">
+                  <h3>Satistiques :</h3>
+                  <ion-list>
+                    <ion-item>
+                      <ion-select
+                        aria-label="Visions"
+                        interface="popover"
+                        placeholder="Période"
+                        :value="period"
+                      >
+                      <ion-select-option value="week"
+                        >Semaines</ion-select-option
+                      >
+                        <ion-select-option value="month"
+                          >Mois</ion-select-option
+                        >
+                      </ion-select>
+                    </ion-item>
+                  </ion-list>
+                </div>
               </div>
               <div class="modal-body">
                 <h4>Semaine du {{ weekRange }}</h4>
 
                 <div>
-                  <canvas width="300px" height="200px" min="0" max="10" id="acquisitions"></canvas>
+                  <canvas
+                    width="300px"
+                    height="200px"
+                    min="0"
+                    max="10"
+                    id="acquisitions"
+                  ></canvas>
                 </div>
                 <div class="week-navigation">
                   <ion-button @click="setPreviousWeek" fill="outline">
-                    < Semaine précédente</ion-button>
-                      <ion-button :disabled="getWeekNumber(new Date(Date.now())) == getWeekNumber(tempDate)"
-                        @click="setNextWeek" fill="outline">Semaine
-                        suivante ></ion-button>
+                    < Semaine précédente</ion-button
+                  >
+                  <ion-button
+                    :disabled="
+                      getWeekNumber(new Date(Date.now())) ==
+                      getWeekNumber(tempDate)
+                    "
+                    @click="setNextWeek"
+                    fill="outline"
+                    >Semaine suivante ></ion-button
+                  >
                 </div>
               </div>
             </ion-content>
@@ -91,25 +175,80 @@
           <div v-if="wellnessNot">
             <p style="text-align: center; margin-top: 10px; font-size: 16px">
               Saissiez votre welness du jour !
-              <ion-button id="open-modal" @click="() => {
-                modal.$el.present()
-              }" expand="block">Saisir le wellness</ion-button>
+              <ion-button
+                id="open-modal"
+                @click="
+                  () => {
+                    modal.$el.present();
+                  }
+                "
+                expand="block"
+                >Saisir le wellness</ion-button
+              >
             </p>
           </div>
-          <div v-else class="divs_range show_divs_range" :class="hideWelness ? 'show_divs_range_hidden' : ''">
-            <WellnessRange id="pain_range" title="Douleurs" :value="welness.pain" :min="0" :max="10" disabled
-              descriptionStart="Journée douloureuse" descriptionEnd="Aucune douleur" />
-            <WellnessRange id="sleep_range" title="Sommeil" :value="welness.sleep" :min="0" :max="10" disabled
-              descriptionStart="Mauvais sommeil" descriptionEnd="Très bon sommeil" />
-            <WellnessRange id="stress_range" title="Stress" :value="welness.stress" :min="0" :max="10" disabled
-              descriptionStart="Journée stressante" descriptionEnd="Journée détendue" />
-            <WellnessRange id="fatigue_range" title="Fatigue" :value="welness.fatigue" :min="0" :max="10" disabled
-              descriptionStart="Très fatigué" descriptionEnd="Je pète la forme" />
-            <WellnessRange id="hydratation_range" title="Hydratation" :value="welness.hydratation" :min="0" :max="10"
-              disabled descriptionStart="- de 1L" descriptionEnd="+ de 3L" />
+          <div
+            v-else
+            class="divs_range show_divs_range"
+            :class="hideWelness ? 'show_divs_range_hidden' : ''"
+          >
+            <WellnessRange
+              id="pain_range"
+              title="Douleurs"
+              :value="welness.pain"
+              :min="0"
+              :max="10"
+              disabled
+              descriptionStart="Journée douloureuse"
+              descriptionEnd="Aucune douleur"
+            />
+            <WellnessRange
+              id="sleep_range"
+              title="Sommeil"
+              :value="welness.sleep"
+              :min="0"
+              :max="10"
+              disabled
+              descriptionStart="Mauvais sommeil"
+              descriptionEnd="Très bon sommeil"
+            />
+            <WellnessRange
+              id="stress_range"
+              title="Stress"
+              :value="welness.stress"
+              :min="0"
+              :max="10"
+              disabled
+              descriptionStart="Journée stressante"
+              descriptionEnd="Journée détendue"
+            />
+            <WellnessRange
+              id="fatigue_range"
+              title="Fatigue"
+              :value="welness.fatigue"
+              :min="0"
+              :max="10"
+              disabled
+              descriptionStart="Très fatigué"
+              descriptionEnd="Je pète la forme"
+            />
+            <WellnessRange
+              id="hydratation_range"
+              title="Hydratation"
+              :value="welness.hydratation"
+              :min="0"
+              :max="10"
+              disabled
+              descriptionStart="- de 1L"
+              descriptionEnd="+ de 3L"
+            />
             <div class="actions">
-              <ion-button size="small" fill="outline" @click="showStats">Satistiques</ion-button>
-              <ion-button size="small" @click="modal.$el.present()">Editer</ion-button>
+              <ion-button size="small" fill="outline" @click="showStats"
+                >Satistiques</ion-button
+              >
+              <ion-button size="small" @click="modal.$el.present()"
+                >Editer</ion-button
+              >
             </div>
           </div>
         </div>
@@ -142,11 +281,12 @@ import { close, chevronDownOutline, chevronUpOutline } from "ionicons/icons";
 import { patch, post, get } from "../lib/callApi";
 import WellnessRange from "@/components/WellnessRange/WellnessRange.vue";
 import Chart from "chart.js/auto";
-import { useErrorHandler } from '../lib/useErrorHandler';
+import { useErrorHandler } from "../lib/useErrorHandler";
 
 const { triggerError } = useErrorHandler() as any;
-
 const api = import.meta.env.VITE_API_URL;
+
+const period = ref('week')
 
 //On retrouve ici l'ensemble de nos ref utilisés dans cette page
 const hideWelness = ref(false);
@@ -182,13 +322,15 @@ const user = ref({
   users_wellness: [],
 });
 
-/** 
+/**
  * Fonction qui permet d'afficher les dates de début et de fin de la semaine pour le wellness
  */
 const weekRange = computed(() => {
   const start = new Date(weekWelnessTemp.value[0].date);
   const end = new Date(weekWelnessTemp.value[6].date);
-  return `${start.getDate()}/${start.getMonth() + 1} au ${end.getDate()}/${end.getMonth() + 1}`;
+  return `${start.getDate()}/${start.getMonth() + 1} au ${end.getDate()}/${
+    end.getMonth() + 1
+  }`;
 });
 
 /**
@@ -202,32 +344,36 @@ const dismiss = () => {
 
 /**
  * Fonction de conversion d'une date pour la récupérer sans la partie heure
- * @param date 
+ * @param date
  */
 const setLongDate = (date: any) => {
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 };
 
 /**
  * Fonction permettant la création du wellness du jour
  */
 const postWelness = async () => {
-  const response = await post("/wellness/", {
-    body: {
-      sleep: welness.value.sleep,
-      hydratation: welness.value.hydratation,
-      fatigue: welness.value.fatigue,
-      pain: welness.value.pain,
-      stress: welness.value.stress,
-      user: user.value.id,
-      date: setLongDate(new Date()),
+  const response = await post(
+    "/wellness/",
+    {
+      body: {
+        sleep: welness.value.sleep,
+        hydratation: welness.value.hydratation,
+        fatigue: welness.value.fatigue,
+        pain: welness.value.pain,
+        stress: welness.value.stress,
+        user: user.value.id,
+        date: setLongDate(new Date()),
+      },
     },
-  }, true);
+    true
+  );
 
   if (!response.status) {
-    const userResponse = await get("/me/", { body: {} }, true);
+    const userResponse = await get("/users/me/", { body: {} }, true);
     if (userResponse.status > 301) {
-      triggerError('Erreur lors de la récupération de l\'utilisateur');
+      triggerError("Erreur lors de la récupération de l'utilisateur");
     } else {
       await store.set("user", JSON.stringify(userResponse));
       welness.value = response;
@@ -235,7 +381,7 @@ const postWelness = async () => {
       modal.value.$el.dismiss();
     }
   } else {
-    triggerError('Erreur à l\'ajout du wellness');
+    triggerError("Erreur à l'ajout du wellness");
   }
 };
 
@@ -243,25 +389,29 @@ const postWelness = async () => {
  * Fonction qui permet la mise à jour du wellness du jour
  */
 const patchWelness = async () => {
-  const response = await patch(`/wellness/${welness.value.id}/`, {
-    body: {
-      sleep: welness.value.sleep,
-      hydratation: welness.value.hydratation,
-      fatigue: welness.value.fatigue,
-      pain: welness.value.pain,
-      stress: welness.value.stress,
+  const response = await patch(
+    `/wellness/${welness.value.id}/`,
+    {
+      body: {
+        sleep: welness.value.sleep,
+        hydratation: welness.value.hydratation,
+        fatigue: welness.value.fatigue,
+        pain: welness.value.pain,
+        stress: welness.value.stress,
+      },
     },
-  }, true);
+    true
+  );
   if (!response.status) {
     modal.value.$el.dismiss();
   } else {
-    triggerError('Erreur lors de la modification du wellness')
+    triggerError("Erreur lors de la modification du wellness");
   }
 };
 
 /**
-* Fonction pour afficher les graphiques du wellness
-*/
+ * Fonction pour afficher les graphiques du wellness
+ */
 const showStats = async () => {
   modalStats.value.$el.present();
   weekWelnessTemp.value = weekWelness.value;
@@ -293,18 +443,22 @@ const setNextWeek = async () => {
 /**
  * Fonction pour convertir une date XXXX-XX-XX en JJ/MM
  */
-const retrieveDayMonth = (date : string) => {
-  const dateSplit = date.split('-');
-  return dateSplit[2] + "/" + dateSplit[1]
-} 
+const retrieveDayMonth = (date: string) => {
+  const dateSplit = date.split("-");
+  return dateSplit[2] + "/" + dateSplit[1];
+};
 
 /**
  * Fonction pour récupérer et afficher le wellness de la semaine de la date actuelle
  */
 const updateWeekWelness = async () => {
-  const res = await get(`/wellness/user/${user.value.id}/week?date=${setLongDate(tempDate.value)}`, { body: {} }, true);
+  const res = await get(
+    `/wellness/user/${user.value.id}/week?date=${setLongDate(tempDate.value)}`,
+    { body: {} },
+    true
+  );
   if (res.status > 301) {
-    triggerError('Erreur lors du changement de données')
+    triggerError("Erreur lors du changement de données");
   } else {
     weekWelnessTemp.value = JSON.parse(JSON.stringify(res));
     chart.value.destroy();
@@ -314,28 +468,53 @@ const updateWeekWelness = async () => {
 
 /**
  * Fonction de création du graphique du wellness
- * @param data 
+ * @param data
  */
 const createChart = (data: any) => {
   //@ts-expect-error
-  chart.value = markRaw(new Chart(document.getElementById("acquisitions"), {
-    type: "line",
-    data: {
-      labels: ["lun " + retrieveDayMonth(data[0].date), "mar " + retrieveDayMonth(data[1].date), "mer " + retrieveDayMonth(data[2].date), "jeu " + retrieveDayMonth(data[3].date), "ven " + retrieveDayMonth(data[4].date), "sam " + retrieveDayMonth(data[5].date), "dim " + retrieveDayMonth(data[6].date)],
-      datasets: [
-        { label: "Sommeil", data: data.map((elem: { sleep: any }) => elem.sleep) },
-        { label: "Douleurs", data: data.map((elem: { pain: any }) => elem.pain) },
-        { label: "Stress", data: data.map((elem: { stress: any }) => elem.stress) },
-        { label: "Hydratation", data: data.map((elem: { hydratation: any }) => elem.hydratation) },
-        { label: "Fatigue", data: data.map((elem: { fatigue: any }) => elem.fatigue) },
-      ],
-    },
-    options: {
-      spanGaps: true,
-      scales: { y: { min: 0, max: 10 } },
-      fullSize: true,
-    },
-  }));
+  chart.value = markRaw(
+    new Chart(document.getElementById("acquisitions"), {
+      type: "line",
+      data: {
+        labels: [
+          "lun " + retrieveDayMonth(data[0].date),
+          "mar " + retrieveDayMonth(data[1].date),
+          "mer " + retrieveDayMonth(data[2].date),
+          "jeu " + retrieveDayMonth(data[3].date),
+          "ven " + retrieveDayMonth(data[4].date),
+          "sam " + retrieveDayMonth(data[5].date),
+          "dim " + retrieveDayMonth(data[6].date),
+        ],
+        datasets: [
+          {
+            label: "Sommeil",
+            data: data.map((elem: { sleep: any }) => elem.sleep),
+          },
+          {
+            label: "Douleurs",
+            data: data.map((elem: { pain: any }) => elem.pain),
+          },
+          {
+            label: "Stress",
+            data: data.map((elem: { stress: any }) => elem.stress),
+          },
+          {
+            label: "Hydratation",
+            data: data.map((elem: { hydratation: any }) => elem.hydratation),
+          },
+          {
+            label: "Fatigue",
+            data: data.map((elem: { fatigue: any }) => elem.fatigue),
+          },
+        ],
+      },
+      options: {
+        spanGaps: true,
+        scales: { y: { min: 0, max: 10 } },
+        fullSize: true,
+      },
+    })
+  );
 };
 
 /**
@@ -353,7 +532,7 @@ const onIonChange = ({ detail }: any, name: any) => {
  */
 const profilePicture = computed(() => {
   if (user.value.profile_picture?.includes(api.split("//")[1])) {
-    return user.value.profile_picture.replace('http', 'https');
+    return user.value.profile_picture.replace("http", "https");
   }
   return user.value.profile_picture ? api + user.value.profile_picture : "";
 });
@@ -375,7 +554,7 @@ const loadUser = async () => {
 const refreshUser = async () => {
   const response = await get(`/users/me`, { body: {} }, true);
   if (response > 301) {
-    triggerError('Erreur lors de la récupération des données utilisateur')
+    triggerError("Erreur lors de la récupération des données utilisateur");
   } else {
     user.value = response.user;
     const userToSet = {
@@ -392,12 +571,19 @@ const refreshUser = async () => {
  * Vérifie le bien-être de l'utilisateur pour la semaine et met à jour l'état de bien-être.
  */
 const checkUserWellness = async () => {
-  const res = await get(`/wellness/user/${user.value.id}/week?date=${setLongDate(new Date())}`, { body: {} }, true);
+  const res = await get(
+    `/wellness/user/${user.value.id}/week?date=${setLongDate(new Date())}`,
+    { body: {} },
+    true
+  );
   if (res.status > 301) {
-    triggerError('Erreur lors de la récupération du wellness')
+    triggerError("Erreur lors de la récupération du wellness");
   } else {
     res.forEach((welnessItem: any) => {
-      if (welnessItem.date === setLongDate(new Date()) && welnessItem.sleep != null) {
+      if (
+        welnessItem.date === setLongDate(new Date()) &&
+        welnessItem.sleep != null
+      ) {
         wellnessNot.value = false;
         welness.value = welnessItem;
       }
@@ -414,7 +600,7 @@ function getWeekNumber(d: any) {
   d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
   let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1)) as any;
-  let weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  let weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
   return weekNo;
 }
 
@@ -424,9 +610,13 @@ function getWeekNumber(d: any) {
 onIonViewWillEnter(async () => {
   await loadUser();
 
-  const res = await get(`/wellness/user/${user.value.id}/week?date=${setLongDate(new Date())}`, { body: {} }, true);
+  const res = await get(
+    `/wellness/user/${user.value.id}/week?date=${setLongDate(new Date())}`,
+    { body: {} },
+    true
+  );
   if (res.status > 301) {
-    triggerError('Erreur lors de la récupération du wellness')
+    triggerError("Erreur lors de la récupération du wellness");
   } else {
     res.forEach((welnessItem: any) => {
       if (welnessItem.date === setLongDate(new Date())) {
@@ -441,7 +631,7 @@ onIonViewWillEnter(async () => {
   weekWelness.value = res;
   weekWelnessTemp.value = res;
 
-  document.querySelectorAll(".custom_nav").forEach(elem => {
+  document.querySelectorAll(".custom_nav").forEach((elem) => {
     const shadowRoot = elem.shadowRoot;
     if (shadowRoot) {
       const style = document.createElement("style");
@@ -459,5 +649,4 @@ onIonViewWillLeave(() => {
     chart.value.destroy();
   }
 });
-
 </script>

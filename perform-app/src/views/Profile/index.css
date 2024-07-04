@@ -293,3 +293,12 @@ ion-popover {
 .injury_item:last-child {
     border-bottom: none;
 }
+
+.required_class {
+    border:1px solid red !important;
+    --border-color:1px solid red !important;
+}
+
+.required_text {
+    color : red;
+}

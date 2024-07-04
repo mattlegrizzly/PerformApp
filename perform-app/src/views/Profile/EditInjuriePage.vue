@@ -9,61 +9,137 @@
           Modifier une blessure
         </h1>
         <div class="input_injurie">
-          <ion-label>Nom de la blessure</ion-label>
-          <ion-input label-placement="stacked" fill="outline" :value="injury.name"
-            @ion-change="handleInput('name', $event.detail.value)" placeholder="Déchirure du quadriceps"></ion-input>
+          <ion-label
+            :class="errorAdd && injury.name == '' ? 'required_text' : ''"
+            >Nom de la blessure *</ion-label
+          >
+          <ion-input
+            :class="errorAdd && injury.name == '' ? 'required_class' : ''"
+            label-placement="stacked"
+            fill="outline"
+            :value="injury.name"
+            @ion-change="handleInput('name', $event.detail.value)"
+            placeholder="Déchirure du quadriceps"
+          ></ion-input>
         </div>
         <div class="input_injurie">
           <ion-label>Description de la blessure</ion-label>
 
-          <ion-textarea :value="injury.description" variant="outlined" placeholder="Décrivez votre blessure"
-            @ion-change="handleInput('description', $event.detail.value)">
+          <ion-textarea
+            :value="injury.description"
+            variant="outlined"
+            placeholder="Décrivez votre blessure"
+            @ion-change="handleInput('description', $event.detail.value)"
+          >
           </ion-textarea>
         </div>
 
         <div class="input_injurie">
-          <ion-label>Zone de la blessure</ion-label>
+          <ion-label
+            :class="errorAdd && injury.zone.code == '' ? 'required_text' : ''"
+            >Zone de la blessure</ion-label
+          >
 
-          <ion-list class="filter-item">
+          <ion-list
+            :class="errorAdd && injury.zone.code == '' ? 'required_class' : ''"
+            class="filter-item"
+          >
             <ion-item>
-              <ion-select interface="popover" placeholder="Zone de la blessure" class="custom-ion-select"
-                :toggle-icon="chevronDownOutline" justify="space-between" :value="injury.zone[0].zone.code"
-                @click="setIonSize()" @ion-change="handleInput('zone', $event.detail.value)">
-                <ion-select-option v-for="elem in muscles" :key="elem.code" :value="elem.code">{{ elem.name
-                  }}</ion-select-option>
+              <ion-select
+                interface="popover"
+                placeholder="Zone de la blessure"
+                class="custom-ion-select"
+                :toggle-icon="chevronDownOutline"
+                justify="space-between"
+                :value="injury.zone[0].zone.code"
+                @click="setIonSize()"
+                @ion-change="handleInput('zone', $event.detail.value)"
+              >
+                <ion-select-option
+                  v-for="elem in muscles"
+                  :key="elem.code"
+                  :value="elem.code"
+                  >{{ elem.name }}</ion-select-option
+                >
               </ion-select>
             </ion-item>
           </ion-list>
         </div>
         <div class="input_injurie">
-          <ion-label>Date de la blessure</ion-label>
-          <ion-input type="date" label-placement="stacked" fill="outline" placeholder="2021-09-01" :value="injury.date"
-            @ion-change="handleInput('date', $event.detail.value)"></ion-input>
+          <ion-label
+            :class="errorAdd && injury.date == '' ? 'required_text' : ''"
+            >Date de la blessure *</ion-label
+          >
+          <ion-input
+            :class="errorAdd && injury.date == '' ? 'required_class' : ''"
+            type="date"
+            :month-names="t('monthNames')"
+            :month-short-names="t('monthShortNames')"
+            :day-names="t('dayNames')"
+            :day-short-names="t('dayShortNames')"
+            :done-text="t('doneText')"
+            :cancel-text="t('cancelText')"
+            label-placement="stacked"
+            fill="outline"
+            placeholder="2021-09-01"
+            :value="injury.date"
+            @ion-change="handleInput('date', $event.detail.value)"
+          ></ion-input>
         </div>
         <div class="input_injurie">
-          <ion-label>Etat de la blessure</ion-label>
-          <ion-list class="filter-item">
+          <ion-label
+            :class="errorAdd && injury.state == '' ? 'required_text' : ''"
+            >Etat de la blessure *</ion-label
+          >
+          <ion-list
+            :class="errorAdd && injury.state == '' ? 'required_class' : ''"
+            class="filter-item"
+          >
             <ion-item>
-              <ion-select :value="injury.state" interface="popover" placeholder="Etat de la blessure"
-                class="custom-ion-select" :toggle-icon="chevronDownOutline" justify="space-between"
-                @click="setIonSize()" @ion-change="handleInput('state', $event.detail.value)">
-                <ion-select-option v-for="elem in injuries_state" :key="elem.code" :value="elem.code">{{ elem.name
-                  }}</ion-select-option>
+              <ion-select
+                :value="injury.state"
+                interface="popover"
+                placeholder="Etat de la blessure"
+                class="custom-ion-select"
+                :toggle-icon="chevronDownOutline"
+                justify="space-between"
+                @click="setIonSize()"
+                @ion-change="handleInput('state', $event.detail.value)"
+              >
+                <ion-select-option
+                  v-for="elem in injuries_state"
+                  :key="elem.code"
+                  :value="elem.code"
+                  >{{ elem.name }}</ion-select-option
+                >
               </ion-select>
             </ion-item>
           </ion-list>
         </div>
-        <div style="
+        <div
+          style="
             display: flex;
             width: 100%;
             margin-top: 16px;
             justify-content: center;
             align-items: center;
-          ">
-          <BodyComponent :setMuscleSelected="setMuscle" :muscleSelected="injury.zone" :height="'200'" :width="'100'"
-            :viewOnly="'edit'" />
+          "
+        >
+          <BodyComponent
+            :setMuscleSelected="setMuscle"
+            :muscleSelected="injury.zone"
+            :height="'200'"
+            :width="'100'"
+            :viewOnly="'edit'"
+          />
         </div>
-        <NavButton style="width: 100%; height: 40px; margin-top: 20px;" @click="addInjurie" text="Enregistrer" :noIcon="true" />
+        <NavButton
+          style="width: 100%; height: 40px; margin-top: 20px"
+          @click="addInjurie"
+          :disabled="editing"
+          :text="editing ? 'Enregistrement en cours..' : 'Enregistrer'"
+          :noIcon="true"
+        />
       </div>
     </ion-content>
   </ion-page>
@@ -80,7 +156,7 @@ import {
   IonInput,
   IonTextarea,
   IonLabel,
-  onIonViewWillEnter
+  onIonViewWillEnter,
 } from "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";
@@ -90,28 +166,38 @@ import { ref } from "vue";
 import { get, patch } from "../../lib/callApi";
 import "./index.css";
 //@ts-expect-error
-import { BodyComponent } from 'perform-body-component-lib'
+import { BodyComponent } from "perform-body-component-lib";
 import { store } from "../../store/store";
 import router from "../../router";
 import { useRoute } from "vue-router";
-import { useErrorHandler } from '../../lib/useErrorHandler';
+import { useErrorHandler } from "../../lib/useErrorHandler";
+
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const { triggerError } = useErrorHandler() as any;
 
 const navRoute = useRoute();
 
+const editing = ref(false);
+
+const errorAdd = ref(false);
+
 const injury = ref({
   id: "",
   name: "",
   description: "",
-  zone: [{
-    zone: {
-      name: "",
-      code: ""
-    }
-  }],
+  zone: [
+    {
+      zone: {
+        name: "",
+        code: "",
+      },
+    },
+  ],
   date: "",
-  user: '',
+  user: "",
   state: "",
 }) as any;
 
@@ -121,7 +207,7 @@ const injury = ref({
  * @param {string | undefined | null} valuePass - La valeur à affecter à la propriété.
  */
 const handleInput = (name: string, valuePass: string | undefined | null) => {
-  const value = valuePass as string
+  const value = valuePass as string;
   switch (name) {
     case "name":
       injury.value.name = value;
@@ -130,12 +216,14 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
       injury.value.description = value;
       break;
     case "zone":
-      injury.value.zone = [{
-        zone: {
-          code: value,
-          name: ''
-        }
-      }];
+      injury.value.zone = [
+        {
+          zone: {
+            code: value,
+            name: "",
+          },
+        },
+      ];
       break;
     case "date":
       injury.value.date = value;
@@ -148,7 +236,6 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
 
 const user = ref({} as any);
 const id = ref(0);
-
 
 /**
  * Définit la taille des popovers `ion-popover`.
@@ -178,11 +265,12 @@ const setIonSize = () => {
     `;
     elem.appendChild(stylePopover);
   }
-}
+};
 /**
  * Ajoute une blessure en utilisant l'API `patch` et redirige vers la page de vue des blessures.
  */
 const addInjurie = () => {
+  editing.value = true;
   patch(
     "/injuries/" + id.value + "/",
     {
@@ -198,10 +286,12 @@ const addInjurie = () => {
     true
   ).then((res) => {
     if (res.status > 300) {
-      triggerError('Erreur lors de la modification de la blessure');
-
+      triggerError("Erreur lors de la modification de la blessure");
+      errorAdd.value = true;
+      editing.value = false;
     } else {
       router.push("/view_injuries/" + id.value + "/?edit=true");
+      errorAdd.value = false;
     }
   });
 };
@@ -227,29 +317,33 @@ const injuries_state = ref([
 const muscles = ref([] as any);
 
 const setMuscle = (code: string) => {
-  injury.value.zone = [{
-    zone: {
-      code: code,
-      name: ''
-    }
-  }];
-
-}
+  injury.value.zone = [
+    {
+      zone: {
+        code: code,
+        name: "",
+      },
+    },
+  ];
+};
 
 onIonViewWillEnter(async () => {
   id.value = Number(navRoute.params.id);
+  editing.value = false;
   injury.value = {
     id: "",
     name: "",
     description: "",
-    zone: [{
-      zone: {
-        name: "",
-        code: ""
-      }
-    }],
+    zone: [
+      {
+        zone: {
+          name: "",
+          code: "",
+        },
+      },
+    ],
     date: "",
-    user: '',
+    user: "",
     state: "",
   };
   store.get("user").then((res) => {
@@ -258,15 +352,17 @@ onIonViewWillEnter(async () => {
       user.value = JSON.parse(storeUser).user;
       get("/injuries/" + id.value + "/", { body: {} }, true).then((res) => {
         if (res.status > 300) {
-          triggerError('Erreur lors de la récupération des blessures');
+          triggerError("Erreur lors de la récupération des blessures");
         } else {
           injury.value = res;
-          injury.value.zone = [{
-            zone: {
-              code: res.zone.code,
-              name: ''
-            }
-          }]
+          injury.value.zone = [
+            {
+              zone: {
+                code: res.zone.code,
+                name: "",
+              },
+            },
+          ];
         }
       });
     }
@@ -289,7 +385,7 @@ onIonViewWillEnter(async () => {
 
   get("/workzones/all", { body: {} }, false).then((res) => {
     if (res.status > 301) {
-      triggerError('Erreur lors de la récupération des muscles')
+      triggerError("Erreur lors de la récupération des muscles");
     } else {
       muscles.value = res;
     }

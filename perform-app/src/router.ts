@@ -103,7 +103,7 @@ const isLoggedIn = async () => {
         return false;
       }
     }
-    const userResponse = await get("/admin/users_all/me/", { body: {} }, true);
+    const userResponse = await get("/users/me/", { body: {} }, true);
     await store.set("user", JSON.stringify(userResponse));
     return true;
   } catch (error) {

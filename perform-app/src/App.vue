@@ -16,7 +16,6 @@
 import { IonApp, IonRouterOutlet, IonToast } from '@ionic/vue';
 import { ref, provide } from 'vue';
 
-
 const showToast = ref(false);
 const toastMessage = ref('');
 
