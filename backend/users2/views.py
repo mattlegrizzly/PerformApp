@@ -650,7 +650,8 @@ class InjurieViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path="user/(?P<user_id>\d+)")
     def injurie(self, request, *args, **kwargs):
-        user_id = kwargs.get('user')
+        user_id = kwargs.get('user_id')
+        print(user_id)
         queryset = self.queryset.filter(user=user_id)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -729,7 +730,8 @@ class WellnessViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         date = serializer.validated_data.get('date')
-        if Wellness.objects.filter(date=date).exists():
+        user = self.request.user  # assuming you are within a view and `self.request` is available
+        if Wellness.objects.filter(date=date , user=user).exists():
             raise ValidationError("An entry with this date already exists.")
         serializer.save()
 
@@ -830,6 +832,44 @@ class WellnessViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(week_data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        tags=['Users - Wellness'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="user/(?P<user_id>\d+)/month")
+    def month_wellness(self, request, user_id, *args, **kwargs):
+        date_str = request.query_params.get('date')
+        try:
+            input_date = datetime.strptime(date_str, '%Y-%m-%d')
+        except (ValueError, TypeError):
+            return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+
+        start_month = input_date.replace(day=1)  # Premier jour du mois
+        next_month = (start_month.replace(day=28) + timedelta(days=4)).replace(day=1)  # Premier jour du mois suivant
+        end_month = next_month - timedelta(days=1)  # Dernier jour du mois
+
+        queryset = self.queryset.filter(user=user_id, date__range=[start_month, end_month])
+        wellness_data = {w.date: w for w in queryset}
+
+        month_data = []
+        current_date = start_month
+        while current_date <= end_month:
+            if current_date.date() in wellness_data:
+                month_data.append(wellness_data[current_date.date()])
+            else:
+                month_data.append(Wellness(
+                    user_id=user_id,
+                    date=current_date.date(),
+                    hydratation=None,
+                    sleep=None,
+                    stress=None,
+                    fatigue=None,
+                    pain=None
+                ))
+            current_date += timedelta(days=1)
+
+        serializer = self.get_serializer(month_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 class PasswordChangeLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PasswordChangeLog.objects.all()
     serializer_class = PasswordChangeLogSerializer
