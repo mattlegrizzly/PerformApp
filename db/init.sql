@@ -12,6 +12,10 @@ SELECT 'Trapèzes', 'trapezoid', 'MU', current_timestamp, current_timestamp
 WHERE NOT EXISTS (SELECT 1 FROM "exercise_workzone" WHERE code= 'trapezoid');
 
 INSERT INTO "exercise_workzone" (name, code, zone, created_at, updated_at)
+SELECT 'Cervicales', 'cervical', 'MU', current_timestamp, current_timestamp
+WHERE NOT EXISTS (SELECT 1 FROM "exercise_workzone" WHERE code= 'cervical');
+
+INSERT INTO "exercise_workzone" (name, code, zone, created_at, updated_at)
 SELECT 'Epaules', 'deltoids', 'MU', current_timestamp, current_timestamp
 WHERE NOT EXISTS (SELECT 1 FROM "exercise_workzone" WHERE code= 'deltoids');
 

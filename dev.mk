@@ -2,7 +2,7 @@ include ./config/.env.dev
 export $(shell sed 's/=.*//' .env)
 
 ADMIN=react_admin
-API=django
+API=django_dev
 CLIENT=react_client
 CMP=docker-compose.dev.yml
 ENV=.env

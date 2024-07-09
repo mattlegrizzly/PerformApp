@@ -121,7 +121,14 @@
                   @click="modalStats ? modalStats.$el.dismiss() : ''"
                   :icon="close"
                 />
-                <div style=" width:100%; display:  flex;  margin-top : 10px; justify-content: space-between">
+                <div
+                  style="
+                    width: 100%;
+                    display: flex;
+                    margin-top: 10px;
+                    justify-content: space-between;
+                  "
+                >
                   <h3>Satistiques :</h3>
                   <ion-list>
                     <ion-item>
@@ -130,10 +137,11 @@
                         interface="popover"
                         placeholder="Période"
                         :value="period"
+                        @ion-change="handleChartChange($event.detail.value)"
                       >
-                      <ion-select-option value="week"
-                        >Semaines</ion-select-option
-                      >
+                        <ion-select-option value="week"
+                          >Semaines</ion-select-option
+                        >
                         <ion-select-option value="month"
                           >Mois</ion-select-option
                         >
@@ -143,7 +151,8 @@
                 </div>
               </div>
               <div class="modal-body">
-                <h4>Semaine du {{ weekRange }}</h4>
+                <h4 v-if="period=='week'">Semaine du {{ weekRange }}</h4>
+                <h4 v-else>{{ getMonthAndYear() }}</h4>
 
                 <div>
                   <canvas
@@ -154,8 +163,8 @@
                     id="acquisitions"
                   ></canvas>
                 </div>
-                <div class="week-navigation">
-                  <ion-button @click="setPreviousWeek" fill="outline">
+                <div v-if="period == 'week'" class="week-navigation">
+                  <ion-button @click="setPreviousWeek" fill="solid">
                     < Semaine précédente</ion-button
                   >
                   <ion-button
@@ -164,11 +173,37 @@
                       getWeekNumber(tempDate)
                     "
                     @click="setNextWeek"
-                    fill="outline"
+                    fill="solid"
                     >Semaine suivante ></ion-button
                   >
                 </div>
+                <div v-else class="week-navigation">
+                  <ion-button @click="setPreviousMonth" fill="solid">
+                    < Mois précédent</ion-button
+                  >
+                  <ion-button
+                    :disabled="
+                      isMonthBeforeTempDate()
+                    "
+                    @click="setNextMonth"
+                    fill="solid"
+                    >Mois suivant ></ion-button
+                  >
+                </div>
               </div>
+              <div style="display: flex; justify-content: center;"><ion-button
+                    @click="() => {
+                      tempDate = new Date(Date.now());
+                      if(period === 'week'){
+                        updateWeekWelness();
+                      } else {
+                        updateMonthWellness();
+                      }
+                    }"
+                    fill="outline"
+                    size="small"
+                    >Revenir {{ period =="week" ? 'à la semaine actuelle' : 'au mois actuel' }}</ion-button
+                  ></div>
             </ion-content>
           </ion-modal>
 
@@ -244,7 +279,7 @@
             />
             <div class="actions">
               <ion-button size="small" fill="outline" @click="showStats"
-                >Satistiques</ion-button
+                >Statistiques</ion-button
               >
               <ion-button size="small" @click="modal.$el.present()"
                 >Editer</ion-button
@@ -274,7 +309,7 @@ import {
   IonList,
   IonSelect,
   IonSelectOption,
-  IonItem
+  IonItem,
 } from "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";
@@ -290,13 +325,14 @@ import { useErrorHandler } from "../lib/useErrorHandler";
 const { triggerError } = useErrorHandler() as any;
 const api = import.meta.env.VITE_API_URL;
 
-const period = ref('week')
+const period = ref("week");
 
 //On retrouve ici l'ensemble de nos ref utilisés dans cette page
 const hideWelness = ref(false);
 const wellnessNot = ref(true);
 const weekWelness: any = ref([]);
 const weekWelnessTemp: any = ref([]);
+const monthWellnessTemp: any = ref([]);
 const tempDate: any = ref(new Date(Date.now()));
 const welness = ref({
   sleep: 0,
@@ -390,6 +426,38 @@ const postWelness = async () => {
 };
 
 /**
+ * Fonction pour mettre à jour les types de graphes
+ */
+const handleChartChange = (e : any) => {
+  console.log(e)
+  period.value = e;
+  console.log(tempDate)
+  if (e == 'week') {
+    updateWeekWelness()
+  } else {
+    updateMonthWellness()
+  }
+}
+
+/**
+ * Fonction pour vérifier si le mois et l'année de la date actuelle sont antérieurs à tempDate
+ * @param date - La date à vérifier
+ * @returns {boolean} - Retourne vrai si le mois et l'année de la date actuelle sont antérieurs à tempDate
+ */
+ const isMonthBeforeTempDate = () => {
+  const currentDate = new Date(Date.now());
+
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth(); // Mois de 0 à 11
+
+  const tempYear = new Date(tempDate.value).getFullYear();
+  const tempMonth =  new Date(tempDate.value).getMonth();
+
+  // Vérifier si l'année et le mois de la date actuelle sont antérieurs à ceux de tempDate
+  return (currentYear <= tempYear && currentMonth == tempMonth);
+};
+
+/**
  * Fonction qui permet la mise à jour du wellness du jour
  */
 const patchWelness = async () => {
@@ -419,9 +487,7 @@ const patchWelness = async () => {
 const showStats = async () => {
   modalStats.value.$el.present();
   weekWelnessTemp.value = weekWelness.value;
-  setTimeout(() => {
-    createChart(weekWelness.value);
-  }, 100);
+  await updateWeekWelness();
 };
 
 /**
@@ -445,6 +511,26 @@ const setNextWeek = async () => {
 };
 
 /**
+ * Fonction pour afficher et récupérer les informations du wellness du mois précédent
+ */
+ const setPreviousMonth = async () => {
+  const newDate = new Date(tempDate.value);
+  newDate.setMonth(newDate.getMonth() - 1);
+  tempDate.value = newDate;
+  await updateMonthWellness();  // Supposons que vous avez une fonction updateMonthWellness pour mettre à jour les données mensuelles
+};
+
+/**
+ * Fonction pour afficher et récupérer les informations du wellness du mois suivant
+ */
+const setNextMonth = async () => {
+  const newDate = new Date(tempDate.value);
+  newDate.setMonth(newDate.getMonth() + 1);
+  tempDate.value = newDate;
+  await updateMonthWellness();  // Supposons que vous avez une fonction updateMonthWellness pour mettre à jour les données mensuelles
+};
+
+/**
  * Fonction pour convertir une date XXXX-XX-XX en JJ/MM
  */
 const retrieveDayMonth = (date: string) => {
@@ -453,11 +539,29 @@ const retrieveDayMonth = (date: string) => {
 };
 
 /**
+ * Fonction pour récupérer le nom complet du mois et l'année à partir d'une date
+ * @param date - La date à partir de laquelle extraire le mois et l'année
+ * @returns {string} - Retourne le nom complet du mois et l'année (ex: "July 2023")
+ */
+ const getMonthAndYear = () => {
+  const months = [
+    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+    "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"
+  ];
+
+  const givenDate = new Date(tempDate.value);
+  const monthName = months[givenDate.getMonth()];
+  const year = givenDate.getFullYear();
+
+  return `${monthName} ${year}`;
+};
+
+/**
  * Fonction pour récupérer et afficher le wellness de la semaine de la date actuelle
  */
 const updateWeekWelness = async () => {
   const res = await get(
-    `/wellness/user/${user.value.id}/week?date=${setLongDate(tempDate.value)}`,
+    `/wellness/user/${user.value.id}/week?date=${setLongDate(new Date(tempDate.value))}`,
     { body: {} },
     true
   );
@@ -465,8 +569,26 @@ const updateWeekWelness = async () => {
     triggerError("Erreur lors du changement de données");
   } else {
     weekWelnessTemp.value = JSON.parse(JSON.stringify(res));
-    chart.value.destroy();
+    if (chart.value) chart.value.destroy()
     createChart(weekWelnessTemp.value);
+  }
+};
+
+/**
+ * Fonction pour récupérer et afficher le wellness du mois de la date actuelle
+ */
+ const updateMonthWellness = async () => {
+  const res = await get(
+    `/wellness/user/${user.value.id}/month?date=${setLongDate(new Date(tempDate.value))}`,
+    { body: {} },
+    true
+  );
+  if (res.status > 301) {
+    triggerError("Erreur lors du changement de données");
+  } else {
+    monthWellnessTemp.value = JSON.parse(JSON.stringify(res));
+    if (chart.value) chart.value.destroy();
+    createChart(monthWellnessTemp.value);
   }
 };
 
@@ -474,21 +596,20 @@ const updateWeekWelness = async () => {
  * Fonction de création du graphique du wellness
  * @param data
  */
-const createChart = (data: any) => {
+ const createChart = (data: any) => {
+  const labels = data.map((elem: { date: string }) => {
+    const date = new Date(elem.date);
+    const day = date.getDate();
+    const weekday = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"][date.getDay()];
+    return `${weekday} ${day}`;
+  });
+
   //@ts-expect-error
   chart.value = markRaw(
     new Chart(document.getElementById("acquisitions"), {
       type: "line",
       data: {
-        labels: [
-          "lun " + retrieveDayMonth(data[0].date),
-          "mar " + retrieveDayMonth(data[1].date),
-          "mer " + retrieveDayMonth(data[2].date),
-          "jeu " + retrieveDayMonth(data[3].date),
-          "ven " + retrieveDayMonth(data[4].date),
-          "sam " + retrieveDayMonth(data[5].date),
-          "dim " + retrieveDayMonth(data[6].date),
-        ],
+        labels: labels,
         datasets: [
           {
             label: "Sommeil",
@@ -516,10 +637,23 @@ const createChart = (data: any) => {
         spanGaps: true,
         scales: { y: { min: 0, max: 10 } },
         fullSize: true,
+        plugins: {
+            legend: {
+                display: true,
+                labels: {
+                    font: {
+                        size: 11
+                    },
+                    boxWidth : 15,
+                    boxHeight : 8
+                }
+            }
+        }
       },
     })
   );
 };
+
 
 /**
  * Met à jour la valeur d'un champ de bien-être.
@@ -608,12 +742,21 @@ function getWeekNumber(d: any) {
   return weekNo;
 }
 
+
+
 /**
  * Exécute les actions nécessaires lors de l'entrée dans la vue.
  */
 onIonViewWillEnter(async () => {
-  welness.value = null;
   wellnessNot.value = true;
+  welness.value = {
+  sleep: 0,
+  stress: 0,
+  hydratation: 0,
+  pain: 0,
+  fatigue: 0,
+  id: 0,
+}
   await loadUser();
   const res = await get(
     `/wellness/user/${user.value.id}/week?date=${setLongDate(new Date())}`,
