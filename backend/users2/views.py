@@ -711,7 +711,7 @@ class InjurieViewSet(viewsets.ModelViewSet):
 #------------------USERS WELLNESS------------------
 # Users Wellness ViewSet
 class WellnessViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsUserOrAdmin, permissions.IsAdminUser]
+    permission_classes = [IsUserOrAdmin]
     queryset = Wellness.objects.all()
 
     def get_serializer_class(self):

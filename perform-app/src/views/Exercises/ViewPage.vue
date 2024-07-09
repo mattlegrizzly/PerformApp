@@ -182,7 +182,8 @@ onIonViewWillEnter(() => {
       { body: {} },
       true
     ).then((res: any) => {
-      if (res.status > 300 || res.length <= 0) {
+      console.log(res)
+      if ((res.status != undefined && res.status > 300) || res.length <= 0) {
         triggerError('Erreur lors de la récupération des favoris');
         is_fav.value = false;
       } else {

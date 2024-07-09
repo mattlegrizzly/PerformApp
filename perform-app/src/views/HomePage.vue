@@ -271,6 +271,10 @@ import {
   IonPage,
   onIonViewWillLeave,
   onIonViewWillEnter,
+  IonList,
+  IonSelect,
+  IonSelectOption,
+  IonItem
 } from "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";
@@ -608,8 +612,9 @@ function getWeekNumber(d: any) {
  * Exécute les actions nécessaires lors de l'entrée dans la vue.
  */
 onIonViewWillEnter(async () => {
+  welness.value = null;
+  wellnessNot.value = true;
   await loadUser();
-
   const res = await get(
     `/wellness/user/${user.value.id}/week?date=${setLongDate(new Date())}`,
     { body: {} },

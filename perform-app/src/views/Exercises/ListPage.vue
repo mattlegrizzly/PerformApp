@@ -302,7 +302,7 @@ const resetFilter = () => {
   muscle_selected.value = [];
   materials_selected.value = [];
   sports_selected.value = [];
-  filterExercice();
+  filterExercice(); 
 }
 
 const getThumbnail = (path: string) => {
@@ -524,7 +524,8 @@ const getExercises = async (type: string) => {
 
   if (isFavorite) {
     const res = await get(`/userfavexercises/user/${user_id.value}/`, option);
-    if (res.status > 301) {
+    console.log("res ", res.status)
+    if (res.status !== undefined && res.status > 301) {
       triggerError('Erreur lors de la récupération des exercices favoris');
     }
     const favs = res.map((exo: any) => exo.fav_exercise);
