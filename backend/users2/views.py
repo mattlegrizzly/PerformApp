@@ -551,10 +551,11 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path="user/(?P<user_id>\d+)")
     def exercise(self, request, *args, **kwargs):
         user_id = kwargs.get('user_id')
-        queryset = self.queryset.filter(user=user_id)
         exercise_id = request.query_params.get('exercise_id')
         if exercise_id:
-            queryset = self.queryset.filter(fav_exercise=exercise_id)
+            queryset = self.queryset.filter(fav_exercise=exercise_id,user=user_id)
+        else:
+            queryset = self.queryset.filter(user=user_id)
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -607,8 +608,13 @@ class UsersFavExercisesViewSet(viewsets.ModelViewSet):
         tags=['Users Fav Exercises'],
         responses={204: "No Content"}
     )
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+    def destroy(self, request, pk=None):
+        try:
+            user_fav_exercise = UsersFavExercises.objects.get(pk=pk)
+            user_fav_exercise.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except UsersFavExercises.DoesNotExist:
+            return Response({'error': 'Item not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 #------------------USERS INJURIES------------------
 # Users Injuries ViewSet
