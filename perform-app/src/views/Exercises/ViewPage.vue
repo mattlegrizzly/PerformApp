@@ -170,6 +170,7 @@ onIonViewWillLeave(() => {
 onIonViewWillEnter(() => {
   loadVideo.value = true;
   showVideo.value = true;
+  is_fav.value = false;
   exercises.value.zone_exercises = []
   id.value = Number(router.params.id);
   store.get("user").then((res) => {
@@ -183,10 +184,10 @@ onIonViewWillEnter(() => {
       true
     ).then((res: any) => {
       console.log(res)
-      if ((res.status != undefined && res.status > 300) || res.length <= 0) {
+      if (res.status != undefined && res.status > 300) {
         triggerError('Erreur lors de la récupération des favoris');
         is_fav.value = false;
-      } else {
+      } else if (res.length > 0) {
         fav_id.value = res[0].id;
         is_fav.value = true;
       }
