@@ -21,6 +21,7 @@
     "lucide-vue-next": "^0.363.0",
     "material-design-icons-iconfont": "^6.7.0",
     "nanoid": "^5.0.7",
+    "perform-body-component-lib": "^1.5.1",
     "pinia": "^2.1.7",
     "plyr": "^3.7.8",
     "radix-vue": "^1.5.3",

@@ -6,7 +6,9 @@ import { useRoute } from 'vue-router'
 import { onMounted } from 'vue'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
-import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
+//@ts-expect-error
+import {BodyComponent} from 'perform-body-component-lib'
+import "perform-body-component-lib/style.css";
 import './exercises.css'
 import type { Muscle } from '@/types/types'
 

@@ -9,7 +9,9 @@ import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import router from '@/router'
 import { nanoid } from 'nanoid'
-import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
+//@ts-expect-error
+import {BodyComponent} from 'perform-body-component-lib'
+import "perform-body-component-lib/style.css";
 import './exercises.css'
 import type { Step, Muscle } from '@/types/types'
 import DeleteModalComponent from '@/components/DeleteModalComponent/DeleteModalComponent.vue'

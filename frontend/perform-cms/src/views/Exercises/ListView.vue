@@ -9,7 +9,9 @@ import router from '@/router'
 import { useRoute } from 'vue-router'
 import PaginationComponent from '@/components/PaginationComponent/PaginationComponent.vue'
 import OrderByComponent from '@/components/OrderByComponent/OrderByComponent.vue'
-import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
+//@ts-expect-error
+import {BodyComponent} from 'perform-body-component-lib'
+import "perform-body-component-lib/style.css";
 import { RouterView } from 'vue-router'
 import type { Order, QueryParams } from '@/types/types'
 import './exercises.css'

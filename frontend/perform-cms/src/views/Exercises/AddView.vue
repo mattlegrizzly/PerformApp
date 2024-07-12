@@ -7,7 +7,10 @@ import type IERequestOptions from '@/types/request'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import { nanoid } from 'nanoid'
-import BodyComponent from '@/components/BodyComponent/BodyComponent.vue'
+import { type Muscle } from '@/types/types'
+//@ts-expect-error
+import {BodyComponent} from 'perform-body-component-lib'
+import "perform-body-component-lib/style.css";
 import './exercises.css'
 import router from '@/router'
 
@@ -24,6 +27,7 @@ const steps_exercise: any = ref([])
 const adding = ref(false)
 
 const materials_selected = ref([])
+const temp_selected = ref([])
 const sport_selected = ref([])
 const muscle_selected: any = ref([])
 const video_src = ref('')
@@ -130,7 +134,7 @@ const sendData = async () => {
           const sportToPush = {
             body: {
               exercise: id,
-              zone: muscle
+              zone: muscle.zone.code
             }
           }
           res = post('/admin/exercisezones/', sportToPush, true)
@@ -151,9 +155,37 @@ const getExercise = async () => {
       error_message.value = res.data.detail
       alertErr.value = true
     } else {
-      elem.array.value = res
+      if(elem.link.includes('workzones')){
+        let array = [] as any; 
+        res.map((elem : any) => {
+          array.push({zone : elem})
+        })
+      elem.array.value = array
+      console.log(array)
+      } else {
+        elem.array.value = res
+      }
     }
   })
+}
+
+const handleChange = (codes : any) => {
+  // Mettez à jour temp_selected pour correspondre aux codes
+  temp_selected.value = codes;
+
+// Créez une nouvelle sélection en fonction des codes
+const newSelection = codes.map(code => muscles.value.find(muscle => muscle.zone.code === code));
+
+// Supprimez les muscles non sélectionnés de muscle_selected
+muscle_selected.value = muscle_selected.value.filter(muscle => codes.includes(muscle.zone.code));
+
+// Ajoutez les nouveaux muscles sélectionnés à muscle_selected
+newSelection.forEach(muscle => {
+  if (!muscle_selected.value.some(m => m.zone.code === muscle.zone.code)) {
+    muscle_selected.value.push(muscle);
+  }
+});
+  
 }
 
 const addStep = async () => {
@@ -173,25 +205,30 @@ const removeStep = async (id: number) => {
   }
 }
 
+
 const setMuscle = (key: string, action: string) => {
-  if (action === 'add') {
+  if (action === "add") {
     const findKey =
-      muscle_selected.value.filter(function (element: any) {
-        return element === (key as string)
-      }).length == 0
+      muscle_selected.value.filter(function (element: Muscle) {
+        return element.zone.code === key;
+      }).length == 0;
     if (findKey) {
-      muscle_selected.value.push(key)
+      muscle_selected.value.push(muscles.value.find((element : any) => element.zone.code == key));
     }
   } else {
-    // Trouver l'index de la valeur à supprimer
-    const index = muscle_selected.value.indexOf(key)
-
-    if (index !== -1) {
-      // Supprimer la valeur à l'index trouvé
-      muscle_selected.value.splice(index, 1)
-    }
+    let index = muscle_selected.value.indexOf(key as any);
+    muscle_selected.value.map((muscle : any) => {
+      if (muscle.zone.code === key) {
+        index = muscle_selected.value.indexOf(muscle);
+      }
+      if (index !== -1) {
+        muscle_selected.value.splice(index, 1);
+      }
+    });
   }
-}
+
+  temp_selected.value = muscle_selected.value
+};
 
 onMounted(() => {
   getExercise()
@@ -232,7 +269,6 @@ onMounted(() => {
           type="file"
           accept="video/mp4"
           multiple
-          v-model="video_url"
           @update:modelValue="onChangeInput($event)"
         ></v-file-input>
       </div>
@@ -253,15 +289,14 @@ onMounted(() => {
         :viewOnly="'add'"
       />
       <v-select
-        v-model="muscle_selected"
+        v-model="temp_selected"
         :items="muscles"
         hint="Sélectionnez les muscles utilisés"
-        item-title="name"
-        item-value="code"
+        item-title="zone.name"
+        item-value="zone.code"
         label="Select"
         multiple
-        persistent-hint
-        single-line
+        @update:modelValue="handleChange"
       >
       </v-select>
       <h2>Sports</h2>
