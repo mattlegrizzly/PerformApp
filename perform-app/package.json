@@ -28,7 +28,7 @@
     "@ionic/vue-router": "^8.1.2",
     "@vueuse/integrations": "^10.9.0",
     "chart.js": "^4.4.3",
-    "perform-body-component-lib": "^1.5.0",
+    "perform-body-component-lib": "^1.5.1",
     "pinia": "^2.1.7",
     "plyr": "^3.7.8",
     "universal-cookie": "^6.1.3",

@@ -335,15 +335,6 @@ const limitExerciseSport = (elem: any) => {
   return elem.slice(0, 2);
 };
 
-/**
- * Fonction qui affiche la modal de définition du wellness
- */
-const dismiss = () => {
-  if (modalSports) {
-    modalSports.$el.dismiss();
-  }
-};
-
 const showModal = async (modal: any) => {
   console.log(modal);
   modal.$el.present();

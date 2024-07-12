@@ -1,5 +1,3 @@
-<style scoped></style>
-
 <template>
   <ion-page style="padding-top: 0px !important" data-page="Home">
     <ion-content>
@@ -531,14 +529,6 @@ const setNextMonth = async () => {
 };
 
 /**
- * Fonction pour convertir une date XXXX-XX-XX en JJ/MM
- */
-const retrieveDayMonth = (date: string) => {
-  const dateSplit = date.split("-");
-  return dateSplit[2] + "/" + dateSplit[1];
-};
-
-/**
  * Fonction pour récupérer le nom complet du mois et l'année à partir d'une date
  * @param date - La date à partir de laquelle extraire le mois et l'année
  * @returns {string} - Retourne le nom complet du mois et l'année (ex: "July 2023")
@@ -604,8 +594,8 @@ const updateWeekWelness = async () => {
     return `${weekday} ${day}`;
   });
 
-  //@ts-expect-error
   chart.value = markRaw(
+    //@ts-expect-error
     new Chart(document.getElementById("acquisitions"), {
       type: "line",
       data: {
