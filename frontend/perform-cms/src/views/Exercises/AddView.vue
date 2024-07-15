@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import NavMenu from '../../components/NavMenu/NavMenu.vue'
-import { ref, onMounted, onUpdated } from 'vue'
+import { ref, onMounted
+ } from 'vue'
 import '@/assets/base.css'
 import { get, post } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import { nanoid } from 'nanoid'
-import { type Muscle } from '@/types/types'
+import type Muscle from '@/types/types'
 //@ts-expect-error
 import {BodyComponent} from 'perform-body-component-lib'
 import "perform-body-component-lib/style.css";
@@ -174,14 +175,14 @@ const handleChange = (codes : any) => {
   temp_selected.value = codes;
 
 // Créez une nouvelle sélection en fonction des codes
-const newSelection = codes.map(code => muscles.value.find(muscle => muscle.zone.code === code));
+const newSelection = codes.map((code : any )=> muscles.value.find((muscle : any) => muscle.zone.code === code));
 
 // Supprimez les muscles non sélectionnés de muscle_selected
-muscle_selected.value = muscle_selected.value.filter(muscle => codes.includes(muscle.zone.code));
+muscle_selected.value = muscle_selected.value.filter((muscle : any) => codes.includes(muscle.zone.code));
 
 // Ajoutez les nouveaux muscles sélectionnés à muscle_selected
-newSelection.forEach(muscle => {
-  if (!muscle_selected.value.some(m => m.zone.code === muscle.zone.code)) {
+newSelection.forEach((muscle : any) => {
+  if (!muscle_selected.value.some((m : any) => m.zone.code === muscle.zone.code)) {
     muscle_selected.value.push(muscle);
   }
 });
@@ -209,7 +210,7 @@ const removeStep = async (id: number) => {
 const setMuscle = (key: string, action: string) => {
   if (action === "add") {
     const findKey =
-      muscle_selected.value.filter(function (element: Muscle) {
+      muscle_selected.value.filter(function (element: any) {
         return element.zone.code === key;
       }).length == 0;
     if (findKey) {
