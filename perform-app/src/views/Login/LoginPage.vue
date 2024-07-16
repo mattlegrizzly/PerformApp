@@ -10,12 +10,9 @@ ion-content .scroll-y {
   <ion-page>
     <ion-content style="align-content: center; justify-content: center; display: flex">
       <div style="
-          display: flex;
-          justify-content: center;
-          position: absolute;
-          top: 10%;
-          width: 100%;
-        ">
+
+        "
+        class="logo_perform_login">
         <img style="width: 250px" src="../../assets/logo_perform.png" />
       </div>
       <div class="login_inputs">
@@ -25,7 +22,7 @@ ion-content .scroll-y {
             <div class="input-div">
               <ion-label>Email : </ion-label>
               <ion-input class="login-input" :class="error ? 'errorInput' : ''" fill="outline" slot="end"
-                placeholder="force@gmail.com" shape="round" @ionInput="handleEmailInput($event)"
+                placeholder="force@gmail.com"  @ionFocus="onFocus" @ionBlur="onBlur" shape="round" @ionInput="handleEmailInput($event)"
                 :value="email"></ion-input>
             </div>
             <div class="input-div">
@@ -83,6 +80,14 @@ const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value;
 };
 
+const onFocus = () => {
+  console.log('focus')
+  if(isMobileDevice()) {document.body.classList.add('keyboard-open');}
+    }
+  const  onBlur = () => {
+    if(isMobileDevice()) {document.body.classList.remove('keyboard-open');}
+    }
+
 /**
  * Fonction de connexion
  */
@@ -126,4 +131,8 @@ const handleEmailInput = (event: any) => {
 const handlePwdInput = (event: any) => {
   pwd.value = event.target.value;
 };
+
+const isMobileDevice = () => {
+      return /Mobi|Android/i.test(navigator.userAgent);
+    }
 </script>

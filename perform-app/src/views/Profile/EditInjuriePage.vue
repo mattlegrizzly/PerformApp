@@ -72,13 +72,7 @@
           >
           <ion-input
             :class="errorAdd && injury.date == '' ? 'required_class' : ''"
-            type="date"
-            :month-names="t('monthNames')"
-            :month-short-names="t('monthShortNames')"
-            :day-names="t('dayNames')"
-            :day-short-names="t('dayShortNames')"
-            :done-text="t('doneText')"
-            :cancel-text="t('cancelText')"
+            type="datetime-local"
             label-placement="stacked"
             fill="outline"
             placeholder="2021-09-01"
@@ -171,10 +165,6 @@ import { store } from "../../store/store";
 import router from "../../router";
 import { useRoute } from "vue-router";
 import { useErrorHandler } from "../../lib/useErrorHandler";
-
-import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
 
 const { triggerError } = useErrorHandler() as any;
 

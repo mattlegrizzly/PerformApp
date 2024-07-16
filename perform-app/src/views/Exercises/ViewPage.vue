@@ -8,6 +8,7 @@
             @click="setFav"
             :icon="is_fav ? heart : heartOutline"
             size="large"
+            color="danger"
           ></ion-icon>
         </div>
         <h1

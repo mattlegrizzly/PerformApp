@@ -137,6 +137,11 @@ const slideRightAnimation = (baseEl: any, opts: any) => {
     return animation;
 };
 
+//@ts-expect-error
+const userLang = navigator.language || navigator.userLanguage
+
+console.log('user lang '  , userLang)
+
 const app = createApp(App).use(vuetify).use(router);
 
 //Cet objet va permettre de définir les différentes animations en fonction de l'entrée (gauche) et la page de sortie (droite)
@@ -174,6 +179,8 @@ app.use(IonicVue, {
 });
 
 app.use(i18n)
+
+app.config.globalProperties.$locale = userLang
 
 router.isReady().then(() => {
     app.mount('#app');

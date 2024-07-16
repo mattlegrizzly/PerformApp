@@ -9,7 +9,7 @@
           <NavButton :disabled='injury.state == "TR"' @click="router.push('/edit_injurie/' + routerNav.params.id)"
             text="Editer" :noIcon="true" />
         </div>
-        <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
+        <h1 style="color: black; margin-top: 10px; margin-bottom: 5px">
           {{ injury.name }}
         </h1>
         <p>

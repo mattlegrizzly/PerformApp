@@ -77,5 +77,19 @@
     padding-right: 20px !important;
 }
 
+.logo_perform_login {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 8%;
+    width: 100%;
+transition: top 0.5s ease-in-out;
+}
+
+.keyboard-open .logo_perform_login 
+{
+    top: 7%;
+}
+
 
 

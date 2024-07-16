@@ -40,7 +40,7 @@
         </div>
         <div class="input_injurie">
           <ion-label :class="errorAdd && date == '' ? 'required_text' : ''">Date de la blessure *</ion-label>
-          <ion-input :class="errorAdd  && date == '' ? 'required_class' : ''" type="date" label-placement="stacked" fill="outline" placeholder="2021-09-01"
+          <ion-input :class="errorAdd  && date == '' ? 'required_class' : ''" type="datetime-local" label-placement="stacked" fill="outline" placeholder="2021-09-01"
             @ion-change="handleInput('date', $event.detail.value)"></ion-input>
         </div>
         <div class="input_injurie">
