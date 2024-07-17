@@ -99,6 +99,7 @@ ion-chip {
               </div>
               <input type="file" accept="image/*" id="fileINput" ref="fileInput" @change="handleFileChange"
                 style="display: none"></input>
+                <ImageCropper :isOpen="isModalOpen" :imageSrc="imageSrc" @update:isOpen="isModalOpen = $event" @image-cropped="handleImageCropped" />
             </div>
 
           </div>
@@ -174,6 +175,7 @@ import {
   IonChip,
   onIonViewWillEnter
 } from "@ionic/vue";
+import ImageCropper from '../../components/ImageCropperView/ImageCropperView.vue'
 import { ref } from "vue";
 import { close, pencil } from "ionicons/icons";
 import "@/assets/base.css";
@@ -190,7 +192,9 @@ import { useErrorHandler } from '../../lib/useErrorHandler';
 const { triggerError } = useErrorHandler() as any;
 
 const api = import.meta.env.VITE_API_URL;
-const fileInput = ref(null);
+const fileInput = ref(null) as any; 
+const imageSrc = ref(null) as any;
+const isModalOpen = ref(false);
 
 const loading = ref(false);
 
@@ -329,7 +333,6 @@ const editProfile = (): void => {
  * Déclenche l'entrée de fichier pour sélectionner un fichier.
  */
 const triggerFileInput = () => {
-  //@ts-expect-error
   if (fileInput.value) fileInput.value.click();
 };
 
@@ -337,21 +340,22 @@ const triggerFileInput = () => {
  * Gère le changement de fichier pour l'upload de l'image de profil.
  * @param {Event} event - Événement de changement de fichier.
  */
-const handleFileChange = (event: Event): void => {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result;
-      if (result) {
-        fileToDisplay.value = result as string;
-        fileToSend.value = file;
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-};
+ function handleFileChange(event : any) {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (e : any) => {
+    imageSrc.value = e.target.result;
+    isModalOpen.value = true;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleImageCropped({ blob, url }) {
+  isModalOpen.value = false;
+  console.log('file ', blob )
+  fileToDisplay.value = url;
+  fileToSend.value = blob;
+}
 
 /**
  * Supprime un sport de la liste temporaire de sports.
