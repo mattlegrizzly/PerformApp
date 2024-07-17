@@ -61,7 +61,6 @@ function initializeCropper() {
 }
 
 async function cropAndCompressImage() {
-  console.log(cropper.value)
   if (cropper.value) {
     const croppedCanvas = cropper.value.getCroppedCanvas({
       width: 300,
@@ -75,9 +74,9 @@ async function cropAndCompressImage() {
         maxWidthOrHeight: 300,
         useWebWorker: true,
       });
-      console.log("blob ", blob)
-      emit('image-cropped', { blob: compressedBlob, url: URL.createObjectURL(compressedBlob) });
-      console.log('emit ', blob)
+      const file = new File([compressedBlob], 'croppedImage.jpg', { type: 'image/jpeg' });
+      console.log('Fichier créé à partir du blob', file);
+      emit('image-cropped', { file, url: URL.createObjectURL(compressedBlob) });
       dismiss();
     }, 'image/jpeg');
   }

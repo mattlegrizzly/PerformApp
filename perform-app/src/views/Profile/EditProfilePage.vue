@@ -306,6 +306,7 @@ const editProfile = (): void => {
     post("/sports_user/", { body: { user: user.value.id, sport: sport.id } }, true, true).then((res) => {
       if (res.status > 300) {
         triggerError('Erreur lors de l\'ajout du sport : ', sport.name);
+        loading.value = false;
       }
     });
   });
@@ -314,6 +315,8 @@ const editProfile = (): void => {
     del("/sports_user/" + sport.id + "/").then((res) => {
       if (res.status > 300) {
         triggerError('Erreur lors de la suppression du sport : ', sport.name);
+        loading.value = false;
+
       }
     });
   });
@@ -321,6 +324,7 @@ const editProfile = (): void => {
   patch("/users/" + user.value.id + "/", { body: userEdit }, true, true).then((res) => {
     if (res.status > 300) {
       triggerError('Erreur lors de la modification, réessayez');
+      loading.value = false;
 
     } else {
       router.push('/profile');
@@ -350,11 +354,11 @@ const triggerFileInput = () => {
   reader.readAsDataURL(file);
 }
 
-function handleImageCropped({ blob, url }) {
+function handleImageCropped({ file, url }) {
   isModalOpen.value = false;
-  console.log('file ', blob )
+  console.log('file ', file )
   fileToDisplay.value = url;
-  fileToSend.value = blob;
+  fileToSend.value = file;
 }
 
 /**
