@@ -113,6 +113,33 @@ ion-segment-button {
     justify-content: center;
 }
 
+.displayFilterContainer {
+    height: 35px; overflow: hidden; position: relative;
+} 
+
+.showFullDisplayContainer {
+    overflow: visible;
+    height: auto;
+}
+
+.displayFilterChipContainer {
+    width: 95%;
+}
+
+.displayFilterContainer ion-icon {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+.displayFilter ion-chip {
+        padding-left: 10px;
+        padding-right: 10px;
+        color: white;
+        font-size: 8px;
+        background-color: var(--secondary-blue);
+        pointer-events: none;
+}
+
 .select-wrapper {
     font-size: 40px;
 }

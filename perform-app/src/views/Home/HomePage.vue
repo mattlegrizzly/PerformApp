@@ -9,7 +9,7 @@
           <div class="div_info">
             <h1>
               Salut <br />
-              {{ user.first_name }} !
+              {{ user.last_name }} !
             </h1>
             <p>
               {{ new Date(Date.now()).toLocaleString("fr").split(" ")[0] }}
@@ -322,12 +322,12 @@ import "@/assets/base.css";
 import "@/assets/main.css";
 import "./homepage.css";
 import { ref, computed, markRaw } from "vue";
-import { store } from "../store/store";
+import { store } from "../../store/store";
 import { close, chevronDownOutline, chevronUpOutline } from "ionicons/icons";
-import { patch, post, get } from "../lib/callApi";
+import { patch, post, get } from "../../lib/callApi";
 import WellnessRange from "@/components/WellnessRange/WellnessRange.vue";
 import Chart from "chart.js/auto";
-import { useErrorHandler } from "../lib/useErrorHandler";
+import { useErrorHandler } from "../../lib/useErrorHandler";
 
 const { triggerError } = useErrorHandler() as any;
 const api = import.meta.env.VITE_API_URL;
@@ -372,11 +372,14 @@ const user = ref({
 /**
  * Fonction qui permet d'afficher les dates de début et de fin de la semaine pour le wellness
  */
-const weekRange = computed(() => {
+ const weekRange = computed(() => {
   const start = new Date(weekWellnessTemp.value[0].date);
   const end = new Date(weekWellnessTemp.value[6].date);
-  return `${start.getDate()}/${start.getMonth() + 1} au ${end.getDate()}/${
-    end.getMonth() + 1
+
+  const formatWithLeadingZero = (number : number) => number.toString().padStart(2, '0');
+
+  return `${start.getDate()}/${formatWithLeadingZero(start.getMonth() + 1)} au ${end.getDate()}/${
+    formatWithLeadingZero(end.getMonth() + 1)
   }`;
 });
 

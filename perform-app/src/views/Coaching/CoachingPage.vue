@@ -9,13 +9,13 @@
 
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Statistiques</ion-title>
-      </ion-toolbar>
-    </ion-header>
     <ion-content>
-      <div class="example-content">Vos stats</div>
+      <div>
+        <div style=" height: calc(42vh - 50px); padding-top : 50px; width: 100%; display : flex; justify-content : center">
+            <img width="200px" height="50px" src="@/assets/logo_perform.png" alt="logo" />
+          </div>
+        <h2 style="text-align: center; width: 100%;">Nos coachings à venir</h2>
+      </div>
     </ion-content>
   </ion-page>
 </template>

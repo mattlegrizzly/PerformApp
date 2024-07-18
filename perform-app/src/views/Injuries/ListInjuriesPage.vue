@@ -64,7 +64,7 @@ import { useRoute } from "vue-router";
 import { store } from "../../store/store";
 import { Injurie } from "../../types/allTypes";
 import router from "../../router";
-import "./index.css";
+import "../Profile/index.css";
 import { stateSet, stateSetClass } from "../../lib/injurie";
 import { useErrorHandler } from '../../lib/useErrorHandler';
 

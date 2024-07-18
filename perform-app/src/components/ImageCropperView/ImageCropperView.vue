@@ -1,5 +1,5 @@
 <template>
-  <ion-modal :is-open="isOpen" @ionModalDidDismiss="dismiss">
+  <ion-modal id="cropImage" :is-open="isOpen" @ionModalDidDismiss="dismiss">
     <div class="modal-content">
       <h2>Recadrer votre photo</h2>
         <img v-if="imageSrc" :src="imageSrc" ref="image" class="cropper-image" />
@@ -27,6 +27,7 @@ const cropper = ref(null);
 watch(() => image.value, (newValue) => {
   nextTick(() => {
       initializeCropper();
+      disableTransitions();
     });
 })
 
@@ -34,19 +35,17 @@ function initializeCropper() {
   if (cropper.value) {
     cropper.value.destroy();
   }
-  console.log(image.value)
   const imageElement = image.value;
   if (imageElement) {
     cropper.value = new Cropper(imageElement, {
       aspectRatio: 1,
       viewMode: 1,
-      dragMode: 'move',
-      guides: true,
+      guides: false,
       center: true,
       highlight: false,
       scalable: true,
       cropBoxResizable: false,
-      toggleDragModeOnDblclick: true,
+      toggleDragModeOnDblclick: false,
       background: false,
       zoomOnTouch: true,
       zoomOnWheel: true,
@@ -55,7 +54,7 @@ function initializeCropper() {
       zoomable: true,
       movable: true,
       responsive: true,
-      scalable: true,
+      transition: false
     });
   }
 }
@@ -67,7 +66,6 @@ async function cropAndCompressImage() {
       height: 300,
       imageSmoothingQuality: 'high',
     });
-    console.log('croppedCanvas 2 ' , croppedCanvas)
     croppedCanvas.toBlob(async (blob) => {
       const compressedBlob = await imageCompression(blob, {
         maxSizeMB: 1,
@@ -75,11 +73,23 @@ async function cropAndCompressImage() {
         useWebWorker: true,
       });
       const file = new File([compressedBlob], 'croppedImage.jpg', { type: 'image/jpeg' });
-      console.log('Fichier créé à partir du blob', file);
+      var sizeInMB = (file.size / (1024*1024)).toFixed(2);
       emit('image-cropped', { file, url: URL.createObjectURL(compressedBlob) });
       dismiss();
     }, 'image/jpeg');
   }
+}
+
+function disableTransitions() {
+  setTimeout(() => {
+    const modalContent = document.querySelector('.cropper-container');
+    if (modalContent) {
+      const cropperElements = modalContent.querySelectorAll('.cropper-container *');
+      cropperElements.forEach(el => {
+        el.style.transition = 'none';
+      });
+    }
+  }, 200)
 }
 
 function dismiss() {
@@ -97,6 +107,10 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+#cropImage {
+  --max-height : 70%;
+}
+
 .modal-content {
   display: flex;
   flex-direction: column;
@@ -109,4 +123,5 @@ onUnmounted(() => {
   max-width: 100%;
   height: 300px !important;
 }
+
 </style>

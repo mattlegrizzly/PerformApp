@@ -24,43 +24,40 @@
         <div class="info_wrapper">
           <div class="info_exercise">
             <ion-modal class="static-modal" ref="modalMaterial">
-                <ion-content>
-                  <div style="padding: 10px">
-                    <div
-                      style="
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 10px;
-                      "
-                    >
-                      <h1 style="margin: 0px">Liste des matériels</h1>
-                      <ion-icon
-                        class="close-icon"
-                        @click="modalMaterial ? modalMaterial.$el.dismiss() : ''"
-                        :icon="close"
-                      />
-                    </div>
-                    <div
-                      style="
-                        width: 90%;
-                        padding-bottom: 5px;
-                      "
-                      v-for="element of exercises.material_exercise"
-                    >
-                      <ion-chip
-                        style="
-                          width: 100%;
-                          padding-left: 10px;
-                          padding-right: 10px;
-                        "
-                        color="primary"
-                        >{{ element.material.name }}</ion-chip
-                      >
-                    </div>
+              <ion-content>
+                <div style="padding: 10px">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    <h1 style="margin: 0px">Liste des matériels</h1>
+                    <ion-icon
+                      class="close-icon"
+                      @click="modalMaterial ? modalMaterial.$el.dismiss() : ''"
+                      :icon="close"
+                    />
                   </div>
-                </ion-content>
-              </ion-modal>
+                  <div
+                    style="width: 90%; padding-bottom: 5px"
+                    v-for="element of exercises.material_exercise"
+                  >
+                    <ion-chip
+                      style="
+                        width: 100%;
+                        padding-left: 10px;
+                        padding-right: 10px;
+                      "
+                      color="primary"
+                      >{{ element.material.name }}</ion-chip
+                    >
+                  </div>
+                </div>
+              </ion-content>
+            </ion-modal>
             <h2 style="font-size: 14px">Matériels :</h2>
             <div style="display: flex">
               <ion-chip
@@ -112,10 +109,7 @@
                       />
                     </div>
                     <div
-                      style="
-                        width: 90%;
-                        padding-bottom: 5px;
-                      "
+                      style="width: 90%; padding-bottom: 5px"
                       v-for="element of exercises.sports_exercise"
                     >
                       <ion-chip
@@ -158,39 +152,41 @@
           </div>
         </div>
       </div>
-      <div v-if="!loadVideo" class="imageDiv">
-        <video
-          v-if="showVideo"
-          ref="videoController"
-          id="player"
-          playsinline
-          data-poster="/path/to/poster.jpg"
-          width="100%"
-          autoplay
-          hideControl
-          loop
-          clickToPlay
-          muted
+      <transition mode="out-in" name="fade">
+        <div
+        :style="spinnerStyle"
+          style="
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+          key="spinner"
+          v-if="loadVideo"
         >
-          <source :src="api_url + exercises.video" type="video/mp4" />
-          <source :src="api_url + exercises.video" type="video/webm" />
-        </video>
-      </div>
-      <div
-        v-else
-        style="
-          width: 100%;
-          height: 250px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        "
-      >
-        <v-progress-circular
-          color="primary"
-          indeterminate
-        ></v-progress-circular>
-      </div>
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          ></v-progress-circular>
+        </div>
+        <div v-else key="video" class="video-container" :style="spinnerStyle">
+          <video
+            ref="videoController"
+            id="player"
+            playsinline
+            data-poster="/path/to/poster.jpg"
+            width="100%"
+            autoplay
+            hideControl
+            loop
+            clickToPlay
+            muted
+          >
+            <source :src="api_url + exercises.video" type="video/mp4" />
+            <source :src="api_url + exercises.video" type="video/webm" />
+          </video>
+        </div>
+      </transition>
       <v-tabs id="tabs-exercise" v-model="tab">
         <v-tab value="one">Instructions</v-tab>
         <v-tab value="two">Muscles</v-tab>
@@ -294,7 +290,7 @@ import { BodyComponent } from "perform-body-component-lib";
 import type { Step, Muscle } from "../../types/allTypes";
 
 import { useRoute } from "vue-router";
-import { ref } from "vue";
+import { ref , computed} from "vue";
 import { get, post, del } from "../../lib/callApi";
 import { store } from "../../store/store";
 
@@ -307,6 +303,7 @@ import { useErrorHandler } from "../../lib/useErrorHandler";
 
 const modalSports = ref(null) as any;
 const modalMaterial = ref(null) as any;
+const videoController = ref(null) as any;
 
 const { triggerError } = useErrorHandler() as any;
 
@@ -332,12 +329,10 @@ const fav_id = ref(0);
 const showExercises = ref(true);
 
 const limitExerciseSport = (elem: any) => {
-  console.log(elem);
   return elem.slice(0, 2);
 };
 
 const showModal = async (modal: any) => {
-  console.log(modal);
   modal.$el.present();
 };
 
@@ -388,7 +383,6 @@ onIonViewWillEnter(() => {
       { body: {} },
       true
     ).then((res: any) => {
-      console.log(res);
       if (res.status != undefined && res.status > 300) {
         triggerError("Erreur lors de la récupération des favoris");
         is_fav.value = false;
@@ -405,9 +399,19 @@ onIonViewWillEnter(() => {
       exercises.value = res;
       setTimeout(() => {
         loadVideo.value = false;
-      }, 500);
+      }, 700);
     }
   });
+});
+
+const aspectRatio = 1080 / 1920; // Rapport d'aspect 16:9
+
+const spinnerStyle = computed(() => {
+  const width = videoController.value ? videoController.value.clientWidth : window.innerWidth;
+  const height = width * aspectRatio;
+  return {
+    height: `${height}px`
+  };
 });
 </script>
 
@@ -418,5 +422,17 @@ ion-modal {
   --border-radius: 16px;
   --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
     0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.spinner-container, .video-container {
+  width: 100%;
+  position: relative;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
 }
 </style>

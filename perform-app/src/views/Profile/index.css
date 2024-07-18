@@ -126,17 +126,6 @@ ion-img::part(image) {
     object-fit: cover;
 }
 
-.filter-div {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-}
-
-.filter-div ion-button {
-    width: 100%;
-    height: 40px;
-}
-
 .input_injurie ion-input {
     width: auto;
     height: 40px;

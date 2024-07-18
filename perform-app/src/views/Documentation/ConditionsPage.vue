@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import NavButton from "../components/NavButton/NavButton.vue";
+import NavButton from "../../components/NavButton/NavButton.vue";
 import {
   IonPage,
   IonContent,

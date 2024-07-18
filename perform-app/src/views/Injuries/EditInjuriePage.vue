@@ -72,7 +72,7 @@
           >
           <ion-input
             :class="errorAdd && injury.date == '' ? 'required_class' : ''"
-            type="datetime-local"
+            type="date"
             label-placement="stacked"
             fill="outline"
             placeholder="2021-09-01"
@@ -158,7 +158,7 @@ import { chevronDownOutline } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { ref } from "vue";
 import { get, patch } from "../../lib/callApi";
-import "./index.css";
+import "../Profile/index.css";
 //@ts-expect-error
 import { BodyComponent } from "perform-body-component-lib";
 import { store } from "../../store/store";

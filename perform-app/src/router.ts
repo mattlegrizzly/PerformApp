@@ -15,7 +15,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "home",
         name: "Home",
-        component: () => import("./views/HomePage.vue")
+        component: () => import("./views/Home/HomePage.vue")
       },
       {
         path: "profile",
@@ -31,22 +31,22 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "add_injurie",
         name: "AddInjurie",
-        component: () => import("./views/Profile/AddInjuriePage.vue")
+        component: () => import("./views/Injuries/AddInjuriePage.vue")
       },
       {
         path: "list_injuries",
         name: "ListInjuries",
-        component: () => import("./views/Profile/ListInjuriesPage.vue")
+        component: () => import("./views/Injuries/ListInjuriesPage.vue")
       },
       {
         path: "view_injuries/:id",
         name: "ViewInjurie",
-        component: () => import("./views/Profile/ViewInjuriePage.vue")
+        component: () => import("./views/Injuries/ViewInjuriePage.vue")
       },
       {
         path: "edit_injurie/:id",
         name: "EditInjurie",
-        component: () => import("./views/Profile/EditInjuriePage.vue")
+        component: () => import("./views/Injuries/EditInjuriePage.vue")
       },
       {
         path: "exercises",
@@ -59,19 +59,19 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("./views/Exercises/ViewPage.vue")
       },
       {
-        path: "stats",
-        name: "Statistics",
-        component: () => import("./views/StatsPage.vue")
+        path: "coaching",
+        name: "Coaching",
+        component: () => import("./views/Coaching/CoachingPage.vue")
       },
 
       {
         path: "programs",
         name: "Programs",
-        component: () => import("./views/ProgramsPage.vue")
+        component: () => import("./views/Programs/ProgramsPage.vue")
       },
       {
         path: "conditions",
-        component: () => import("./views/ConditionsPage.vue")
+        component: () => import("./views/Documentation/ConditionsPage.vue")
       },
     ],
   },

@@ -40,7 +40,7 @@
         </div>
         <div class="input_injurie">
           <ion-label :class="errorAdd && date == '' ? 'required_text' : ''">Date de la blessure *</ion-label>
-          <ion-input :class="errorAdd  && date == '' ? 'required_class' : ''" type="datetime-local" label-placement="stacked" fill="outline" placeholder="2021-09-01"
+          <ion-input :class="errorAdd  && date == '' ? 'required_class' : ''" type="date" label-placement="stacked" fill="outline" placeholder="2021-09-01"
             @ion-change="handleInput('date', $event.detail.value)"></ion-input>
         </div>
         <div class="input_injurie">
@@ -95,7 +95,7 @@ import NavButton from "../../components/NavButton/NavButton.vue";
 import { ref } from "vue";
 import { get, post } from "../../lib/callApi";
 import type { Muscles } from "../../types/allTypes";
-import "./index.css";
+import "../Profile/index.css";
 //@ts-expect-error
 import { BodyComponent } from 'perform-body-component-lib'
 import { store } from "../../store/store";

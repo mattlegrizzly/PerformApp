@@ -24,7 +24,7 @@
   border-radius: 30px;
   border: 1px solid #d4d4d4;
   min-height: 40px !important;
-  height: 40px;
+  height: 35px;
 
   width: 100%;
 }
@@ -49,13 +49,14 @@
 .img_div {
   overflow: hidden;
   border-radius: 200px;
-
+  border: solid var(--primary-blue) 2px;
 }
 
 .div_pp {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .div_pp ion-label {
@@ -63,11 +64,18 @@
 
 }
 
-ion-chip {
+.sports_chip_users ion-chip {
   padding-left: 10px;
   padding-right: 10px;
   color: white;
   background-color: var(--primary-blue);
+}
+.sports_chip_users ion-chip ion-label {
+  font-size: 10px !important;
+}
+
+.sports_chip_users ion-icon{
+  font-size: 14px !important;
 }
 </style>
 
@@ -95,10 +103,12 @@ ion-chip {
     display: flex;
     justify-content: center;
     align-items: center;" @click="triggerFileInput"></ion-img>
-                <ion-icon style="color:black; position: absolute; right: 0px;" :icon="pencil"></ion-icon>
+    <div style="position: absolute; right: 0px; width : 30px; bottom:5px;height: 30px; display: flex; justify-content: center; align-items: center; border-radius: 20px; background-color: white; border: solid var(--primary-blue) 2px;">
+      <ion-icon style="color:black; " :icon="pencil" size="10px"></ion-icon>
+    </div>
               </div>
               <input type="file" accept="image/*" id="fileINput" ref="fileInput" @change="handleFileChange"
-                style="display: none"></input>
+                style="display: none" capture="environment"></input>
                 <ImageCropper :isOpen="isModalOpen" :imageSrc="imageSrc" @update:isOpen="isModalOpen = $event" @image-cropped="handleImageCropped" />
             </div>
 
@@ -145,14 +155,14 @@ ion-chip {
                 </ion-select>
               </ion-item>
             </ion-list>
-            <div style="margin-top: 10px;">
-              <ion-chip :icon="close" v-for="sport of sports_user_temp" style="margin-bottom: 5px" color="primary">
+            <div style="margin-top: 10px;" class="sports_chip_users">
+              <ion-chip :icon="close" v-for="sport of sports_user_temp" style="margin-bottom: 10px" color="primary">
                 <ion-icon :id="sport.id" :icon="close" @click="removeSport"></ion-icon>
                 <ion-label>{{ sport.name }}</ion-label>
               </ion-chip>
             </div>
           </div>
-          <NavButton style="margin-bottom: 10px" :text="loading ? 'Enregistrement en cours..' : 'Enregistrer'"
+          <NavButton style="margin-bottom: 10px; height: 35px;" :text="loading ? 'Enregistrement en cours..' : 'Enregistrer'"
             :noIcon="true" @click="editProfile" :disabled="loading" />
         </div>
       </div>
@@ -354,7 +364,11 @@ const triggerFileInput = () => {
   reader.readAsDataURL(file);
 }
 
-function handleImageCropped({ file, url }) {
+/**
+ * Cette fonction est appelé par un emit du composant ImageCropperView lorsque l'image est redimensionné
+ * @param param0 
+ */
+function handleImageCropped({ file, url } : any) {
   isModalOpen.value = false;
   console.log('file ', file )
   fileToDisplay.value = url;
