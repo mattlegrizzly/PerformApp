@@ -17,7 +17,9 @@ const muscle_selected: any = ref([])
 const api_url = import.meta.env.VITE_API_URL
 
 const router = useRoute()
-const exercise = ref('')
+const exercise = ref({
+  steps_exercise : []
+})
 const exercise_id = ref(-1)
 const videoController = ref(document.createElement('video'))
 

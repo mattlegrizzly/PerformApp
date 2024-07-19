@@ -45,6 +45,7 @@ const getUser = async () => {
     alertErr.value = true
   } else {
     user.value = await res
+    console.log('res ', res)
     gender.value.map((gender) => {
       if (user.value.gender === gender.id) {
         userGender.value = gender.value
@@ -171,15 +172,15 @@ onMounted(() => {
 </p>
 <h3 class="showTitle">Age</h3>
 <p>
-  {{ user.age }}
+  {{ user.age }} ans
 </p>
 <h3 class="showTitle">Taille</h3>
 <p>
-  {{ user.size }}
+  {{ user.size }} cm
 </p>
 <h3 class="showTitle">Poids</h3>
 <p>
-  {{ user.weight }}
+  {{ user.weight }} kg
 </p>
 <h3 class="showTitle">Genre</h3>
 <p>

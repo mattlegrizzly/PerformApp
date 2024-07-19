@@ -110,7 +110,7 @@ onMounted(() => {
     </div>
     <OrderByComponent :orderBy="orderBy" :setOrderBy="setOrderBy" />
     <div>
-      <ListElement :headerTable="['Id', 'Email', 'Nom', 'Prénom']" :contentTable="users" :limitData="4" nav="users" />
+      <ListElement :headerTable="['Id', 'Email', 'Prénom', 'Nom']" :contentTable="users" :limitData="4" nav="users" />
       <PaginationComponent
         :setPage="setPage"
         :page="page"

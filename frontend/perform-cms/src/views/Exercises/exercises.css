@@ -22,7 +22,17 @@
 #steps button {
   margin-left: 10px;
 }
-
+.step-item {
+  display: flex;
+  align-items: center;
+}
+.drag-handle {
+  cursor: grab;
+  margin-right: 10px;
+}
+.buttonWrapper {
+  margin-top: 20px;
+}
 #player {
   height: 400px;
 }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import NavMenu from '../../components/NavMenu/NavMenu.vue'
-import { ref, onMounted
- } from 'vue'
+import { ref, onMounted } from 'vue'
 import '@/assets/base.css'
 import { get, post } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
@@ -10,10 +9,11 @@ import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import { nanoid } from 'nanoid'
 import type Muscle from '@/types/types'
 //@ts-expect-error
-import {BodyComponent} from 'perform-body-component-lib'
-import "perform-body-component-lib/style.css";
+import { BodyComponent } from 'perform-body-component-lib'
+import 'perform-body-component-lib/style.css'
 import './exercises.css'
 import router from '@/router'
+import draggable from 'vuedraggable'
 
 const materials = ref([])
 const sports = ref([])
@@ -53,12 +53,12 @@ const dataToRetrieve = [
 ]
 
 const setAlertValue = (type: string) => {
-  if (type === "error") {
+  if (type === 'error') {
     alertErr.value = false
   } else {
-
   }
 }
+
 
 const onChangeInput = (file: Array<File>) => {
   if (file[0]) {
@@ -73,8 +73,32 @@ const onChangeInput = (file: Array<File>) => {
   }
 }
 
+const updateOrder = () => {
+  steps_exercise.value.forEach((step : any, index : number) => {
+    step.order = index
+  })
+}
+
+const moveUp = (index : number) => {
+      if (index > 0) {
+        const temp = steps_exercise.value[index];
+        steps_exercise.value[index] = steps_exercise.value[index - 1];
+        steps_exercise.value[index - 1] = temp;
+        updateOrder();
+      }
+    };
+
+    const moveDown = (index : number) => {
+      if (index < steps_exercise.value.length - 1) {
+        const temp = steps_exercise.value[index];
+        steps_exercise.value[index] = steps_exercise.value[index + 1];
+        steps_exercise.value[index + 1] = temp;
+        updateOrder();
+      }
+    };
+
 const sendData = async () => {
-  adding.value = true;
+  adding.value = true
   console.log('adding ', adding.value)
 
   const option = {
@@ -90,22 +114,23 @@ const sendData = async () => {
   post('/admin/exercises/', option, true, true).then((res) => {
     setTimeout(() => {
       if (res.status > 300) {
-        error_message.value = ""
+        error_message.value = ''
         const keys = Object.keys(res.data)
         for (let i = 0; i < keys.length; i++) {
           error_message.value += keys[i] + ' : ' + res.data[keys[i]] + '\n\n'
         }
         alertErr.value = true
-        error_title.value = 'Erreur à l\'ajout'
-        adding.value = false;
+        error_title.value = "Erreur à l'ajout"
+        adding.value = false
       } else {
         const id = res.id
         router.push('/exercises/show/' + id + '/')
-        steps_exercise.value.map((step: { text: string; id: number }) => {
+        steps_exercise.value.map((step: { text: string; id: number, order: number }) => {
           const stepToPush = {
             body: {
               exercise: id,
-              text: step.text
+              text: step.text,
+              order: step.order
             }
           }
           res = post('/admin/steps/', stepToPush, true)
@@ -144,7 +169,6 @@ const sendData = async () => {
         router.push('/exercises')
       }
     }, 1000)
-
   })
 }
 
@@ -156,13 +180,13 @@ const getExercise = async () => {
       error_message.value = res.data.detail
       alertErr.value = true
     } else {
-      if(elem.link.includes('workzones')){
-        let array = [] as any; 
-        res.map((elem : any) => {
-          array.push({zone : elem})
+      if (elem.link.includes('workzones')) {
+        let array = [] as any
+        res.map((elem: any) => {
+          array.push({ zone: elem })
         })
-      elem.array.value = array
-      console.log(array)
+        elem.array.value = array
+        console.log(array)
       } else {
         elem.array.value = res
       }
@@ -170,32 +194,36 @@ const getExercise = async () => {
   })
 }
 
-const handleChange = (codes : any) => {
+const handleChange = (codes: any) => {
   // Mettez à jour temp_selected pour correspondre aux codes
-  temp_selected.value = codes;
+  temp_selected.value = codes
 
-// Créez une nouvelle sélection en fonction des codes
-const newSelection = codes.map((code : any )=> muscles.value.find((muscle : any) => muscle.zone.code === code));
+  // Créez une nouvelle sélection en fonction des codes
+  const newSelection = codes.map((code: any) =>
+    muscles.value.find((muscle: any) => muscle.zone.code === code)
+  )
 
-// Supprimez les muscles non sélectionnés de muscle_selected
-muscle_selected.value = muscle_selected.value.filter((muscle : any) => codes.includes(muscle.zone.code));
+  // Supprimez les muscles non sélectionnés de muscle_selected
+  muscle_selected.value = muscle_selected.value.filter((muscle: any) =>
+    codes.includes(muscle.zone.code)
+  )
 
-// Ajoutez les nouveaux muscles sélectionnés à muscle_selected
-newSelection.forEach((muscle : any) => {
-  if (!muscle_selected.value.some((m : any) => m.zone.code === muscle.zone.code)) {
-    muscle_selected.value.push(muscle);
-  }
-});
-  
+  // Ajoutez les nouveaux muscles sélectionnés à muscle_selected
+  newSelection.forEach((muscle: any) => {
+    if (!muscle_selected.value.some((m: any) => m.zone.code === muscle.zone.code)) {
+      muscle_selected.value.push(muscle)
+    }
+  })
 }
 
 const addStep = async () => {
   const id = nanoid()
   const step = {
     id,
-    text: 'Saisissez une étape'
+    text: ''
   }
   steps_exercise.value.push(step)
+  updateOrder()
 }
 
 const removeStep = async (id: number) => {
@@ -204,37 +232,37 @@ const removeStep = async (id: number) => {
       steps_exercise.value.splice(index, 1)
     }
   }
+  updateOrder()
+
 }
 
-
 const setMuscle = (key: string, action: string) => {
-  if (action === "add") {
+  if (action === 'add') {
     const findKey =
       muscle_selected.value.filter(function (element: any) {
-        return element.zone.code === key;
-      }).length == 0;
+        return element.zone.code === key
+      }).length == 0
     if (findKey) {
-      muscle_selected.value.push(muscles.value.find((element : any) => element.zone.code == key));
+      muscle_selected.value.push(muscles.value.find((element: any) => element.zone.code == key))
     }
   } else {
-    let index = muscle_selected.value.indexOf(key as any);
-    muscle_selected.value.map((muscle : any) => {
+    let index = muscle_selected.value.indexOf(key as any)
+    muscle_selected.value.map((muscle: any) => {
       if (muscle.zone.code === key) {
-        index = muscle_selected.value.indexOf(muscle);
+        index = muscle_selected.value.indexOf(muscle)
       }
       if (index !== -1) {
-        muscle_selected.value.splice(index, 1);
+        muscle_selected.value.splice(index, 1)
       }
-    });
+    })
   }
 
   temp_selected.value = muscle_selected.value
-};
+}
 
 onMounted(() => {
   getExercise()
 })
-
 </script>
 <template lang="">
   <NavMenu />
@@ -327,18 +355,25 @@ onMounted(() => {
       >
       </v-select>
       <h2>Instructions</h2>
-      <div id="steps" v-for="(element, index) in steps_exercise" :key="index">
-        <v-text-field
-          v-model="element.text"
-          :label="'Instruction ' + (index + 1)"
-          variant="filled"
-        ></v-text-field>
-        <v-btn icon="mdi-delete" @click="removeStep(element.id)"> </v-btn>
-      </div>
-      <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une instruction</v-btn>
-      <div class="buttonWrapper">
-        <v-btn @click="sendData(false)" :disabled="adding">{{adding ? 'Ajout en cours...' : 'Ajouter'}}</v-btn>
-      </div>
+      <draggable v-model="steps_exercise" item-key="id" @end="updateOrder">
+      <template #item="{ element, index }">
+        <div id="steps" class="step-item">
+          <v-icon class="drag-handle" left>mdi-drag</v-icon>
+          <v-text-field
+            v-model="element.text"
+            :label="'Instruction ' + (index + 1)"
+            variant="filled"
+          ></v-text-field>
+          <v-btn icon="mdi-arrow-up" @click="moveUp(index)" :disabled="index === 0"></v-btn>
+          <v-btn icon="mdi-arrow-down" @click="moveDown(index)" :disabled="index === steps_exercise.length - 1"></v-btn>
+          <v-btn icon="mdi-delete" @click="removeStep(element.id)"></v-btn>
+        </div>
+      </template>
+    </draggable>
+    <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une instruction</v-btn>
+    <div class="buttonWrapper">
+      <v-btn @click="sendData(false)" :disabled="adding">{{ adding ? 'Ajout en cours...' : 'Ajouter' }}</v-btn>
+    </div>
     </form>
   </div>
 </template>

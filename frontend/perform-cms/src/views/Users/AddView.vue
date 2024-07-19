@@ -65,6 +65,7 @@ const sendData = (quitForm: boolean) => {
       gender: user.value.gender,
       age: user.value.age,
       size: user.value.size,
+      weight: user.value.weight,
       profile_picture: image_url.value
     }
   } as IERequestOptions
@@ -151,8 +152,8 @@ onMounted(() => {
         <v-text-field v-model="user.email" label="Email * " variant="filled"></v-text-field>
       </div>
       <div class="inputFormDiv">
-        <v-text-field v-model="user.last_name" label="Nom " variant="filled"></v-text-field>
         <v-text-field v-model="user.first_name" label="Pénom " variant="filled"></v-text-field>
+        <v-text-field v-model="user.last_name" label="Nom " variant="filled"></v-text-field>
       </div>
       <div class="inputFormDiv">
         <v-text-field v-model="user.size" label="Taille " variant="filled"></v-text-field>

@@ -10,11 +10,12 @@ import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import router from '@/router'
 import { nanoid } from 'nanoid'
 //@ts-expect-error
-import {BodyComponent} from 'perform-body-component-lib'
-import "perform-body-component-lib/style.css";
+import { BodyComponent } from 'perform-body-component-lib'
+import 'perform-body-component-lib/style.css'
 import './exercises.css'
 import type { Step, Muscle } from '@/types/types'
 import DeleteModalComponent from '@/components/DeleteModalComponent/DeleteModalComponent.vue'
+import draggable from 'vuedraggable'
 const routerNav = useRoute()
 
 //Data qui vont être utilisé dans les menus déroulants
@@ -27,7 +28,9 @@ const api_url = import.meta.env.VITE_API_URL
 const videoController = ref(document.createElement('video'))
 
 const const_exercice: any = ref()
-const exercise: any = ref({})
+const exercise: any = ref({
+  steps_exercise: []
+})
 
 const editing = ref(false)
 
@@ -42,11 +45,12 @@ const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
 
+const adding = ref(false)
+
 const setAlertValue = (type: string) => {
-  if (type === "error") {
+  if (type === 'error') {
     alertErr.value = false
   } else {
-
   }
 }
 
@@ -78,9 +82,43 @@ const onChangeInput = (file: Array<File>) => {
   }
 }
 
+const updateOrder = () => {
+  if (exercise.value.steps_exercise) {
+    exercise.value.steps_exercise.forEach((step: any, index: number) => {
+      step.order = index
+    })
+  }
+}
+
+const moveUp = (index: number) => {
+  if (index > 0) {
+    if (exercise.value.steps_exercise) {
+      const temp = exercise.value.steps_exercise[index]
+      exercise.value.steps_exercise[index] = exercise.value.steps_exercise[index - 1]
+      exercise.value.steps_exercise[index - 1] = temp
+      updateOrder()
+    }
+  }
+}
+
+function sortArrayByOrder(arr) {
+  console.log(arr)
+  return arr.sort((a, b) => a.order - b.order)
+}
+const moveDown = (index: number) => {
+  if (exercise.value.steps_exercise) {
+    if (index < exercise.value.steps_exercise.length - 1) {
+      const temp = exercise.value.steps_exercise[index]
+      exercise.value.steps_exercise[index] = exercise.value.steps_exercise[index + 1]
+      exercise.value.steps_exercise[index + 1] = temp
+      updateOrder()
+    }
+  }
+}
+
 const sendData = async () => {
   const id = routerNav.params.exercise_id
-  editing.value = true;
+  editing.value = true
   let isFormData = false
   const option = {
     body: {
@@ -104,17 +142,20 @@ const sendData = async () => {
       }
       alertErr.value = true
       error_title.value = 'Erreur à la modification'
-      editing.value = false;
+      editing.value = false
     } else {
       //router.push('/exercises/show/' + id + '/')
       let startStep = const_exercice.value.steps_exercise
       let endStep = exercise.value.steps_exercise
+
       const newStep = endStep.filter(
         (step: Step) => !startStep.find((step_: Step) => step_.id === step.id)
       )
+
       const modified = startStep.filter((step: Step) =>
         endStep.find((step_: Step) => step_.id === step.id)
       )
+
       const deleted = startStep.filter(
         (step: Step) => !endStep.find((step_: Step) => step_.id === step.id)
       )
@@ -123,7 +164,8 @@ const sendData = async () => {
         const stepToPush = {
           body: {
             exercise: id,
-            text: step.text
+            text: step.text,
+            order: step.order
           }
         }
         res = post('/admin/steps/', stepToPush, true)
@@ -134,16 +176,27 @@ const sendData = async () => {
       })
 
       modified.map((step: Step) => {
-        const elem = endStep.find((step_: Step) => step_.id == step.id)
+        const elem = endStep.find((step_: Step) => step_.id === step.id)
+        const options = {
+          body: {}
+        }
+        let needsUpdate = false
+
         if (elem.text !== step.text) {
-          const options = {
-            body: {
-              text: elem.text
-            }
-          }
+          options.body.text = elem.text
+          needsUpdate = true
+        }
+
+        if (elem.order !== step.order) {
+          options.body.order = elem.order
+          needsUpdate = true
+        }
+
+        if (needsUpdate) {
           res = patch('/admin/steps/' + elem.id + '/', options, true)
         }
       })
+
       router.push('/exercises/show/' + id + '/?edit=true')
     }
   })
@@ -236,6 +289,7 @@ const removeStep = async (id: number) => {
     if (step.id == id) {
       exercise.value.steps_exercise.splice(index, 1)
     }
+    updateOrder()
   }
 }
 
@@ -345,17 +399,30 @@ onMounted(() => {
         single-line
       ></v-select>
       <h2>Etapes</h2>
-      <div id="steps" v-for="(element, index) in exercise.steps_exercise" :key="index">
-        <v-text-field
-          v-model="element.text"
-          :label="'Etape ' + (index + 1)"
-          variant="filled"
-        ></v-text-field>
-        <v-btn icon="mdi-delete" @click="removeStep(element.id)"> </v-btn>
-      </div>
-      <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une étape </v-btn>
+      <draggable v-model="exercise.steps_exercise" item-key="id" @end="updateOrder">
+        <template #item="{ element, index }">
+          <div id="steps" class="step-item">
+            <v-icon class="drag-handle" left>mdi-drag</v-icon>
+            <v-text-field
+              v-model="element.text"
+              :label="'Instruction ' + (index + 1)"
+              variant="filled"
+            ></v-text-field>
+            <v-btn icon="mdi-arrow-up" @click="moveUp(index)" :disabled="index === 0"></v-btn>
+            <v-btn
+              icon="mdi-arrow-down"
+              @click="moveDown(index)"
+              :disabled="index === exercise.steps_exercise.length - 1"
+            ></v-btn>
+            <v-btn icon="mdi-delete" @click="removeStep(element.id)"></v-btn>
+          </div>
+        </template>
+      </draggable>
+      <v-btn @click="addStep()" prepend-icon="mdi-plus"> Ajouter une instruction</v-btn>
       <div class="buttonWrapper">
-        <v-btn @click="sendData(false)" :disabled="editing">{{editing ? 'Enregistrement..':'Modifier'}}</v-btn>
+        <v-btn @click="sendData(false)" :disabled="adding">{{
+          adding ? 'Ajout en cours...' : 'Ajouter'
+        }}</v-btn>
       </div>
     </form>
   </div>

@@ -54,6 +54,7 @@ const sendData = (quitForm: boolean) => {
       first_name: user.value.first_name,
       gender: user.value.gender,
       age: user.value.age,
+      weight: user.value.weight,
       size: user.value.size
     }
   } as IERequestOptions
