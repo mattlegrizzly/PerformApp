@@ -12,13 +12,13 @@ class MaterialSerializer(serializers.ModelSerializer):
 class ExerciseStepSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseStep
-        fields = ['id', 'text', 'exercise']
+        fields = ['id', 'text', 'exercise', 'order']
 
 #Detailed serializer for Exercise Serializer
 class ExerciseStepDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseStep
-        fields = ['id', 'text'] 
+        fields = ['id', 'text', 'order'] 
 
 #Creation serializer only with id
 class ExerciseMaterialSerializer(serializers.ModelSerializer):
@@ -76,7 +76,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'video', 'thumbnail', 'steps_exercise', 'material_exercise', 'zone_exercises', 'sports_exercise', 'created_at']
     
     def get_steps_exercise(self, obj):
-        steps = obj.steps_exercise.order_by('id')
+        steps = obj.steps_exercise.order_by('order')
         return ExerciseStepDetailedSerializer(steps, many=True, read_only=True).data
 
 

@@ -31,12 +31,12 @@ class InjurieDetailedSerializer(serializers.ModelSerializer):
 class WellnessSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wellness
-        fields = ['sleep', 'hydratation', 'fatigue', 'pain', 'stress', 'date', 'user']
+        fields = ['sleep', 'hydratation', 'fatigue', 'pain', 'stress', 'nutrition', 'date', 'user']
 
 class WellnessDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wellness
-        fields = ['id', 'sleep', 'hydratation', 'fatigue', 'pain', 'stress', 'date', 'user']
+        fields = ['id', 'sleep', 'hydratation', 'fatigue', 'pain', 'stress', 'nutrition', 'date', 'user']
 
 class UserDetailedSerializer(serializers.ModelSerializer):
     sports_user = SportsDetailedUserSerializer(many=True, read_only=False)
@@ -98,13 +98,14 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["email", "password","last_name", "first_name", "profile_picture", "gender", "age", "size"]
+        fields = ["email", "password","last_name", "weight", "first_name", "profile_picture", "gender", "age", "size"]
 
     def save(self):
         user = User(
             email=self.validated_data["email"],
             gender=self.validated_data["gender"],
             age=self.validated_data["age"],
+            weight=self.validated_data["weight"],
             size=self.validated_data["size"],
             last_name=self.validated_data["last_name"],
             first_name=self.validated_data["first_name"],

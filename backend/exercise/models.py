@@ -112,6 +112,7 @@ class Exercise(models.Model):
 class ExerciseStep(models.Model):
     text = models.CharField(max_length=255)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="steps_exercise")
+    order = models.IntegerField(null=False, default=0, blank=True)
 
 class ExerciseMaterial(models.Model):
     material = models.ForeignKey(Material, on_delete=models.CASCADE)

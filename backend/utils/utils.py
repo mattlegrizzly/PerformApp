@@ -6,7 +6,7 @@ def get_ordered_queryset(queryset, query_params, type=""):
             return queryset.order_by("name")
         elif order == "orderByNameDesc":
             return queryset.order_by("-name")
-        elif order == "orderByIdAsc" or order == "default":
+        elif order == "orderByIdAsc":
             return queryset.order_by("id")
         elif order == "orderByIdDesc":
             return queryset.order_by("-id")
@@ -14,7 +14,14 @@ def get_ordered_queryset(queryset, query_params, type=""):
             return queryset.order_by("created_at")
         elif order == "orderByDateDesc":
             return queryset.order_by("-created_at")
+        elif order == "default":
+            if type == "user":
+                return queryset.order_by("id")
+            else:
+                return queryset.order_by('name')
     elif type == "muscle":
         return queryset.order_by('name')
+    elif type == "user":
+        return queryset.order_by('id')
     else:
-        return queryset.order_by("id")
+        return queryset.order_by("name")

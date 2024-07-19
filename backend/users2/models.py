@@ -129,6 +129,7 @@ class Wellness(models.Model):
     stress = models.IntegerField(null=False, default=0, blank=True)
     fatigue = models.IntegerField(null=False, default=0, blank=True)
     pain = models.IntegerField(null=False, default=0, blank=True)
+    nutrition = models.IntegerField(null=False, default=0, blank=True)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='users_wellness')
     date = models.DateField(null=False)

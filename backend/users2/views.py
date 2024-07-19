@@ -417,7 +417,7 @@ class AdminUsersAllViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def list(self, request, *args, **kwargs):
-        queryset = get_ordered_queryset(self.queryset, request.query_params)
+        queryset = get_ordered_queryset(self.queryset, request.query_params, 'user')
 
         # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
@@ -832,7 +832,8 @@ class WellnessViewSet(viewsets.ModelViewSet):
                     sleep=None,
                     stress=None,
                     fatigue=None,
-                    pain=None
+                    pain=None,
+                    nutrition=None,
                 ))
 
         serializer = self.get_serializer(week_data, many=True)
@@ -870,7 +871,8 @@ class WellnessViewSet(viewsets.ModelViewSet):
                     sleep=None,
                     stress=None,
                     fatigue=None,
-                    pain=None
+                    pain=None,
+                    nutrition=None
                 ))
             current_date += timedelta(days=1)
 
