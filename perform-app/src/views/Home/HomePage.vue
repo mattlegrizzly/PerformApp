@@ -1,6 +1,10 @@
 <template>
-  <ion-page style="padding-top: 0px !important" data-page="Home">
-    <ion-content>
+  <ion-page
+    class="home-ion-page"
+    style="padding-top: 0px !important"
+    data-page="Home"
+  >
+    <ion-content id="home-ion-page">
       <div class="home_div">
         <div class="header_img">
           <img width="200px" src="@/assets/logo_perform.png" alt="logo" />
@@ -9,7 +13,7 @@
           <div class="div_info">
             <h1>
               Salut <br />
-              {{ user.last_name }} !
+              {{ user.first_name }} !
             </h1>
             <p>
               {{ new Date(Date.now()).toLocaleString("fr").split(" ")[0] }}
@@ -40,13 +44,122 @@
               :icon="hideWellness ? chevronUpOutline : chevronDownOutline"
             />
           </div>
+          <ion-modal ref="infoModal" id="info_wellness_modal">
+            <div
+              class="infoWellnessModal"
+              style="margin: 10px; position: relative; overflow: scroll"
+            >
+              <ion-icon
+                style="
+                  font-size: 18px;
+                  position: absolute;
+                  right: 10px;
+                  top: 10px;
+                "
+                class="close-icon"
+                @click="infoModal.$el.dismiss()"
+                :icon="close"
+              />
+              <h1 style="margin-top: 10px">C'est quoi le wellness ?</h1>
+              <p>
+                Notre application vous permet de suivre facilement votre
+                bien-être quotidien grâce à cinq paramètres essentiels :
+                sommeil, stress, hydratation, douleurs et fatigue. Voici
+                l'intérêt de suivre chaque paramètre pour vous et votre coach :
+              </p>
+
+              <h2>1. Sommeil</h2>
+              <p>
+                Un bon sommeil est crucial pour la récupération et la
+                performance sportive. En suivant votre sommeil, vous pouvez
+                identifier les tendances et ajuster vos habitudes pour optimiser
+                votre bien-être et vos résultats sportifs.
+              </p>
+
+              <h2>2. Stress</h2>
+              <p>
+                Le stress peut affecter vos performances et votre motivation. En
+                le surveillant, vous pouvez apprendre à le gérer plus
+                efficacement et maintenir un esprit calme et concentré,
+                bénéfique pour vos entraînements.
+              </p>
+
+              <h2>3. Hydratation</h2>
+              <p>
+                Une bonne hydratation est essentielle pour l'endurance et la
+                récupération. En suivant ce paramètre, vous pouvez éviter la
+                déshydratation et optimiser vos performances.
+              </p>
+
+              <h2>4. Douleurs</h2>
+              <p>
+                Surveiller les douleurs permet de prévenir les blessures et
+                d'ajuster vos entraînements en conséquence. Cela aide à
+                maintenir une pratique sportive durable et sans risque.
+              </p>
+
+              <h2>5. Fatigue</h2>
+              <p>
+                La fatigue peut affecter l'efficacité de vos séances
+                d'entraînement. En la suivant, vous pouvez ajuster votre
+                programme pour maximiser votre énergie et vos performances.
+              </p>
+
+              <h2>Intérêt pour l'utilisateur et le coach</h2>
+              <p>
+                Pour l'utilisateur: Ces données fournissent une vue d'ensemble
+                de votre bien-être quotidien. Vous pouvez identifier les
+                domaines à améliorer et adapter vos habitudes pour un meilleur
+                équilibre entre entraînement et récupération.
+              </p>
+              <p>
+                Pour le coach: Avoir accès à ces informations permet de
+                personnaliser les programmes d'entraînement en fonction de votre
+                état actuel. Cela aide à prévenir les blessures, à améliorer les
+                performances et à favoriser une progression continue et saine.
+              </p>
+              <p>
+                En suivant ces cinq paramètres, vous et votre coach pouvez
+                collaborer plus efficacement pour atteindre vos objectifs
+                sportifs tout en maintenant un état de bien-être optimal.
+              </p>
+            </div>
+          </ion-modal>
           <ion-modal ref="modal" id="set_wellness">
             <ion-content>
-              <div class="modal-header" style="display: flex">
-                <h3 style="width: 90%; font-size: 16px">
+              <div
+                class="modal-header"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  padding-top: 10px;
+                  padding-bottom: 10px;
+                  padding-right: 10px;
+                "
+              >
+                <h3
+                  style="font-size: 16px; margin-top: 0px; margin-bottom: 0px"
+                >
                   Saisissez le wellness du jour :
                 </h3>
-                <ion-icon class="close-icon" @click="dismiss" :icon="close" />
+                <div
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <ion-icon
+                    :icon="informationCircleOutline"
+                    @click="showInfoWellness"
+                  />
+                </div>
+                <ion-icon
+                  style="font-size: 18px"
+                  class="close-icon"
+                  @click="dismiss"
+                  :icon="close"
+                />
               </div>
               <div class="divs_range">
                 <WellnessRange
@@ -99,6 +212,16 @@
                   descriptionEnd="+3L"
                   @change="onIonChange($event, 'hydratation')"
                 />
+                <WellnessRange
+                  id="nutrition_range"
+                  title="Nutrition"
+                  :value="wellness.nutrition"
+                  :min="0"
+                  :max="10"
+                  descriptionStart="Très mauvaise"
+                  descriptionEnd="Très saine"
+                  @change="onIonChange($event, 'nutrition')"
+                />
                 <div
                   class="display_flex"
                   style="justify-content: center; margin-top: 10px"
@@ -113,9 +236,9 @@
               </div>
             </ion-content>
           </ion-modal>
-          <ion-modal class="static-modal" ref="modalStats">
+          <ion-modal class="static-modal_wellness" ref="modalStats">
             <ion-content>
-              <div class="modal-header">
+              <div class="modal-header_wellness">
                 <ion-icon
                   class="close-icon"
                   @click="modalStats ? modalStats.$el.dismiss() : ''"
@@ -284,6 +407,17 @@
               descriptionEnd="+3L"
               disabled
             />
+            <WellnessRange
+                  id="nutrition_range"
+                  title="Nutrition"
+                  :value="wellness.nutrition"
+                  :min="0"
+                  :max="10"
+                  descriptionStart="Très mauvaise"
+                  descriptionEnd="Très saine"
+                  @change="onIonChange($event, 'nutrition')"
+                  disabled
+                />
             <div class="actions">
               <ion-button size="small" fill="outline" @click="showStats"
                 >Statistiques</ion-button
@@ -323,7 +457,12 @@ import "@/assets/main.css";
 import "./homepage.css";
 import { ref, computed, markRaw } from "vue";
 import { store } from "../../store/store";
-import { close, chevronDownOutline, chevronUpOutline } from "ionicons/icons";
+import {
+  close,
+  chevronDownOutline,
+  chevronUpOutline,
+  informationCircleOutline,
+} from "ionicons/icons";
 import { patch, post, get } from "../../lib/callApi";
 import WellnessRange from "@/components/WellnessRange/WellnessRange.vue";
 import Chart from "chart.js/auto";
@@ -348,6 +487,7 @@ const wellness = ref({
   pain: 0,
   fatigue: 0,
   id: 0,
+  nutrition: 0
 } as any);
 
 const chart = ref(null) as any;
@@ -369,18 +509,28 @@ const user = ref({
   users_wellness: [],
 });
 
+const infoModal = ref(null) as any;
+
+const showInfoWellness = () => {
+  console.log(infoModal.value);
+  if (infoModal.value) {
+    infoModal.value.$el.present();
+  }
+};
+
 /**
  * Fonction qui permet d'afficher les dates de début et de fin de la semaine pour le wellness
  */
- const weekRange = computed(() => {
+const weekRange = computed(() => {
   const start = new Date(weekWellnessTemp.value[0].date);
   const end = new Date(weekWellnessTemp.value[6].date);
 
-  const formatWithLeadingZero = (number : number) => number.toString().padStart(2, '0');
+  const formatWithLeadingZero = (number: number) =>
+    number.toString().padStart(2, "0");
 
-  return `${start.getDate()}/${formatWithLeadingZero(start.getMonth() + 1)} au ${end.getDate()}/${
-    formatWithLeadingZero(end.getMonth() + 1)
-  }`;
+  return `${start.getDate()}/${formatWithLeadingZero(
+    start.getMonth() + 1
+  )} au ${end.getDate()}/${formatWithLeadingZero(end.getMonth() + 1)}`;
 });
 
 /**
@@ -413,6 +563,7 @@ const postWellness = async () => {
         fatigue: wellness.value.fatigue,
         pain: wellness.value.pain,
         stress: wellness.value.stress,
+        nutrition: wellness.value.nutrition,
         user: user.value.id,
         date: setLongDate(new Date()),
       },
@@ -480,6 +631,7 @@ const patchWellness = async () => {
         fatigue: wellness.value.fatigue,
         pain: wellness.value.pain,
         stress: wellness.value.stress,
+        nutrition: wellness.value.nutrition,
       },
     },
     true
@@ -616,7 +768,7 @@ const createChart = (data: any) => {
   const labels = data.map((elem: { date: string }) => {
     const date = new Date(elem.date);
     const day = date.getDate();
-    const weekday = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"][
+    const weekday = ["lun", "mar", "mer", "jeu", "ven", "sam", "dim"][
       date.getDay()
     ];
     return `${weekday} ${day}`;
@@ -649,6 +801,10 @@ const createChart = (data: any) => {
             label: "Hydratation",
             data: data.map((elem: { hydratation: any }) => elem.hydratation),
           },
+          {
+            label: "Nutrition",
+            data: data.map((elem: { nutrition: any }) => elem.nutrition),
+          },
         ],
       },
       options: {
@@ -660,9 +816,9 @@ const createChart = (data: any) => {
             display: true,
             labels: {
               font: {
-                size: 11,
+                size: 12,
               },
-              boxWidth: 20,
+              boxWidth: 30,
               boxHeight: 8,
             },
           },
@@ -770,6 +926,7 @@ onIonViewWillEnter(async () => {
     hydratation: 0,
     pain: 0,
     fatigue: 0,
+    nutrition: 0,
     id: 0,
   };
   await loadUser();

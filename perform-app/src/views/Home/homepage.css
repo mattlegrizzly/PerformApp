@@ -16,9 +16,13 @@
   height: 80px;
   border-radius: 50%;
 }
+#home-ion-page::part(scroll){
+  overscroll-behavior: contain;
+  touch-action: none;
+}
 
-.modal-header {
-  padding: 10px 5px 5px 10px;
+.modal-header_wellness {
+  padding: 10px 20px 5px 20px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -61,6 +65,11 @@ ion-modal {
   --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
+#info_wellness_modal{
+  --width : 90% !important;
+  --height : 90% !important;
+}
+
 .div_info h1 {
   font-size: 18px;
   margin-top: 10px;
@@ -70,17 +79,21 @@ ion-modal {
   font-size: 12px;
 }
 
-.static-modal {
+.static-modal_wellness {
   --height: 60%;
   --width: 100%;
   --border-radius: 16px;
   --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-.static-modal h4 {
+.static-modal_wellness h4 {
   margin-top: 0px;
   text-align: center;
   font-size: 18px;
+  font-weight: 800;
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 5px;
 }
 
 ion-modal::part(backdrop) {
@@ -104,6 +117,10 @@ ion-range {
   align-items: center;
   justify-content: center;
   height: 100%;
+}
+
+.infoWellnessModal h2 {
+  font-size: 16px;
 }
 
 .home_div {

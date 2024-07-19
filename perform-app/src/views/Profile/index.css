@@ -55,8 +55,9 @@
     padding-left: 10px;
     padding-right: 10px;
     color: white;
-    background-color: var(--secondary-blue);
+    background-color: var(--primary-blue);
     pointer-events: none;
+    font-size: 10px;
 }
 
 .users_infos {

@@ -86,10 +86,6 @@ const urlReturn = ref<string>("/list_injuries");
 const showBodyComponent = ref<boolean>(false);  // État pour contrôler le rendu du composant
 const bodyComponentKey = ref<string>(Date.now().toString());
 
-const editInjury = () => {
-  router.push('/edit_injurie/' + routerNav.params.id);
-};
-
 /**
  * Exécute les actions nécessaires lors de l'entrée dans la vue.
  */

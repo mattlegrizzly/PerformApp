@@ -43,7 +43,7 @@
         <div class="profile_container_div">
           <div class="div_container_info">
             <h2>Mes disciplines</h2>
-            <ion-chip v-for="sport of user.sports_user" color="primary">{{
+            <ion-chip class="ion-chip-user" v-for="sport of user.sports_user" color="primary">{{
               sport.sport.name
             }}</ion-chip>
           </div>

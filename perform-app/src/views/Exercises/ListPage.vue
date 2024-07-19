@@ -392,7 +392,7 @@ import {
   IonChip,
 } from "@ionic/vue";
 import { get } from "../../lib/callApi";
-import { nextTick, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { chevronForwardOutline, close, trashBinSharp, chevronDownOutline, chevronUpOutline  } from "ionicons/icons";
 import "./index.css";
 import { useRoute, useRouter } from "vue-router";
@@ -472,7 +472,7 @@ const resumeFilter = () => {
 
 watch(
   () => muscle_selected.value.length | materials_selected.value.length | sports_selected.value.length,
-  (newValue) => {
+  () => {
     setTimeout(() => { 
       if(chipFilterContainer && chipFilterContainer.value.clientHeight > 43) {
         showIconResume.value = true;

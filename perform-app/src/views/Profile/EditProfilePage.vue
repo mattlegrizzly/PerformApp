@@ -1,9 +1,7 @@
 <style scoped>
 .input-div ion-list {
   width: auto;
-  height: 40px;
   display: flex;
-  min-height: 40px !important;
   align-items: center;
 }
 
@@ -128,6 +126,10 @@
             <ion-label>Email : </ion-label>
             <ion-input type="email" class="login-input" fill="outline" slot="end" placeholder="email@perform.com"
               shape="round" @ionInput="handleInput('email', $event.detail.value)" :value="user.email"></ion-input>
+          </div><div class="input-div">
+            <ion-label>Mot de passe : </ion-label>
+            <ion-input type="password" class="login-input" fill="outline" slot="end" placeholder="Nouveau mot de passe (Inchangé si vide)"
+              shape="round" @ionInput="handlePassword($event.detail.value)" :value="password"></ion-input>
           </div>
           <div class="input-div">
             <ion-label>Âge : </ion-label>
@@ -235,6 +237,7 @@ const user = ref<{
   sports_user: [] as Sport[],
 });
 
+const password = ref<string>('')
 const sports_user_temp = ref<Sport[]>([]);
 const sports = ref<Sport[]>([]);
 const fileToDisplay = ref<string>('');
@@ -249,6 +252,15 @@ const handleInput = (key: keyof IEUserData, valuePass: string | null | undefined
   const value = valuePass as never;
   user.value[key] = value;
 };
+
+/**
+ * Méthode pour changer la variable du password
+ * @param value - Valeur passé par l'input
+ */
+const handlePassword = (value: string | null | undefined) => {
+  if(value != null || value != undefined) password.value = value
+  console.log(password.value)
+} 
 
 /**
  * Compare deux objets en fonction de leur propriété `id`.
@@ -337,7 +349,19 @@ const editProfile = (): void => {
       loading.value = false;
 
     } else {
+      if(password.value != ''){
+        patch('/users/' + user.value.id + '/set_password/', {body : { password : password.value }}, true, false).then((res) => {
+          if(res.status > 300){
+            triggerError('Erreur lors de la modification du mot de passe, réessayez');
+      loading.value = false;
+          } else {
       router.push('/profile');
+            
+          }
+        })
+      } else {
+        router.push('/profile');
+      }
     }
   });
 };
@@ -397,6 +421,7 @@ const updateSelectedSports = (change: CustomEvent): void => {
  * Actions à exécuter lors de l'entrée dans la vue.
  */
 onIonViewWillEnter(async () => {
+  password.value = ''
   loading.value = false;
   sports_user_temp.value = [];
   const storeUser = await store.get("user");
