@@ -408,16 +408,16 @@
               disabled
             />
             <WellnessRange
-                  id="nutrition_range"
-                  title="Nutrition"
-                  :value="wellness.nutrition"
-                  :min="0"
-                  :max="10"
-                  descriptionStart="Très mauvaise"
-                  descriptionEnd="Très saine"
-                  @change="onIonChange($event, 'nutrition')"
-                  disabled
-                />
+              id="nutrition_range"
+              title="Nutrition"
+              :value="wellness.nutrition"
+              :min="0"
+              :max="10"
+              descriptionStart="Très mauvaise"
+              descriptionEnd="Très saine"
+              @change="onIonChange($event, 'nutrition')"
+              disabled
+            />
             <div class="actions">
               <ion-button size="small" fill="outline" @click="showStats"
                 >Statistiques</ion-button
@@ -487,7 +487,7 @@ const wellness = ref({
   pain: 0,
   fatigue: 0,
   id: 0,
-  nutrition: 0
+  nutrition: 0,
 } as any);
 
 const chart = ref(null) as any;
@@ -764,15 +764,31 @@ const updateMonthWellness = async () => {
  * Fonction de création du graphique du wellness
  * @param data
  */
-const createChart = (data: any) => {
-  const labels = data.map((elem: { date: string }) => {
-    const date = new Date(elem.date);
+ const createChart = (data: any) => {
+  // Fonction pour formater les dates
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
     const day = date.getDate();
-    const weekday = ["lun", "mar", "mer", "jeu", "ven", "sam", "dim"][
-      date.getDay()
-    ];
+    const options = { weekday: "short" } as any;
+    const weekday = date.toLocaleDateString("fr-FR", options).split(" ")[0];
     return `${weekday} ${day}`;
-  });
+  };
+
+  // Extraction des labels
+  const labels = data.map((elem: { date: string }) => formatDate(elem.date));
+
+  // Ajouter des valeurs nulles pour le premier et le dernier jour si nécessaire
+  if (data.length > 0) {
+    const firstData = data[0];
+    if (firstData.sleep == null) {
+      data[0] = { date: firstData.date, sleep: null, fatigue: null, pain: null, stress: null, hydratation: null, nutrition: null };
+    }
+
+    const lastData = data[data.length - 1];
+    if (lastData.sleep == null) {
+      data[data.length - 1] = { date: lastData.date, sleep: null, fatigue: null, pain: null, stress: null, hydratation: null, nutrition: null };
+    }
+  }
 
   chart.value = markRaw(
     //@ts-expect-error
@@ -809,7 +825,29 @@ const createChart = (data: any) => {
       },
       options: {
         spanGaps: true,
-        scales: { y: { min: 0, max: 10 } },
+        scales: { 
+          y: { min: 0, max: 10 }, 
+          x: {
+            ticks: {
+              callback: function(value : any, index, ticks) {
+                // Forcer l'affichage du premier et du dernier label
+                if (index === 0 || index === ticks.length - 1) {
+                  return this.getLabelForValue(value);
+                }
+                // Afficher certains labels intermédiaires pour la lisibilité
+                if (ticks.length > 15) {
+                  const skip = Math.ceil(ticks.length / 15);
+                  if (index % skip !== 0) {
+                    return null;
+                  }
+                }
+                return this.getLabelForValue(value);
+              },
+              maxTicksLimit: 15, // Limiter le nombre maximum de labels affichés
+              autoSkip: false, // Désactiver l'auto-skip pour afficher tous les ticks
+            },
+          },
+        },
         fullSize: true,
         plugins: {
           legend: {
@@ -819,7 +857,7 @@ const createChart = (data: any) => {
                 size: 12,
               },
               boxWidth: 30,
-              boxHeight: 8,
+              boxHeight: 1,
             },
           },
         },
@@ -827,6 +865,10 @@ const createChart = (data: any) => {
     })
   );
 };
+
+
+
+
 
 /**
  * Met à jour la valeur d'un champ de bien-être.

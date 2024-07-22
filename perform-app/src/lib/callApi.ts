@@ -1,6 +1,44 @@
 //@ts-expect-error
 import type IERequestOptions from "../types/requet";
 
+const sendRequest = async (originalRequest: Request, originalBody: any = null, retry: boolean = true): Promise<any> => {
+  const response = await fetch(originalRequest);
+
+  if (response.status === 401 && retry) {
+    const refreshResponse = await refresh();
+    if (refreshResponse && refreshResponse.access) {
+      const user = await store.get("user");
+      const updatedUser = {
+        ...JSON.parse(user),
+        access: refreshResponse.access,
+      };
+      await store.set("user", JSON.stringify(updatedUser));
+
+      // Clone headers
+      const newHeaders = new Headers(originalRequest.headers);
+      newHeaders.set("Authorization", `Bearer ${refreshResponse.access}`);
+
+      // Recreate the request with the new headers and the same body
+      const newRequest = new Request(originalRequest.url, {
+        method: originalRequest.method,
+        headers: newHeaders,
+        body: originalBody,
+        mode: originalRequest.mode,
+        credentials: originalRequest.credentials,
+        cache: originalRequest.cache,
+        redirect: originalRequest.redirect,
+        referrer: originalRequest.referrer,
+        referrerPolicy: originalRequest.referrerPolicy,
+        integrity: originalRequest.integrity,
+      });
+      return sendRequest(newRequest, originalBody, false); // Disable retry to prevent infinite loop
+    } else {
+      throw new Error("Unable to refresh token");
+    }
+  }
+  return handleResponse(response);
+};
+
 import { store } from "../store/store";
 
 const baseUrl = import.meta.env.VITE_API_URL + "";
@@ -91,14 +129,13 @@ const handleResponse = async (response: Response): Promise<any> => {
  * This function permits to refresh token and User in the store
  * @returns
  */
-const refresh = async () => {
-  store.get("user").then(async (res) => {
-    const refresh = JSON.parse(res).refresh;
+const refresh = async (): Promise<any> => {
+  try {
+    const res = await store.get("user");
+    const refreshToken = JSON.parse(res).refresh;
     const relativeUrlString = "/api/refresh_tokens/";
     const url = new URL(relativeUrlString, baseUrl);
-    const body = {
-      refresh: refresh,
-    };
+    const body = { refresh: refreshToken };
 
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -108,17 +145,17 @@ const refresh = async () => {
       body: JSON.stringify(body),
     });
 
-    try {
-      const response = await fetch(request);
-      if (!response.ok) {
-        throw new Error("La requête a échoué");
-      }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      throw new Error("Impossible de rafraîchir le token");
+    const response = await fetch(request);
+    if (!response.ok) {
+      throw new Error("La requête a échoué");
     }
-  });
+
+    const data = await response.json();
+    console.log('return data ', data);
+    return data;
+  } catch (error) {
+    throw new Error("Impossible de rafraîchir le token");
+  }
 };
 
 /**
@@ -135,7 +172,6 @@ const get = async (
 ): Promise<any> => {
   const relativeUrlString = "/api" + urlChunk;
   const url = new URL(relativeUrlString, baseUrl);
-
   handleParams(url, options);
 
   const headers = new Headers();
@@ -150,15 +186,8 @@ const get = async (
     headers: headers,
     mode: "cors",
   });
-  const response = await fetch(request);
-  if ((await response.status) > 301) {
-    return {
-      status: response.status,
-      data: response.statusText,
-    };
-  } else {
-    return handleResponse(response);
-  }
+
+  return sendRequest(request);
 };
 
 /**
@@ -211,15 +240,7 @@ const post = async (
     body: body,
   });
 
-  const response = await fetch(request);
-  if ((await response.status) > 301) {
-    return {
-      status: response.status,
-      data: response.statusText,
-    };
-  } else {
-    return handleResponse(response);
-  }
+  return sendRequest(request, body);
 };
 
 /**
@@ -234,7 +255,7 @@ const put = async (
   options = {} as IERequestOptions,
   authorization = true,
   image: Boolean
-) => {
+) => {  
   const relativeUrlString = "/api" + urlChunk;
   const url = new URL(relativeUrlString, baseUrl);
   const headers = new Headers();
@@ -269,15 +290,7 @@ const put = async (
     body: body,
   });
 
-  const response = await fetch(request);
-  if ((await response.status) > 301) {
-    return {
-      status: response.status,
-      data: response.statusText,
-    };
-  } else {
-    return handleResponse(response);
-  }
+  return sendRequest(request, body);
 };
 
 /**
@@ -327,16 +340,7 @@ const patch = async (
     headers: headers,
     body: body,
   });
-
-  const response = await fetch(request);
-  if ((await response.status) > 301) {
-    return {
-      status: response.status,
-      data: response.statusText,
-    };
-  } else {
-    return handleResponse(response);
-  }
+  return sendRequest(request, body);
 };
 
 /**
@@ -345,6 +349,7 @@ const patch = async (
  * @param {*} authorization
  */
 const del = async (urlChunk: any, authorization = true) => {
+  verifyToken();
   const relativeUrlString = "/api" + urlChunk;
   const url = new URL(relativeUrlString, baseUrl);
 
@@ -362,7 +367,7 @@ const del = async (urlChunk: any, authorization = true) => {
     headers: headers,
   });
 
-  return fetch(request);
+  return sendRequest(request);
 };
 
 export { get, post, put, del, patch, refresh, verifyToken };

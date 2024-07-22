@@ -285,7 +285,7 @@ import {
 } from "@ionic/vue";
 import { heartOutline, heart, close } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
-//@ts-expect-error
+//@ts-expect-errors
 import { BodyComponent } from "perform-body-component-lib";
 import type { Step, Muscle } from "../../types/allTypes";
 

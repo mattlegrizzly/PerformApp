@@ -85,6 +85,8 @@ const routes: Array<RouteRecordRaw> = [
 const isLoggedIn = async () => {
   try {
     const res = await store.get("user");
+    const user = JSON.parse(res).user;
+    console.log('user router ', user)
     const access = JSON.parse(res).access;
     if (!access) return false;
 
@@ -92,24 +94,34 @@ const isLoggedIn = async () => {
 
     if (verifyResponse.status > 300) {
       if (verifyResponse.status === 401) {
-        const refreshResponse = refresh();
-        //@ts-expect-error
+        const refreshResponse = await refresh();
         if (refreshResponse.status > 300) {
-          store.remove("user");
+          await store.remove("user");
           return false;
+        } else {
+          const newUser = {
+            user: user,
+            refresh: refreshResponse.refresh,
+            access: refreshResponse.access,
+          };
+          console.log('new user ', newUser)
+          store.set('user', JSON.stringify(newUser)).then(() => {return true});
         }
       } else {
-        store.remove("user");
+        await store.remove("user");
         return false;
       }
+    } else {
+      const userResponse = await get("/users/me/", { body: {} }, true);
+      store.set("user", JSON.stringify(userResponse)).then(() => {return true});
     }
-    const userResponse = await get("/users/me/", { body: {} }, true);
-    await store.set("user", JSON.stringify(userResponse));
-    return true;
   } catch (error) {
     return false;
   }
+  return true;
+
 };
+
 
 const router = createRouter({
   // Use: createWebHistory(process.env.BASE_URL) in your app
@@ -120,6 +132,7 @@ const router = createRouter({
 //@ts-expect-error
 router.beforeEach(async (to, from, next) => {
   const isloggedin = (await isLoggedIn()) as any;
+  console.log(isloggedin)
   if (to.name !== "login" && (await !isloggedin)) {
     next({
       path: "login",
