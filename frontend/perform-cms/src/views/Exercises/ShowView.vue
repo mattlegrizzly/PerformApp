@@ -14,6 +14,8 @@ import type { Muscle } from '@/types/types'
 
 const muscle_selected: any = ref([])
 
+const showMuscle = ref(false)
+
 const api_url = import.meta.env.VITE_API_URL
 
 const router = useRoute()
@@ -39,6 +41,7 @@ const setAlertValue = (type: string) => {
 
 const getExercises = async () => {
   const id = router.params.exercise_id
+
   const res = await get('/admin/exercises/' + id + '/')
   if (res.status === 404) {
     error_title.value = 'Erreur à la récupération de l\'exerecice pour id ' + id
@@ -49,9 +52,10 @@ const getExercises = async () => {
     const muscle_res = await res.zone_exercises
     const temp_muscle: Array<String> = [];
     muscle_res.map((muscle: Muscle) => {
-      temp_muscle.push(muscle.zone.code);
+      temp_muscle.push(muscle);
     })
     muscle_selected.value = temp_muscle
+    showMuscle.value = true;
     videoController.value.load()
   }
 }
@@ -62,6 +66,11 @@ onMounted(() => {
   } else {
     back.value = 'back'
   }
+  exercise.value = {
+  steps_exercise : []
+}
+  showMuscle.value = false;
+  muscle_selected.value = []
   getExercises()
 })
 </script>
@@ -102,6 +111,7 @@ onMounted(() => {
     <h2 class="showTitle">Muscles</h2>
     <BodyComponent
         :height="400"
+        v-if="showMuscle"
         :muscleSelected="muscle_selected"
         :viewOnly="'show'"
       />

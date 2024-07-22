@@ -35,8 +35,10 @@ const exercise: any = ref({
 const editing = ref(false)
 
 const muscle_selected: any = ref([])
+const temp_selected:any = ref([])
 const file = ref()
 const materials_selected = ref([])
+const const_muscles : any= ref([])
 const sport_selected = ref([])
 const video_url = ref('')
 const video_src = ref('')
@@ -101,6 +103,28 @@ const moveUp = (index: number) => {
   }
 }
 
+const handleChange = (codes: any) => {
+  // Mettez à jour temp_selected pour correspondre aux codes
+  temp_selected.value = codes
+
+  // Créez une nouvelle sélection en fonction des codes
+  const newSelection = codes.map((code: any) =>
+    muscles.value.find((muscle: any) => muscle.zone.code === code)
+  )
+
+  // Supprimez les muscles non sélectionnés de muscle_selected
+  muscle_selected.value = muscle_selected.value.filter((muscle: any) =>
+    codes.includes(muscle.zone.code)
+  )
+
+  // Ajoutez les nouveaux muscles sélectionnés à muscle_selected
+  newSelection.forEach((muscle: any) => {
+    if (!muscle_selected.value.some((m: any) => m.zone.code === muscle.zone.code)) {
+      muscle_selected.value.push(muscle)
+    }
+  })
+}
+
 function sortArrayByOrder(arr) {
   console.log(arr)
   return arr.sort((a, b) => a.order - b.order)
@@ -152,13 +176,14 @@ const sendData = async () => {
         (step: Step) => !startStep.find((step_: Step) => step_.id === step.id)
       )
 
+      const deleted = startStep.filter(
+        (step: Step) => !endStep.find((step_: Step) => step_.id === step.id)
+      )
+
       const modified = startStep.filter((step: Step) =>
         endStep.find((step_: Step) => step_.id === step.id)
       )
 
-      const deleted = startStep.filter(
-        (step: Step) => !endStep.find((step_: Step) => step_.id === step.id)
-      )
 
       newStep.map((step: Step) => {
         const stepToPush = {
@@ -197,6 +222,39 @@ const sendData = async () => {
         }
       })
 
+      let startMuscle = const_muscles.value
+      let endMuscle = muscle_selected.value
+      console.log('start muscle ', startMuscle)
+      console.log('end muscle ', endMuscle)
+      const newMuscle = endMuscle.filter(
+        (muscle: Muscle) => !startMuscle.find((muscle_: Muscle) => muscle_.zone.code === muscle.zone.code)
+      )
+      
+      const deletedMuscle = startMuscle.filter(
+        (muscle: Muscle) => !endMuscle.find((muscle_: Muscle) => muscle_.zone.code === muscle.zone.code)
+      )
+
+      newMuscle.map((muscle: Muscle) => {
+        const muscleToPush = {
+          body: {
+            exercise: id,
+            zone: muscle.zone.code
+          }
+        }
+        res = post('/admin/exercisezones/', muscleToPush, true)
+      })
+
+      deletedMuscle.map((muscle: Muscle) => {
+        get('/admin/exercisezones/exercise_zone?exercise_id='+id+"&zone_id="+muscle.zone.code, { body:{}}, true).then((res) => {
+          if(res.status > 300) {
+            console.log('erreur oui')
+          } else {
+            del('/admin/exercisezones/' + res + '')
+          }
+        })
+      })
+
+
       router.push('/exercises/show/' + id + '/?edit=true')
     }
   })
@@ -209,17 +267,40 @@ const setMuscleSelected = (key: string, action: string) => {
         return element === key
       }).length == 0
     if (findKey) {
-      muscle_selected.value.push(key)
+      const muscle = muscles.value.find((el) => el.zone.code == key)
+      muscle_selected.value.push(muscle)
     }
   } else {
     // Trouver l'index de la valeur à supprimer
-    var index = muscle_selected.value.indexOf(key)
+    var index = muscle_selected.value.map(function(e) { return e.zone.code; }).indexOf(key);
 
     if (index !== -1) {
       // Supprimer la valeur à l'index trouvé
       muscle_selected.value.splice(index, 1)
     }
   }
+}
+const setMuscle = (key: string, action: string) => {
+  if (action === 'add') {
+    const findKey =
+      muscle_selected.value.filter(function (element: any) {
+        return element.zone.code === key
+      }).length == 0
+    if (findKey) {
+      muscle_selected.value.push(muscles.value.find((element: any) => element.zone.code == key))
+    }
+  } else {
+    let index = muscle_selected.value.indexOf(key as any)
+    muscle_selected.value.map((muscle: any) => {
+      if (muscle.zone.code === key) {
+        index = muscle_selected.value.indexOf(muscle)
+      }
+      if (index !== -1) {
+        muscle_selected.value.splice(index, 1)
+      }
+    })
+  }
+
 }
 
 const getExercise = async () => {
@@ -232,11 +313,15 @@ const getExercise = async () => {
   } else {
     const_exercice.value = JSON.parse(JSON.stringify(await res))
     exercise.value = JSON.parse(JSON.stringify(await res))
-    const temp_muscle: Array<string> = []
+    const temp_muscle: Array<Muscle> = []
+      const const_temp: Array<Muscle> = []
     exercise.value.zone_exercises.map((muscle: Muscle) => {
-      temp_muscle.push(muscle.zone.code)
+      temp_muscle.push(muscle)
+      const_temp.push(muscle)
     })
     muscle_selected.value = temp_muscle
+    temp_selected.value = temp_muscle
+    const_muscles.value = const_temp
     for (let elem of exercise.value.material_exercise) {
       //@ts-expect-error
       materials_selected.value.push(elem.material.id)
@@ -270,7 +355,16 @@ const getExercise = async () => {
       error_message.value = res.data.detail
       alertErr.value = true
     } else {
-      elem.array.value = res
+      if (elem.link.includes('workzones')) {
+        let array = [] as any
+        res.map((elem: any) => {
+          array.push({ zone: elem })
+        })
+        elem.array.value = array
+        console.log(array)
+      } else {
+        elem.array.value = res
+      }
     }
   })
 }
@@ -388,16 +482,15 @@ onMounted(() => {
         :viewOnly="'edit'"
       />
       <v-select
-        v-model="muscle_selected"
+        v-model="temp_selected"
         :items="muscles"
         hint="Sélectionnez les muscles utilisés"
-        item-title="name"
-        item-value="code"
+        item-title="zone.name"
+        item-value="zone.code"
         label="Select"
         multiple
-        persistent-hint
-        single-line
-      ></v-select>
+        @update:modelValue="handleChange"
+      />
       <h2>Etapes</h2>
       <draggable v-model="exercise.steps_exercise" item-key="id" @end="updateOrder">
         <template #item="{ element, index }">

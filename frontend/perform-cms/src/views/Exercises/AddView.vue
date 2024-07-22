@@ -329,7 +329,7 @@ onMounted(() => {
       >
       </v-select>
       <h2>Sports</h2>
-      <v-select
+      <v-autocomplete
         v-model="sport_selected"
         :items="sports"
         hint="Sélectionnez le sport utilisé"
@@ -340,9 +340,9 @@ onMounted(() => {
         persistent-hint
         single-line
       >
-      </v-select>
+      </v-autocomplete>
       <h2>Matériels</h2>
-      <v-select
+      <v-autocomplete
         v-model="materials_selected"
         :items="materials"
         hint="Sélectionnez le matériel utilisé"
@@ -353,7 +353,7 @@ onMounted(() => {
         persistent-hint
         single-line
       >
-      </v-select>
+      </v-autocomplete>
       <h2>Instructions</h2>
       <draggable v-model="steps_exercise" item-key="id" @end="updateOrder">
       <template #item="{ element, index }">
