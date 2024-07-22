@@ -267,7 +267,6 @@ class AdminExerciseViewSet(viewsets.ModelViewSet):
         obj = self.get_object()
         update_relationships(obj, "materials", Material, "material_ids")
         update_relationships(obj, "sports", Sport, "sports_ids")
-        update_relationships(obj, "muscles", WorkZone, "muscles_id", lookup_field='code')
         
         return super().update(request, *args, **kwargs)
 
@@ -658,6 +657,23 @@ class AdminExerciseZoneViewSet(viewsets.ModelViewSet):
     )
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
+    
+    @extend_schema(
+        tags=['Admin - Exercise Zone'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="exercise_zone")
+    def exercise(self, request, *args, **kwargs):
+        exercise_id = int(request.query_params.get('exercise_id'))
+        zone_id = request.query_params.get('zone_id')
+        if exercise_id and zone_id:
+            queryset = self.queryset.filter(zone=zone_id, exercise=exercise_id)
+        else:
+            queryset = self.queryset.none()  # ou gérez cette situation comme vous le souhaitez
+
+        # Extraire les IDs directement du queryset
+        ids = queryset.values_list('id', flat=True)
+        return Response(list(ids), status=status.HTTP_200_OK)
 
 #------------------WORKZONE------------------
 # Admin ViewSet

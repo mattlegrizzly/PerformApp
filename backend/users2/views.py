@@ -803,9 +803,9 @@ class WellnessViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
     @extend_schema(
-        tags=['Users - Wellness'],
-        responses={200: "OK"}
-    )
+    tags=['Users - Wellness'],
+    responses={200: "OK"}
+)
     @action(detail=False, methods=['get'], url_path="user/(?P<user_id>\d+)/week")
     def week_wellness(self, request, user_id, *args, **kwargs):
         date_str = request.query_params.get('date')
@@ -813,8 +813,9 @@ class WellnessViewSet(viewsets.ModelViewSet):
             input_date = datetime.strptime(date_str, '%Y-%m-%d')
         except (ValueError, TypeError):
             return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
-        start_week = input_date - timedelta(days=input_date.weekday())  # Lundi
-        end_week = start_week + timedelta(days=6)  # Dimanche
+        
+        start_week = input_date - timedelta(days=(input_date.weekday()) % 7)  # Lundi
+        end_week = start_week + timedelta(days=7)  # Dimanche
 
         queryset = self.queryset.filter(user=user_id, date__range=[start_week, end_week])
         wellness_data = {w.date: w for w in queryset}
