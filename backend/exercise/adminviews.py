@@ -7,6 +7,7 @@ from sport.models import Sport
 from .models import Material, Exercise, ExerciseStep, ExerciseMaterial, ExerciseSport, ExerciseZone, WorkZone
 from .serializers import MaterialSerializer, ExerciseSerializer, ExerciseStepSerializer, ExerciseMaterialSerializer, ExerciseSportSerializer, ExerciseZoneSerializer, WorkZoneSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from django.db.models import Q
 
 from utils.utils import get_ordered_queryset
 
@@ -688,9 +689,11 @@ class AdminWorkZoneViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, methods=['get'], url_path="all")
     def get(self, request):
-        # Récupérez toutes les entités de votre modèle sans limite
-        items = WorkZone.objects.all()        
-        items = self.queryset.order_by("name")
+        # Récupérez toutes les entités de votre modèle
+        items = WorkZone.objects.all()
+        # Exclure les muscles contenant "droit" ou "gauche" dans le nom
+        items = items.exclude(Q(name__icontains="droit") | Q(name__icontains="gauche"))
+        items = items.order_by("name")
 
         # Sérialisez les données
         serializer = WorkZoneSerializer(items, many=True)

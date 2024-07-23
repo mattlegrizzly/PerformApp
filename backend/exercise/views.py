@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import filters, mixins, status, viewsets, pagination
 from rest_framework.decorators import action
 from utils.utils import get_ordered_queryset
+from django.db.models import Count, Q
 #------------------MATERIAL------------------
 # List/Get ViewSet
 class MaterialViewSet(viewsets.ReadOnlyModelViewSet):
@@ -168,7 +169,38 @@ class WorkZoneViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=False, methods=['get'], url_path="all")
     def all(self, request):
         queryset = self.get_queryset()
+        # Exclure les muscles contenant "droit" ou "gauche" dans le nom
+        queryset = queryset.exclude(Q(name__icontains="droit") | Q(name__icontains="gauche"))
         queryset = queryset.order_by("name")
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], url_path="all_injury")
+    def all_injury(self, request):
+    # Trouver les codes des muscles ayant des versions "left" et "right"
+        main_codes_with_sides = (
+            self.get_queryset()
+            .filter(Q(code__icontains="-left") | Q(code__icontains="-right"))
+            .values_list('code', flat=True)
+            .distinct()
+        )
+        
+        # Extraire les codes principaux (sans "-left" ni "-right")
+        main_codes = set(code.rsplit('-', 1)[0] for code in main_codes_with_sides)
+        
+        # Muscles ayant des versions "left" et "right"
+        left_right_muscles = self.get_queryset().filter(
+            Q(code__icontains="-left") | Q(code__icontains="-right")
+        )
+        
+        # Muscles n'ayant pas de versions "left" et "right"
+        single_muscles = self.get_queryset().exclude(
+            Q(code__icontains="-left") | Q(code__icontains="-right") | Q(code__in=main_codes)
+        )
 
+        # Combiner les deux ensembles de muscles
+        queryset = left_right_muscles | single_muscles
+        queryset = queryset.order_by("name")
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

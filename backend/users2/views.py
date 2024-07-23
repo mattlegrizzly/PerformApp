@@ -644,7 +644,7 @@ class InjurieViewSet(viewsets.ModelViewSet):
         # Si l'utilisateur n'est pas administrateur, filtrer les objets pour n'afficher que ceux associés à l'utilisateur connecté
         if not request.user.is_superuser:
             queryset = self.queryset.filter(user=request.user)
-        queryset = get_ordered_queryset(self.queryset,  request.query_params)
+        queryset = get_ordered_queryset(self.queryset,  request.query_params, 'injury')
             # Filtrer le queryset
                 # Sinon, sérialiser le queryset complet
         serializer = self.get_serializer(queryset, many=True)
@@ -659,6 +659,7 @@ class InjurieViewSet(viewsets.ModelViewSet):
         user_id = kwargs.get('user_id')
         print(user_id)
         queryset = self.queryset.filter(user=user_id)
+        queryset = get_ordered_queryset(self.queryset,  request.query_params, 'injury')
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -669,6 +670,7 @@ class InjurieViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path="latest")
     def latest(self, request):
         latest_sports_user = self.get_latest()
+        latest_sports_user = get_ordered_queryset(self.queryset,  request.query_params, 'injury')
         serializer = self.get_serializer(latest_sports_user, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

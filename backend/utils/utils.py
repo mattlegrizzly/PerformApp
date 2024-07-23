@@ -21,6 +21,8 @@ def get_ordered_queryset(queryset, query_params, type=""):
                 return queryset.order_by('name')
     elif type == "muscle":
         return queryset.order_by('name')
+    elif type == "injury":
+        return queryset.order_by('-date')
     elif type == "user":
         return queryset.order_by('id')
     else:

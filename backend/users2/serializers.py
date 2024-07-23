@@ -40,7 +40,7 @@ class WellnessDetailedSerializer(serializers.ModelSerializer):
 
 class UserDetailedSerializer(serializers.ModelSerializer):
     sports_user = SportsDetailedUserSerializer(many=True, read_only=False)
-    user_injuries = InjurieDetailedSerializer(many=True, read_only=False)
+    user_injuries =  serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = [ 'id', 'email', 'first_name', 'last_name' , 'size', 'age','weight', 'gender', 'profile_picture', 'sports_user', 'user_injuries',  'is_superuser']
@@ -50,6 +50,10 @@ class UserDetailedSerializer(serializers.ModelSerializer):
             return True
         else:
             return False
+        
+    def get_injuries(self, obj):
+        injuries_ = obj.user_injuries.order_by('date')
+        return InjurieDetailedSerializer(injuries_, many=True, read_only=True).data
 
 class UserSerializer(serializers.ModelSerializer):
     sports_user = SportsDetailedUserSerializer(many=True, read_only=False)
