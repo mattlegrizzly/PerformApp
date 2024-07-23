@@ -34,6 +34,7 @@ const showFilter = ref(false)
 const materials_id_filter: any = ref([])
 const sport_selected: any = ref([])
 const muscle_selected: any = ref([])
+const temp_selected = ref([])
 
 //Ref pour la pagination
 const exercisesCount = ref(0)
@@ -106,24 +107,50 @@ const addMaterialFilter = (id: any) => {
   }
 }
 
+const handleChange = (codes: any) => {
+  // Mettez à jour temp_selected pour correspondre aux codes
+  temp_selected.value = codes
+
+  // Créez une nouvelle sélection en fonction des codes
+  const newSelection = codes.map((code: any) =>
+    muscles.value.find((muscle: any) => muscle.zone.code === code)
+  )
+
+  // Supprimez les muscles non sélectionnés de muscle_selected
+  muscle_selected.value = muscle_selected.value.filter((muscle: any) =>
+    codes.includes(muscle.zone.code)
+  )
+
+  // Ajoutez les nouveaux muscles sélectionnés à muscle_selected
+  newSelection.forEach((muscle: any) => {
+    if (!muscle_selected.value.some((m: any) => m.zone.code === muscle.zone.code)) {
+      muscle_selected.value.push(muscle)
+    }
+  })
+}
+
 const setMuscleSelected = (key: string, action: string) => {
   if (action === 'add') {
     const findKey =
-      muscle_selected.value.filter(function (element: string) {
-        return element === key
+      muscle_selected.value.filter(function (element: any) {
+        return element.zone.code === key
       }).length == 0
     if (findKey) {
-      muscle_selected.value.push(key)
+      muscle_selected.value.push(muscles.value.find((element: any) => element.zone.code == key))
     }
   } else {
-    // Trouver l'index de la valeur à supprimer
-    var index = muscle_selected.value.indexOf(key)
-
-    if (index !== -1) {
-      // Supprimer la valeur à l'index trouvé
-      muscle_selected.value.splice(index, 1)
-    }
+    let index = muscle_selected.value.indexOf(key as any)
+    muscle_selected.value.map((muscle: any) => {
+      if (muscle.zone.code === key) {
+        index = muscle_selected.value.indexOf(muscle)
+      }
+      if (index !== -1) {
+        muscle_selected.value.splice(index, 1)
+      }
+    })
   }
+
+  temp_selected.value = muscle_selected.value
 }
 
 const changeInput = async () => {
@@ -167,7 +194,7 @@ const filterExercice = () => {
     option.material_id = jointByComa(materials_id_filter.value)
   }
   if (muscle_selected.value.length > 0) {
-    option.workzone_code = jointByComa(muscle_selected.value)
+    option.workzone_code = jointByComa(muscle_selected.value, "muscle")
   }
   if (sport_selected.value.length > 0) {
     option.sport_id = jointByComa(sport_selected.value)
@@ -207,7 +234,7 @@ const getExercises = async () => {
   }
 
   if (muscle_selected.value.length > 0) {
-    option.workzone_code = jointByComa(muscle_selected.value)
+    option.workzone_code = jointByComa(muscle_selected.value, "muscle")
   }
 
   get('/admin/exercises', option).then((res) => {
@@ -236,10 +263,15 @@ const pushData = (params_push: any) => {
   })
 }
 
-const jointByComa = (array: Array<string>) => {
+const jointByComa = (array: Array<string>, type: string = "") => {
   let stringWithCommas = ''
   for (let i = 0; i < array.length; i++) {
-    stringWithCommas += array[i]
+    console.log(array[i])
+    if(type == "muscle"){
+      stringWithCommas += array[i].zone.code
+    } else {
+      stringWithCommas += array[i]
+    }
     if (i < array.length - 1) {
       stringWithCommas += ', '
     }
@@ -279,11 +311,20 @@ onMounted(async () => {
   dataToRetrieve.map(async (elem) => {
     const res = await get(elem.link, { body: {} }, true)
     if (res.status === 404) {
-      error_title.value = 'Erreur à la récupération des exercices'
+      error_title.value = 'Error while retrieve materials'
       error_message.value = res.data.detail
       alertErr.value = true
     } else {
-      elem.array.value = res
+      if (elem.link.includes('workzones')) {
+        let array = [] as any
+        res.map((elem: any) => {
+          array.push({ zone: elem })
+        })
+        elem.array.value = array
+        console.log(array)
+      } else {
+        elem.array.value = res
+      }
     }
   })
 
@@ -372,19 +413,18 @@ onMounted(async () => {
                 :width="'50%'"
                 :muscleSelected="muscle_selected"
                 :setMuscleSelected="setMuscleSelected"
-                :viewOnly="'edit'"
+                :viewOnly="'add'"
               />
               <v-select
-                v-model="muscle_selected"
-                :items="muscles"
-                hint="Sélectionnez les muscles utilisés"
-                item-title="name"
-                item-value="code"
-                label="Select"
-                multiple
-                persistent-hint
-                single-line
-              >
+        v-model="temp_selected"
+        :items="muscles"
+        hint="Sélectionnez les muscles utilisés"
+        item-title="zone.name"
+        item-value="zone.code"
+        label="Select"
+        multiple
+        @update:modelValue="handleChange"
+      >
               </v-select>
             </v-card-item>
             <v-card-actions>

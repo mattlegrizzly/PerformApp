@@ -101,7 +101,9 @@ const refresh = async () => {
   const userStore = useUserStore()
   const relativeUrlString = '/api/refresh_tokens/'
   const url = new URL(relativeUrlString, baseUrl)
-  const refresh = userStore.refresh
+  console.log(userStore.getRefresh)
+  const refresh = userStore.getRefresh
+  console.log('refresh ' , refresh)
   const body = {
     refresh: refresh
   }

@@ -48,6 +48,8 @@ const removeUser = () => {
 
 const isLoggedIn = async () => {
   const access = cookies.get('access')
+  const userStore = useUserStore()
+
   if (!access) return false
 
   try {
@@ -57,6 +59,8 @@ const isLoggedIn = async () => {
         const refreshResponse = await refresh()
         if ((await refreshResponse.status) > 300) {
           return false
+        } else {
+          userStore.setTokens(refreshResponse)
         }
       }
       removeUser()
@@ -70,6 +74,8 @@ const isLoggedIn = async () => {
     return false
   }
 }
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
