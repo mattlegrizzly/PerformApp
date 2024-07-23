@@ -202,7 +202,14 @@ const user = ref({
  * @returns {any} - Les deux premières blessures de l'utilisateur.
  */
 function limitedItems(): any {
-  return user.value.user_injuries.slice(0, 2);
+  const injuries = user.value.user_injuries.sort(function(a : any, b : any){
+    const start = new Date(a.date) as Date
+    const end = new Date(b.date) as Date
+    //@ts-expect-error
+    return end - start;
+});
+
+  return injuries.slice(0, 2);
 }
 
 /**

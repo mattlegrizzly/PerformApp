@@ -41,7 +41,7 @@
           <BodyComponent
             v-if="showBodyComponent"
             :key="bodyComponentKey"
-            :muscleSelected="[{ zone: injury.zone }]" :height="'300'" :width="'200'" :viewOnly="'show'"
+            :muscleSelected="[{ zone: injury.zone }]" :height="'300'" :width="'200'" :viewOnly="'show'"  :isInjury="true"
           />
         </div>
       </div>

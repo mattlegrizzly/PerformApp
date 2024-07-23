@@ -14,6 +14,7 @@
             >Nom de la blessure *</ion-label
           >
           <ion-input
+          style="text-transform: capitalize;" 
             :class="errorAdd && injury.name == '' ? 'required_class' : ''"
             label-placement="stacked"
             fill="outline"
@@ -125,6 +126,7 @@
             :height="'200'"
             :width="'100'"
             :viewOnly="'edit'"
+             :isInjury="true"
           />
         </div>
         <NavButton
@@ -373,7 +375,7 @@ onIonViewWillEnter(async () => {
     shadowRoot.appendChild(style);
   }
 
-  get("/workzones/all", { body: {} }, false).then((res) => {
+  get("/workzones/all_injury", { body: {} }, false).then((res) => {
     if (res.status > 301) {
       triggerError("Erreur lors de la récupération des muscles");
     } else {

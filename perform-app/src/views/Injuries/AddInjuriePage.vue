@@ -13,7 +13,7 @@
         </h1>
         <div class="input_injurie">
           <ion-label :class="errorAdd && nameInjury == '' ? 'required_text' : ''">Nom de la blessure *</ion-label>
-          <ion-input label-placement="stacked" :class="errorAdd  && nameInjury == '' ? 'required_class' : ''" fill="outline" @ion-change="handleInput('name', $event.detail.value)"
+          <ion-input style="text-transform: capitalize;" label-placement="stacked" :class="errorAdd  && nameInjury == '' ? 'required_class' : ''" fill="outline" @ion-change="handleInput('name', $event.detail.value)"
             placeholder="Déchirure du quadriceps"></ion-input>
         </div>
         <div class="input_injurie">
@@ -64,7 +64,7 @@
             align-items: center;
           ">
           <BodyComponent :setMuscleSelected="setMuscle" :muscleSelected="muscleSelected" :height="'300'" :width="'200'"
-            :viewOnly="'edit'" />
+            :viewOnly="'edit'" :isInjury="true"/>
 
         </div>
         <div>
@@ -173,11 +173,16 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
   }
 };
 
+
 const setMuscle = (code: string) => {
+  console.log('code ', code)
+  console.log(muscles)
+  const muscleToSet = muscles.value.find((element: any) => element.code == code) as any
+  console.log(muscleToSet)
   muscleSelected.value = [{
     zone: {
-      code: code,
-      name: ''
+      code: muscleToSet.code,
+      name: muscleToSet?.name
     }
   }];
 }
@@ -236,8 +241,8 @@ const addInjurie = () => {
       errorAdd.value = true;
       adding.value = false;
     } else {
-      router.push("/view_injuries/" + res.id + "/?edit=true")
       errorAdd.value = false;
+      router.push("/view_injuries/" + res.id + "/?edit=true")
 
     }
   });
@@ -266,7 +271,7 @@ onIonViewWillEnter(async () => {
     `;
     shadowRoot.appendChild(style);
   }
-  get("/workzones/all", { body: {} }, false).then((res) => {
+  get("/workzones/all_injury", { body: {} }, false).then((res) => {
     if (res.status > 301) {
       triggerError('Erreur lors de la récupération des muscles');
     } else {
