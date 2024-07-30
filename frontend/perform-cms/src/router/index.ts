@@ -20,6 +20,7 @@ import ListSports from '@/views/Sports/ListView.vue'
 import ShowSport from '@/views/Sports/ShowView.vue'
 import EditSport from '@/views/Sports/EditView.vue'
 import AddSport from '@/views/Sports/AddView.vue'
+import AddRecord from '@/views/Sports/AddViewRecord.vue'
 
 import PageNotFoundView from '@/views/PageNotFoundView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -118,6 +119,11 @@ const router = createRouter({
       component: AddSport
     },
 
+    {
+      path: '/sports/add_record/:sport_id',
+      name: 'addRecord',
+      component: AddRecord
+    },
     {
       path: '/sports/show/:sport_id',
       name: 'showSport',

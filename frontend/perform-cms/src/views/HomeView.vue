@@ -108,20 +108,20 @@ onMounted(() => {
     <div class="home-card">
       <div class="five-recents">
         <h2>Les 5 derniers utilisateurs inscrits</h2>
-        <ListElement :headerTable="['Email', 'Nom', 'Prénom', 'Taille', 'Age', 'Genre']" :contentTable="users"
-          :limitData="6" />
+        <ListElement :headerTable="['Id', 'Email', 'Nom', 'Prénom', 'Taille', 'Age', 'Genre']" :contentTable="users"
+          :limitData="6" nav="users" />
       </div>
       <div class="five-recents">
         <h2>Les 5 derniers matériels inscrits</h2>
-        <ListElement :headerTable="['Id', 'Nom']" :contentTable="materials" :limitData="2" />
+        <ListElement :headerTable="['Id', 'Nom']" :contentTable="materials" :limitData="2" nav="materials" />
       </div>
       <div class="five-recents">
         <h2>Les 5 derniers exercises inscrits</h2>
-        <ListElement :headerTable="['Nom']" :contentTable="exercises" :limitData="1" />
+        <ListElement :headerTable="['Id', 'Nom']" :contentTable="exercises" :limitData="2" nav="exercises"/>
       </div>
       <div class="five-recents">
         <h2>Les 5 derniers sports inscrits</h2>
-        <ListElement :headerTable="['Id', 'Nom']" :contentTable="sports" :limitData="2" />
+        <ListElement :headerTable="['Id', 'Nom']" :contentTable="sports" :limitData="2" nav="sports"/>
       </div>
     </div>
   </div>

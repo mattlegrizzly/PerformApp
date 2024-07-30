@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-btn @click="dialog = true" prepend-icon="mdi-delete"> Delete </v-btn>
+    <v-icon v-if='props.isIcon' @click="dialog = true"  icon="mdi-delete"></v-icon>
+    <v-btn v-else @click="dialog = true" prepend-icon="mdi-delete"> Delete </v-btn>
     <v-dialog v-model="dialog" max-width="400" persistent>
       <v-card class="delete_modal">
         <v-card-title>Vous allez supprimer : {{ props.item }}</v-card-title>
@@ -17,11 +18,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, defineEmits} from 'vue'
 import { del } from '@/lib/callApi'
 import router from '@/router'
-const props = defineProps(['url', 'item', 'id', 'list'])
-
+const props = defineProps(['url', 'item', 'id', 'list', 'isIcon'])
+const emit = defineEmits(['dialogClosed']);
 const dialog = ref(false)
 
 const deleteElement = () => {
@@ -30,7 +31,12 @@ const deleteElement = () => {
     if (res.status > 301) {
       throw Error
     } else {
-      router.push('/' + props.list)
+      if(props.list !="") { 
+        router.push('/' + props.list)
+      } else {
+        dialog.value = false
+        emit('dialogClosed');
+      }
     }
   })
 }
