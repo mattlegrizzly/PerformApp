@@ -83,13 +83,8 @@
     position: absolute;
     top: 8%;
     width: 100%;
-transition: top 0.5s ease-in-out;
 }
 
-.keyboard-open .logo_perform_login 
-{
-    top: 7%;
-}
 
 
 

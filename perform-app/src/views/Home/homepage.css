@@ -21,6 +21,12 @@
   touch-action: none;
 }
 
+.infoIcon {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+}
+
 .modal-header_wellness {
   padding: 10px 20px 5px 20px;
   display: flex;
@@ -28,13 +34,6 @@
   align-items: center;
   justify-content: flex-end;
 }
-
-.close-icon {
-  color: red;
-  border: 1px solid red;
-  border-radius: 5px;
-}
-
 .modal-body {
   padding: 0px 20px 5px 20px;
 }

@@ -42,10 +42,16 @@
         </div>
         <div class="profile_container_div">
           <div class="div_container_info">
-            <h2>Mes disciplines</h2>
+            <h2 >Mes disciplines</h2>
             <ion-chip class="ion-chip-user" v-for="sport of user.sports_user" color="primary">{{
               sport.sport.name
             }}</ion-chip>
+          </div>
+        </div>
+        <div class="profile_container_div">
+          <div @click="() => router.push('records')" class="div_container_info" style="display: flex; align-items: center; justify-content: space-between;">
+            <h2 style="margin-bottom: 0px  !important;">Mes records</h2>
+            <ion-icon :icon="chevronForwardOutline"></ion-icon>
           </div>
         </div>
         <div class="profile_container_div">

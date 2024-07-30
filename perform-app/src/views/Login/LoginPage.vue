@@ -1,19 +1,10 @@
-<style scoped>
-ion-content .scroll-y {
-  display: flex;
-  justify-content: center;
-  align-content: center;
-}
-</style>
 
 <template>
-  <ion-page>
-    <ion-content style="align-content: center; justify-content: center; display: flex">
-      <div style="
-
-        "
+  <ion-page data-page="Login" class="home-ion-page">
+    <ion-content id="login-home-page" style="align-content: center; justify-content: center; display: flex">
+      <div 
         class="logo_perform_login">
-        <img style="width: 250px" src="../../assets/logo_perform.png" />
+        <img style="width: 250px" src="../../assets/logo_perform.png" alt="logo perform" />
       </div>
       <div class="login_inputs">
         <div style="padding-left: 50px; padding-right: 50px; width: 50%">
@@ -21,8 +12,8 @@ ion-content .scroll-y {
           <form>
             <div class="input-div">
               <ion-label>Email : </ion-label>
-              <ion-input class="login-input" :class="error ? 'errorInput' : ''" fill="outline" slot="end"
-                placeholder="force@gmail.com"  @ionFocus="onFocus" @ionBlur="onBlur" shape="round" @ionInput="handleEmailInput($event)"
+              <ion-input class="login-input" :class="error ? 'errorInput' : ''" fill="outline" slot="end" id="email-input"
+                placeholder="force@gmail.com"  inputmode="email" @ionFocus="onFocus" @ionBlur="onBlur" shape="round" @ionInput="handleEmailInput($event)"
                 :value="email"></ion-input>
             </div>
             <div class="input-div">
@@ -57,6 +48,7 @@ import {
   IonLabel,
   IonButton,
   IonIcon,
+  onIonViewWillEnter
 } from "@ionic/vue";
 import { ref } from "vue";
 import "@/assets/base.css";
@@ -75,6 +67,10 @@ const pwd = ref("");
 const email = ref("");
 const loading = ref(false);
 const showPassword = ref(false);
+
+onIonViewWillEnter(async () => {
+  console.log('login')
+})
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value;
@@ -110,11 +106,13 @@ const connect = () => {
         email.value = "";
         pwd.value = "";
         loading.value = false;
-        router.push("/");
+        router.push("/home");
       });
     }
   });
 };
+
+
 
 /**
  * Fonction de modification de la value du mail
@@ -136,3 +134,11 @@ const isMobileDevice = () => {
       return /Mobi|Android/i.test(navigator.userAgent);
     }
 </script>
+
+<style scoped>
+ion-content .scroll-y {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+</style>

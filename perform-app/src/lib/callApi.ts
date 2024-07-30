@@ -130,7 +130,6 @@ const handleResponse = async (response: Response): Promise<any> => {
  * @returns
  */
 const refresh = async (): Promise<any> => {
-  try {
     const res = await store.get("user");
     const refreshToken = JSON.parse(res).refresh;
     const relativeUrlString = "/api/refresh_tokens/";
@@ -146,16 +145,25 @@ const refresh = async (): Promise<any> => {
     });
 
     const response = await fetch(request);
-    if (!response.ok) {
-      throw new Error("La requête a échoué");
+    if ((await response.status) == 401) {
+      const resRefresh = await response.json();
+      if ((await response.status) > 300) {
+        return {
+          status: response.status,
+          data: resRefresh,
+        };
+      } else {
+        return {
+          status: response.status,
+          data: resRefresh,
+        };
+      }
+    } else {
+      return {
+        status: response.status,
+        data: {},
+      };
     }
-
-    const data = await response.json();
-    console.log('return data ', data);
-    return data;
-  } catch (error) {
-    throw new Error("Impossible de rafraîchir le token");
-  }
 };
 
 /**

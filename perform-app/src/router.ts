@@ -7,10 +7,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     component: NavMenu,
-    children: [
+    children: [    
       {
         path: "",
-        redirect: "/home",
+        name: "Splash",
+        component: () => import("./views/SplashScreen/SplashScreen.vue"),
       },
       {
         path: "home",
@@ -49,6 +50,17 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("./views/Injuries/EditInjuriePage.vue")
       },
       {
+        path: "records",
+        name: "Records",
+        component: () => import("./views/Records/ListRecords.vue")
+      },
+
+      {
+        path: "show_records/:record_id",
+        name: "ShowRecords",
+        component: () => import("./views/Records/ShowRecords.vue")
+      },
+      {
         path: "exercises",
         name: "Exercises",
         component: () => import("./views/Exercises/ListPage.vue")
@@ -73,12 +85,12 @@ const routes: Array<RouteRecordRaw> = [
         path: "conditions",
         component: () => import("./views/Documentation/ConditionsPage.vue")
       },
+      {
+        path: "login",
+        name: "Login",
+        component: () => import("./views/Login/LoginPage.vue"),
+      }
     ],
-  },
-  {
-    path: "/login",
-    name: "login",
-    component: () => import("./views/Login/LoginPage.vue"),
   },
 ];
 
@@ -86,16 +98,18 @@ const isLoggedIn = async () => {
   try {
     const res = await store.get("user");
     const user = JSON.parse(res).user;
-    console.log('user router ', user)
     const access = JSON.parse(res).access;
     if (!access) return false;
 
     const verifyResponse = await verifyToken();
-
     if (verifyResponse.status > 300) {
+      console.log(verifyResponse.status === 401)
       if (verifyResponse.status === 401) {
         const refreshResponse = await refresh();
+        console.log('??')
+        console.log(refreshResponse)
         if (refreshResponse.status > 300) {
+          
           await store.remove("user");
           return false;
         } else {
@@ -104,7 +118,6 @@ const isLoggedIn = async () => {
             refresh: refreshResponse.refresh,
             access: refreshResponse.access,
           };
-          console.log('new user ', newUser)
           store.set('user', JSON.stringify(newUser)).then(() => {return true});
         }
       } else {
@@ -132,20 +145,18 @@ const router = createRouter({
 //@ts-expect-error
 router.beforeEach(async (to, from, next) => {
   const isloggedin = (await isLoggedIn()) as any;
-  console.log(isloggedin)
-  if (to.name !== "login" && (await !isloggedin)) {
+  if (to.name !== "Login" && to.name !== "Splash" && (await !isloggedin)) {
     next({
       path: "login",
       replace: true,
     });
-  } else if (to.name == "login" && (await isloggedin)) {
-    router.push("/");
+  } else if (to.name == "Login" && (await isloggedin)) {
+    next({
+      path: "home",
+      replace: true,
+    });
   } else {
-    if (to.params.animation) {
-      to.meta.animation = to.params.animation;
-    } else {
-      to.meta.animation = 'default-animation'; // Animation par défaut
-    }
+    console.log('ici ')
     next();
 
   }

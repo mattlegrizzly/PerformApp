@@ -80,6 +80,8 @@ const vuetify = createVuetify({
 // Définir les animations
 //@ts-expect-error
 const slideAnimation = (baseEl: any, opts: any) => {
+    console.log('slide')
+
     const enteringEl = opts.enteringEl;
     const leavingEl = opts.leavingEl;
 
@@ -137,6 +139,28 @@ const slideRightAnimation = (baseEl: any, opts: any) => {
     return animation;
 };
 
+const fadeAnimation = (baseEl: any, opts: any) => {
+    console.log('fade')
+    const enteringEl = opts.enteringEl;
+    const leavingEl = opts.leavingEl;
+  
+    const animation = createAnimation()
+      .addElement(enteringEl)
+      .duration(300)
+      .fromTo('opacity', '0', '1');
+  
+    if (leavingEl) {
+      const leavingAnimation = createAnimation()
+        .addElement(leavingEl)
+        .duration(300)
+        .fromTo('opacity', '1', '0');
+  
+      animation.addAnimation([leavingAnimation]);
+    }
+  
+    return animation;
+  };
+
 //@ts-expect-error
 const userLang = navigator.language || navigator.userLanguage
 
@@ -147,6 +171,7 @@ const app = createApp(App).use(vuetify).use(router);
 //Cet objet va permettre de définir les différentes animations en fonction de l'entrée (gauche) et la page de sortie (droite)
 const pageTransitions = {
     'Home': slideAnimation,
+    'Login': fadeAnimation,
     'ExerciseView|Exercises': slideLeftAnimation,
     'Exercises|ExerciseView': slideRightAnimation,
     'list-injuries|profile': slideLeftAnimation,
@@ -161,6 +186,8 @@ const pageTransitions = {
     'show-injuries|profile': slideLeftAnimation,
     'edit-profile|profile': slideLeftAnimation,
     'profile|edit-profile': slideRightAnimation,
+    'Splash': fadeAnimation,
+    'Home|Splash': fadeAnimation
 };
 
 
@@ -171,6 +198,7 @@ app.use(IonicVue, {
         const enteringPage = opts.enteringEl.getAttribute('data-page');
         const leavingPage = opts.leavingEl?.getAttribute('data-page') || '';
         const transitionKey = `${enteringPage}|${leavingPage}`;
+        console.log(transitionKey)
         //@ts-expect-error
         const animationFunction = pageTransitions[transitionKey] || slideAnimation;
 

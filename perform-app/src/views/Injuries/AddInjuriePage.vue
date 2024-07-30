@@ -13,8 +13,8 @@
         </h1>
         <div class="input_injurie">
           <ion-label :class="errorAdd && nameInjury == '' ? 'required_text' : ''">Nom de la blessure *</ion-label>
-          <ion-input style="text-transform: capitalize;" label-placement="stacked" :class="errorAdd  && nameInjury == '' ? 'required_class' : ''" fill="outline" @ion-change="handleInput('name', $event.detail.value)"
-            placeholder="Déchirure du quadriceps"></ion-input>
+          <ion-input label-placement="stacked" :class="errorAdd  && nameInjury == '' ? 'required_class' : ''" fill="outline" @ion-input="handleInput('name', $event.detail.value)"
+            placeholder="Déchirure du quadriceps" :value="nameInjury"></ion-input>
         </div>
         <div class="input_injurie">
           <ion-label>Description de la blessure</ion-label>
@@ -92,7 +92,7 @@ import "@/assets/base.css";
 import "@/assets/main.css";
 import { chevronDownOutline } from "ionicons/icons";
 import NavButton from "../../components/NavButton/NavButton.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { get, post } from "../../lib/callApi";
 import type { Muscles } from "../../types/allTypes";
 import "../Profile/index.css";
@@ -137,6 +137,11 @@ const injuries_state = ref([
   },
 ]);
 
+watch(nameInjury, (newValue, oldValue) => {
+  if(nameInjury.value.length > 0) {
+    nameInjury.value = nameInjury.value[0].toUpperCase() + nameInjury.value.slice(1)
+  }
+})
 
 /**
  * Handle input changes and update relevant reactive variables.
@@ -144,10 +149,11 @@ const injuries_state = ref([
  * @param {string | undefined | null} valuePass - The value passed from the input.
  */
 const handleInput = (name: string, valuePass: string | undefined | null) => {
+  console.log('oui')
   let value = valuePass as string;
   switch (name) {
     case "name":
-      nameInjury.value = value;
+      nameInjury.value = value[0].toUpperCase() + value.slice(1);
       break;
     case "description":
       description.value = value;

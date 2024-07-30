@@ -14,12 +14,11 @@
             >Nom de la blessure *</ion-label
           >
           <ion-input
-          style="text-transform: capitalize;" 
             :class="errorAdd && injury.name == '' ? 'required_class' : ''"
             label-placement="stacked"
             fill="outline"
             :value="injury.name"
-            @ion-change="handleInput('name', $event.detail.value)"
+            @ion-input="handleInput('name', $event.detail.value)"
             placeholder="Déchirure du quadriceps"
           ></ion-input>
         </div>
@@ -202,7 +201,11 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
   const value = valuePass as string;
   switch (name) {
     case "name":
-      injury.value.name = value;
+      if(value.length > 0){
+        injury.value.name = value[0].toUpperCase() + value.slice(1);
+      } else { 
+        injury.name = value
+      }
       break;
     case "description":
       injury.value.description = value;

@@ -138,9 +138,9 @@
                 "
               >
                 <h3
-                  style="font-size: 16px; margin-top: 0px; margin-bottom: 0px"
+                  style="font-size: 16px; margin-top: 0px; margin-bottom: 0px; margin-left: 10px;"
                 >
-                  Saisissez le wellness du jour :
+                Saisissez le wellness du jour :
                 </h3>
                 <div
                   style="
@@ -152,6 +152,7 @@
                   <ion-icon
                     :icon="informationCircleOutline"
                     @click="showInfoWellness"
+                    class="infoIcon"
                   />
                 </div>
                 <ion-icon
@@ -253,6 +254,11 @@
                   "
                 >
                   <h3>Satistiques :</h3>
+                  <ion-icon
+                    :icon="informationCircleOutline"
+                    @click="showInfoWellness"
+                    class="infoIcon"
+                  />
                   <ion-list>
                     <ion-item>
                       <ion-select
@@ -326,6 +332,7 @@
                   "
                   fill="outline"
                   size="small"
+                  style="padding-top: 10px;"
                   >Revenir
                   {{
                     period == "week"
