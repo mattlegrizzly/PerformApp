@@ -50,7 +50,7 @@ const getExercises = async () => {
   } else {
     exercise.value = await res
     const muscle_res = await res.zone_exercises
-    const temp_muscle: Array<String> = [];
+    const temp_muscle: Array<Muscle> = [];
     muscle_res.map((muscle: Muscle) => {
       temp_muscle.push(muscle);
     })

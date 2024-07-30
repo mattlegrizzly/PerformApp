@@ -19,7 +19,8 @@ interface IEUserData {
 
 interface Step {
   id: number,
-  text: string
+  text: string,
+  order: number
 }
 
 interface Muscle {

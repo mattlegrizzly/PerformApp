@@ -16,6 +16,7 @@ import { RouterView } from 'vue-router'
 import type { Order, QueryParams } from '@/types/types'
 import './exercises.css'
 import type IERequestOptions from '@/types/request'
+import type { Muscle } from '@/types/types'
 
 const alertErr = ref(false)
 const error_title = ref('')
@@ -263,12 +264,13 @@ const pushData = (params_push: any) => {
   })
 }
 
-const jointByComa = (array: Array<string>, type: string = "") => {
+const jointByComa = (array: Array<Muscle | string>, type: string = "") => {
   let stringWithCommas = ''
   for (let i = 0; i < array.length; i++) {
     console.log(array[i])
     if(type == "muscle"){
-      stringWithCommas += array[i].zone.code
+      let arrayConvert = array as Muscle[]
+      stringWithCommas += arrayConvert[i].zone.code
     } else {
       stringWithCommas += array[i]
     }

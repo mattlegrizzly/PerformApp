@@ -125,9 +125,9 @@ const handleChange = (codes: any) => {
   })
 }
 
-function sortArrayByOrder(arr) {
+function sortArrayByOrder(arr :any ) {
   console.log(arr)
-  return arr.sort((a, b) => a.order - b.order)
+  return arr.sort((a : any, b : any) => a.order - b.order)
 }
 const moveDown = (index: number) => {
   if (exercise.value.steps_exercise) {
@@ -202,23 +202,26 @@ const sendData = async () => {
 
       modified.map((step: Step) => {
         const elem = endStep.find((step_: Step) => step_.id === step.id)
-        const options = {
-          body: {}
+        const optionsToEdit = {
+          body: {
+            text:'',
+            order: 0
+          }
         }
         let needsUpdate = false
 
         if (elem.text !== step.text) {
-          options.body.text = elem.text
+          optionsToEdit.body.text = elem.text
           needsUpdate = true
         }
 
         if (elem.order !== step.order) {
-          options.body.order = elem.order
+          optionsToEdit.body.order = elem.order
           needsUpdate = true
         }
 
         if (needsUpdate) {
-          res = patch('/admin/steps/' + elem.id + '/', options, true)
+          res = patch('/admin/steps/' + elem.id + '/', optionsToEdit, true)
         }
       })
 
@@ -267,12 +270,12 @@ const setMuscleSelected = (key: string, action: string) => {
         return element === key
       }).length == 0
     if (findKey) {
-      const muscle = muscles.value.find((el) => el.zone.code == key)
+      const muscle = muscles.value.find((el : any) => el.zone.code == key)
       muscle_selected.value.push(muscle)
     }
   } else {
     // Trouver l'index de la valeur à supprimer
-    var index = muscle_selected.value.map(function(e) { return e.zone.code; }).indexOf(key);
+    var index = muscle_selected.value.map(function(e : any) { return e.zone.code; }).indexOf(key);
 
     if (index !== -1) {
       // Supprimer la valeur à l'index trouvé
