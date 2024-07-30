@@ -17,8 +17,8 @@ from django.conf.urls.static import static
 from users2.views import LoginViewset, LogoutViewset, RefreshTokensViewset, RegisterViewset, PasswordChangeLogViewSet
 from users2.views import AdminUserViewSet, UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet, AdminUsersAllViewSet
 
-from sport.views import ( SportViewSet, SportsUserViewSet)
-from sport.admin_views import ( AdminSportViewSet, AdminSportsUserViewSet)
+from sport.views import ( SportViewSet, SportsUserViewSet, RecordsSportUserViewSet, RecordsSportViewSet)
+from sport.admin_views import ( AdminSportViewSet, AdminSportsUserViewSet, AdminRecordsSportUserViewSet, AdminRecordsSportViewSet)
 
 
 from rest_framework_simplejwt.views import (
@@ -61,8 +61,14 @@ router.register('userfavexercises', UsersFavExercisesViewSet, basename='user_fav
 router.register('sports', SportViewSet, basename="sports")
 router.register('admin/sports', AdminSportViewSet, basename="admin_sports")
 
+router.register('admin/records', AdminRecordsSportViewSet, basename="admin_records")
+router.register('records', RecordsSportViewSet, basename="records")
+
 router.register('sports_user', SportsUserViewSet, basename="sports_user")
 router.register('admin/sports_user', AdminSportsUserViewSet, basename="admin_sportsUser" )
+
+router.register('records_user', RecordsSportUserViewSet, basename="records_user")
+router.register('admin/records_user', AdminRecordsSportUserViewSet, basename="admin_records_user" )
 
 router.register('materials', MaterialViewSet, basename="materials")
 router.register('admin/materials', AdminMaterialViewSet ,basename="admin_materials")
