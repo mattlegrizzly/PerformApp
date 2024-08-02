@@ -15,6 +15,7 @@ class AdminSportViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
     filter_backends = [filters.SearchFilter]
     search_fields = ["name"]
+    
     @extend_schema(
         tags=['Admin - Sport'],
         responses={200: "OK"}

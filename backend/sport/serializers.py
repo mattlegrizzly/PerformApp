@@ -28,7 +28,7 @@ class SportsDetailedUserSerializer(serializers.ModelSerializer):
 class RecordsSportSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecordsSport
-        fields = ['id', 'sport', 'units', 'name', 'groups', 'general']
+        fields = ['id', 'sport', 'units', 'order', 'name', 'groups', 'general']
 
 class RecordsSportUserSerializer(serializers.ModelSerializer):
     class Meta:

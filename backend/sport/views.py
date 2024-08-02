@@ -15,19 +15,19 @@ class SportViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SportSerializer
 
     def get_queryset(self):
-        # Si l'action en cours est 'retrieve', retourner un queryset sans filtre
+        """ # Si l'action en cours est 'retrieve', retourner un queryset sans filtre
         if self.action == 'retrieve':
-            return Sport.objects.all()
+            return Sport.objects.all() """
 
-        # Sinon, utiliser le queryset filtré par défaut
-        return Sport.objects.filter(isTheme=False).all()
+        queryset = Sport.objects.filter(isTheme=False).all()
+        return queryset
     
     @action(detail=False, methods=['get'], url_path="all")
     def all(self, request):
         queryset = self.get_queryset()
-        queryset = get_ordered_queryset(self.queryset, request.query_params)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        queryset = get_ordered_queryset(self.get_queryset(), request.query_params)
+        queryset = self.get_serializer(queryset, many=True)
+        return Response(queryset.data)
 
 class SportsUserViewSet(viewsets.ModelViewSet):
     queryset = SportsUser.objects.all()
@@ -101,7 +101,7 @@ class SportsUserViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
     
 class RecordsSportViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = RecordsSport.objects.all()
+    queryset = RecordsSport.objects.all().order_by('order')
     serializer_class = RecordsSportSerializer
 
     @extend_schema(

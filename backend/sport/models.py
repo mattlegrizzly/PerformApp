@@ -28,6 +28,18 @@ class RecordsSport(models.Model):
     name = models.CharField(max_length=100, unique=False, null=False)
     groups = models.ForeignKey(RecordsGroupSport, unique=True, null=True, on_delete=models.DO_NOTHING)
     general = models.BooleanField(unique=False, null=True, default=False)
+    order = models.PositiveIntegerField(null=True, blank=True)
+    class Meta:
+        ordering = ['order']
+
+    def save(self, *args, **kwargs):
+        if self.order is None:  # Si l'ordre n'est pas défini
+            # Compter le nombre de records existants pour le même sport
+            existing_records = RecordsSport.objects.filter(sport=self.sport).count()
+            # Attribuer l'ordre en conséquence (nombre de records + 1)
+            self.order = existing_records + 1
+
+        super().save(*args, **kwargs)
 
 
 class RecordsSportUser(models.Model):
@@ -47,3 +59,4 @@ class RecordsSportUser(models.Model):
                 return int(self.record_value)
             return self.record_value
         return None
+    
