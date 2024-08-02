@@ -39,7 +39,8 @@ const sendData = (quitForm: boolean) => {
     body: {
       name: name.value,
       units: unit_selected.value, 
-      sport: id.value
+      sport: id.value,
+      general: false
     }
   } as IERequestOptions
   post('/admin/records/', option, true)
@@ -87,6 +88,21 @@ const units = [
   }, {
     name: 'Poids',
     value: 'weight',
+  },{
+    name: 'Distance (en km)',
+    value: 'distance_km',
+  },
+  {
+    name: 'Distance (en m)',
+    value: 'distance_m',
+  },
+  {
+    name: 'Points',
+    value: 'points',
+  },
+  {
+    name: 'Personnalisé',
+    value: 'free',
   },
 ]
 

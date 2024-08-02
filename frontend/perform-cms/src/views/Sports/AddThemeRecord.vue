@@ -1,20 +1,33 @@
 <script setup lang="ts">
 import NavMenu from '../../components/NavMenu/NavMenu.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import '@/assets/base.css'
-import { post } from '@/lib/callApi'
+import { post, get } from '@/lib/callApi'
 import type IERequestOptions from '@/types/request'
-import router from '@/router'
+import { useRoute , useRouter} from 'vue-router'
 import NavButton from '@/components/NavButton/NavButton.vue'
+const route = useRoute()
+const router = useRouter()
+
+const unit_selected = ref(
+  'time')
+
+watch(() => unit_selected, () => {
+  console.log(unit_selected)
+})
 
 const name = ref('')
 const description = ref('')
 
+const id = ref(0)
 const alertErr = ref(false)
 const alertSuc = ref(false)
 const error_message = ref('')
+const error_title = ref('')
 const success_message = ref('error')
+
+const sport = ref('')
 
 const closePopup = () => {
   alertErr.value = false
@@ -25,11 +38,12 @@ const sendData = (quitForm: boolean) => {
   const option = {
     body: {
       name: name.value,
-      isTheme: false
+      units: unit_selected.value, 
+      sport: id.value,
+      general: true
     }
   } as IERequestOptions
-  post('/admin/sports/', option, true)
-    .then((res) => {
+  post('/admin/records/', option, true).then((res) => {
       error_message.value = ''
       success_message.value = ''
       if (res.status) {
@@ -42,7 +56,7 @@ const sendData = (quitForm: boolean) => {
         name.value = ''
         description.value = ''
         if (quitForm) {
-          router.push('/sports')
+          router.push('/records_theme')
         } else {
           success_message.value = 'Vous avez ajoutez : ' + res.name
           alertSuc.value = true
@@ -51,8 +65,49 @@ const sendData = (quitForm: boolean) => {
     })
     .catch((error) => {
       alertErr.value = true
-    })
+    }) 
+   console.log(unit_selected.value)
 }
+
+const getSport = async () => {
+  id.value = Number(route.params.sport_id)
+  const res = await get('/admin/sports/' + id.value + '/')
+  if (res.status === 404) {
+    error_title.value = 'Erreur à la récupération du Sport avec pour id ' + id.value
+    error_message.value = res.data.detail
+    alertErr.value = true
+  } else {
+    sport.value = await res
+  }
+}
+const units = [
+  {
+    name: 'Temps',
+    value: 'time',
+  }, {
+    name: 'Poids',
+    value: 'weight',
+  },{
+    name: 'Distance (en km)',
+    value: 'distance_km',
+  },
+  {
+    name: 'Distance (en m)',
+    value: 'distance_m',
+  },
+  {
+    name: 'Points',
+    value: 'points',
+  },
+  {
+    name: 'Personnalisé',
+    value: 'free',
+  },
+]
+
+onMounted(() => {
+  getSport()
+})
 </script>
 <style>
 .return_btn {
@@ -87,18 +142,28 @@ const sendData = (quitForm: boolean) => {
     border="start"
     close-label="Close Alert"
     color="success"
-    title="Sport ajouté"
+    title="Record ajouté"
     closable
     @click:close="closePopup"
   >
     {{ success_message }}
   </v-alert>
   <div class="mainWrapper">
-    <NavButton class="returnBack" :text="'Retour'" :url="'/sports'" prepend-icon="mdi-arrow-left" />
-    <h1>Ajouter un Sport</h1>
+    <NavButton class="returnBack" :text="'Retour'" :url="'/sports/show/' + id " prepend-icon="mdi-arrow-left" />
+    <h1>Ajouter un Record à : {{sport.name}}</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">
-        <v-text-field v-model="name" label="Nom du sport * " variant="filled"></v-text-field>
+        <v-text-field v-model="name" label="Nom du record * " variant="filled"></v-text-field>
+      </div>
+      <div class="inputFormDiv">
+        <v-select
+        v-model="unit_selected"
+        :items="units"
+        hint="Sélectionnez l'unité à utiliser"
+        item-title="name"
+        item-value="value"
+        label="Select"
+      />
       </div>
       <div class="buttonWrapper">
         <button @click="sendData(false)">Créer et continuer</button>

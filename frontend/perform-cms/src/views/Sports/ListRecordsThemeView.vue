@@ -76,10 +76,11 @@ const getSports = async () => {
       name: nameSearch.value
     }
   }
-  const res = await get('/admin/sports', option)
-  sports.value = await res.results
-  sportsCount.value = res.count
-  pagination.value = Math.ceil(sportsCount.value / itemsPerPage.value)
+  const res = await get('/admin/sports/theme', option)
+  console.log(await res)
+    sports.value = await res.results
+    sportsCount.value = res.count
+    pagination.value = Math.ceil(sportsCount.value / itemsPerPage.value)
 }
 
 onMounted(() => {
@@ -115,6 +116,8 @@ const emitClosed =() => {
     <h1 class="listTitle">Gérer les records des Thèmes ({{ sportsCount }})</h1>
     <h5 class="underTitle">Retrouvez la liste de tous vos Thèmes pour y créer leurs records</h5>
     <div class="headerList">
+      <NavButton url="/records_theme/add" text="Ajouter" prepend-icon="mdi-plus" />
+
       <div class="searchBar">
         <v-text-field
           placeholder="Chercher un sport"
@@ -131,7 +134,7 @@ const emitClosed =() => {
         :headerTable="['Id', 'Nom']"
         :contentTable="sports"
         :limitData="2"
-        nav="sports"
+        nav="records_theme"
       />
       <PaginationComponent
         :setPage="setPage"

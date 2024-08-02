@@ -19,10 +19,13 @@ import EditExercise from '@/views/Exercises/EditView.vue'
 import ListSports from '@/views/Sports/ListView.vue'
 import ListRecordsSportsView from '@/views/Sports/ListRecordsSportsView.vue'
 import ListRecordsThemeView from '@/views/Sports/ListRecordsThemeView.vue'
+import ShowTheme from '@/views/Sports/ShowTheme.vue'
 import ShowSport from '@/views/Sports/ShowView.vue'
 import EditSport from '@/views/Sports/EditView.vue'
 import AddSport from '@/views/Sports/AddView.vue'
+import AddTheme from '@/views/Sports/AddTheme.vue'
 import AddRecord from '@/views/Sports/AddViewRecord.vue'
+import AddThemeRecord from '@/views/Sports/AddThemeRecord.vue'
 
 import PageNotFoundView from '@/views/PageNotFoundView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -140,11 +143,26 @@ const router = createRouter({
       component: ListRecordsThemeView
     },
     {
+      path: '/records_theme/add',
+      name: 'addTheme',
+      component: AddTheme
+    },
+    {
+      path: '/records_theme/show/:sport_id',
+      name: 'showTheme',
+      component: ShowTheme
+    },
+    {
+      path: '/records_theme/add_record/:sport_id',
+      name: 'addThemeRecord',
+      component: AddThemeRecord
+    },
+    {
       path: '/sports/add',
       name: 'addSport',
       component: AddSport
     },
-
+    
     {
       path: '/sports/add_record/:sport_id',
       name: 'addRecord',
@@ -155,7 +173,6 @@ const router = createRouter({
       name: 'showSport',
       component: ShowSport
     },
-
     {
       path: '/sports/edit/:sport_id',
       name: 'editSport',

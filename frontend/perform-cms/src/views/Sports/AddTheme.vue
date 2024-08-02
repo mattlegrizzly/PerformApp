@@ -25,7 +25,7 @@ const sendData = (quitForm: boolean) => {
   const option = {
     body: {
       name: name.value,
-      isTheme: false
+      isTheme: true
     }
   } as IERequestOptions
   post('/admin/sports/', option, true)
@@ -42,7 +42,7 @@ const sendData = (quitForm: boolean) => {
         name.value = ''
         description.value = ''
         if (quitForm) {
-          router.push('/sports')
+          router.push('/records_theme')
         } else {
           success_message.value = 'Vous avez ajoutez : ' + res.name
           alertSuc.value = true
@@ -94,11 +94,11 @@ const sendData = (quitForm: boolean) => {
     {{ success_message }}
   </v-alert>
   <div class="mainWrapper">
-    <NavButton class="returnBack" :text="'Retour'" :url="'/sports'" prepend-icon="mdi-arrow-left" />
-    <h1>Ajouter un Sport</h1>
+    <NavButton class="returnBack" :text="'Retour'" :url="'/records_theme'" prepend-icon="mdi-arrow-left" />
+    <h1>Ajouter un Theme</h1>
     <form @submit.prevent="submit">
       <div class="inputFormDiv">
-        <v-text-field v-model="name" label="Nom du sport * " variant="filled"></v-text-field>
+        <v-text-field v-model="name" label="Nom du Theme * " variant="filled"></v-text-field>
       </div>
       <div class="buttonWrapper">
         <button @click="sendData(false)">Créer et continuer</button>
