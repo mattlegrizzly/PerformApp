@@ -8,6 +8,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 from rest_framework import filters, mixins, status, viewsets, pagination
 from rest_framework.exceptions import ValidationError
 # Create your views here.
+from utils.utils import get_ordered_queryset
 
 class SportViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Sport.objects.all()
@@ -16,6 +17,7 @@ class SportViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=False, methods=['get'], url_path="all")
     def all(self, request):
         queryset = self.get_queryset()
+        queryset = get_ordered_queryset(self.queryset, request.query_params)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
