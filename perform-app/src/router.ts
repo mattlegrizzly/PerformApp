@@ -23,11 +23,15 @@ const routes: Array<RouteRecordRaw> = [
         name: "Profile",
         component: () => import("./views/Profile/ProfilePage.vue")
       },
-
       {
         path: "edit_profile",
         name: "EditProfile",
         component: () => import("./views/Profile/EditProfilePage.vue")
+      },
+      {
+        path: "edit_password",
+        name: "EditPassword",
+        component: () => import("./views/Profile/EditPasswordPage.vue")
       },
       {
         path: "add_injurie",

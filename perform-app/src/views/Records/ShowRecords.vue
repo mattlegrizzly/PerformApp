@@ -109,7 +109,7 @@ ion-modal {
                           v-model="hours"
                           type="number"
                           placeholder="HH"
-                          maxlength="2"
+                          maxLength="2"
                           class="time_input"
                           :class="errorAdd && !isTimeIsEmpty() ? 'required_class' : ''"
                         ></ion-input
@@ -118,7 +118,7 @@ ion-modal {
                           v-model="minutes"
                           type="number"
                           placeholder="MM"
-                          maxlength="2"
+                          maxLength="2"
                           class="time_input"
                            :class="errorAdd && !isTimeIsEmpty() ? 'required_class' : ''"
                         ></ion-input
@@ -127,7 +127,7 @@ ion-modal {
                           v-model="seconds"
                           type="number"
                           placeholder="SS"
-                          maxlength="2"
+                          maxLength="2"
                           class="time_input"
                           :class="errorAdd && !isTimeIsEmpty() ? 'required_class' : ''"
                         ></ion-input>
@@ -244,7 +244,7 @@ import "@/assets/base.css";
 import "@/assets/main.css";
 import '../Profile/index.css'
 import { get, post } from "../../lib/callApi";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { store } from "../../store/store";
 import { ref, watch, computed, onMounted, onUnmounted, markRaw } from "vue";
 import { Chart, registerables } from "chart.js";
@@ -267,7 +267,7 @@ const record = ref({
   record_name: "",
   performances: [],
   units: "",
-});
+}) as any;
 
 const errorAdd = ref(false)
 
@@ -275,14 +275,13 @@ const inputValue = ref("");
 const hours = ref("");
 const minutes = ref("");
 const seconds = ref("");
-const user = ref("");
+const user = ref("") as any;
 const weightValue = ref("");
 const dateRecord = ref("") as any;
 
 const modalRecord = ref(null) as any;
 
 const routerNav = useRoute();
-const router = useRouter();
 
 const handleInput = (e: any, type: string) => {
   console.log(e);
@@ -353,6 +352,7 @@ const getRecords = () => {
               `;
 
               // Insérez l'élément style dans le shadowRoot
+              //@ts-expect-error
               elem.shadowRoot.appendChild(style);
             }
           } else {
@@ -374,7 +374,7 @@ const getRecords = () => {
 const chartInstance = ref(null) as any;
 
 // Fonction pour formater les dates en dd/mm/yyyy
-const formatDate = (dateString) => {
+const formatDate = (dateString : string ) => {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -383,7 +383,7 @@ const formatDate = (dateString) => {
 };
 
 // Fonction pour convertir le temps de hh:mm:ss en secondes
-const timeToSeconds = (time) => {
+const timeToSeconds = (time : string) => {
   const timeParts = time.split(":");
   console.log(timeParts);
   return (
@@ -394,7 +394,7 @@ const timeToSeconds = (time) => {
 };
 
 // Fonction pour convertir les secondes en hh:mm:ss
-const secondsToTime = (seconds) => {
+const secondsToTime = (seconds : any) => {
   const h = String(Math.floor(seconds / 3600)).padStart(2, "0");
   const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
   const s = String(seconds % 60).padStart(2, "0");
@@ -402,17 +402,18 @@ const secondsToTime = (seconds) => {
 };
 
 const createChart = () => {
-  const labels = record.value.performances.map((performance) =>
+  const labels = record.value.performances.map((performance : any) =>
     formatDate(performance.date_record)
   );
   console.log(record.value.performances);
-  const data = record.value.performances.map((performance) =>
+  const data = record.value.performances.map((performance : any) =>
     record.value.units === "time"
       ? timeToSeconds(performance.time_value)
       : performance.weight_value
   );
 
   chartInstance.value = markRaw(
+    //@ts-expect-error
     new Chart(document.getElementById("chartStats"), {
       type: "line",
       data: {
@@ -437,7 +438,7 @@ const createChart = () => {
           },
           y: {
             ticks: {
-              callback: (value, index, values) => {
+              callback: (value : any) => {
                 const unit = record.value.units; // Assume all records have the same unit
                 return unit === "time"
                   ? secondsToTime(value)
@@ -458,10 +459,10 @@ const createChart = () => {
 const updateChart = () => {
   if (!chartInstance) return;
 
-  const labels = record.value.performances.map((performance) =>
+  const labels = record.value.performances.map((performance : any) =>
     new Date(performance.date_record).toLocaleDateString()
   );
-  const data = record.value.performances.map((performance) => {
+  const data = record.value.performances.map((performance : any) => {
     const timeParts = performance.time_value.split(":");
     return (
       parseInt(timeParts[0]) * 3600 +
@@ -564,10 +565,10 @@ const timeValue = computed(() => {
 const showModal = async (modal: any) => {
   modal.$el.present();
 };
-const formatDuration = (time) => {
+const formatDuration = (time : any) => {
   const [hours, minutes, seconds] = time
     .split(":")
-    .map((part) => part.padStart(2, "0"));
+    .map((part : any) => part.padStart(2, "0"));
 
   // Format to HH:MM:SS
   const formattedDuration = `00 ${hours}:${minutes}:${seconds}`;

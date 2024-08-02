@@ -41,8 +41,6 @@ import {
   IonIcon,
   IonLabel
 } from "@ionic/vue";
-import onMounted from 'vue'
-import { statsChart, statsChartOutline } from 'ionicons/icons'
 import { useRoute, useRouter } from "vue-router";
 import "./index.css";
 import "../../assets/base.css";

@@ -1,5 +1,3 @@
-<style scoped></style>
-
 <template>
   <ion-page data-page="add-injuries">
     <ion-content>
@@ -137,7 +135,7 @@ const injuries_state = ref([
   },
 ]);
 
-watch(nameInjury, (newValue, oldValue) => {
+watch(nameInjury, () => {
   if(nameInjury.value.length > 0) {
     nameInjury.value = nameInjury.value[0].toUpperCase() + nameInjury.value.slice(1)
   }

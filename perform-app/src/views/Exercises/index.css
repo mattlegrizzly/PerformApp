@@ -113,6 +113,10 @@ ion-segment-button {
     justify-content: center;
 }
 
+.displayFilter {
+    padding-top: 10px;
+}
+
 .displayFilterContainer {
     height: 35px; overflow: hidden; position: relative;
 } 

@@ -2,7 +2,7 @@
   <ion-page data-page="ExerciseView" style="background-color: white">
     <ion-content id="view_page">
       <div class="perform-page">
-        <div style="display: flex; justify-content: space-between">
+        <div style="display: flex; justify-content: space-between; margin-bottom : 15px">
           <NavButton url="/exercises" text="Retour" />
           <ion-icon
             @click="setFav"

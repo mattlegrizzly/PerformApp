@@ -136,6 +136,7 @@ const isMobileDevice = () => {
 </script>
 
 <style scoped>
+
 ion-content .scroll-y {
   display: flex;
   justify-content: center;

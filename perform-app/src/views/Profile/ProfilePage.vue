@@ -42,20 +42,6 @@
         </div>
         <div class="profile_container_div">
           <div class="div_container_info">
-            <h2 >Mes disciplines</h2>
-            <ion-chip class="ion-chip-user" v-for="sport of user.sports_user" color="primary">{{
-              sport.sport.name
-            }}</ion-chip>
-          </div>
-        </div>
-        <div class="profile_container_div">
-          <div @click="() => router.push('records')" class="div_container_info" style="display: flex; align-items: center; justify-content: space-between;">
-            <h2 style="margin-bottom: 0px  !important;">Mes records</h2>
-            <ion-icon :icon="chevronForwardOutline"></ion-icon>
-          </div>
-        </div>
-        <div class="profile_container_div">
-          <div class="div_container_info">
             <h2>Mes infos</h2>
             <div class="users_infos">
               <div class="div_user_info">
@@ -75,6 +61,21 @@
             </div>
           </div>
         </div>
+        <div class="profile_container_div">
+          <div class="div_container_info">
+            <h2 >Mes disciplines</h2>
+            <ion-chip style="margin-right: 5px;" class="ion-chip-user" v-for="sport of user.sports_user" color="primary">{{
+              sport.sport.name
+            }}</ion-chip>
+          </div>
+        </div>
+        <div class="profile_container_div">
+          <div @click="() => router.push('records')" class="div_container_info" style="display: flex; align-items: center; justify-content: space-between;">
+            <h2 style="margin-bottom: 0px  !important;">Mes records</h2>
+            <ion-icon :icon="chevronForwardOutline"></ion-icon>
+          </div>
+        </div>
+        
         <div class="profile_container_div">
           <div
             class="div_container_info"
@@ -140,6 +141,12 @@
             />
             <NavButton
               class="custom_nav"
+              url="edit_password"
+              text="Editer mon mot de passe"
+              :icon="lockClosedOutline"
+            />
+            <NavButton
+              class="custom_nav"
               href="mailto:contact@performapp.com"
               text="Nous contacter"
               :icon="mail"
@@ -186,6 +193,7 @@ import {
   mail,
   documentText,
   logOut,
+  lockClosedOutline
 } from "ionicons/icons";
 
 const api = import.meta.env.VITE_API_URL;

@@ -7,6 +7,11 @@ ion-modal {
     0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
+.filter-ion-chip {
+  margin-bottom: 10px; min-height: 0px !important; margin-right: 5px; height: 20px;
+  font-size: 10px !important;
+}
+
 .list-md.list-inset {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
@@ -122,21 +127,21 @@ ion-modal {
               <ion-chip
                 :icon="close"
                 v-for="muscle of muscle_selected"
-                style="margin-bottom: 10px"
+                class="filter-ion-chip"
                 color="primary"
                 >{{ muscle.zone.name }}</ion-chip
               >
               <ion-chip
                 :icon="close"
                 v-for="sport of sports_selected"
-                style="margin-bottom: 10px"
+                class="filter-ion-chip"
                 color="primary"
                 >{{ sport.sport.name }}</ion-chip
               >
               <ion-chip
                 :icon="close"
                 v-for="material of materials_selected"
-                style="margin-bottom: 10px"
+                class="filter-ion-chip"
                 color="primary"
                 >{{ material.material.name }}</ion-chip
               >

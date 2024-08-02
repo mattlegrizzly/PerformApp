@@ -95,13 +95,7 @@ const find = ref(false);
 const router = useRouter();
 
 const records = ref([
-  {
-    "": {
-      name: "",
-      id: 0,
-    },
-  },
-]);
+]) as any;
 
 onIonViewWillEnter(async () => {
   find.value =  false;
@@ -147,6 +141,7 @@ onIonViewWillEnter(async () => {
                 `;
         
                 // Insérez l'élément style dans le shadowRoot
+                //@ts-expect-error
                 elem.shadowRoot.appendChild(style);
               }
           } else {

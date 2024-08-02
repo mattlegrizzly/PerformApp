@@ -139,6 +139,7 @@ const slideRightAnimation = (baseEl: any, opts: any) => {
     return animation;
 };
 
+//@ts-expect-error
 const fadeAnimation = (baseEl: any, opts: any) => {
     console.log('fade')
     const enteringEl = opts.enteringEl;
