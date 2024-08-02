@@ -25,72 +25,92 @@
     <h2 class="showTitle">{{ sport.name }}</h2>
     <div class="recordList">
       <h3>Les records du sport :</h3>
-      <v-list-item v-for="(item, i) in record" :key="i" :value="item" color="primary">
-        <template v-slot:append>
-          <v-dialog max-width="500">
-            <template v-slot:activator="{ props: activatorProps }">
-              <v-icon  @click='() => {recordEdit = item}' v-bind="activatorProps" icon="mdi-pencil"></v-icon>
-            </template>
-
-            <template v-slot:default="{ isActive }">
-              <v-card title="Modifier le nom">
-                <v-card-text> </v-card-text>
-                <div style="margin-left: 20px; margin-right: 20px">
-                  <v-text-field
-                    label="Nom du record"
-                    v-model="recordEdit.name"
-                  ></v-text-field>
-                </div>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-
-                  <v-btn variant="tonal" text="Annuler" @click="isActive.value = false"></v-btn>
-                  <v-btn
-                    variant="outlined"
-                    text="Modifier"
+      <draggable v-model="record" item-key="id" @end="updateOrder">
+        <template #item="{ element, index }">
+          <div id="record" class="record-item">
+            <div style="display: flex">
+              <v-icon class="drag-handle" left>mdi-drag</v-icon>
+              <v-list-item-title
+                style="margin-bottom: 10px"
+                v-text="element.name"
+              ></v-list-item-title>
+            </div>
+            <div style="display : flex; align-items: center">
+              <v-dialog max-width="500">
+                <template v-slot:activator="{ props: activatorProps }">
+                  <v-icon
                     @click="
                       () => {
-
-                        patch(
-                          '/admin/records/' + recordEdit.id + '/',
-                          {
-                            body: {
-                              name: recordEdit.name
-                            }
-                          },
-                          true
-                        ).then((res) => {
-                          console.log(res)
-                          if (res.status > 301) {
-                            error_title = 'Error while retrieve edit record id ' + id.value
-                            error_message = res.data.detail
-                            alertErr = true
-                          } else {
-                            isActive.value = false
-                            alertSuc = true
-                            success_message = 'Record modifié'
-                          }
-                        })
+                        recordEdit = element
                       }
                     "
-                  ></v-btn>
-                </v-card-actions>
-              </v-card>
-            </template>
-          </v-dialog>
-          <DeleteModalComponent
+                    v-bind="activatorProps"
+                    icon="mdi-pencil"
+                  ></v-icon>
+                </template>
+
+                <template v-slot:default="{ isActive }">
+                  <v-card title="Modifier le nom">
+                    <v-card-text> </v-card-text>
+                    <div style="margin-left: 20px; margin-right: 20px">
+                      <v-text-field label="Nom du record" v-model="recordEdit.name"></v-text-field>
+                    </div>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+
+                      <v-btn variant="tonal" text="Annuler" @click="isActive.value = false"></v-btn>
+                      <v-btn
+                        variant="outlined"
+                        text="Modifier"
+                        @click="
+                          () => {
+                            patch(
+                              '/admin/records/' + recordEdit.id + '/',
+                              {
+                                body: {
+                                  name: recordEdit.name
+                                }
+                              },
+                              true
+                            ).then((res) => {
+                              console.log(res)
+                              if (res.status > 301) {
+                                error_title = 'Error while retrieve edit record id ' + id.value
+                                error_message = res.data.detail
+                                alertErr = true
+                              } else {
+                                isActive.value = false
+                                alertSuc = true
+                                success_message = 'Record modifié'
+                              }
+                            })
+                          }
+                        "
+                      ></v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </template>
+              </v-dialog>
+              <DeleteModalComponent
             :item="name"
             url="/admin/records"
-            :id="item.id"
+            :id="element.id"
             :list="''"
             isIcon="oui"
             @dialogClosed="handleDialogClosed"
-          />
+            />
+              <v-btn icon="mdi-arrow-up" @click="moveUp(index)" :disabled="index === 0"></v-btn>
+              <v-btn
+                icon="mdi-arrow-down"
+                @click="moveDown(index)"
+                :disabled="index === record.length - 1"
+              ></v-btn>
+             
+            </div>
+          </div>
         </template>
-        <v-list-item-title style="margin-bottom: 10px" v-text="item.name"></v-list-item-title>
-        <v-divider></v-divider>
-      </v-list-item>
+      </draggable>
     </div>
   </div>
 </template>
@@ -103,15 +123,19 @@ import { onMounted } from 'vue'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
 import DeleteModalComponent from '@/components/DeleteModalComponent/DeleteModalComponent.vue'
+import draggable from 'vuedraggable'
+
 
 const router = useRoute()
 const sport = ref('')
 const record = ref([
   {
     name: '',
-    title: ''
+    title: '',
+    order: 0
   }
 ])
+const recordConst = ref([])
 
 const recordEdit = ref ('')
 const back = ref('back')
@@ -132,6 +156,58 @@ const handleDialogClosed = () => {
   getSport()
 }
 
+const updateOrder = () => {
+  record.value.forEach((rec: any, index: number) => {
+    rec.order = index
+  })
+  let startRecord = recordConst.value
+  let endRecord = record.value
+
+  console.log(startRecord)
+  console.log(endRecord)
+
+  const modified = startRecord.filter((rec: any) =>
+    endRecord.find((rec_: any) => rec_.id === rec.id)
+  )
+  modified.map((rec: any) => {
+    const elem = endRecord.find((rec_: any) => rec_.id === rec.id) as any
+    const optionsToEdit = {
+      body: {
+        order: 0
+      }
+    }
+    let needsUpdate = false
+
+    if (elem?.order !== rec.order) {
+      optionsToEdit.body.order = elem?.order as any
+      needsUpdate = true
+    }
+
+    if (needsUpdate) {
+      const res = patch('/admin/records/' + elem?.id + '/', optionsToEdit, true)
+      console.log(res)
+    }
+  })
+}
+
+const moveUp = (index: number) => {
+  if (index > 0) {
+    const temp = record.value[index]
+    record.value[index] = record.value[index - 1]
+    record.value[index - 1] = temp
+    updateOrder()
+  }
+}
+
+const moveDown = (index: number) => {
+  if (index < record.value.length - 1) {
+    const temp = record.value[index]
+    record.value[index] = record.value[index + 1]
+    record.value[index + 1] = temp
+    updateOrder()
+  }
+}
+
 const getSport = async () => {
   const id = router.params.sport_id
   const res = await get('/admin/sports/' + id + '/')
@@ -149,7 +225,7 @@ const getSport = async () => {
       alertErr.value = true
     } else {
       record.value = await res_record
-      console.log(record.value)
+      recordConst.value = await JSON.parse(JSON.stringify(res_record))
     }
   }
 }
