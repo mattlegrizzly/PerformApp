@@ -17,6 +17,8 @@ import ShowExercise from '@/views/Exercises/ShowView.vue'
 import EditExercise from '@/views/Exercises/EditView.vue'
 
 import ListSports from '@/views/Sports/ListView.vue'
+import ListRecordsSportsView from '@/views/Sports/ListRecordsSportsView.vue'
+import ListRecordsThemeView from '@/views/Sports/ListRecordsThemeView.vue'
 import ShowSport from '@/views/Sports/ShowView.vue'
 import EditSport from '@/views/Sports/EditView.vue'
 import AddSport from '@/views/Sports/AddView.vue'
@@ -47,34 +49,48 @@ const removeUser = () => {
   userStore.removeUser()
 }
 
+
 const isLoggedIn = async () => {
-  const access = cookies.get('access')
-  const userStore = useUserStore()
-
-  if (!access) return false
-
   try {
-    const tokenResponse = await verifyToken()
-    if ((await tokenResponse.status) > 300) {
-      if ((await tokenResponse.status) === 401) {
-        const refreshResponse = await refresh()
-        if ((await refreshResponse.status) > 300) {
-          return false
+    const userStore = useUserStore();
+    const user = userStore.userData
+    const access = cookies.get('access')
+
+    if (!access) return false;
+
+    const verifyResponse = await verifyToken();
+    if (verifyResponse.status > 300) {
+      console.log(verifyResponse.status === 401)
+      if (verifyResponse.status === 401) {
+        const refreshResponse = await refresh();
+        if (refreshResponse.status > 300) {
+          
+          removeUser()
+          return false;
         } else {
-          userStore.setTokens(refreshResponse)
+          const newUser = {
+            user: user,
+            refresh: refreshResponse.refresh,
+            access: refreshResponse.access,
+          };
+          userStore.setUser(newUser)
+          return true;
         }
+      } else {
+        removeUser()
+        return false;
       }
-      removeUser()
-      return false
+    } else {
+      const userResponse = await get("/users/me/", { body: {} }, true);
+      userStore.setUser(userResponse)
+      return true;
     }
-    const res = get('/admin/users_all/me/', { body: {} }, true);
-    setUser(await res)
-    return true
   } catch (error) {
-    removeUser()
-    return false
+    return false;
   }
-}
+  return true;
+
+};
 
 
 
@@ -112,6 +128,16 @@ const router = createRouter({
       path: '/sports',
       name: 'sport',
       component: ListSports
+    },
+    {
+      path: '/records_sports',
+      name: 'records_sports',
+      component: ListRecordsSportsView
+    },
+    {
+      path: '/records_theme',
+      name: 'records_theme',
+      component: ListRecordsThemeView
     },
     {
       path: '/sports/add',

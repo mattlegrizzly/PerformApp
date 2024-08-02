@@ -12,8 +12,7 @@
       <NavButton
         class="returnBtn"
         :text="'Retour'"
-        :url="'/sports'"
-        :back="back"
+        :url="'/records_sports'"
         prepend-icon="mdi-arrow-left"
       />
       <NavButton
@@ -22,18 +21,8 @@
         :url="'/sports/add_record/' + sport.id"
         prepend-icon="mdi-medal"
       />
-      <NavButton
-        class="editBtn"
-        :text="'Modifier'"
-        :url="'/sports/edit/' + sport.id"
-        prepend-icon="mdi-pencil"
-      />
     </div>
-    <h1>Carte du sport : {{ sport === undefined ? '' : sport.name }}</h1>
-    <h2 class="showTitle">Titre</h2>
-    <p>
-      {{ sport.name }}
-    </p>
+    <h2 class="showTitle">{{ sport.name }}</h2>
     <div class="recordList">
       <h3>Les records du sport :</h3>
       <v-list-item v-for="(item, i) in record" :key="i" :value="item" color="primary">

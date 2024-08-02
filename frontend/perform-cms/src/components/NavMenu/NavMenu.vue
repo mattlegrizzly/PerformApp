@@ -5,11 +5,17 @@
         <img class="logo" :src="image" />
       </div>
       <nav>
-        <a v-on:click.stop.prevent="routerMove('/')">Accueil</a>
-        <a v-on:click.stop.prevent="routerMove('/users')">Utilisateurs</a>
-        <a v-on:click.stop.prevent="routerMove('/exercises')">Exercices</a>
-        <a v-on:click.stop.prevent="routerMove('/materials')">Matériels</a>
-        <a v-on:click.stop.prevent="routerMove('/sports')">Sports</a>
+        <a class="parent-menu" v-on:click.stop.prevent="routerMove('/')">Accueil</a>
+        <a class="parent-menu"  v-on:click.stop.prevent="routerMove('/users')">Utilisateurs</a>
+        <a class="parent-menu no-overflow" >Bibliothèque
+        </a>
+        <a class="sub-menu" v-on:click.stop.prevent="routerMove('/exercises')">Exercices</a>
+        <a class="sub-menu" v-on:click.stop.prevent="routerMove('/materials')">Matériels</a>
+        <a class="sub-menu" v-on:click.stop.prevent="routerMove('/sports')">Sports</a>
+        <a class="parent-menu  no-overflow"> Records
+        </a>
+        <a class="sub-menu" v-on:click.stop.prevent="routerMove('/records_theme')">Générales</a>
+        <a class="sub-menu" v-on:click.stop.prevent="routerMove('/records_sports')">Sports</a>
       </nav>
       <div class="buttonWrapper">
         <button @click="deconnectUser">Se déconnecter</button>
@@ -37,3 +43,18 @@ const deconnectUser = () => {
   router.push('/login')
 }
 </script>
+
+<style>
+.sub-menu {
+  padding-left: 40px !important;
+  font-style: italic;
+}
+
+.parent-menu {
+  font-weight: 600;
+}
+
+.no-overflow:hover{
+  background-color: transparent !important
+}
+</style>

@@ -1,12 +1,19 @@
 <script setup>
 import router from '@/router'
-import { defineProps } from 'vue'
-import { onMounted } from 'vue'
+import { defineProps, defineEmits } from 'vue'
+import DeleteModalComponent from '../DeleteModalComponent/DeleteModalComponent.vue'
 import './index.css'
-const props = defineProps(['headerTable', 'contentTable', 'limitData', 'nav'])
+const props = defineProps(['headerTable', 'contentTable', 'limitData', 'nav', 'delete', 'deleteList'])
+const emit = defineEmits(['deleteElement']);
 
 const navigate = (index) => {
-  router.push('/' + props.nav + '/show/' + index)
+  if(!props.delete){
+    router.push('/' + props.nav + '/show/' + index)
+  }
+}
+
+const emitDelete = () => {
+  emit('deleteElement')
 }
 </script>
 
@@ -17,6 +24,9 @@ const navigate = (index) => {
         <th class="text-left" v-for="(item, index) in props.headerTable" :key="item.name">
           {{ headerTable[index] }}
         </th>
+        <th
+        v-if="props.delete"
+        ></th>
       </tr>
     </thead>
     <tbody>
@@ -41,6 +51,19 @@ const navigate = (index) => {
             </div>
           </td>
         </template>
+        <td
+        style="width: 150px;"
+        v-if="props.delete"
+        >
+
+          <DeleteModalComponent
+        :item="row.name"
+        url="/admin/sports"
+        :id="row.id"
+        list=""
+        @dialogClosed="emitDelete()"
+      />
+        </td>
       </tr>
     </tbody>
   </v-table>

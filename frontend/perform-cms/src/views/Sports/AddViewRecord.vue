@@ -73,7 +73,7 @@ const getSport = async () => {
   id.value = Number(route.params.sport_id)
   const res = await get('/admin/sports/' + id.value + '/')
   if (res.status === 404) {
-    error_title.value = 'Erreur à la récupération du Material avec pour id ' + id.value
+    error_title.value = 'Erreur à la récupération du Sport avec pour id ' + id.value
     error_message.value = res.data.detail
     alertErr.value = true
   } else {
@@ -85,17 +85,12 @@ const units = [
     name: 'Temps',
     value: 'time',
   }, {
-    name: 'Kilogrammes',
+    name: 'Poids',
     value: 'weight',
   },
 ]
 
 onMounted(() => {
-/*   if (router.query.edit) {
-    back.value = ''
-  } else {
-    back.value = 'back'
-  } */
   getSport()
 })
 </script>
@@ -132,7 +127,7 @@ onMounted(() => {
     border="start"
     close-label="Close Alert"
     color="success"
-    title="Sport ajouté"
+    title="Record ajouté"
     closable
     @click:close="closePopup"
   >

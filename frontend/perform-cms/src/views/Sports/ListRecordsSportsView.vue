@@ -112,10 +112,9 @@ const emitClosed =() => {
   <NavMenu />
 
   <div class="mainWrapper">
-    <h1 class="listTitle">Sports ({{ sportsCount }})</h1>
-    <h5 class="underTitle">Retrouvez la liste de tous vos Sports</h5>
+    <h1 class="listTitle">Gérer les records des Sports ({{ sportsCount }})</h1>
+    <h5 class="underTitle">Retrouvez la liste de tous vos Sports pour y créer leurs records</h5>
     <div class="headerList">
-      <NavButton url="/sports/add" text="Ajouter" prepend-icon="mdi-plus" />
       <div class="searchBar">
         <v-text-field
           placeholder="Chercher un sport"
@@ -133,9 +132,6 @@ const emitClosed =() => {
         :contentTable="sports"
         :limitData="2"
         nav="sports"
-        :delete="true"
-        @deleteElement="emitClosed()"
-        deleteList="sports"
       />
       <PaginationComponent
         :setPage="setPage"
