@@ -3,9 +3,10 @@ import type IERequestOptions from "../types/requet";
 
 const sendRequest = async (originalRequest: Request, originalBody: any = null, retry: boolean = true): Promise<any> => {
   const response = await fetch(originalRequest);
-
-  if (response.status === 401 && retry) {
+  if (response.status === 401 && retry && !response.url.includes('login')) {
+    console.log(response)
     const refreshResponse = await refresh();
+
     if (refreshResponse && refreshResponse.access) {
       const user = await store.get("user");
       const updatedUser = {
@@ -130,7 +131,8 @@ const handleResponse = async (response: Response): Promise<any> => {
  * @returns
  */
 const refresh = async (): Promise<any> => {
-    const res = await store.get("user");
+  const res = await store.get("user");
+  console.log('res ', res)
     const refreshToken = JSON.parse(res).refresh;
     const relativeUrlString = "/api/refresh_tokens/";
     const url = new URL(relativeUrlString, baseUrl);

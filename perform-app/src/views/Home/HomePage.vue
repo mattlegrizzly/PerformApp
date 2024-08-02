@@ -961,7 +961,7 @@ onIonViewWillEnter(async () => {
   setTimeout(() => {
 
     createChart(weekWellnessTemp.value, 'home-chart', homeChart);
-  }, 200)
+  }, 500)
 });
 
 const getWellness = async () => {

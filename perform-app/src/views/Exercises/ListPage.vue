@@ -229,7 +229,11 @@ ion-modal {
                   cols="12"
                   sm="4"
                 >
-                  <v-card @click="addMaterialFilter(material.id)">
+                  <v-card @click="addMaterialFilter(material.id)" :style="
+                        findMaterial(material)
+                          ? 'box-shadow:inset 0px 0px 0px 2px var(--primary-blue)'
+                          : ''
+                      ">
                     <v-img
                       :src="
                         material.pictures

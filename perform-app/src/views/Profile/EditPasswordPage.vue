@@ -123,14 +123,13 @@ import "@/assets/main.css";
 import { store } from "../../store/store";
 import router from "../../router";
 import NavButton from "../../components/NavButton/NavButton.vue";
-import { get, patch } from "../../lib/callApi";
+import { patch } from "../../lib/callApi";
 import "./index.css";
 
 import { useErrorHandler } from "../../lib/useErrorHandler";
 
 const { triggerError } = useErrorHandler() as any;
 
-const api = import.meta.env.VITE_API_URL;
 const loading = ref(false);
 const errorAdd = ref(false);
 const password = ref<string>("");

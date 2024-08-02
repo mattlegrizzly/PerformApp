@@ -104,8 +104,8 @@
       <ion-icon style="color:black; " :icon="pencil" size="10px"></ion-icon>
     </div>
               </div>
-              <input type="file" accept="image/*" id="fileINput" ref="fileInput" @change="handleFileChange"
-                style="display: none" capture="environment"></input>
+              <input type="file" accept="image/jpeg,image/png" id="fileINput" ref="fileInput" @change="handleFileChange"
+                style="display: none"></input>
                 <ImageCropper :isOpen="isModalOpen" :imageSrc="imageSrc" @update:isOpen="isModalOpen = $event" @image-cropped="handleImageCropped" />
             </div>
 
@@ -247,15 +247,6 @@ const handleInput = (key: keyof IEUserData, valuePass: string | null | undefined
   const value = valuePass as never;
   user.value[key] = value;
 };
-
-/**
- * Méthode pour changer la variable du password
- * @param value - Valeur passé par l'input
- */
-const handlePassword = (value: string | null | undefined) => {
-  if(value != null || value != undefined) password.value = value
-  console.log(password.value)
-} 
 
 /**
  * Compare deux objets en fonction de leur propriété `id`.

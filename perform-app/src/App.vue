@@ -15,6 +15,11 @@
 <script lang="ts" setup>
 import { IonApp, IonRouterOutlet, IonToast } from '@ionic/vue';
 import { ref, provide } from 'vue';
+//@ts-expect-error
+import {useKeyboardControl} from './composables/KeyboardControl.js'
+
+useKeyboardControl()
+
 
 const showToast = ref(false);
 const toastMessage = ref('');

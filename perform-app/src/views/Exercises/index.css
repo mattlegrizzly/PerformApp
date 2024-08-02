@@ -118,7 +118,7 @@ ion-segment-button {
 }
 
 .displayFilterContainer {
-    height: 35px; overflow: hidden; position: relative;
+    height: 20px; overflow: hidden; position: relative;
 } 
 
 .showFullDisplayContainer {

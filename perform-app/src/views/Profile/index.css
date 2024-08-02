@@ -182,7 +182,11 @@ ion-img::part(image) {
     width: 100%;
     height: 40px;
 }
-
+.native-input{
+    --padding-start: 0px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
 ion-select.custom-ion-select::part(icon) {
     left: 0px;
 }

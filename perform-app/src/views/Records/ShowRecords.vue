@@ -54,7 +54,7 @@ ion-modal {
 </style>
 
 <template>
-  <ion-page>
+  <ion-page data-page="ShowRecords">
     <ion-content id="list-records">
       <div
         class="perform-page"

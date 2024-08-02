@@ -188,7 +188,11 @@ const pageTransitions = {
     'edit-profile|profile': slideLeftAnimation,
     'profile|edit-profile': slideRightAnimation,
     'Splash': fadeAnimation,
-    'Home|Splash': fadeAnimation
+    'Home|Splash': fadeAnimation,
+    'Records|profile': slideLeftAnimation,
+    'profile|Records': slideRightAnimation,
+    'Records|ShowRecords': slideRightAnimation,
+    'ShowRecords|Records': slideLeftAnimation
 };
 
 

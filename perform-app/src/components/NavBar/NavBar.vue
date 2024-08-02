@@ -22,7 +22,7 @@
         </ion-tab-button>
         <ion-tab-button @click="navigateTo('/profile')" tab="profile">
           <ion-icon
-            :name="isRouteActive(['Profile', 'AddInjurie', 'ListInjuries', 'EditInjurie', 'ViewInjurie', 'Records', 'ShowRecords']) ? 'profile-selected' : 'profile'" />
+            :name="isRouteActive(['Profile', 'EditProfile', 'AddInjurie', 'ListInjuries', 'EditInjurie', 'ViewInjurie', 'Records', 'ShowRecords']) ? 'profile-selected' : 'profile'" />
           <ion-label>Profil</ion-label>
 
         </ion-tab-button>

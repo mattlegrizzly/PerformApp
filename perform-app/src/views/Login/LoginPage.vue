@@ -59,7 +59,6 @@ import { post } from "../../lib/callApi";
 import router from "../../router";
 import "./index.css";
 import { useErrorHandler } from "../../lib/useErrorHandler";
-import { useKeyboardControl } from '@/mixins/useKeyboardControl';
 
 const { triggerError } = useErrorHandler() as any;
 
@@ -69,7 +68,6 @@ const email = ref("");
 const loading = ref(false);
 const showPassword = ref(false);
 
-useKeyboardControl()
 
 onIonViewWillEnter(async () => {
   console.log('login')
@@ -98,7 +96,9 @@ const connect = () => {
       password: pwd.value,
     },
   };
+try {
   post("/login/", options, false).then((res) => {
+    console.log('res ', res)
     error.value = false;
     if (res.status > 301) {
       triggerError("Erreur de connexion");
@@ -113,7 +113,12 @@ const connect = () => {
       });
     }
   });
+} catch (error) {
+  console.log(error)
+  triggerError(error)
+}
 };
+
 
 
 
