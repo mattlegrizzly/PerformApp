@@ -241,10 +241,7 @@ ion-modal {
                           : ''
                       "
                       class="align-end"
-                      :gradient="
-                        findMaterial(material)
-                          ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)'
-                          : 'to bottom, rgba(0,0,0,.05), rgba(0,0,0,.1'
+                      gradient="to bottom, rgba(0,0,0,.05), rgba(0,0,0,.1)
                       "
                       height="80px"
                       cover

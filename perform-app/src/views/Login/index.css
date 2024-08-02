@@ -67,18 +67,10 @@
     font-style: italic;
 }
 
-.login-input{
-    --padding-start: 0px !important;
-    --padding-end: 0px !important;
-}
 .native-wrapper{
     padding-right: 10px;
 }
-.native-input{
-    --padding-start: 0px !important;
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-}
+
 
 .logo_perform_login {
     display: flex;

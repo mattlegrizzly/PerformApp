@@ -55,7 +55,8 @@
 
 #set_wellness {
   --min-height : 30%;
-  --max-height : 60%;
+  height : auto;
+  --max-height : 75%;
 }
 
 ion-modal {

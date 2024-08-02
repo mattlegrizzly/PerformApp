@@ -57,7 +57,7 @@
                 <ion-item @click="router.push('/show_records/'+item.record)" class="record-unit" >
                         <p>{{ item.record_name }}</p>
                         <div style="display: flex; justify-content: center; align-items: center;">
-                          <p style="font-size: 15px">{{ item.units == "time" ? item.time_value : item.weight_value+'kg' }}</p>
+                          <p style="font-size: 15px">{{item.formatted_record}}</p>
                           <ion-icon :icon="chevronForwardOutline"></ion-icon>
                         </div>
                 </ion-item>
@@ -65,7 +65,20 @@
             </div>
           </v-tabs-window-item>
 
-          <v-tabs-window-item value="two"> </v-tabs-window-item>
+          <v-tabs-window-item value="two">
+            <div class="records-div" v-for="(items, key) in recordsSports" :key="key">
+              <h4 style="padding-left: 10px;">{{ key }}</h4>
+              <ion-list v-for="item in items" :key="item.id" class="records-list">
+                <ion-item @click="router.push('/show_records/'+item.record)" class="record-unit" >
+                        <p>{{ item.record_name }}</p>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                          <p style="font-size: 15px">{{item.formatted_record}}</p>
+                          <ion-icon :icon="chevronForwardOutline"></ion-icon>
+                        </div>
+                </ion-item>
+              </ion-list>
+            </div>
+          </v-tabs-window-item>
         </v-tabs-window>
       </v-card-text>
     </ion-content>
@@ -96,6 +109,8 @@ const router = useRouter();
 
 const records = ref([
 ]) as any;
+const recordsSports = ref([
+]) as any;
 
 onIonViewWillEnter(async () => {
   find.value =  false;
@@ -103,11 +118,19 @@ onIonViewWillEnter(async () => {
   let stringifyUser = JSON.parse(storeUser)
   if (stringifyUser !== "") {
     console.log(stringifyUser)
-    get("/records_user/by-user?user_id=" +stringifyUser.user.id, { body: {} }, true).then((res) => {
+    get("/records_user/by-theme-sports?user_id=" +stringifyUser.user.id, { body: {} }, true).then((res) => {
       if (res.status > 300) {
         triggerError("Erreur lors de la récupération des records");
       } else {
         records.value = res;
+      }
+    });
+
+    get("/records_user/by-user-sports?user_id=" +stringifyUser.user.id, { body: {} }, true).then((res) => {
+      if (res.status > 300) {
+        triggerError("Erreur lors de la récupération des records");
+      } else {
+        recordsSports.value = res;
       }
     });
     

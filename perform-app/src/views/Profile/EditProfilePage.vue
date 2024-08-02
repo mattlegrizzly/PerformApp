@@ -10,8 +10,6 @@
   border: 1px solid #d4d4d4;
   min-height: 40px !important;
   width: calc(100% - 20px);
-  --padding-start: 0px !important;
-  --padding-end: 0px !important;
   --border: none;
   --border-color: none;
   --border-width: none;

@@ -7,11 +7,16 @@ ion-modal {
     0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
+.time-input::v-deep .input-wrapper.sc-ion-input-ios {
+    padding-inline-start: 0px !important;
+    padding-inline-end: 0px !important;
+}
+
 .custom-ion-item {
   --padding-start: 0;
 }
 
-.time-input {
+.time-input{
   display: flex;
   align-items: center;
   gap: 5px;
@@ -94,12 +99,12 @@ ion-modal {
                        :class="errorAdd && weightValue=='' ? 'required_class' : ''"
                         v-model="inputValue"
                         type="number"
-                        placeholder="Enter weight in kg"
+                        placeholder="Entez le poids en kg"
                         style="padding-left: 10px;"
                         @ion-change="handleInput($event.detail.value, 'weight')"
                       ></ion-input>
                     </template>
-                    <template v-else>
+                    <template v-else-if="record.units === 'time'">
                       <ion-label position="stacked" :class="errorAdd && !isTimeIsEmpty() ? 'required_text' : ''"
                         >Temps (en hh:mm:ss)</ion-label
                       >
@@ -107,17 +112,23 @@ ion-modal {
                       <div class="time-input">
                         <ion-input
                           v-model="hours"
+                           aria-label="hours"
                           type="number"
+                          :labelPlacement=undefined
                           placeholder="HH"
                           maxLength="2"
                           class="time_input"
+                          style="padding-inline-start: 0px; --padding-end: 0px;"
                           :class="errorAdd && !isTimeIsEmpty() ? 'required_class' : ''"
-                        ></ion-input
-                        >:
+                        >
+                        </ion-input>:
                         <ion-input
                           v-model="minutes"
                           type="number"
                           placeholder="MM"
+                          aria-label="minutes"
+                          :labelPlacement=undefined
+
                           maxLength="2"
                           class="time_input"
                            :class="errorAdd && !isTimeIsEmpty() ? 'required_class' : ''"
@@ -127,11 +138,58 @@ ion-modal {
                           v-model="seconds"
                           type="number"
                           placeholder="SS"
+                          aria-label="secondes"
+                          :labelPlacement=undefined
+
                           maxLength="2"
                           class="time_input"
                           :class="errorAdd && !isTimeIsEmpty() ? 'required_class' : ''"
                         ></ion-input>
                       </div>
+                    </template>
+                    <template v-else-if="record.units === 'points'">
+                      <ion-label position="stacked" :class="errorAdd && weightValue=='' ? 'required_text' : ''">Points</ion-label>
+                      <ion-input
+                       :class="errorAdd && weightValue=='' ? 'required_class' : ''"
+                        v-model="inputValue"
+                        type="number"
+                        placeholder="Entrer les points"
+                        style="padding-left: 10px;"
+                        @ion-change="handleInput($event.detail.value, 'points')"
+                      ></ion-input>
+                    </template>
+                    <template v-else-if="record.units === 'distance_m'">
+                      <ion-label position="stacked" :class="errorAdd && weightValue=='' ? 'required_text' : ''">Distance (en m)</ion-label>
+                      <ion-input
+                       :class="errorAdd && weightValue=='' ? 'required_class' : ''"
+                        v-model="inputValue"
+                        type="number"
+                        placeholder="Entrer la distance (en m)"
+                        style="padding-left: 10px;"
+                        @ion-change="handleInput($event.detail.value, 'distance_m')"
+                      ></ion-input>
+                    </template>
+                    <template v-else-if="record.units === 'distance_km'">
+                      <ion-label position="stacked" :class="errorAdd && weightValue=='' ? 'required_text' : ''">Distance (en km)</ion-label>
+                      <ion-input
+                       :class="errorAdd && weightValue=='' ? 'required_class' : ''"
+                        v-model="inputValue"
+                        type="number"
+                        placeholder="Entrer la distance (en km)"
+                        style="padding-left: 10px;"
+                        @ion-change="handleInput($event.detail.value, 'distance_km')"
+                      ></ion-input>
+                    </template>
+                    <template v-else>
+                      <ion-label position="stacked" :class="errorAdd && freeValue=='' ? 'required_text' : ''">Personnalisé</ion-label>
+                      <ion-input
+                       :class="errorAdd && freeValue=='' ? 'required_class' : ''"
+                        v-model="inputValue"
+                        type="text"
+                        placeholder="Entrer un record personnalisé"
+                        style="padding-left: 10px;"
+                        @ion-change="handleInput($event.detail.value, 'free')"
+                      ></ion-input>
                     </template>
                   <div class="input_injurie" >
                     <ion-label
@@ -180,6 +238,7 @@ ion-modal {
           "
         >
           <canvas
+          v-if="record.units !=='free'"
             id="chartStats"
             width="300px"
             height="200px"
@@ -269,6 +328,8 @@ const record = ref({
   units: "",
 }) as any;
 
+const recordArray=ref(['weight', 'distance_m', 'distance_km', 'points'])
+
 const errorAdd = ref(false)
 
 const inputValue = ref("");
@@ -277,6 +338,7 @@ const minutes = ref("");
 const seconds = ref("");
 const user = ref("") as any;
 const weightValue = ref("");
+const freeValue = ref("");
 const dateRecord = ref("") as any;
 
 const modalRecord = ref(null) as any;
@@ -284,11 +346,14 @@ const modalRecord = ref(null) as any;
 const routerNav = useRoute();
 
 const handleInput = (e: any, type: string) => {
-  console.log(e);
+  console.log('e ', e);
+  console.log(type)
   if (type == "time") {
     dateRecord.value = new Date(e);
-  } else {
+  } else if(recordArray.value.includes(e)) {
     weightValue.value = e;
+  } else {
+    freeValue.value = e;
   }
 };
 
@@ -364,9 +429,12 @@ const getRecords = () => {
       if (chartInstance.value) {
         chartInstance.value.destroy();
       }
-      setTimeout(() => {
-        createChart();
-      }, 200);
+      console.log('res ', )
+      if(res.performances.length > 0 && res.units !=="free"){
+        setTimeout(() => {
+          createChart();
+        }, 200);
+      }
     }
   });
 };
@@ -409,7 +477,7 @@ const createChart = () => {
   const data = record.value.performances.map((performance : any) =>
     record.value.units === "time"
       ? timeToSeconds(performance.time_value)
-      : performance.weight_value
+      : performance.record_value
   );
 
   chartInstance.value = markRaw(
@@ -493,9 +561,7 @@ onMounted(() => {
     setTimeout(() => {
       if (document.getElementById("chartStats")) createChart();
     }, 100);
-  } else {
-    if (document.getElementById("chartStats")) createChart();
-  }
+  } 
 });
 
 watch(
@@ -504,7 +570,7 @@ watch(
     if (chartInstance.value) {
       chartInstance.value.destroy();
     }
-    updateChart();
+    createChart();
   },
   { deep: true }
 );
@@ -515,9 +581,11 @@ const isTimeIsEmpty = () => {
 const submitRecord = async () => {
     if(record.value.units ==="time" && isTimeIsEmpty()) {
         postData()
-    } else if (record.value.units == 'weight' && weightValue.value != "") {
+    } else if (recordArray.value.includes(record.value.units) && weightValue.value != "") {
         postData()
-    }else {
+    } else if (freeValue.value != '') {
+      postData()
+    } else {
         console.log('je suis vide zebi')
         errorAdd.value = true;
         console.log(dateRecord.value)
@@ -533,7 +601,8 @@ const postData = () => {
           user: user.value.id,
           date_record: dateRecord.value,
           time_value: record.value.units === "time"  &&( hours.value  !== "" || minutes.value != "" || seconds.value != "")  ? formattedTimeValue : null,
-          weight_value: record.value.units === "weight" ? weightValue.value : null,
+          record_value: recordArray.value.includes(record.value.units) ? weightValue.value : null,
+          free_value: record.value.units === 'free' ? freeValue.value : null,
         };
       
         try {

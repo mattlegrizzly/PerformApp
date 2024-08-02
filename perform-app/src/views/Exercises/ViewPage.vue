@@ -3,7 +3,7 @@
     <ion-content id="view_page">
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between; margin-bottom : 15px">
-          <NavButton url="/exercises" text="Retour" />
+          <NavButton url="/exercises" text="Retour" back="back" />
           <ion-icon
             @click="setFav"
             :icon="is_fav ? heart : heartOutline"
