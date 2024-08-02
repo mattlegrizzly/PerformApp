@@ -59,6 +59,7 @@ import { post } from "../../lib/callApi";
 import router from "../../router";
 import "./index.css";
 import { useErrorHandler } from "../../lib/useErrorHandler";
+import { useKeyboardControl } from '@/mixins/useKeyboardControl';
 
 const { triggerError } = useErrorHandler() as any;
 
@@ -67,6 +68,8 @@ const pwd = ref("");
 const email = ref("");
 const loading = ref(false);
 const showPassword = ref(false);
+
+useKeyboardControl()
 
 onIonViewWillEnter(async () => {
   console.log('login')
