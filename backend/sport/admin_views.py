@@ -335,10 +335,22 @@ class AdminRecordsSportViewSet(viewsets.ModelViewSet):
         sport_id = request.query_params.get('sport_id')
         if not sport_id:
             return Response({"detail": "sport_id query parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        queryset = self.get_queryset().filter(sport_id=sport_id)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # Filtrer les enregistrements par sport
+        queryset = self.get_queryset().filter(sport_id=sport_id).order_by('groups__is_general', 'groups__name', 'order')
+
+        # Organiser les enregistrements par groupes
+        records_by_group = {}
+        for record in queryset:
+            group_name = record.groups.name if record.groups else "General"
+
+            if group_name not in records_by_group:
+                records_by_group[group_name] = []
+
+            record_data = self.get_serializer(record).data
+            records_by_group[group_name].append(record_data)
+
+        return Response(records_by_group, status=status.HTTP_200_OK)
 
 #------------------ADMIN_USER_RECORDS_SPORTS------------------
 # Admin ViewSet

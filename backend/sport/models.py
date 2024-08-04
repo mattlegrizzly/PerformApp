@@ -12,7 +12,12 @@ class SportsUser(models.Model):
     user = models.ForeignKey('users2.User', on_delete=models.CASCADE, related_name="sports_user")
 
 class RecordsGroupSport(models.Model):
-    name = models.CharField(max_length=100, unique=True, null=False)
+    name = models.CharField(max_length=100, unique=False, null=False)
+    sport = models.ForeignKey(Sport, on_delete=models.CASCADE, related_name="group_sports")
+    is_general = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('name', 'sport')  # Pour éviter les doublons de noms de groupes dans le même sport
 
 class RecordsSport(models.Model):
     UNITS_CHOICE = [
@@ -26,18 +31,25 @@ class RecordsSport(models.Model):
     sport = models.ForeignKey(Sport, on_delete=models.CASCADE)
     units = models.CharField(max_length=20, choices=UNITS_CHOICE)
     name = models.CharField(max_length=100, unique=False, null=False)
-    groups = models.ForeignKey(RecordsGroupSport, unique=True, null=True, on_delete=models.DO_NOTHING)
+    groups = models.ForeignKey(RecordsGroupSport, null=True, on_delete=models.DO_NOTHING)
     general = models.BooleanField(unique=False, null=True, default=False)
     order = models.PositiveIntegerField(null=True, blank=True)
+
     class Meta:
-        ordering = ['order']
+        ordering = ['groups__is_general', 'order']  # Ajoute l'ordre de tri par groupe
 
     def save(self, *args, **kwargs):
+        # Assigner un groupe général si aucun groupe n'est défini
+        if not self.groups:
+            general_group = RecordsGroupSport.objects.filter(is_general=True, sport=self.sport).first()
+            if general_group:
+                self.groups = general_group
+
         if self.order is None:  # Si l'ordre n'est pas défini
-            # Compter le nombre de records existants pour le même sport
-            existing_records = RecordsSport.objects.filter(sport=self.sport).count()
+            # Compter le nombre de records existants dans le même groupe pour le même sport
+            existing_records_in_group = RecordsSport.objects.filter(sport=self.sport, groups=self.groups).count()
             # Attribuer l'ordre en conséquence (nombre de records + 1)
-            self.order = existing_records + 1
+            self.order = existing_records_in_group + 1
 
         super().save(*args, **kwargs)
 

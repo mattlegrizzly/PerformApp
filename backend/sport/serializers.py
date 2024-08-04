@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Sport, SportsUser, RecordsSport, RecordsSportUser
+from .models import Sport, SportsUser, RecordsSport, RecordsSportUser, RecordsGroupSport
 from users2.permissions import UserViewSetPermissions
 
 class SportSerializer(serializers.ModelSerializer):
@@ -25,6 +25,11 @@ class SportsDetailedUserSerializer(serializers.ModelSerializer):
         model = SportsUser
         fields = ["id", 'sport']
 
+class RecordsGroupSportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecordsGroupSport
+        fields = ['id', 'name', 'sport', 'is_general']
+
 class RecordsSportSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecordsSport
@@ -33,7 +38,7 @@ class RecordsSportSerializer(serializers.ModelSerializer):
 class RecordsSportUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecordsSportUser
-        fields = ['record', 'user', 'time_value', 'record_value', 'free_value', 'created_at', 'updated_at', 'date_record']
+        fields = ['id', 'record', 'user', 'time_value', 'record_value', 'free_value', 'created_at', 'updated_at', 'date_record']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
