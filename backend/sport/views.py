@@ -303,8 +303,9 @@ class RecordsSportUserViewSet(viewsets.ModelViewSet):
                 record_data = self.get_serializer(latest_record).data
                 record_data['record_name'] = latest_record.record.name
                 record_data['units'] = latest_record.record.units
-                if latest_record.record.units == 'time':
-                    record_data['formatted_record'] = str(latest_record.time_value) if latest_record.time_value else ''
+                if record.units == 'time':
+                    formatted_time = latest_record.formatted_time_value()
+                    record_data['formatted_record'] = formatted_time if formatted_time else ''
                 elif latest_record.record.units == 'weight':
                     record_data['formatted_record'] = f"{latest_record.formatted_record_value() } kg" if latest_record.formatted_record_value()  else ''
                 elif latest_record.record.units == 'points':
@@ -370,8 +371,9 @@ class RecordsSportUserViewSet(viewsets.ModelViewSet):
                 record_data = self.get_serializer(latest_record).data
                 record_data['record_name'] = latest_record.record.name
                 record_data['units'] = latest_record.record.units
-                if latest_record.record.units == 'time':
-                    record_data['formatted_record'] = str(latest_record.time_value) if latest_record.time_value else ''
+                if record.units == 'time':
+                    formatted_time = latest_record.formatted_time_value()
+                    record_data['formatted_record'] = formatted_time if formatted_time else ''
                 elif latest_record.record.units == 'weight':
                     record_data['formatted_record'] = f"{latest_record.formatted_record_value()} kg" if latest_record.formatted_record_value() else ''
                 elif latest_record.record.units == 'points':
@@ -424,7 +426,8 @@ class RecordsSportUserViewSet(viewsets.ModelViewSet):
         for user_record in user_records:
             record_data = self.get_serializer(user_record).data
             if record.units == 'time':
-                record_data['formatted_record'] = f"{str(user_record.time_value)}" if user_record.time_value else ''
+                formatted_time = user_record.formatted_time_value()
+                record_data['formatted_record'] = formatted_time if formatted_time else ''
             elif record.units == 'weight':
                 record_data['formatted_record'] = f"{user_record.formatted_record_value()} kg" if user_record.formatted_record_value() else ''
             elif record.units == 'points':

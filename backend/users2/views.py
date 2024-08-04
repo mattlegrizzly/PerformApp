@@ -91,7 +91,62 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
                 from_email='contact@grizzlyperform.app',
                 to_emails=recipient_list,
                 subject='Perform App Registration',
-                html_content= f'Hello,\n\nYour account has been created successfully. Here are your credentials:\n\nEmail: {user.email}\nPassword: {request.data.get("password")}\n\nThank you for registering!')
+                # En-tête du courriel stylisé avec Python
+                html_content = f"""
+                <!DOCTYPE html>
+                <html lang="fr">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        body {{
+                            background-color: #f0f0f0;
+                            margin: 0;
+                            padding: 0;
+                            font-family: Arial, sans-serif;
+                        }}
+                        .email-container {{
+                            max-width: 600px;
+                            margin: 40px auto;
+                            background-color: #ffffff;
+                            padding: 20px;
+                            border-radius: 8px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                        }}
+                        .email-header {{
+                            margin-bottom: 20px;
+                        }}
+                        .email-header img {{
+                            max-width: 150px;
+                        }}
+                        .email-body {{
+                            text-align: left;
+                            font-size: 16px;
+                            line-height: 1.6;
+                            color: #333333;
+                        }}
+                        .email-body p {{
+                            margin: 0 0 10px;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="email-container">
+                        <div class="email-header">
+                            <img src="https://example.com/logo.png" alt="Logo">
+                        </div>
+                        <div class="email-body">
+                            <p>Hello,</p>
+                            <p>Your account has been created successfully. Here are your credentials:</p>
+                            <p><strong>Email:</strong> {user.email}</p>
+                            <p><strong>Password:</strong> {request.data.get("password")}</p>
+                            <p>Thank you for registering!</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """)
             
             try:
                 sg = SendGridAPIClient(os.getenv("SENDGRID_API"))
@@ -659,7 +714,7 @@ class InjurieViewSet(viewsets.ModelViewSet):
         user_id = kwargs.get('user_id')
         print(user_id)
         queryset = self.queryset.filter(user=user_id)
-        queryset = get_ordered_queryset(self.queryset,  request.query_params, 'injury')
+        queryset = get_ordered_queryset(queryset,  request.query_params, 'injury')
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     

@@ -59,4 +59,14 @@ class RecordsSportUser(models.Model):
                 return int(self.record_value)
             return self.record_value
         return None
+
+    def formatted_time_value(self):
+        if self.time_value is not None:
+            total_seconds = int(self.time_value.total_seconds())
+            hours, remainder = divmod(total_seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            milliseconds = self.time_value.microseconds // 1000
+            formatted_time = f"{hours:02}:{minutes:02}.{seconds:02}"
+            return formatted_time
+        return None
     
