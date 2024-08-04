@@ -88,7 +88,7 @@
 </style>
 
 <template>
-  <ion-page data-page="AddWorkout">
+  <ion-page data-page="EditWorkout">
     <ion-content>
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
@@ -109,6 +109,7 @@
             label-placement="stacked"
             fill="outline"
             placeholder="Séance VMA"
+            :value="workout.name"
             @ion-change="handleInput('name', $event.detail.value)"
           ></ion-input>
         </div>
@@ -116,6 +117,7 @@
           <ion-label position="stacked">Description de la séance</ion-label>
 
           <ion-textarea
+          :value="workout.workout_description"
             variant="outlined"
             placeholder="Décrivez votre séance"
             @ion-change="handleInput('description', $event.detail.value)"
@@ -135,6 +137,7 @@
             :value="workout.date"
             label-placement="stacked"
             fill="outline"
+            :default="actualDate"
             placeholder="12/03/2023"
             @ion-change="handleInput('date', $event.detail.value)"
           ></ion-input>
@@ -155,6 +158,8 @@
               placeholder="HH"
               maxLength="2"
               class="time_input"
+              :max="23"
+              :min="0"
               style="padding-inline-start: 0px; --padding-end: 0px"
               :class="errorAdd && !isTimeIsEmpty() ? 'required_class' : ''"
             >
@@ -168,6 +173,8 @@
               :labelPlacement="undefined"
               maxLength="2"
               class="time_input"
+              :max="59"
+              :min="0"
               :class="errorAdd && !isTimeIsEmpty() ? 'required_class' : ''"
             ></ion-input
             >:
@@ -179,6 +186,8 @@
               :labelPlacement="undefined"
               maxLength="2"
               class="time_input"
+              :max="59"
+              :min="0"
               :class="errorAdd && !isTimeIsEmpty() ? 'required_class' : ''"
             ></ion-input>
           </div>
@@ -196,7 +205,7 @@
             <!-- Slider pour la difficulté de 1 à 10 -->
             <div class="range_inner">
               <ion-range
-                v-model="cognitive_rpe"
+                v-model="workout.cognitive_rpe"
                 aria-label="Difficulté"
                 :ticks="true"
                 :snaps="true"
@@ -220,7 +229,7 @@
             <!-- Slider pour la difficulté de 1 à 10 -->
             <div class="range_inner">
               <ion-range
-                v-model="physical_rpe"
+                v-model="workout.physical_rpe"
                 aria-label="Difficulté"
                 id="phsyical"
                 :ticks="true"
@@ -238,7 +247,7 @@
             style="width: 100%; height: 40px; margin-top: 20px"
             @click="addWorkout"
             :disabled="adding"
-            :text="adding ? 'Ajout en cours' : 'Ajouter la séance'"
+            :text="adding ? 'Ajout en cours' : 'Modifier la séance'"
             :noIcon="true"
           />
         </div>
@@ -262,11 +271,11 @@ import "@/assets/main.css";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import { ref, computed } from "vue";
 import "../Profile/index.css";
-import { post } from "../../lib/callApi";
 import { store } from "../../store/store";
 import { useRoute } from "vue-router";
 import { useErrorHandler } from "../../lib/useErrorHandler";
 import { useRouter } from 'vue-router';
+import { get, patch } from "../../lib/callApi";
 
 const { triggerError } = useErrorHandler() as any;
 const router = useRoute();
@@ -288,6 +297,7 @@ const userLoggin = ref({
 }) as any;
 const actualDate = ref('')
 const workout = ref({
+  id: 0,
   name: "",
   date: actualDate.value as any,
   workout_description: "",
@@ -297,9 +307,29 @@ const workout = ref({
   user: 0,
 });
 
+
 const adding = ref(false);
 
+const addWorkout = () => {
+  workout.value.user = userLoggin.value.user.id;
+  workout.value.date = new Date(actualDate.value);
+  const formattedTimeValue = formatDuration(timeValue.value);
+  workout.value.time_value = formattedTimeValue;
+  patch("/workout/" + workout.value.id + '/', { body: workout.value }, true).then((res) => {
+    if(res.status > 300){
+      triggerError(res.data)
+    } else {
+      navRouter.push('/workout_show/' + workout.value.id)
+    }
+  });
+};
+
+const isTimeIsEmpty = () => {
+  return hours.value !== "" || minutes.value != "" || seconds.value != "";
+};
+
 const formatDuration = (time : any) => {
+  console.log(time)
   const [hours, minutes, seconds] = time
     .split(":")
     .map((part : any) => part.padStart(2, "0"));
@@ -313,24 +343,6 @@ const timeValue = computed(() => {
   return `${hours.value}:${minutes.value}:${seconds.value}`;
 });
 
-const addWorkout = () => {
-  adding.value = true;
-  workout.value.user = userLoggin.value.user.id;
-  workout.value.date = new Date(actualDate.value);
-  const formattedTimeValue = formatDuration(timeValue.value);
-  workout.value.time_value = formattedTimeValue;
-  post("/workout/", { body: workout.value }, true).then((res) => {
-    if(res.status > 300){
-      triggerError(res.data)
-    } else {
-      navRouter.push('/coaching')
-    }
-  });
-};
-
-const isTimeIsEmpty = () => {
-  return hours.value !== "" || minutes.value != "" || seconds.value != "";
-};
 
 const handleRange = (e: any) => {
   console.log(e.target.id);
@@ -369,6 +381,7 @@ const handleInput = (
       workout.value.physical_rpe = value;
       break;
     case "time":
+      console.log(value)
       workout.value.time_value = value;
       break;
     case undefined:
@@ -385,6 +398,32 @@ const toFrenchDate = () => {
   return formattedDate;
 };
 
+const loadWorkoutForDay = () => {
+
+  get(
+    "/workout/" + router.params.id,
+    { body: {} },
+    true
+  ).then((res) => {
+    if (res.status > 300) {
+      triggerError("Erreur à la récupération de l'entrainement");
+    } else {
+      workout.value = res;
+      const paramsDate = workout.value.date;
+      const date = new Date(paramsDate);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+      actualDate.value = formattedDate;
+      workout.value.date = formattedDate;
+      hours.value = workout.value.time_value.split(':')[0]
+      minutes.value = workout.value.time_value.split(':')[1]
+      seconds.value = workout.value.time_value.split(':')[2]
+    }
+  });
+}
+
 onIonViewWillEnter(async () => {
   workout.value.name = '';
   workout.value.workout_description = '';
@@ -393,16 +432,9 @@ onIonViewWillEnter(async () => {
   hours.value = '';
   minutes.value = '';
   seconds.value = '';
-  const paramsDate = router.params.date as string;
-  const date = new Date(paramsDate);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const formattedDate = `${year}-${month}-${day}`;
-  workout.value.date = formattedDate;
-  actualDate.value = formattedDate;
   const user = await store.get("user");
   userLoggin.value = JSON.parse(user);
   adding.value = false;
+  loadWorkoutForDay();
 });
 </script>

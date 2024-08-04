@@ -8,7 +8,7 @@
           <ion-label>Accueil</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="programs" @click="navigateTo('/programs')">
-          <ion-icon :icon="isRouteActive(['Program']) ? 'program' : 'program'"  />
+          <ion-icon :icon="isRouteActive(['Program']) ? 'program-selected' : 'program'"  />
           <ion-label>Programmes</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="exercises" @click="navigateTo('/exercises')">
@@ -16,7 +16,7 @@
           <ion-label>Bibliothèque</ion-label>
         </ion-tab-button>
         <ion-tab-button tab="coaching" @click="navigateTo('/coaching')">
-          <ion-icon style="color: white" :icon="isRouteActive(['Coaching']) ? 'trainer' : 'trainer'" />
+          <ion-icon style="color: white" :icon="isRouteActive(['Coaching', 'AddWorkout', 'ShowWorkout']) ? 'trainer-selected' : 'trainer'" />
           <ion-label>Coaching</ion-label>
 
         </ion-tab-button>

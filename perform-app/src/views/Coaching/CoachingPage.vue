@@ -4,8 +4,8 @@
       <div class="perform-page">
         <div>
           <div style="display: flex; justify-content: space-between">
-            <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
-              Mes entrainements
+            <h1 style="color: black; font-size: 20px;margin-top: 5px; margin-bottom: 10px">
+              Entrainements
             </h1>
             <div style="display: flex; align-items: center; justify-content: space-around;">
               <ion-button style="margin-right : 5px" @click="getUrlDate()">
@@ -18,8 +18,8 @@
           </div>
           <!-- Slider pour les jours de la semaine -->
           <!-- Affichage du mois en cours -->
-          <div style="text-align: center; margin-bottom: 10px;">
-            <h2>{{ currentMonth }}</h2>
+          <div style="text-align: center; margin-bottom: 0px;">
+            <h2 style="margin-bottom: 0px; margin-top:10px">{{ currentMonth }}</h2>
           </div>
 
           <swiper
@@ -51,7 +51,7 @@
           <div>
             <h2>{{ selectedDay.label }} {{ selectedDay.dayNumber }}</h2>
             <div v-for="workout of selectedWorkout">
-              <div class="workout_elem">
+              <div @click="router.push('/workout_show/'+workout.id)" class="workout_elem">
                 <h5 style="margin: 0px">{{ workout.name }}</h5>
                 <p>{{ new Date(workout.date).toLocaleDateString("fr") }}</p>
                 <p>{{ workout.workout_description }}</p>
@@ -161,8 +161,8 @@ const numWeeks = 52;
 
 const updateCurrentMonth = () => {
   if (weeks.value.length > 0) {
-    const firstVisibleDate = weeks.value[0].fullDate;
-    currentMonth.value = firstVisibleDate.toLocaleDateString("fr-FR", {
+    console.log(selectedDay.value)
+    currentMonth.value = selectedDay.value.fullDate.toLocaleDateString("fr-FR", {
       month: "long",
       year: "numeric",
     });
@@ -217,6 +217,7 @@ const selectDay = (day) => {
   nextTick(() => {
     loadWorkoutForDay();
   });
+  updateCurrentMonth()
 };
 
 const onSlideChange = (swiper) => {
@@ -243,6 +244,7 @@ const closeCalendarModal = () => {
 };
 
 const onDateSelected = async (day) => {
+  
   let selectedDate;
   if(day.date){
     selectedDate = new Date(day.date);
@@ -284,14 +286,14 @@ onIonViewWillEnter(() => {
 <style scoped>
 .day-card {
   text-align: center;
-  height: 80px; /* Fixe la hauteur de chaque jour */
+  height: 60px; /* Fixe la hauteur de chaque jour */
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   background-color: var(--primary-blue);
   color: white;
-  width: calc(100% - 13px); /* Ajuste la largeur pour inclure l'espace */
+  width: calc(100% - 5px); /* Ajuste la largeur pour inclure l'espace */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   cursor: pointer;

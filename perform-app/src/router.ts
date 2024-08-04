@@ -84,15 +84,24 @@ const routes: Array<RouteRecordRaw> = [
         name: "Coaching",
         component: () => import("./views/Coaching/CoachingPage.vue")
       },
-      
       {
         path: "workout_add/:date",
         name: "WorkoutAdd",
         component: () => import("./views/Coaching/AddWorkoutPage.vue")
       },
       {
+        path: "workout_edit/:id",
+        name: "WorkoutEdit",
+        component: () => import("./views/Coaching/EditWorkoutPage.vue")
+      },
+      {
+        path: "workout_show/:id",
+        name: "ShowWorkout",
+        component: () => import("./views/Coaching/ShowWorkoutPage.vue")
+      },
+      {
         path: "programs",
-        name: "Programs",
+        name: "Program",
         component: () => import("./views/Programs/ProgramsPage.vue")
       },
       {

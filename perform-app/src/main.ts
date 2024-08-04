@@ -34,7 +34,9 @@ import homeSelected from './assets/icons/HomeSelected.svg';
 import exercise from './assets/icons/Exercices.svg';
 import exerciseSelected from './assets/icons/ExercicesSelected.svg';
 import trainer from './assets/icons/Personal Trainer.svg'
+import trainerSelected from './assets/icons/PersonalTrainerFill.svg'
 import program from './assets/icons/Programs.svg'
+import programSelected from './assets/icons/ProgramsFill.svg'
 
 //Vuetify
 import 'vuetify/styles'
@@ -56,7 +58,9 @@ addIcons({
     'home-selected': homeSelected,
     'exercise-selected': exerciseSelected,
     'trainer': trainer,
+    'trainer-selected': trainerSelected,
     'program': program,
+    'program-selected': programSelected,
 });
 
 export default createVuetify({

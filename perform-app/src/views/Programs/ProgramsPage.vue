@@ -30,7 +30,7 @@
 </style>
 
 <template>
-  <ion-page>
+  <ion-page data-page="Program">
     <ion-content>
       <div class="perform-page">
         <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonContent, IonPage } from  "@ionic/vue";
+import { IonContent, IonPage, IonChip } from  "@ionic/vue";
 import "@/assets/base.css";
 import "@/assets/main.css";
 import { ref } from "vue";
