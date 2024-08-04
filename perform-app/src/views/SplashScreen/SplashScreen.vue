@@ -16,25 +16,23 @@
         />
       </div>
     </ion-content>
-  </ion-page>
+  </ion-page> 
 </template>
+
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUnmounted } from "vue";
 import { IonContent, onIonViewWillEnter, IonPage } from "@ionic/vue";
 import { store } from "../../store/store";
 import router from "../../router"
+import { App } from '@capacitor/app';  // Import correct
 
 const userLogin = ref("");
-
-const logo = <any|HTMLElement>ref(null);
-
+const logo = ref<HTMLElement | null>(null);
 const topCss = ref("");
 const logoWidth = ref("");
 
 const checkUserStatus = async () => {
-  //const isLoggedIn = store.state.isLoggedIn; // Exemple de vérification de l'état de connexion
   await store.set("hasLaunched", true);
-
   if (userLogin.value !== "") {
     router.push("/home");
   } else {
@@ -43,38 +41,62 @@ const checkUserStatus = async () => {
 };
 
 const handleAnimationEnd = () => {
-  logo.value.style.top = topCss.value;
-  console.log(logo.value.style)
+  logo.value!.style.top = topCss.value;
   checkUserStatus();
 };
 
+// Gestion de la logique de réinitialisation lors de la fermeture
+const resetVariableOnColdStart = () => {
+  console.log('local storage ', localStorage.getItem('appInBackground'))
+  if (!localStorage.getItem('appInBackground')) {
+    store.set("hasLaunched", false);
+  }
+};
+
+const setAppInBackgroundFlag = () => {
+  localStorage.setItem('appInBackground', 'true');
+};
+
+const clearAppInBackgroundFlag = () => {
+  localStorage.removeItem('appInBackground');
+};
+
 onIonViewWillEnter(() => {
-  console.log('oui ')
-})
+  console.log('Page is entering');
+});
 
 onMounted(async () => {
+  resetVariableOnColdStart(); // Vérifier si c'est un cold start
+
   const hasLaunched = await store.get("hasLaunched");
   const user = await store.get("user");
   userLogin.value = JSON.stringify(await user);
   console.log(hasLaunched)
+
   if (userLogin.value == '""' || userLogin.value == "null") {
     topCss.value = "8%";
     logoWidth.value = "250px";
-    console.log(topCss.value);
   } else {
     topCss.value = "50px";
     logoWidth.value = "200px";
-    console.log(topCss.value);
   }
-  // Mettre à jour la variable CSS
   document.documentElement.style.setProperty("--topCss", topCss.value);
   document.documentElement.style.setProperty("--logoWidth", logoWidth.value);
+
   if (!hasLaunched) {
     await store.set("hasLaunched", false);
-    // Afficher le splash screen seulement lors du premier lancement
   } else {
     checkUserStatus(); // Sauter le splash screen si l'app a déjà été lancée
   }
+
+  // Écoute des événements pause et resume
+  App.addListener('pause', setAppInBackgroundFlag);
+  App.addListener('resume', clearAppInBackgroundFlag);
+});
+
+onUnmounted(() => {
+  // Retirer les écouteurs pour éviter les fuites de mémoire
+  App.removeAllListeners();
 });
 </script>
 

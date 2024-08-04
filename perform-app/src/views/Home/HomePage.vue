@@ -538,6 +538,14 @@ const postWellness = async () => {
       wellness.value = response;
       wellnessNot.value = false;
       modal.value.$el.dismiss();
+      setTimeout(() => {
+        if(homeChart.value) {
+        homeChart.value.destroy()
+      }
+      getWellness();
+      createChart(weekWellnessTemp.value, 'home-chart', homeChart);
+        
+      }, 200)
     }
   } else {
     triggerError("Erreur à l'ajout du wellness");
@@ -948,7 +956,14 @@ onIonViewWillEnter(async () => {
     id: 0,
   };
   await loadUser();
-  getWellness();
+  getWellness().then(() => {
+    console.log(wellnessNot.value)
+  if(!wellnessNot.value ) {
+    setTimeout(() => {
+      createChart(weekWellnessTemp.value, 'home-chart', homeChart);
+    }, 500)
+  }
+  });
 
   document.querySelectorAll(".custom_nav").forEach((elem) => {
     const shadowRoot = elem.shadowRoot;
@@ -958,10 +973,8 @@ onIonViewWillEnter(async () => {
       shadowRoot.appendChild(style);
     }
   });
-  setTimeout(() => {
 
-    createChart(weekWellnessTemp.value, 'home-chart', homeChart);
-  }, 500)
+ 
 });
 
 const getWellness = async () => {
@@ -975,6 +988,7 @@ const getWellness = async () => {
   } else {
     res.forEach((WellnessItem: any) => {
       if (WellnessItem.date === setLongDate(new Date())) {
+        console.log(WellnessItem.sleep )
         if (WellnessItem.sleep !== null) {
           wellnessNot.value = false;
           wellness.value = WellnessItem;

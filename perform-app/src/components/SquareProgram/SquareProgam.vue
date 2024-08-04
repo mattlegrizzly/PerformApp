@@ -83,11 +83,8 @@ import {
 import "@/assets/base.css";
 import "@/assets/main.css";
 import { defineProps } from "vue";
-import { useRouter } from "vue-router";
 
 const props = defineProps(["program"]);
 
-const router = useRouter();
 
-const goBack = () => router.push("/exercises");
 </script>

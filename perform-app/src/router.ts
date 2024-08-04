@@ -75,11 +75,21 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("./views/Exercises/ViewPage.vue")
       },
       {
+        path: 'template',
+        name :'template',
+        component: () => import("./views/TemplatePage.vue")
+      },
+      {
         path: "coaching",
         name: "Coaching",
         component: () => import("./views/Coaching/CoachingPage.vue")
       },
-
+      
+      {
+        path: "workout_add/:date",
+        name: "WorkoutAdd",
+        component: () => import("./views/Coaching/AddWorkoutPage.vue")
+      },
       {
         path: "programs",
         name: "Programs",

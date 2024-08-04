@@ -300,12 +300,12 @@ import "perform-body-component-lib/style.css";
 import "./index.css";
 
 import { useErrorHandler } from "../../lib/useErrorHandler";
+const { triggerError } = useErrorHandler() as any;
 
 const modalSports = ref(null) as any;
 const modalMaterial = ref(null) as any;
 const videoController = ref(null) as any;
 
-const { triggerError } = useErrorHandler() as any;
 
 const router = useRoute();
 const api_url = import.meta.env.VITE_API_URL;

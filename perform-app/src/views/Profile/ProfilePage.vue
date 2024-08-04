@@ -196,6 +196,7 @@ import {
   lockClosedOutline
 } from "ionicons/icons";
 
+
 const api = import.meta.env.VITE_API_URL;
 const user = ref({
   age: 0,

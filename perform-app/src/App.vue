@@ -18,7 +18,7 @@ import { ref, provide } from 'vue';
 //@ts-expect-error
 import {useKeyboardControl} from './composables/KeyboardControl.js'
 
-useKeyboardControl()
+//useKeyboardControl()
 
 
 const showToast = ref(false);

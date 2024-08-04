@@ -18,7 +18,6 @@
 }
 #home-ion-page::part(scroll){
   overscroll-behavior: contain;
-  touch-action: none;
 }
 
 .infoIcon {

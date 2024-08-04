@@ -127,6 +127,12 @@ ion-img::part(image) {
     object-fit: cover;
 }
 
+
+.filter-div .input-label-placement-floating.sc-ion-input-md-h .label-text-wrapper.sc-ion-input-md {
+    -webkit-transform: none;
+    transform: none;
+}
+
 .input_injurie ion-input {
     width: auto;
     height: 40px;
@@ -151,11 +157,6 @@ ion-img::part(image) {
     align-items: center;
     border-radius: 5px;
     border: 1px solid #d4d4d4;
-}
-
-.filter-div .input-label-placement-floating.sc-ion-input-md-h .label-text-wrapper.sc-ion-input-md {
-    -webkit-transfor: none;
-    transform: none;
 }
 
 .input_injurie ion-input {

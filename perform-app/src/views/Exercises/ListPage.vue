@@ -8,7 +8,11 @@ ion-modal {
 }
 
 .filter-ion-chip {
-  margin-bottom: 10px; min-height: 0px !important; margin-right: 5px; height: 20px;
+  margin-bottom: 10px;
+  min-height: 0px !important;
+  pointer-events: auto; /* Pour que les chip restent cliquables */
+  margin-right: 5px;
+  height: 20px;
   font-size: 10px !important;
 }
 
@@ -119,36 +123,88 @@ ion-modal {
         </div>
         <div class="displayFilter" v-if="isFilter()">
           <p>Filtres actifs :</p>
-          <div class="displayFilterContainer" :class="showFilterResume ? 'showFullDisplayContainer': ''">
-            <div
-              class="displayFilterChipContainer"
-              ref="chipFilterContainer"
-            >
+          <div
+            class="displayFilterContainer"
+            :class="showFilterResume ? 'showFullDisplayContainer' : ''"
+          >
+            <div class="displayFilterChipContainer" ref="chipFilterContainer">
               <ion-chip
-                :icon="close"
                 v-for="muscle of muscle_selected"
                 class="filter-ion-chip"
                 color="primary"
-                >{{ muscle.zone.name }}</ion-chip
               >
+                <ion-icon
+                  :icon="close"
+                  @click="
+                    (event) => {
+                      addMaterialFilter(
+                        muscle.zone.code,
+                        muscle_selected,
+                        muscles,
+                        'remove'
+                      ).then(() => {
+                        filterExercice();
+                      });
+                    }
+                  "
+                ></ion-icon>
+                <ion-label>{{ muscle.zone.name }}</ion-label>
+              </ion-chip>
+
               <ion-chip
-                :icon="close"
                 v-for="sport of sports_selected"
+                :key="sport.sport.id"
                 class="filter-ion-chip"
                 color="primary"
-                >{{ sport.sport.name }}</ion-chip
               >
+                <ion-icon
+                  :icon="close"
+                  @click="
+                    (event) => {
+                      event.stopPropagation();
+                      addMaterialFilter(
+                        sport.sport.id,
+                        sports_selected,
+                        sports,
+                        'remove'
+
+                      );
+                      filterExercice();
+                    }
+                  "
+                ></ion-icon>
+                <ion-label>{{ sport.sport.name }}</ion-label>
+              </ion-chip>
+
               <ion-chip
-                :icon="close"
                 v-for="material of materials_selected"
+                :key="material.material.id"
                 class="filter-ion-chip"
                 color="primary"
-                >{{ material.material.name }}</ion-chip
               >
+                <ion-icon
+                  :icon="close"
+                  @click="
+                    (event) => {
+                      event.stopPropagation();
+                      addMaterialFilter(
+                        material.material.id,
+                        materials_selected,
+                        materials,
+                        'remove'
+
+                      );
+                      filterExercice();
+                    }
+                  "
+                ></ion-icon>
+                <ion-label>{{ material.material.name }}</ion-label>
+              </ion-chip>
             </div>
+
             <ion-icon
-            @click="resumeFilter"
-            v-if="showIconResume"
+              @click="resumeFilter"
+              v-if="showIconResume"
               :icon="showFilterResume ? chevronUpOutline : chevronDownOutline"
             />
           </div>
@@ -229,11 +285,20 @@ ion-modal {
                   cols="12"
                   sm="4"
                 >
-                  <v-card @click="addMaterialFilter(material.id)" :style="
-                        findMaterial(material)
-                          ? 'box-shadow:inset 0px 0px 0px 2px var(--primary-blue)'
-                          : ''
-                      ">
+                  <v-card
+                    @click="
+                      addMaterialFilter(
+                        material.id,
+                        materials_selected,
+                        materials
+                      )
+                    "
+                    :style="
+                      findMaterial(material)
+                        ? 'box-shadow:inset 0px 0px 0px 2px var(--primary-blue)'
+                        : ''
+                    "
+                  >
                     <v-img
                       :src="
                         material.pictures
@@ -399,7 +464,13 @@ import {
 } from "@ionic/vue";
 import { get } from "../../lib/callApi";
 import { ref, watch } from "vue";
-import { chevronForwardOutline, close, trashBinSharp, chevronDownOutline, chevronUpOutline  } from "ionicons/icons";
+import {
+  chevronForwardOutline,
+  close,
+  trashBinSharp,
+  chevronDownOutline,
+  chevronUpOutline,
+} from "ionicons/icons";
 import "./index.css";
 import { useRoute, useRouter } from "vue-router";
 import { store } from "../../store/store";
@@ -473,19 +544,26 @@ const getThumbnail = (path: string) => {
 };
 
 const resumeFilter = () => {
-  showFilterResume.value = !showFilterResume.value
-}
+  showFilterResume.value = !showFilterResume.value;
+};
 
 watch(
-  () => muscle_selected.value.length | materials_selected.value.length | sports_selected.value.length,
+  () =>
+    muscle_selected.value.length |
+    materials_selected.value.length |
+    sports_selected.value.length,
   () => {
-    setTimeout(() => { 
-      if(chipFilterContainer && chipFilterContainer.value.clientHeight > 43) {
+    setTimeout(() => {
+      if (
+        chipFilterContainer &&
+        chipFilterContainer.value.clientHeight &&
+        chipFilterContainer.value.clientHeight > 43
+      ) {
         showIconResume.value = true;
       } else {
         showIconResume.value = false;
       }
-    },100)
+    }, 100);
   }
 );
 
@@ -584,18 +662,40 @@ const setMuscleSelectedView = (key: string, action: string) => {
   }
 };
 
-const addMaterialFilter = (id: any) => {
+const addMaterialFilter = async (id: any, array: any, constArray: any, remove : string = 'add') => {
+  
   const findKey =
-    materials_selected.value.filter(function (element: any) {
+    array.filter(function (element: any) {
+      if (element.zone) {
+        console.log(element)
+        return Number(element.zone.code) === id;
+      } else if (element.material) {
+        return Number(element.material.code) === id;
+      } else if (element.sport) {
+        return Number(element.sport.code) === id;
+      } else {
+      }
       return Number(element.material.id) === id;
     }).length == 0;
-  if (findKey) {
-    const materialFind = materials.value.find((el) => el.id == id) as Material;
-    materials_selected.value.push({ material: materialFind });
+    console.log(findKey)
+  if (findKey && remove == "add") {
+    const materialFind = constArray.find((el) => el.id == id) as any;
+    array.push({ material: materialFind });
   } else {
-    materials_selected.value.map((elem, index) => {
-      if (elem.material.id == id) {
-        materials_selected.value.splice(index, 1);
+    array.map((elem, index) => {
+      if (elem.zone) {
+        if (elem.zone.code == id) {
+          array.splice(index, 1);
+        }
+      } else if (elem.material) {
+        if (elem.material.id == id) {
+          array.splice(index, 1);
+        }
+      } else if (elem.sport) {
+        if (elem.sport.id == id) {
+          array.splice(index, 1);
+        }
+      } else {
       }
     });
   }
@@ -778,7 +878,7 @@ const handleSearchInput = async (event: any) => {
 };
 
 onIonViewWillEnter(async () => {
-  console.log(chipFilterContainer.value)
+  console.log(chipFilterContainer.value);
   muscle_selected.value = [];
   store.get("user").then((res) => {
     user_id.value = JSON.parse(res).user.id;

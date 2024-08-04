@@ -63,8 +63,7 @@ ion-modal {
     <ion-content id="list-records">
       <div
         class="perform-page"
-        style="display: flex; flex-direction: column; 
-    height: calc(100% - 20px);"
+        style="display: flex; flex-direction: column; "
       >
         <div style="display: flex; justify-content: space-between">
           <NavButton url="records" text="Retour" back="back" />
@@ -228,15 +227,8 @@ ion-modal {
         <div v-if="record.performances.length <= 0">
           <h2 style="text-align: center">Saisissez votre premier record !</h2>
         </div>
-        <div
-          v-else
-          style="
-            flex: 1;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-          "
-        >
+        </div>
+        <div v-if="record.performances.length > 0" style="margin: 20px; padding: 10px ; border-radius : 10px ; border : solid 0.5px #eaeaea;  position: relative; z-index: 1;box-shadow: silver 0px 10px 20px 0px">
           <canvas
           v-if="record.units !=='free'"
             id="chartStats"
@@ -245,8 +237,19 @@ ion-modal {
             min="0"
             max="10"
           ></canvas>
+        </div>
+
+        <div
+        v-if="record.performances.length > 0"
+          style="margin: 20px; padding: 10px ; border-radius : 10px ; border : solid 0.5px #eaeaea;  z-index: 1000; box-shadow: silver 0px 10px 20px 0px;
+            flex: 1;
+            overflow: scroll;
+            height: calc(100vh - 520px);
+            display: flex;
+            flex-direction: column;"
+        >
           <h3>Mes records passés</h3>
-          <div style="display: flex; justify-content: space-between;">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid silver; padding-bottom: 10px; margin-bottom: 5px">
               <p>Records</p>
               <p>Date</p>
           </div>
@@ -278,7 +281,6 @@ ion-modal {
             </div>
           </div>
         </div>
-      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -519,29 +521,21 @@ const createChart = () => {
             },
           },
         },
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              font: {
+                size: 12,
+              },
+              boxWidth: 30,
+              boxHeight: 1,
+            },
+          },
+        },
       },
     })
   );
-};
-
-const updateChart = () => {
-  if (!chartInstance) return;
-
-  const labels = record.value.performances.map((performance : any) =>
-    new Date(performance.date_record).toLocaleDateString()
-  );
-  const data = record.value.performances.map((performance : any) => {
-    const timeParts = performance.time_value.split(":");
-    return (
-      parseInt(timeParts[0]) * 3600 +
-      parseInt(timeParts[1]) * 60 +
-      parseInt(timeParts[2])
-    );
-  });
-
-  chartInstance.data.labels = labels;
-  chartInstance.data.datasets[0].data = data;
-  chartInstance.update();
 };
 
 const cleanValues = () => {

@@ -63,8 +63,6 @@ import "@/assets/main.css";
 import { ref } from "vue";
 import SliderComponents from "../../components/SliderComponents/SliderComponents.vue";
 
-import { useRouter } from "vue-router";
-
 const sports = ref(['CrossFit', 'Pilate', 'Fitness', 'Boxe'])
 
 const programs = ref([
@@ -177,9 +175,5 @@ const programs2 = ref(
 ]
 
 )
-
-const router = useRouter()
-
-const goBack = () => router.push('/exercises')
 
 </script>
