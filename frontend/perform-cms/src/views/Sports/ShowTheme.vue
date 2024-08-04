@@ -101,6 +101,16 @@
 </template>
 
 <script setup lang="ts">
+interface RecordItem {
+  id: number;
+  name: string;
+  order: number;
+  // autres propriétés éventuelles
+}
+
+type RecordMap = {
+  [category: string]: RecordItem[];
+}
 import NavMenu from '@/components/NavMenu/NavMenu.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -141,7 +151,7 @@ const handleDialogClosed = () => {
 }
 
 // Fonction pour mettre à jour l'ordre des éléments après drag-and-drop
-const updateOrder = (category: string) => {
+const updateOrder = (category:  string | number) => {
   if (!record.value[category] || !recordConst.value[category]) return
 
   const modifiedRecords: RecordItem[] = []
@@ -179,22 +189,25 @@ const updateRecord = async (record: RecordItem) => {
 }
 
 // Fonction pour déplacer un élément vers le haut
-const moveUp = (index: number, items: RecordItem[], category: string) => {
+const moveUp = (index: number, items: RecordItem[], category:  string | number) => {
+  let cat = category as string;
+
   if (index > 0) {
     const temp = items[index]
     items.splice(index, 1)
     items.splice(index - 1, 0, temp)
-    updateOrder(category)
+    updateOrder(cat)
   }
 }
 
 // Fonction pour déplacer un élément vers le bas
-const moveDown = (index: number, items: RecordItem[], category: string) => {
+const moveDown = (index: number, items: RecordItem[], category: string | number) => {
+  let cat = category as string;
   if (index < items.length - 1) {
     const temp = items[index]
     items.splice(index, 1)
     items.splice(index + 1, 0, temp)
-    updateOrder(category)
+    updateOrder(cat)
   }
 }
 
