@@ -101,6 +101,10 @@ onMounted(() => {
   }
   getSports()
 })
+
+const emitClosed =() => {
+  getSports()
+}
 </script>
 <style lang=""></style>
 
@@ -129,6 +133,9 @@ onMounted(() => {
         :contentTable="sports"
         :limitData="2"
         nav="sports"
+        :delete="true"
+        @deleteElement="emitClosed()"
+        deleteList="sports"
       />
       <PaginationComponent
         :setPage="setPage"

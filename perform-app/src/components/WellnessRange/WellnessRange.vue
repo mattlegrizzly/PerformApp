@@ -1,6 +1,7 @@
 <template>
-    <div :id="id">
+    <div class="range_component" :id="id">
         <div class="range_div">
+            <ion-label style="text-align: center; width: 100%; display: block;" class="title_range">{{ title }}</ion-label>
             <div class="range_container">
                 <p>{{ descriptionStart }}</p>
                 <p>{{ descriptionEnd }}</p>
@@ -10,7 +11,7 @@
             <ion-range :value="value" :aria-label="title" :ticks="true" :snaps="true" :min="min" :max="max"
                 :disabled="disabled" @ionChange="handleChange"></ion-range>
         </div>
-        <ion-label style="text-align: center; width: 100%; display: block;" class="title_range">{{ title }}</ion-label>
+        
     </div>
 </template>
 
@@ -62,10 +63,11 @@ const handleChange = (event: any) => {
 </script>
 
 <style scoped>
-.range_div {
+.range_component {
+    padding-bottom: 15px;
     margin-bottom: 10px;
+    border-bottom: solid 1px lightgray;
 }
-
 .range_container {
     display: flex;
     justify-content: space-between;

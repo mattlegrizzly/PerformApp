@@ -1,16 +1,13 @@
 .item-table {
     transition: 0.3s;
+    width: 100%;
   }
   
   .item-table:hover {
     transition: 0.3s;
     background-color: rgb(246, 246, 246);
   }
-  
-  .item-table {
-    transition: 0.3s;
-  }
-  
+
   .item-table:hover td {
     text-decoration: underline;
     transition: 0.3s;

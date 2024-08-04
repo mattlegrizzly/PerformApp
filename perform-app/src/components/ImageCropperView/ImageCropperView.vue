@@ -3,7 +3,7 @@
     <div class="modal-content">
       <h2>Recadrer votre photo</h2>
         <img v-if="imageSrc" :src="imageSrc" ref="image" class="cropper-image" />
-      <ion-button @click="cropAndCompressImage">Recadrer et Compresser</ion-button>
+      <ion-button style="margin-top: 20px" @click="cropAndCompressImage">Recadrer et Compresser</ion-button>
     </div>
   </ion-modal>
 </template>
@@ -39,22 +39,26 @@ function initializeCropper() {
   if (imageElement) {
     cropper.value = new Cropper(imageElement, {
       aspectRatio: 1,
-      viewMode: 1,
       guides: false,
       center: true,
       highlight: false,
-      scalable: true,
-      cropBoxResizable: false,
       toggleDragModeOnDblclick: false,
       background: false,
       zoomOnTouch: true,
       zoomOnWheel: true,
       checkCrossOrigin: true,
-      cropBoxMovable: true,
-      zoomable: true,
       movable: true,
       responsive: true,
-      transition: false
+      transition: false,
+      cropBoxResizable: true, // Désactive le redimensionnement en cliquant
+  cropBoxMovable: true,    // Permet de déplacer la cropper box
+  zoomable: false,          // Permet de zoomer
+  scalable: true,          // Permet de redimensionner
+  viewMode: 1,             // Ajustez selon vos besoins
+  autoCropArea: 1,         // Ajustez selon vos besoins
+  minContainerHeight: 500,
+  minContainerHeight: 300,
+  dragMode: 'move'         // Permet de déplacer l'image
     });
   }
 }

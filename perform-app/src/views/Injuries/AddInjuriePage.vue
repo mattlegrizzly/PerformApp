@@ -1,5 +1,3 @@
-<style scoped></style>
-
 <template>
   <ion-page data-page="add-injuries">
     <ion-content>
@@ -103,9 +101,9 @@ import router from "../../router";
 
 import { useErrorHandler } from '../../lib/useErrorHandler';
 
+const { triggerError } = useErrorHandler() as any;
 const errorAdd = ref(false); 
 
-const { triggerError } = useErrorHandler() as any;
 
 const nameInjury = ref("");
 const description = ref("");
@@ -137,7 +135,7 @@ const injuries_state = ref([
   },
 ]);
 
-watch(nameInjury, (newValue, oldValue) => {
+watch(nameInjury, () => {
   if(nameInjury.value.length > 0) {
     nameInjury.value = nameInjury.value[0].toUpperCase() + nameInjury.value.slice(1)
   }
@@ -153,7 +151,8 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
   let value = valuePass as string;
   switch (name) {
     case "name":
-      nameInjury.value = value[0].toUpperCase() + value.slice(1);
+      if(value[0]) nameInjury.value = value[0].toUpperCase() + value.slice(1);
+      else nameInjury.value = value
       break;
     case "description":
       description.value = value;

@@ -2,8 +2,8 @@
   <ion-page data-page="ExerciseView" style="background-color: white">
     <ion-content id="view_page">
       <div class="perform-page">
-        <div style="display: flex; justify-content: space-between">
-          <NavButton url="/exercises" text="Retour" />
+        <div style="display: flex; justify-content: space-between; margin-bottom : 15px">
+          <NavButton url="/exercises" text="Retour" back="back" />
           <ion-icon
             @click="setFav"
             :icon="is_fav ? heart : heartOutline"
@@ -300,12 +300,12 @@ import "perform-body-component-lib/style.css";
 import "./index.css";
 
 import { useErrorHandler } from "../../lib/useErrorHandler";
+const { triggerError } = useErrorHandler() as any;
 
 const modalSports = ref(null) as any;
 const modalMaterial = ref(null) as any;
 const videoController = ref(null) as any;
 
-const { triggerError } = useErrorHandler() as any;
 
 const router = useRoute();
 const api_url = import.meta.env.VITE_API_URL;

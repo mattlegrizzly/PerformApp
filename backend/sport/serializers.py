@@ -1,17 +1,23 @@
 from rest_framework import serializers
-from .models import Sport, SportsUser, RecordsSport, RecordsSportUser
+from .models import Sport, SportsUser, RecordsSport, RecordsSportUser, RecordsGroupSport
 from users2.permissions import UserViewSetPermissions
 
 class SportSerializer(serializers.ModelSerializer):
     permission_classes = [UserViewSetPermissions]
     class Meta:
         model = Sport
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'isTheme']
+
+class SportSerializer(serializers.ModelSerializer):
+    permission_classes = [UserViewSetPermissions]
+    class Meta:
+        model = Sport
+        fields = ['id', 'name', 'isTheme']
 
 class SportsUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = SportsUser
-        fields = ['user', 'sport']
+        fields = ['user', 'sport',]
 
 class SportsDetailedUserSerializer(serializers.ModelSerializer):
     sport = SportSerializer()
@@ -19,22 +25,30 @@ class SportsDetailedUserSerializer(serializers.ModelSerializer):
         model = SportsUser
         fields = ["id", 'sport']
 
+class RecordsGroupSportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecordsGroupSport
+        fields = ['id', 'name', 'sport', 'is_general']
+
 class RecordsSportSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecordsSport
-        fields = ['id', 'sport', 'units', 'name']
+        fields = ['id', 'sport', 'units', 'order', 'name', 'groups', 'general']
 
 class RecordsSportUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecordsSportUser
-        fields = ['record', 'user', 'time_value', 'weight_value', 'created_at', 'updated_at', 'date_record']
+        fields = ['id', 'record', 'user', 'time_value', 'record_value', 'free_value', 'created_at', 'updated_at', 'date_record']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if instance.record.units == 'time':
-            representation.pop('weight_value')
-        elif instance.record.units == 'weight':
+            representation.pop('record_value')
+        elif instance.record.units == 'weight' or instance.record.units == 'points' or instance.record.units == 'distance_m' or instance.record.units == 'distance_km':
             representation.pop('time_value')
+        elif instance.record.units == 'free':
+            representation.pop('time_value')
+            representation.pop('record_value')
         return representation
 
 class RecordsSportDetailedUserSerializer(serializers.ModelSerializer):
@@ -43,12 +57,15 @@ class RecordsSportDetailedUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RecordsSportUser
-        fields = ['id', 'record', 'user', 'time_value', 'weight_value', 'created_at', 'updated_at']
+        fields = ['id', 'record', 'user', 'time_value', 'free_value','record_value', 'created_at', 'updated_at']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if instance.record.units == 'time':
-            representation.pop('weight_value')
-        elif instance.record.units == 'weight':
+            representation.pop('record_value')
+        elif instance.record.units == 'weight' or instance.record.units == 'points' or instance.record.units == 'distance_m' or instance.record.units == 'distance_km':
             representation.pop('time_value')
+        elif instance.record.units == 'free':
+            representation.pop('time_value')
+            representation.pop('record_value')
         return representation

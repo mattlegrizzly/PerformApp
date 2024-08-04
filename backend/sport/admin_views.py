@@ -15,6 +15,7 @@ class AdminSportViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
     filter_backends = [filters.SearchFilter]
     search_fields = ["name"]
+    
     @extend_schema(
         tags=['Admin - Sport'],
         responses={200: "OK"}
@@ -30,11 +31,23 @@ class AdminSportViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     @extend_schema(
+    tags=['Admin - Sport'],
+    responses={200: "OK"}
+    )
+    def get_queryset(self):
+        # Si l'action en cours est 'retrieve', retourner un queryset sans filtre
+        if self.action == 'retrieve':
+            return Sport.objects.all()
+
+        # Sinon, utiliser le queryset filtré par défaut
+        return Sport.objects.filter(isTheme=False).all()
+    
+    @extend_schema(
         tags=['Admin - Sport'],
         responses={200: "OK"}
     )
-    def get_queryset(self):
-        queryset = Sport.objects.all()
+    def get_queryset_theme(self):
+        queryset = Sport.objects.filter(isTheme=True).all()
         return queryset
 
     @extend_schema(
@@ -42,33 +55,57 @@ class AdminSportViewSet(viewsets.ModelViewSet):
         responses={200: "OK"}
     )
     def get_latest(self):
-        queryset = Sport.objects.all().order_by("created_at")[:5]
+        queryset = Sport.objects.filter(isTheme=False).all().order_by("created_at")[:5]
         return queryset
 
     @extend_schema(
         tags=['Admin - Sport'],
         responses={200: "OK"}
     )
-    def list(self, request, *args, **kwargs):
-        # Appliquer l'ordre initial par id si nécessaire
-        queryset = get_ordered_queryset(self.queryset, request.query_params)
+    @action(detail=False, methods=['get'], url_path="all_theme")
+    def all_theme(self, request):
+        sports_with_theme = self.get_queryset_theme()
+        serializer = self.get_serializer(sports_with_theme, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @extend_schema(
+        tags=['Admin - Sport'],
+        responses={200: "OK"}
+    )
+    @action(detail=False, methods=['get'], url_path="theme")
+    def list_theme(self, request, *args, **kwargs):
+        queryset = get_ordered_queryset(self.get_queryset_theme(), request.query_params)
 
-        # Modifier la taille de la pagination si un paramètre itemsPerPage est fourni
         if request.query_params.get("itemsPerPage"):
             self.pagination_class.page_size = request.query_params.get("itemsPerPage")
 
-        # Filtrer le queryset
         queryset = self.filter_queryset(queryset)
-
-        # Paginer le queryset trié
         page = self.paginate_queryset(queryset)
-        
-        # Si la pagination est activée, sérialiser la page paginée
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        # Sinon, sérialiser le queryset complet
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @extend_schema(
+        tags=['Admin - Sport'],
+        responses={200: "OK"}
+    )
+    def list(self, request, *args, **kwargs):
+        queryset = get_ordered_queryset(self.get_queryset(), request.query_params)
+
+        if request.query_params.get("itemsPerPage"):
+            self.pagination_class.page_size = request.query_params.get("itemsPerPage")
+
+        queryset = self.filter_queryset(queryset)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -83,10 +120,17 @@ class AdminSportViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     @extend_schema(
-        tags=['Admin - Sport'],
-        responses={200: "OK"}
+    tags=['Admin - Sport'],
+    responses={200: "OK"}
     )
     def retrieve(self, request, *args, **kwargs):
+        # Utilisez un queryset sans filtre sur `isTheme` pour cette action
+        queryset = Sport.objects.all()
+        
+        # Surcharge de get_object pour utiliser le queryset sans filtre
+        self.queryset = queryset
+
+        # Appel de la méthode retrieve de la classe parente
         return super().retrieve(request, *args, **kwargs)
 
     @extend_schema(
@@ -291,10 +335,22 @@ class AdminRecordsSportViewSet(viewsets.ModelViewSet):
         sport_id = request.query_params.get('sport_id')
         if not sport_id:
             return Response({"detail": "sport_id query parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        queryset = self.get_queryset().filter(sport_id=sport_id)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # Filtrer les enregistrements par sport
+        queryset = self.get_queryset().filter(sport_id=sport_id).order_by('groups__is_general', 'groups__name', 'order')
+
+        # Organiser les enregistrements par groupes
+        records_by_group = {}
+        for record in queryset:
+            group_name = record.groups.name if record.groups else "General"
+
+            if group_name not in records_by_group:
+                records_by_group[group_name] = []
+
+            record_data = self.get_serializer(record).data
+            records_by_group[group_name].append(record_data)
+
+        return Response(records_by_group, status=status.HTTP_200_OK)
 
 #------------------ADMIN_USER_RECORDS_SPORTS------------------
 # Admin ViewSet

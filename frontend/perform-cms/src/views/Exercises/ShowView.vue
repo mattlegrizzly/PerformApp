@@ -6,6 +6,7 @@ import { useRoute } from 'vue-router'
 import { onMounted } from 'vue'
 import NavButton from '@/components/NavButton/NavButton.vue'
 import AlertComponents from '@/components/AlertComponents/AlertComponents.vue'
+import DeleteModalComponent from '@/components/DeleteModalComponent/DeleteModalComponent.vue'
 //@ts-expect-error
 import {BodyComponent} from 'perform-body-component-lib'
 import "perform-body-component-lib/style.css";
@@ -93,12 +94,22 @@ onMounted(() => {
         :back="back"
         prepend-icon="mdi-arrow-left"
       />
-      <NavButton
-        class="editBtn"
-        :text="'Modifier'"
-        :url="'/exercises/edit/' + router.params.exercise_id"
-        prepend-icon="mdi-pencil"
-      />
+      <div>
+        <NavButton
+          class="editBtn"
+          :text="'Modifier'"
+          :url="'/exercises/edit/' + router.params.exercise_id"
+          prepend-icon="mdi-pencil"
+        />
+        <div style="margin-top:10px">
+          <DeleteModalComponent
+            :item="exercise.name"
+            url="/admin/exercises"
+            :id="router.params.exercise_id"
+            list="exercises"
+          />
+        </div>
+      </div>
     </div>
     <h1>Carte de l'exercise : {{ exercise === undefined ? '' : exercise.name }}</h1>
     <h2 class="showTitle">Titre</h2>

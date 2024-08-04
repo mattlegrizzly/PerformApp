@@ -17,9 +17,10 @@ from django.conf.urls.static import static
 from users2.views import LoginViewset, LogoutViewset, RefreshTokensViewset, RegisterViewset, PasswordChangeLogViewSet
 from users2.views import AdminUserViewSet, UserViewSet, UsersFavExercisesViewSet, InjurieViewSet, WellnessViewSet, AdminUsersAllViewSet
 
-from sport.views import ( SportViewSet, SportsUserViewSet, RecordsSportUserViewSet, RecordsSportViewSet)
+from sport.views import ( SportViewSet, SportsUserViewSet, RecordsSportUserViewSet, RecordsSportViewSet, RecordsGroupsSportViewSet)
 from sport.admin_views import ( AdminSportViewSet, AdminSportsUserViewSet, AdminRecordsSportUserViewSet, AdminRecordsSportViewSet)
 
+from program.views import (WorkoutViewSet)
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -83,6 +84,10 @@ router.register('admin/steps', AdminExerciseStepViewSet, basename='admin_steps')
 
 router.register('exercisematerials', ExerciseMaterialViewSet, basename='exercises_material')
 router.register('admin/exercisematerials', AdminExerciseMaterialViewSet, basename='admin_exercises_material')
+
+router.register('record_group', RecordsGroupsSportViewSet, basename='record_group')
+
+router.register('workout', WorkoutViewSet, basename='workout')
 
 router.register('exercisesports', ExerciseSportViewSet, basename='exercises_sports')
 router.register('admin/exercisesports', AdminExerciseSportViewSet, basename='admin_exercises_sports')

@@ -227,8 +227,6 @@ const sendData = async () => {
 
       let startMuscle = const_muscles.value
       let endMuscle = muscle_selected.value
-      console.log('start muscle ', startMuscle)
-      console.log('end muscle ', endMuscle)
       const newMuscle = endMuscle.filter(
         (muscle: Muscle) => !startMuscle.find((muscle_: Muscle) => muscle_.zone.code === muscle.zone.code)
       )

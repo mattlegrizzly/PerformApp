@@ -1,35 +1,78 @@
-
 <template>
   <ion-page data-page="Login" class="home-ion-page">
-    <ion-content id="login-home-page" style="align-content: center; justify-content: center; display: flex">
-      <div 
-        class="logo_perform_login">
-        <img style="width: 250px" src="../../assets/logo_perform.png" alt="logo perform" />
+    <ion-content
+      id="login-home-page"
+      style="align-content: center; justify-content: center; display: flex"
+    >
+      <div class="logo_perform_login">
+        <img
+          style="width: 250px"
+          src="../../assets/logo_perform.png"
+          alt="logo perform"
+        />
       </div>
       <div class="login_inputs">
-        <div style="padding-left: 50px; padding-right: 50px; width: 50%">
+        <div
+          style="
+            padding-left: 50px;
+            padding-right: 50px;
+            width: 50%;
+            padding-bottom: 30px;
+            border-radius: 25px;
+            box-shadow: 0px 0px 10px 5px lightgray;
+          "
+        >
           <h1>CONNEXION</h1>
           <form>
             <div class="input-div">
               <ion-label>Email : </ion-label>
-              <ion-input class="login-input" :class="error ? 'errorInput' : ''" fill="outline" slot="end" id="email-input"
-                placeholder="force@gmail.com"  inputmode="email" @ionFocus="onFocus" @ionBlur="onBlur" shape="round" @ionInput="handleEmailInput($event)"
-                :value="email"></ion-input>
+              <ion-input
+                class="login-input"
+                :class="error ? 'errorInput' : ''"
+                fill="outline"
+                slot="end"
+                id="email-input"
+                placeholder="force@gmail.com"
+                inputmode="email"
+                @ionFocus="onFocus"
+                @ionBlur="onBlur"
+                shape="round"
+                @ionInput="handleEmailInput($event)"
+                :value="email"
+              ></ion-input>
             </div>
             <div class="input-div">
               <ion-label>Mot de passe : </ion-label>
-              <ion-input class="login-input" :class="error ? 'errorInput' : ''" fill="outline" slot="start"
-                placeholder="****" :type="showPassword ? 'text' : 'password'" shape="round"
-                @ionInput="handlePwdInput($event)" :value="pwd"><ion-icon :icon="!showPassword ? eyeOff : eye" slot="end"
-                  @click="togglePasswordVisibility" class="password-toggle-icon"></ion-icon></ion-input>
+              <ion-input
+                class="login-input"
+                :class="error ? 'errorInput' : ''"
+                fill="outline"
+                slot="start"
+                placeholder="****"
+                :type="showPassword ? 'text' : 'password'"
+                shape="round"
+                @ionInput="handlePwdInput($event)"
+                :value="pwd"
+                ><ion-icon
+                  :icon="!showPassword ? eyeOff : eye"
+                  slot="end"
+                  @click="togglePasswordVisibility"
+                  class="password-toggle-icon"
+                ></ion-icon
+              ></ion-input>
 
               <ion-label id="forgot-password">Mot de passe oublié ?</ion-label>
             </div>
             <div class="input-div">
-              <ion-label v-if="error" class="error_label">Email ou mot de passe incorrect</ion-label>
+              <ion-label v-if="error" class="error_label"
+                >Email ou mot de passe incorrect</ion-label
+              >
             </div>
-            <div class="input-div" style="display: flex; justify-content: center;">
-              <ion-button :disabled="loading" size="small" @click="connect">
+            <div
+              class="input-div"
+              style="display: flex; justify-content: center"
+            >
+              <ion-button :disabled="loading" style="margin-top: 10px;" size="small" @click="connect">
                 {{ loading ? "Connexion ... " : "Se connecter" }}
               </ion-button>
             </div>
@@ -48,7 +91,7 @@ import {
   IonLabel,
   IonButton,
   IonIcon,
-  onIonViewWillEnter
+  onIonViewWillEnter,
 } from "@ionic/vue";
 import { ref } from "vue";
 import "@/assets/base.css";
@@ -69,20 +112,24 @@ const loading = ref(false);
 const showPassword = ref(false);
 
 onIonViewWillEnter(async () => {
-  console.log('login')
-})
+  console.log("login");
+});
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value;
 };
 
 const onFocus = () => {
-  console.log('focus')
-  if(isMobileDevice()) {document.body.classList.add('keyboard-open');}
-    }
-  const  onBlur = () => {
-    if(isMobileDevice()) {document.body.classList.remove('keyboard-open');}
-    }
+  console.log("focus");
+  if (isMobileDevice()) {
+    document.body.classList.add("keyboard-open");
+  }
+};
+const onBlur = () => {
+  if (isMobileDevice()) {
+    document.body.classList.remove("keyboard-open");
+  }
+};
 
 /**
  * Fonction de connexion
@@ -95,24 +142,28 @@ const connect = () => {
       password: pwd.value,
     },
   };
-  post("/login/", options, false).then((res) => {
-    error.value = false;
-    if (res.status > 301) {
-      triggerError("Erreur de connexion");
-      error.value = true;
-      loading.value = false;
-    } else {
-      store.set("user", JSON.stringify(res)).then(() => {
-        email.value = "";
-        pwd.value = "";
+  try {
+    post("/login/", options, false).then((res) => {
+      console.log("res ", res);
+      error.value = false;
+      if (res.status > 301) {
+        triggerError("Erreur de connexion");
+        error.value = true;
         loading.value = false;
-        router.push("/home");
-      });
-    }
-  });
+      } else {
+        store.set("user", JSON.stringify(res)).then(() => {
+          email.value = "";
+          pwd.value = "";
+          loading.value = false;
+          router.push("/home");
+        });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    triggerError(error);
+  }
 };
-
-
 
 /**
  * Fonction de modification de la value du mail
@@ -131,8 +182,8 @@ const handlePwdInput = (event: any) => {
 };
 
 const isMobileDevice = () => {
-      return /Mobi|Android/i.test(navigator.userAgent);
-    }
+  return /Mobi|Android/i.test(navigator.userAgent);
+};
 </script>
 
 <style scoped>

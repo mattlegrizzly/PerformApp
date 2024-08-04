@@ -24,7 +24,8 @@ const closePopup = () => {
 const sendData = (quitForm: boolean) => {
   const option = {
     body: {
-      name: name.value
+      name: name.value,
+      isTheme: false
     }
   } as IERequestOptions
   post('/admin/sports/', option, true)

@@ -13,15 +13,14 @@
         </h1>
         <button @click="goBack">Go back</button>
       </div>
+      <ion-textarea label="Default label" placeholder="Enter text"></ion-textarea>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonContent, IonPage } from "@ionic/vue";
-import "@/assets/base.css";
-import "@/assets/main.css";
-
+import { IonContent, IonPage,IonTextarea } from "@ionic/vue";
+import NavButton from "../components/NavButton/NavButton.vue";
 import { useRouter } from "vue-router";
 const router = useRouter()
 

@@ -6,13 +6,10 @@
 }
 
 .input-div ion-input {
-  padding-left: 20px !important;
   border-radius: 30px;
   border: 1px solid #d4d4d4;
   min-height: 40px !important;
   width: calc(100% - 20px);
-  --padding-start: 0px !important;
-  --padding-end: 0px !important;
   --border: none;
   --border-color: none;
   --border-width: none;
@@ -84,7 +81,7 @@
         <div style="display: flex; justify-content: space-between">
           <NavButton url="profile" text="Retour" back="back" />
         </div>
-        <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
+        <h1 style="color: black; margin-top: 15px; margin-bottom: 10px">
           Modifier mes informations
         </h1>
         <div class="edit_profile_div">
@@ -105,8 +102,8 @@
       <ion-icon style="color:black; " :icon="pencil" size="10px"></ion-icon>
     </div>
               </div>
-              <input type="file" accept="image/*" id="fileINput" ref="fileInput" @change="handleFileChange"
-                style="display: none" capture="environment"></input>
+              <input type="file" accept="image/jpeg,image/png" id="fileINput" ref="fileInput" @change="handleFileChange"
+                style="display: none"></input>
                 <ImageCropper :isOpen="isModalOpen" :imageSrc="imageSrc" @update:isOpen="isModalOpen = $event" @image-cropped="handleImageCropped" />
             </div>
 
@@ -126,10 +123,6 @@
             <ion-label>Email : </ion-label>
             <ion-input type="email" class="login-input" fill="outline" slot="end" placeholder="email@perform.com"
               shape="round" @ionInput="handleInput('email', $event.detail.value)" :value="user.email"></ion-input>
-          </div><div class="input-div">
-            <ion-label>Mot de passe : </ion-label>
-            <ion-input type="password" class="login-input" fill="outline" slot="end" placeholder="Nouveau mot de passe (Inchangé si vide)"
-              shape="round" @ionInput="handlePassword($event.detail.value)" :value="password"></ion-input>
           </div>
           <div class="input-div">
             <ion-label>Âge : </ion-label>
@@ -158,7 +151,7 @@
               </ion-item>
             </ion-list>
             <div style="margin-top: 10px;" class="sports_chip_users">
-              <ion-chip :icon="close" v-for="sport of sports_user_temp" style="margin-bottom: 10px" color="primary">
+              <ion-chip :icon="close" v-for="sport of sports_user_temp" style="margin-bottom: 10px; margin-right: 5px" color="primary">
                 <ion-icon :id="sport.id" :icon="close" @click="removeSport"></ion-icon>
                 <ion-label>{{ sport.name }}</ion-label>
               </ion-chip>
@@ -252,15 +245,6 @@ const handleInput = (key: keyof IEUserData, valuePass: string | null | undefined
   const value = valuePass as never;
   user.value[key] = value;
 };
-
-/**
- * Méthode pour changer la variable du password
- * @param value - Valeur passé par l'input
- */
-const handlePassword = (value: string | null | undefined) => {
-  if(value != null || value != undefined) password.value = value
-  console.log(password.value)
-} 
 
 /**
  * Compare deux objets en fonction de leur propriété `id`.
@@ -435,11 +419,11 @@ onIonViewWillEnter(async () => {
     });
   }
 
-  get("/sports", { body: {} }, false).then((res) => {
+  get("/sports/all", { body: {} }, false).then((res) => {
     if (res.status > 300) {
       triggerError('Erreur lors de la récupération des sports');
     } else {
-      sports.value = res.results;
+      sports.value = res;
     }
   });
 

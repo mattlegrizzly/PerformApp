@@ -39,7 +39,7 @@
           "
         >
           <div class="display_flex" @click="hideWellness = !hideWellness">
-            <h3>Wellness</h3>
+            <h3>Wellness {{ wellnessNot ? "":" de la semaine"}}</h3>
             <ion-icon
               :icon="hideWellness ? chevronUpOutline : chevronDownOutline"
             />
@@ -240,11 +240,15 @@
           <ion-modal class="static-modal_wellness" ref="modalStats">
             <ion-content>
               <div class="modal-header_wellness">
-                <ion-icon
-                  class="close-icon"
-                  @click="modalStats ? modalStats.$el.dismiss() : ''"
-                  :icon="close"
-                />
+                <div style="width: 100%; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                  <h3 style="margin-top: 0px;">Satistiques :</h3>
+                  <ion-icon
+                    class="close-icon"
+                    @click="modalStats ? modalStats.$el.dismiss() : ''"
+                    :icon="close"
+                  />
+                  </div>
+                  
                 <div
                   style="
                     width: 100%;
@@ -253,12 +257,12 @@
                     justify-content: space-between;
                   "
                 >
-                  <h3>Satistiques :</h3>
                   <ion-icon
                     :icon="informationCircleOutline"
                     @click="showInfoWellness"
                     class="infoIcon"
                   />
+                  <h6>Choisissez votre vision </h6>
                   <ion-list>
                     <ion-item>
                       <ion-select
@@ -332,7 +336,7 @@
                   "
                   fill="outline"
                   size="small"
-                  style="padding-top: 10px;"
+                  style="padding-top: 20px;"
                   >Revenir
                   {{
                     period == "week"
@@ -364,67 +368,13 @@
             class="divs_range show_divs_range"
             :class="hideWellness ? 'show_divs_range_hidden' : ''"
           >
-            <WellnessRange
-              id="sleep_range"
-              title="Sommeil"
-              :value="wellness.sleep"
-              :min="0"
-              :max="10"
-              disabled
-              descriptionStart="Très mauvais"
-              descriptionEnd="Excellent"
-            />
-            <WellnessRange
-              id="fatigue_range"
-              title="Fatigue"
-              :value="wellness.fatigue"
-              :min="0"
-              :max="10"
-              descriptionStart="Epuisé"
-              descriptionEnd="Je pète la forme"
-              disabled
-            />
-            <WellnessRange
-              id="pain_range"
-              title="Douleurs"
-              :value="wellness.pain"
-              :min="0"
-              :max="10"
-              descriptionStart="Aucune"
-              descriptionEnd="Extrême"
-              disabled
-            />
-            <WellnessRange
-              id="stress_range"
-              title="Stress"
-              :value="wellness.stress"
-              :min="0"
-              :max="10"
-              descriptionStart="Aucun"
-              descriptionEnd="Extrême"
-              disabled
-            />
-            <WellnessRange
-              id="hydratation_range"
-              title="Hydratation"
-              :value="wellness.hydratation"
-              :min="0"
-              :max="10"
-              descriptionStart="-1L"
-              descriptionEnd="+3L"
-              disabled
-            />
-            <WellnessRange
-              id="nutrition_range"
-              title="Nutrition"
-              :value="wellness.nutrition"
-              :min="0"
-              :max="10"
-              descriptionStart="Très mauvaise"
-              descriptionEnd="Très saine"
-              @change="onIonChange($event, 'nutrition')"
-              disabled
-            />
+          <canvas
+                    width="300px"
+                    height="200px"
+                    min="0"
+                    max="10"
+                    id="home-chart"
+                  ></canvas>
             <div class="actions">
               <ion-button size="small" fill="outline" @click="showStats"
                 >Statistiques</ion-button
@@ -498,6 +448,7 @@ const wellness = ref({
 } as any);
 
 const chart = ref(null) as any;
+const homeChart = ref(null) as any;
 const modal = ref(null) as any;
 const modalStats = ref(null) as any;
 
@@ -587,6 +538,14 @@ const postWellness = async () => {
       wellness.value = response;
       wellnessNot.value = false;
       modal.value.$el.dismiss();
+      setTimeout(() => {
+        if(homeChart.value) {
+        homeChart.value.destroy()
+      }
+      getWellness();
+      createChart(weekWellnessTemp.value, 'home-chart', homeChart);
+        
+      }, 200)
     }
   } else {
     triggerError("Erreur à l'ajout du wellness");
@@ -645,6 +604,12 @@ const patchWellness = async () => {
   );
   if (!response.status) {
     modal.value.$el.dismiss();
+    if(homeChart.value) {
+      homeChart.value.destroy()
+    }
+    getWellness();
+  createChart(weekWellnessTemp.value, 'home-chart', homeChart);
+
   } else {
     triggerError("Erreur lors de la modification du wellness");
   }
@@ -655,8 +620,11 @@ const patchWellness = async () => {
  */
 const showStats = async () => {
   modalStats.value.$el.present();
-  weekWellnessTemp.value = weekWellness.value;
-  await updateWeekWellness();
+  if(period.value == "week"){
+    await updateWeekWellness();
+  } else {
+    await updateMonthWellness();
+  }
 };
 
 /**
@@ -684,7 +652,17 @@ const setNextWeek = async () => {
  */
 const setPreviousMonth = async () => {
   const newDate = new Date(tempDate.value);
-  newDate.setMonth(newDate.getMonth() - 1);
+  const dayOfMonth = newDate.getDate();
+
+  // Change le mois sans ajuster le jour du mois
+  newDate.setMonth(newDate.getMonth() -1);
+
+  // Vérifie si le jour du mois original est toujours valide
+  if (newDate.getDate() !== dayOfMonth) {
+    // Si non, ajustez au dernier jour du mois précédent
+    newDate.setDate(0); // Cela met la date au dernier jour du mois précédent
+  }
+
   tempDate.value = newDate;
   await updateMonthWellness(); // Supposons que vous avez une fonction updateMonthWellness pour mettre à jour les données mensuelles
 };
@@ -743,7 +721,7 @@ const updateWeekWellness = async () => {
   } else {
     weekWellnessTemp.value = JSON.parse(JSON.stringify(res));
     if (chart.value) chart.value.destroy();
-    createChart(weekWellnessTemp.value);
+    createChart(weekWellnessTemp.value, 'acquisitions', chart);
   }
 };
 
@@ -763,7 +741,7 @@ const updateMonthWellness = async () => {
   } else {
     monthWellnessTemp.value = JSON.parse(JSON.stringify(res));
     if (chart.value) chart.value.destroy();
-    createChart(monthWellnessTemp.value);
+      createChart(monthWellnessTemp.value, 'acquisitions', chart);
   }
 };
 
@@ -771,7 +749,7 @@ const updateMonthWellness = async () => {
  * Fonction de création du graphique du wellness
  * @param data
  */
- const createChart = (data: any) => {
+ const createChart = (data: any, id: string, chartRef: any) => {
   // Fonction pour formater les dates
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -796,10 +774,9 @@ const updateMonthWellness = async () => {
       data[data.length - 1] = { date: lastData.date, sleep: null, fatigue: null, pain: null, stress: null, hydratation: null, nutrition: null };
     }
   }
-
-  chart.value = markRaw(
+  chartRef.value = markRaw(
     //@ts-expect-error
-    new Chart(document.getElementById("acquisitions"), {
+    new Chart(document.getElementById(id), {
       type: "line",
       data: {
         labels: labels,
@@ -842,15 +819,15 @@ const updateMonthWellness = async () => {
                   return this.getLabelForValue(value);
                 }
                 // Afficher certains labels intermédiaires pour la lisibilité
-                if (ticks.length > 15) {
-                  const skip = Math.ceil(ticks.length / 15);
+                if (ticks.length > 12) {
+                  const skip = Math.ceil(ticks.length / 12);
                   if (index % skip !== 0) {
                     return null;
                   }
                 }
                 return this.getLabelForValue(value);
               },
-              maxTicksLimit: 15, // Limiter le nombre maximum de labels affichés
+              maxTicksLimit: 12, // Limiter le nombre maximum de labels affichés
               autoSkip: false, // Désactiver l'auto-skip pour afficher tous les ticks
             },
           },
@@ -979,6 +956,28 @@ onIonViewWillEnter(async () => {
     id: 0,
   };
   await loadUser();
+  getWellness().then(() => {
+    console.log(wellnessNot.value)
+  if(!wellnessNot.value ) {
+    setTimeout(() => {
+      createChart(weekWellnessTemp.value, 'home-chart', homeChart);
+    }, 500)
+  }
+  });
+
+  document.querySelectorAll(".custom_nav").forEach((elem) => {
+    const shadowRoot = elem.shadowRoot;
+    if (shadowRoot) {
+      const style = document.createElement("style");
+      style.textContent = `.button-inner { justify-content: flex-start !important; }`;
+      shadowRoot.appendChild(style);
+    }
+  });
+
+ 
+});
+
+const getWellness = async () => {
   const res = await get(
     `/wellness/user/${user.value.id}/week?date=${setLongDate(new Date())}`,
     { body: {} },
@@ -989,6 +988,7 @@ onIonViewWillEnter(async () => {
   } else {
     res.forEach((WellnessItem: any) => {
       if (WellnessItem.date === setLongDate(new Date())) {
+        console.log(WellnessItem.sleep )
         if (WellnessItem.sleep !== null) {
           wellnessNot.value = false;
           wellness.value = WellnessItem;
@@ -999,16 +999,7 @@ onIonViewWillEnter(async () => {
 
   weekWellness.value = res;
   weekWellnessTemp.value = res;
-
-  document.querySelectorAll(".custom_nav").forEach((elem) => {
-    const shadowRoot = elem.shadowRoot;
-    if (shadowRoot) {
-      const style = document.createElement("style");
-      style.textContent = `.button-inner { justify-content: flex-start !important; }`;
-      shadowRoot.appendChild(style);
-    }
-  });
-});
+}
 
 /**
  * Exécute les actions nécessaires lors de la sortie de la vue.
@@ -1016,6 +1007,9 @@ onIonViewWillEnter(async () => {
 onIonViewWillLeave(() => {
   if (chart.value) {
     chart.value.destroy();
+  }
+  if (homeChart.value) {
+    homeChart.value.destroy();
   }
 });
 </script>

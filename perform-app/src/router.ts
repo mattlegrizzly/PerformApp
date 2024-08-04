@@ -23,11 +23,15 @@ const routes: Array<RouteRecordRaw> = [
         name: "Profile",
         component: () => import("./views/Profile/ProfilePage.vue")
       },
-
       {
         path: "edit_profile",
         name: "EditProfile",
         component: () => import("./views/Profile/EditProfilePage.vue")
+      },
+      {
+        path: "edit_password",
+        name: "EditPassword",
+        component: () => import("./views/Profile/EditPasswordPage.vue")
       },
       {
         path: "add_injurie",
@@ -71,14 +75,33 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("./views/Exercises/ViewPage.vue")
       },
       {
+        path: 'template',
+        name :'template',
+        component: () => import("./views/TemplatePage.vue")
+      },
+      {
         path: "coaching",
         name: "Coaching",
         component: () => import("./views/Coaching/CoachingPage.vue")
       },
-
+      {
+        path: "workout_add/:date",
+        name: "WorkoutAdd",
+        component: () => import("./views/Coaching/AddWorkoutPage.vue")
+      },
+      {
+        path: "workout_edit/:id",
+        name: "WorkoutEdit",
+        component: () => import("./views/Coaching/EditWorkoutPage.vue")
+      },
+      {
+        path: "workout_show/:id",
+        name: "ShowWorkout",
+        component: () => import("./views/Coaching/ShowWorkoutPage.vue")
+      },
       {
         path: "programs",
-        name: "Programs",
+        name: "Program",
         component: () => import("./views/Programs/ProgramsPage.vue")
       },
       {

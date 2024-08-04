@@ -113,8 +113,12 @@ ion-segment-button {
     justify-content: center;
 }
 
+.displayFilter {
+    padding-top: 10px;
+}
+
 .displayFilterContainer {
-    height: 35px; overflow: hidden; position: relative;
+    height: 20px; overflow: hidden; position: relative;
 } 
 
 .showFullDisplayContainer {
@@ -124,16 +128,20 @@ ion-segment-button {
 
 .displayFilterChipContainer {
     width: 95%;
+    pointer-events: none;
 }
 
 .displayFilterContainer ion-icon {
     position: absolute;
     right: 0px;
     top: 0px;
+    font-size: 15px;
+    padding-top: 2.5px;
+    padding-right: 3px;
 }
 .displayFilter ion-chip {
         padding-left: 10px;
-        padding-right: 10px;
+        padding-right: 22px;
         color: white;
         font-size: 8px;
         background-color: var(--secondary-blue);

@@ -34,7 +34,9 @@ import homeSelected from './assets/icons/HomeSelected.svg';
 import exercise from './assets/icons/Exercices.svg';
 import exerciseSelected from './assets/icons/ExercicesSelected.svg';
 import trainer from './assets/icons/Personal Trainer.svg'
+import trainerSelected from './assets/icons/PersonalTrainerFill.svg'
 import program from './assets/icons/Programs.svg'
+import programSelected from './assets/icons/ProgramsFill.svg'
 
 //Vuetify
 import 'vuetify/styles'
@@ -56,7 +58,9 @@ addIcons({
     'home-selected': homeSelected,
     'exercise-selected': exerciseSelected,
     'trainer': trainer,
+    'trainer-selected': trainerSelected,
     'program': program,
+    'program-selected': programSelected,
 });
 
 export default createVuetify({
@@ -139,6 +143,7 @@ const slideRightAnimation = (baseEl: any, opts: any) => {
     return animation;
 };
 
+//@ts-expect-error
 const fadeAnimation = (baseEl: any, opts: any) => {
     console.log('fade')
     const enteringEl = opts.enteringEl;
@@ -187,7 +192,13 @@ const pageTransitions = {
     'edit-profile|profile': slideLeftAnimation,
     'profile|edit-profile': slideRightAnimation,
     'Splash': fadeAnimation,
-    'Home|Splash': fadeAnimation
+    'Home|Splash': fadeAnimation,
+    'Records|profile': slideLeftAnimation,
+    'profile|Records': slideRightAnimation,
+    'Records|ShowRecords': slideRightAnimation,
+    'ShowRecords|Records': slideLeftAnimation,
+    'Coaching|AddWorkout': slideRightAnimation,
+    'AddWorkout|Coaching': slideLeftAnimation
 };
 
 
