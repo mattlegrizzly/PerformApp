@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='recordssport',
             name='general',
-            field=models.BooleanField(default=False, null=True, unique=True),
+            field=models.BooleanField(default=False, null=True, unique=False),
         ),
         migrations.AddField(
             model_name='recordssport',
