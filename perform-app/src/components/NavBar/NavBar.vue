@@ -53,7 +53,6 @@ const isRouteActive = (routeNames: string[]) => {
 };
 
 const navigateTo = (path: string) => {
-  console.log("nav route " , router.currentRoute)
   if (router.currentRoute.value.path !== path) {
     router.push(path);
   }

@@ -114,7 +114,7 @@ onIonViewWillEnter(async () => {
     triggerError('Erreur lors de la récupération des blessures');
   } else {
     injury.value = res;
-    console.log(injury.value);
+    
     showBodyComponent.value = false; // Masquer le composant avant de le recharger
     // Générer une nouvelle clé unique pour forcer le remontage du composant
     bodyComponentKey.value = Date.now().toString();

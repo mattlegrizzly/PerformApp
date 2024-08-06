@@ -4,12 +4,37 @@
       <div class="perform-page">
         <div>
           <div style="display: flex; justify-content: space-between">
-            <h1 style="color: black; font-size: 20px;margin-top: 5px; margin-bottom: 10px">
+            <h1
+              style="
+                color: black;
+                font-size: 20px;
+                margin-top: 5px;
+                margin-bottom: 10px;
+              "
+            >
               Entrainements
             </h1>
-            <div style="display: flex; align-items: center; justify-content: space-around;">
-              <ion-button style="margin-right : 5px" @click="getUrlDate()">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+              "
+            >
+              <ion-button style="margin-right: 5px" @click="getUrlDate()">
                 <ion-icon :icon="addOutline"></ion-icon>
+              </ion-button>
+              <ion-button
+                style="
+                  color: var(--primary-blue);
+                  --background: white;
+                  border: 1px solid var(--primary-blue);
+                  border-radius: 15px;
+                  margin-right: 5px;
+                "
+                @click="resetToToday"
+              >
+                <ion-icon :icon="todayOutline"></ion-icon>
               </ion-button>
               <ion-button @click="openCalendarModal">
                 <ion-icon :icon="calendarOutline"></ion-icon>
@@ -18,17 +43,20 @@
           </div>
           <!-- Slider pour les jours de la semaine -->
           <!-- Affichage du mois en cours -->
-          <div style="text-align: center; margin-bottom: 0px;">
-            <h2 style="margin-bottom: 0px; margin-top:10px">{{ currentMonth }}</h2>
+          <div style="text-align: center; margin-bottom: 0px">
+            <h2 style="margin-bottom: 0px; margin-top: 10px">
+              {{ currentMonth }}
+            </h2>
           </div>
 
           <swiper
             v-if="weeks.length"
             :key="swiperKey"
-            :initial-slide="0" 
+            :initial-slide="3"
             :slides-per-view="7"
             :slides-per-group="7"
             :space-between="0"
+            @slideChangeTransitionStart="beforeSlideChange"
             @slideChangeTransitionEnd="onSlideChange"
             :loop="true"
             class="swiper-container day_swiper"
@@ -36,11 +64,24 @@
             <swiper-slide
               v-for="(day, index) in weeks"
               :key="index"
-              @click="selectDay(day)"
+              @click="() => selectDay(day)"
             >
-              <div class="day-card" :class="{ 'selected-day': isSelected(day) }">
+              <div
+                class="day-card"
+                :class="{ 'selected-day': isSelected(day) }"
+                style="position: relative"
+              >
                 <div>{{ day.shortLabel }}</div>
                 <div>{{ day.dayNumber }}</div>
+                <div
+                  v-if="day.isWorkout"
+                  :style="{
+                    color: isSelected(day) ? 'var(--primary-blue)' : 'white',
+                  }"
+                  style="position: absolute; top: -26px; font-size: 40px"
+                >
+                  •
+                </div>
               </div>
             </swiper-slide>
           </swiper>
@@ -51,7 +92,10 @@
           <div>
             <h2>{{ selectedDay.label }} {{ selectedDay.dayNumber }}</h2>
             <div v-for="workout of selectedWorkout">
-              <div @click="router.push('/workout_show/'+workout.id)" class="workout_elem">
+              <div
+                @click="router.push('/workout_show/' + workout.id)"
+                class="workout_elem"
+              >
                 <h5 style="margin: 0px">{{ workout.name }}</h5>
                 <p>{{ new Date(workout.date).toLocaleDateString("fr") }}</p>
                 <p>{{ workout.workout_description }}</p>
@@ -82,13 +126,18 @@
                 <ion-icon :icon="close"></ion-icon>
               </ion-button>
             </div>
-            <vue-cal 
+            <vue-cal
               class="vue-cal"
-              default-view="month" 
+              default-view="month"
               :disable-views="['years', 'year', 'week', 'day']"
               @cell-click="onDateSelected"
+              @view-change="onViewChange"
               locale="fr"
-            />
+              :selected-date="selectedDay ? selectedDay.fullDate : null"
+              :start-date="selectedDay ? selectedDay.fullDate : null"
+              :events="workoutEvents"
+            >
+            </vue-cal>
           </ion-content>
         </ion-modal>
       </div>
@@ -97,17 +146,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, computed } from "vue";
+import { ref, onMounted, nextTick, computed, watch } from "vue";
 import {
   IonPage,
   IonLabel,
   IonContent,
-  IonIcon, 
+  IonIcon,
   IonButton,
-  IonModal, 
-  onIonViewWillEnter
+  IonModal,
+  onIonViewWillEnter,
 } from "@ionic/vue";
-import { close, addOutline, calendarOutline } from "ionicons/icons";
+import {
+  close,
+  addOutline,
+  calendarOutline,
+  todayOutline,
+} from "ionicons/icons";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import NavButton from "../../components/NavButton/NavButton.vue";
 import "swiper/swiper-bundle.css";
@@ -116,12 +170,13 @@ import { store } from "../../store/store";
 import { useErrorHandler } from "../../lib/useErrorHandler";
 import Jauge from "../../components/Jauge/Jauge.vue";
 import { useRouter } from "vue-router";
-import VueCal from 'vue-cal';
-import 'vue-cal/dist/vuecal.css';
+import VueCal from "vue-cal";
+import "vue-cal/dist/vuecal.css";
 
-const router = useRouter()
+const router = useRouter();
 const { triggerError } = useErrorHandler();
-
+const isInitializing = ref(true); // Variable pour contrôler l'initialisation
+const workoutEvents = ref([]);
 const user = ref(null);
 const selectedWorkout = ref(null);
 const selectedDay = ref(null);
@@ -129,9 +184,12 @@ const calendarModal = ref(null);
 const swiperKey = ref(0);
 const weeks = ref([]);
 const currentMonth = ref("");
+const initialSelectedDay = ref(null);
+const numWeeks = 9; // 3 semaines avant, 3 semaines après + semaine actuelle
+const initialBufferWeeks = 3;
 
-// Fonction pour générer les semaines et jours à partir d'une date de départ
-const generateWeeksFromDate = (startDate, numWeeks) => {
+// Fonction pour générer les semaines avec un tampon
+const generateWeeksWithBuffer = (startDate, numWeeks) => {
   const days = [];
   const current = new Date(startDate);
 
@@ -139,7 +197,7 @@ const generateWeeksFromDate = (startDate, numWeeks) => {
   const dayOfWeek = current.getDay();
   const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
-  current.setDate(current.getDate() + diff);
+  current.setDate(current.getDate() + diff - initialBufferWeeks * 7); // Ajouter le tampon
 
   for (let week = 0; week < numWeeks; week++) {
     for (let i = 0; i < 7; i++) {
@@ -147,7 +205,9 @@ const generateWeeksFromDate = (startDate, numWeeks) => {
       day.setDate(current.getDate() + week * 7 + i);
       days.push({
         label: day.toLocaleDateString("fr-FR", { weekday: "long" }),
-        shortLabel: day.toLocaleDateString("fr-FR", { weekday: "short" }).slice(0, 3),
+        shortLabel: day
+          .toLocaleDateString("fr-FR", { weekday: "short" })
+          .slice(0, 3),
         dayNumber: day.getDate(),
         fullDate: new Date(day),
       });
@@ -157,37 +217,44 @@ const generateWeeksFromDate = (startDate, numWeeks) => {
   return days;
 };
 
-const numWeeks = 52;
+watch(weeks, () => {
+  console.log(weeks.value);
+});
 
 const updateCurrentMonth = () => {
   if (weeks.value.length > 0) {
-    console.log(selectedDay.value)
-    currentMonth.value = selectedDay.value.fullDate.toLocaleDateString("fr-FR", {
-      month: "long",
-      year: "numeric",
-    });
+    currentMonth.value = selectedDay.value.fullDate.toLocaleDateString(
+      "fr-FR",
+      {
+        month: "long",
+        year: "numeric",
+      }
+    );
   }
 };
 
+
 const selectToday = () => {
   const today = new Date();
-  selectedDay.value = weeks.value.find(day => 
-    day.fullDate.toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }) === today.toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    })
+  selectedDay.value = weeks.value.find(
+    (day) =>
+      day.fullDate.toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }) ===
+      today.toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
   );
   updateCurrentMonth();
   loadWorkoutForDay();
 };
 
 const loadWorkoutForDay = () => {
-  if (!selectedDay.value) return;
+  if (!selectedDay.value || !user.value) return;
   get(
     "/workout/by-user-and-date?user_id=" +
       user.value.user.id +
@@ -202,7 +269,56 @@ const loadWorkoutForDay = () => {
       selectedWorkout.value = res;
     }
   });
-}
+};
+
+const updateWorkoutEvents = () => {
+  workoutEvents.value = weeks.value
+    .filter(day => day.isWorkout)
+    .map(day => ({
+      start: day.fullDate,
+      end: day.fullDate,
+      title: 'Workout',
+      class: 'workout-event'
+    }));
+    console.log(workoutEvents)
+};
+
+const onViewChange = (view) => {
+  console.log('viewChange', view)
+  if (view && view.startDate) {
+    loadMonthlyWorkouts();
+  }
+};
+
+const resetToToday = async () => {
+  const today = new Date();
+  weeks.value = generateWeeksWithBuffer(today, numWeeks);
+
+  // Sélectionner le jour actuel
+  const todayIndex = weeks.value.findIndex(
+    (day) => day.fullDate.toLocaleDateString() === today.toLocaleDateString()
+  );
+
+  if (todayIndex !== -1) {
+    selectDay(weeks.value[todayIndex]);
+
+    // Repositionner Swiper sur la semaine actuelle
+    nextTick(() => {
+      const swiperInstance = document.querySelector(".swiper-container").swiper;
+      if (swiperInstance) {
+        swiperInstance.slideTo(Math.floor(todayIndex / 7) * 7, 0); // 0 désactive l'animation
+      }
+    });
+
+    // Mettre à jour le mois affiché
+    updateCurrentMonth();
+
+    // Charger les séances pour le mois
+    await loadMonthlyWorkouts();
+    // Charger les séances pour la semaine
+    //await loadWeeklyWorkouts(today);
+  }
+};
 
 const getUrlDate = () => {
   if (selectedDay.value && selectedDay.value.fullDate) {
@@ -217,14 +333,57 @@ const selectDay = (day) => {
   nextTick(() => {
     loadWorkoutForDay();
   });
-  updateCurrentMonth()
+  updateCurrentMonth();
 };
 
-const onSlideChange = (swiper) => {
+const beforeSlideChange = () => {
+  // Capturer la date initiale avant le changement
+  if (selectedDay.value) {
+    initialSelectedDay.value = new Date(selectedDay.value.fullDate);
+  } else {
+    initialSelectedDay.value = null;
+  }
+};
+
+const onSlideChange = async (swiper) => {
+  if (isInitializing.value) return;
+
   const index = swiper.realIndex;
   const firstDayIndex = Math.floor(index / 7) * 7;
-  selectDay(weeks.value[firstDayIndex]);
+  let selectedDay = weeks.value[firstDayIndex];
+
+  if (
+    selectedDay.fullDate.getFullYear() > new Date().getFullYear() &&
+    swiper.swipeDirection === "prev"
+  ) {
+    if (initialSelectedDay.value) {
+      initialSelectedDay.value.setDate(initialSelectedDay.value.getDate() - 7);
+      weeks.value = generateWeeksWithBuffer(initialSelectedDay.value, numWeeks);
+
+      selectedDay = weeks.value.find(
+        (day) =>
+          day.fullDate.toLocaleDateString() ===
+          initialSelectedDay.value.toLocaleDateString()
+      );
+
+      selectDay(selectedDay);
+      updateCurrentMonth();
+
+      nextTick(() => {
+        swiper.slideTo(Math.floor(index / 7) * 7, 0);
+      });
+
+      return;
+    }
+  }
+
+  // Sélectionner le jour calculé et mettre à jour le mois affiché
+  selectDay(selectedDay);
   updateCurrentMonth();
+
+  // Recharger les séances pour la semaine
+  //await loadWeeklyWorkouts(selectedDay.fullDate);
+  await loadMonthlyWorkouts();
 };
 
 const isSelected = (day) => {
@@ -244,43 +403,185 @@ const closeCalendarModal = () => {
 };
 
 const onDateSelected = async (day) => {
-  
   let selectedDate;
-  if(day.date){
+  if (day.date) {
     selectedDate = new Date(day.date);
   } else {
     selectedDate = new Date(day);
   }
 
   // Générer les semaines à partir de la date sélectionnée
-  weeks.value = generateWeeksFromDate(selectedDate, numWeeks);
+  weeks.value = generateWeeksWithBuffer(selectedDate, numWeeks);
 
-  // Incrémenter la clé pour recréer le Swiper
-  swiperKey.value += 1;
+  // Sélectionner le jour dans les semaines générées
+  const selectedIndex = weeks.value.findIndex(
+    (d) => d.fullDate.toLocaleDateString() === selectedDate.toLocaleDateString()
+  );
 
-  // Attendre le prochain cycle DOM pour recréer l'instance Swiper
-  await nextTick();
+  if (selectedIndex !== -1) {
+    selectDay(weeks.value[selectedIndex]);
 
-  selectDay(weeks.value.find(d => 
-    d.fullDate.toLocaleDateString() === selectedDate.toLocaleDateString()));  // Sélectionner le jour du vue-cal
+    // Repositionner manuellement Swiper sur la semaine contenant le jour sélectionné
+    nextTick(() => {
+      const swiperInstance = document.querySelector(".swiper-container").swiper;
+      if (swiperInstance) {
+        swiperInstance.slideTo(Math.floor(selectedIndex / 7) * 7, 0); // 0 désactive l'animation
+      }
+    });
 
-  updateCurrentMonth();  // Mettre à jour le mois affiché
+    // Mise à jour du mois affiché
+    loadMonthlyWorkouts();
+    updateCurrentMonth();
+  }
 
-  closeCalendarModal();
+  closeCalendarModal(); // Fermer le modal du calendrier
 };
 
-// Initialisation lors du montage du composant
-onMounted(async () => {
-  weeks.value = generateWeeksFromDate(new Date(), numWeeks);
-  await store.get("user").then((res) => {
-    user.value = JSON.parse(res);
-    selectToday();
+const fetchWorkoutsForWeek = async (dateStr) => {
+  try {
+    // Assurez-vous que `dateStr` est bien formaté en `YYYY-MM-DD`
+    const formattedDateStr = dateStr.replace(/\//g, "-");
+    const response = await get(
+      `/workout/workouts-for-week/?date_str=${formattedDateStr}`,
+      { body: {} },
+      true
+    );
+
+    return response;
+  } catch (error) {
+    console.error("Error fetching workouts for week:", error);
+    return {};
+  }
+};
+
+const fetchWorkoutsForMonth = async (year, month) => {
+  try {
+    const response = await get(
+      `/workout/workouts-for-month/?year=${year}&month=${month}`,
+      { body: {} },
+      true
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching workouts for month:", error);
+    return {};
+  }
+};
+
+const loadWeeklyWorkouts = async (startDate) => {
+  console.log("loadWeek");
+  // Assurez-vous que la date est au format YYYY-MM-DD
+  const dateStr = startDate.toISOString().split("T")[0]; // Format YYYY-MM-DD
+  const weekWorkouts = await fetchWorkoutsForWeek(dateStr);
+
+  weeks.value.forEach((day) => {
+    day["isWorkout"] = false;
+    const dayStr = day.fullDate
+      .toLocaleDateString("fr-FR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .split("/")
+      .reverse()
+      .join("-");
+    day.isWorkout = weekWorkouts[dayStr] || false;
   });
+
+  
+};
+
+const loadMonthlyWorkouts = async () => {
+  const year = selectedDay.value.fullDate.getFullYear();
+  const month = selectedDay.value.fullDate.getMonth() + 1; // Mois actuel
+  
+  const monthWorkouts = await fetchWorkoutsForMonth(year, month);
+  
+  // Mise à jour des semaines
+  weeks.value.forEach((day) => {
+    const dayStr = day.fullDate
+    .toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .split("/")
+    .reverse()
+    .join("-");
+    day.isWorkout = monthWorkouts[dayStr] || false;
+  });
+  updateWorkoutEvents();
+};
+const isSwiperInitialized = ref(false); // Drapeau pour contrôler l'initialisation du Swiper
+
+onIonViewWillEnter(async () => {
+  if (!isSwiperInitialized.value) {
+    const today = new Date();
+    weeks.value = generateWeeksWithBuffer(today, numWeeks);
+
+    await store.get("user").then((res) => {
+      user.value = JSON.parse(res);
+    });
+
+    // Sélectionner le jour actuel ou le jour sélectionné précédemment
+    const selectedIndex = weeks.value.findIndex((day) =>
+      selectedDay.value
+        ? day.fullDate.toLocaleDateString() ===
+          selectedDay.value.fullDate.toLocaleDateString()
+        : day.fullDate.toLocaleDateString() === today.toLocaleDateString()
+    );
+
+    if (selectedIndex !== -1) {
+      selectDay(weeks.value[selectedIndex]);
+
+      // Utiliser nextTick pour s'assurer que Swiper est bien monté avant de le repositionner
+      nextTick(() => {
+        const swiperInstance =
+          document.querySelector(".swiper-container").swiper;
+        if (swiperInstance) {
+          swiperInstance.slideTo(Math.floor(selectedIndex / 7) * 7, 0); // Positionner Swiper sur la bonne semaine
+        }
+      });
+    }
+
+    isSwiperInitialized.value = true; // Marquer le Swiper comme initialisé
+  }
+
+  loadWorkoutForDay();
 });
 
-onIonViewWillEnter(() => {
-  loadWorkoutForDay()
-})
+onMounted(async () => {
+  const today = new Date();
+  weeks.value = generateWeeksWithBuffer(today, numWeeks);
+
+  await store.get("user").then((res) => {
+    user.value = JSON.parse(res);
+  });
+
+  // Charger les séances pour le mois
+  await loadMonthlyWorkouts();
+  // Charger les séances pour la semaine
+  //await loadWeeklyWorkouts(today);
+
+  // Sélectionner le jour actuel
+  const todayIndex = weeks.value.findIndex(
+    (day) => day.fullDate.toLocaleDateString() === today.toLocaleDateString()
+  );
+
+  if (todayIndex !== -1) {
+    selectDay(weeks.value[todayIndex]);
+
+    nextTick(() => {
+      const swiperInstance = document.querySelector(".swiper-container").swiper;
+      if (swiperInstance) {
+        swiperInstance.slideTo(Math.floor(todayIndex / 7) * 7, 0);
+      }
+    });
+  }
+
+  isInitializing.value = false;
+  loadWorkoutForDay();
+});
 </script>
 
 <style scoped>
@@ -323,13 +624,8 @@ onIonViewWillEnter(() => {
   cursor: pointer;
 }
 
-.vue-call{
+.vue-call {
   padding: 10px;
-}
-
-.vuecal__cell.is-selected {
-  background-color: var(--ion-color-primary);
-  color: white;
 }
 
 #calendarModal {
@@ -357,5 +653,25 @@ onIonViewWillEnter(() => {
 .vue-cal {
   flex: 1;
   max-height: calc(100% - 55px); /* Ajuste la hauteur maximale du calendrier */
+}
+</style>
+
+<style>
+.vuecal .vuecal__cell--selected {
+  background-color: var(--primary-blue) !important;
+  color: white !important; /* Assurez-vous également que le texte est visible */
+  z-index: 2;
+}
+
+.vuecal .vuecal__cell--today {
+  background-color: var(--primary-blue20) !important;
+  color: black !important; /* Assurez-vous également que le texte est visible */
+  z-index: 2;
+}
+
+.vuecal__cell-events-count {
+  background-color: var(--primary-blue);
+  border-radius: 50%;
+  margin: auto;
 }
 </style>

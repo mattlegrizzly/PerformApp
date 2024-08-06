@@ -84,7 +84,6 @@ const vuetify = createVuetify({
 // Définir les animations
 //@ts-expect-error
 const slideAnimation = (baseEl: any, opts: any) => {
-    console.log('slide')
 
     const enteringEl = opts.enteringEl;
     const leavingEl = opts.leavingEl;
@@ -145,7 +144,6 @@ const slideRightAnimation = (baseEl: any, opts: any) => {
 
 //@ts-expect-error
 const fadeAnimation = (baseEl: any, opts: any) => {
-    console.log('fade')
     const enteringEl = opts.enteringEl;
     const leavingEl = opts.leavingEl;
   
@@ -168,8 +166,6 @@ const fadeAnimation = (baseEl: any, opts: any) => {
 
 //@ts-expect-error
 const userLang = navigator.language || navigator.userLanguage
-
-console.log('user lang '  , userLang)
 
 const app = createApp(App).use(vuetify).use(router);
 
@@ -209,7 +205,6 @@ app.use(IonicVue, {
         const enteringPage = opts.enteringEl.getAttribute('data-page');
         const leavingPage = opts.leavingEl?.getAttribute('data-page') || '';
         const transitionKey = `${enteringPage}|${leavingPage}`;
-        console.log(transitionKey)
         //@ts-expect-error
         const animationFunction = pageTransitions[transitionKey] || slideAnimation;
 

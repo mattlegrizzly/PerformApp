@@ -220,6 +220,25 @@ ion-modal {
                       "
                     ></ion-input>
                   </template>
+                  <template v-else-if="record.units === 'reps'">
+                    <ion-label
+                      position="stacked"
+                      :class="
+                        errorAdd && weightValue == '' ? 'required_text' : ''
+                      "
+                      >Nombre de répétitions</ion-label
+                    >
+                    <ion-input
+                      :class="
+                        errorAdd && weightValue == '' ? 'required_class' : ''
+                      "
+                      v-model="inputValue"
+                      type="number"
+                      placeholder="Entrer le nombres de répétitions maxs"
+                      style="padding-left: 10px"
+                      @ion-change="handleInput($event.detail.value, 'reps')"
+                    ></ion-input>
+                  </template>
                   <template v-else>
                     <ion-label
                       position="stacked"
@@ -362,7 +381,7 @@ ion-modal {
                   <p>{{ item.formatted_record }}</p>
                   <p>{{ formattedDate(item.date_record) }}</p>
                 </ion-item>
-                  
+
                 <!-- Bouton de suppression -->
                 <ion-item-options side="end">
                   <ion-item-option
@@ -398,6 +417,7 @@ import {
   IonButton,
   IonItemSliding,
   IonItemOption,
+  IonItemOptions,
 } from "@ionic/vue";
 
 import "@/assets/base.css";
@@ -429,7 +449,13 @@ const record = ref({
   units: "",
 }) as any;
 
-const recordArray = ref(["weight", "distance_m", "distance_km", "points"]);
+const recordArray = ref([
+  "weight",
+  "distance_m",
+  "distance_km",
+  "points",
+  "reps",
+]);
 
 const errorAdd = ref(false);
 
@@ -447,12 +473,12 @@ const modalRecord = ref(null) as any;
 const routerNav = useRoute();
 
 const handleInput = (e: any, type: string) => {
-  console.log("e ", e);
-  console.log(type);
+  console.log(type, " ", e);
   if (type == "time") {
     dateRecord.value = new Date(e);
-  } else if (recordArray.value.includes(e)) {
+  } else if (recordArray.value.includes(type)) {
     weightValue.value = e;
+    console.log(" weight ", weightValue);
   } else {
     freeValue.value = e;
   }
@@ -471,16 +497,15 @@ watch(
   }
 );
 
-const deleteRecord = (id : any) => {
-  console.log(id)
-  del("/records_user/"+id, true).then((res) => {
-    if(res.status && res.status > 300){
-      triggerError('Erreur à la suppression,')
+const deleteRecord = (id: any) => {
+  del("/records_user/" + id, true).then((res) => {
+    if (res.status && res.status > 300) {
+      triggerError("Erreur à la suppression,");
     } else {
       getRecords();
     }
-  })
-}
+  });
+};
 
 const formattedDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -489,7 +514,7 @@ const formattedDate = (dateString: string) => {
 
 const getRecords = () => {
   const id_record = routerNav.params.record_id;
-  console.log(user.value);
+
   get(
     "/records_user/by-record?record_id=" + id_record,
     { body: {} },
@@ -499,12 +524,11 @@ const getRecords = () => {
       triggerError("Erreur lors de la récupération du record");
     } else {
       record.value = res;
+      console.log("record ", res);
       let find = false;
       let count = 0;
       setTimeout(() => {
         while (find == false && count < 3) {
-          console.log("find ", find);
-          console.log("count  ", count);
           const items = document.querySelectorAll(".record-unit");
 
           if (items) {
@@ -537,15 +561,18 @@ const getRecords = () => {
           }
         }
       }, 200);
-
+      console.log(chartInstance.value)
       if (chartInstance.value) {
         chartInstance.value.destroy();
       }
-      console.log("res ");
+
       if (res.performances.length > 0 && res.units !== "free") {
+        if (chartInstance.value) {
+        chartInstance.value.destroy();
+      }
         setTimeout(() => {
           createChart();
-        }, 200);
+        }, 400);
       }
     }
   });
@@ -565,7 +592,7 @@ const formatDate = (dateString: string) => {
 // Fonction pour convertir le temps de hh:mm:ss en secondes
 const timeToSeconds = (time: string) => {
   const timeParts = time.split(":");
-  console.log(timeParts);
+
   return (
     parseInt(timeParts[0]) * 3600 +
     parseInt(timeParts[1]) * 60 +
@@ -585,7 +612,7 @@ const createChart = () => {
   const labels = record.value.performances.map((performance: any) =>
     formatDate(performance.date_record)
   );
-  console.log(record.value.performances);
+
   const data = record.value.performances.map((performance: any) =>
     record.value.units === "time"
       ? timeToSeconds(performance.time_value)
@@ -618,11 +645,26 @@ const createChart = () => {
           },
           y: {
             ticks: {
-              callback: (value: any) => {
-                const unit = record.value.units; // Assume all records have the same unit
-                return unit === "time"
-                  ? secondsToTime(value)
-                  : `${value.toFixed(2)} kg`;
+              callback: (value : any) => {
+                // Récupérer l'unité de l'enregistrement
+                const unit = record.value.units;
+
+                // Traiter la valeur en fonction de l'unité
+                if (unit === "time") {
+                  return secondsToTime(value); // Conversion pour le temps
+                } else if (unit === "weight") {
+                  return `${value.toFixed(2)} kg`; // Afficher avec un suffixe "kg" pour le poids
+                } else if (unit === "distance_km") {
+                  return `${value.toFixed(2)} km`; // Afficher avec un suffixe "km"
+                } else if (unit === "distance_m") {
+                  return `${value.toFixed(2)} m`; // Afficher avec un suffixe "m"
+                } else if (unit === "points" || unit === "reps") {
+                  return `${value.toFixed(0)}`; // Afficher comme un entier pour les points ou répétitions
+                } else if (unit === "free") {
+                  return value; // Pour "free" (personnalisé), affichez simplement la valeur telle quelle
+                } else {
+                  return value.toFixed(2); // Cas par défaut, afficher avec 2 décimales
+                }
               },
             },
             title: {
@@ -693,9 +735,8 @@ const submitRecord = async () => {
   } else if (freeValue.value != "") {
     postData();
   } else {
-    console.log("je suis vide zebi");
     errorAdd.value = true;
-    console.log(dateRecord.value);
+
     triggerError("Erreur à l'ajout, remplissez les champs");
   }
 };
@@ -720,13 +761,10 @@ const postData = () => {
 
   try {
     post("/records_user/", { body }, true).then((res) => {
-      console.log(res);
-
       if (res.status && res.status > 300) {
         // Gérer la réussite
         triggerError("Erreur à l'ajout du record");
       } else {
-        console.log("Record added successfully");
         modalRecord.value.$el.dismiss();
         if (chartInstance.value) {
           chartInstance.value.destroy();

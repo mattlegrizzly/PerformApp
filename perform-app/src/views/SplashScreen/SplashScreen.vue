@@ -47,7 +47,7 @@ const handleAnimationEnd = () => {
 
 // Gestion de la logique de réinitialisation lors de la fermeture
 const resetVariableOnColdStart = () => {
-  console.log('local storage ', localStorage.getItem('appInBackground'))
+  
   if (!localStorage.getItem('appInBackground')) {
     store.set("hasLaunched", false);
   }
@@ -62,7 +62,7 @@ const clearAppInBackgroundFlag = () => {
 };
 
 onIonViewWillEnter(() => {
-  console.log('Page is entering');
+  
 });
 
 onMounted(async () => {
@@ -71,7 +71,7 @@ onMounted(async () => {
   const hasLaunched = await store.get("hasLaunched");
   const user = await store.get("user");
   userLogin.value = JSON.stringify(await user);
-  console.log(hasLaunched)
+  
 
   if (userLogin.value == '""' || userLogin.value == "null") {
     topCss.value = "8%";

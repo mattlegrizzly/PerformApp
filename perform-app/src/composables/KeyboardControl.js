@@ -3,7 +3,6 @@ import { Keyboard } from '@capacitor/keyboard';
 import { Capacitor } from '@capacitor/core';
 
 export function useKeyboardControl() {
-  console.log('hello')
   const handleClickOutside = (event) => {
     if (!event.target.closest('.native-input, ion-textarea') && document.activeElement) {
       document.activeElement.blur(); // Ferme le clavier

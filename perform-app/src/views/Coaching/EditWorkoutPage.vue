@@ -329,7 +329,6 @@ const isTimeIsEmpty = () => {
 };
 
 const formatDuration = (time : any) => {
-  console.log(time)
   const [hours, minutes, seconds] = time
     .split(":")
     .map((part : any) => part.padStart(2, "0"));
@@ -345,7 +344,6 @@ const timeValue = computed(() => {
 
 
 const handleRange = (e: any) => {
-  console.log(e.target.id);
   if (e.target.id === "cognitive") {
     cognitive_rpe.value = e.detail.value;
     workout.value.cognitive_rpe = e.detail.value;
@@ -359,7 +357,6 @@ const handleInput = (
   name: string,
   valuePass: string | undefined | number | null
 ) => {
-  console.log("oui");
   let value = valuePass as any;
   switch (name) {
     case "name":
@@ -371,7 +368,6 @@ const handleInput = (
       workout.value.workout_description = value;
       break;
     case "date":
-      console.log(value);
       actualDate.value = value;
       break;
     case "cogntive":
@@ -381,7 +377,6 @@ const handleInput = (
       workout.value.physical_rpe = value;
       break;
     case "time":
-      console.log(value)
       workout.value.time_value = value;
       break;
     case undefined:

@@ -378,7 +378,7 @@ const triggerFileInput = () => {
  */
 function handleImageCropped({ file, url } : any) {
   isModalOpen.value = false;
-  console.log('file ', file )
+  
   fileToDisplay.value = url;
   fileToSend.value = file;
 }

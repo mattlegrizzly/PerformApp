@@ -126,11 +126,8 @@ const isLoggedIn = async () => {
 
     const verifyResponse = await verifyToken();
     if (verifyResponse.status > 300) {
-      console.log(verifyResponse.status === 401)
       if (verifyResponse.status === 401) {
         const refreshResponse = await refresh();
-        console.log('??')
-        console.log(refreshResponse)
         if (refreshResponse.status > 300) {
           
           await store.remove("user");
@@ -179,7 +176,6 @@ router.beforeEach(async (to, from, next) => {
       replace: true,
     });
   } else {
-    console.log('ici ')
     next();
 
   }

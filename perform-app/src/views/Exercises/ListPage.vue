@@ -667,7 +667,6 @@ const addMaterialFilter = async (id: any, array: any, constArray: any, remove : 
   const findKey =
     array.filter(function (element: any) {
       if (element.zone) {
-        console.log(element)
         return Number(element.zone.code) === id;
       } else if (element.material) {
         return Number(element.material.code) === id;
@@ -677,7 +676,6 @@ const addMaterialFilter = async (id: any, array: any, constArray: any, remove : 
       }
       return Number(element.material.id) === id;
     }).length == 0;
-    console.log(findKey)
   if (findKey && remove == "add") {
     const materialFind = constArray.find((el) => el.id == id) as any;
     array.push({ material: materialFind });
@@ -878,7 +876,6 @@ const handleSearchInput = async (event: any) => {
 };
 
 onIonViewWillEnter(async () => {
-  console.log(chipFilterContainer.value);
   muscle_selected.value = [];
   store.get("user").then((res) => {
     user_id.value = JSON.parse(res).user.id;

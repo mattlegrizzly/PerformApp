@@ -133,11 +133,9 @@ const deleteWorkout = () => {
     "/workout/" + router.params.id,
     true
   ).then((res) => {
-    console.log(res)
     if (res.status && res.status > 300) {
       triggerError("Erreur à la suppression de l'entrainement");
     } else {
-      console.log('push')
       navRouter.push('/coaching')
       deleteModal.value.$el.dismiss();
     }

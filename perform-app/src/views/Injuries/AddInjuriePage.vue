@@ -147,7 +147,7 @@ watch(nameInjury, () => {
  * @param {string | undefined | null} valuePass - The value passed from the input.
  */
 const handleInput = (name: string, valuePass: string | undefined | null) => {
-  console.log('oui')
+  
   let value = valuePass as string;
   switch (name) {
     case "name":
@@ -180,10 +180,10 @@ const handleInput = (name: string, valuePass: string | undefined | null) => {
 
 
 const setMuscle = (code: string) => {
-  console.log('code ', code)
-  console.log(muscles)
+  
+  
   const muscleToSet = muscles.value.find((element: any) => element.code == code) as any
-  console.log(muscleToSet)
+  
   muscleSelected.value = [{
     zone: {
       code: muscleToSet.code,

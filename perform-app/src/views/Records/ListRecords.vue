@@ -182,7 +182,7 @@ watch(tab, () => {
     tabOneStyle.value = true;
   }
   if (tab.value == "two" && tabTwoStyle.value === false) {
-    console.log(tab.value);
+    
     setShadowStyle();
     tabTwoStyle.value = true;
   }
@@ -194,7 +194,7 @@ const setShadowStyle = () => {
   setTimeout(() => {
     while (isFind == false && count < 3) {
       const items = document.querySelectorAll(".record-unit");
-      console.log(items);
+      
       if (items) {
         isFind = true;
         find.value = true;
@@ -234,7 +234,7 @@ onIonViewWillEnter(async () => {
   let storeUser = await store.get("user");
   let stringifyUser = JSON.parse(storeUser);
   if (stringifyUser !== "") {
-    console.log(stringifyUser);
+    
     get(
       "/records_user/by-theme-sports?user_id=" + stringifyUser.user.id,
       { body: {} },

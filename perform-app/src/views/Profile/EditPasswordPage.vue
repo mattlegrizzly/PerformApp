@@ -164,7 +164,7 @@ const editProfile = async ()  => {
   if(password.value !== "" && (password.value == repeatPassword.value)){
     const user = await store.get('user')
     const parseUser = JSON.parse(user)
-    console.log(parseUser)
+    
     patch(
       "/users/" + parseUser.user.id + "/set_password/",
       {
@@ -174,7 +174,7 @@ const editProfile = async ()  => {
       },
       true
     ).then((res) => {
-      console.log(res);
+      
       if (res.status > 301) {
         if(res.data.password){
           triggerError(res.data.password)

@@ -112,7 +112,7 @@ const loading = ref(false);
 const showPassword = ref(false);
 
 onIonViewWillEnter(async () => {
-  console.log("login");
+  
 });
 
 const togglePasswordVisibility = () => {
@@ -120,7 +120,7 @@ const togglePasswordVisibility = () => {
 };
 
 const onFocus = () => {
-  console.log("focus");
+  
   if (isMobileDevice()) {
     document.body.classList.add("keyboard-open");
   }
@@ -144,7 +144,7 @@ const connect = () => {
   };
   try {
     post("/login/", options, false).then((res) => {
-      console.log("res ", res);
+      
       error.value = false;
       if (res.status > 301) {
         triggerError("Erreur de connexion");
@@ -160,7 +160,7 @@ const connect = () => {
       }
     });
   } catch (error) {
-    console.log(error);
+    
     triggerError(error);
   }
 };
