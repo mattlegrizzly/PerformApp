@@ -14,7 +14,7 @@
         <a class="sub-menu" v-on:click.stop.prevent="routerMove('/sports')">Sports</a>
         <a class="parent-menu  no-overflow"> Records
         </a>
-        <a class="sub-menu" v-on:click.stop.prevent="routerMove('/records_theme')">Générales</a>
+        <a class="sub-menu" v-on:click.stop.prevent="routerMove('/records_theme')">Général</a>
         <a class="sub-menu" v-on:click.stop.prevent="routerMove('/records_sports')">Sports</a>
       </nav>
       <div class="buttonWrapper">

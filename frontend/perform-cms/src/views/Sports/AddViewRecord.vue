@@ -66,7 +66,7 @@ const sendData = (quitForm: boolean) => {
       sport: id.value,
     }
   } as IERequestOptions
-  if(addToGroup && groups.value.length > 0){
+  if(addToGroup.value && groups.value.length > 0){
     option.body['groups'] = group_selected.value
   }
   post('/admin/records/', option, true)
@@ -83,7 +83,7 @@ const sendData = (quitForm: boolean) => {
         name.value = ''
         description.value = ''
         if (quitForm) {
-          router.push('/sports')
+          router.push('/sports/show/'+id.value+'/')
         } else {
           success_message.value = 'Vous avez ajoutez : ' + res.name
           alertSuc.value = true
@@ -105,6 +105,7 @@ const getSport = async () => {
     alertErr.value = true
   } else {
     sport.value = await res
+    units.value = await res.units_display
     getGroups()
   }
 }
@@ -125,32 +126,7 @@ const getGroups = async () => {
     }
   })
 }
-const units = [
-  {
-    name: 'Temps',
-    value: 'time'
-  },
-  {
-    name: 'Poids',
-    value: 'weight'
-  },
-  {
-    name: 'Distance (en km)',
-    value: 'distance_km'
-  },
-  {
-    name: 'Distance (en m)',
-    value: 'distance_m'
-  },
-  {
-    name: 'Points',
-    value: 'points'
-  },
-  {
-    name: 'Personnalisé',
-    value: 'free'
-  }
-]
+const units = ref([])
 
 onMounted(() => {
   getSport()

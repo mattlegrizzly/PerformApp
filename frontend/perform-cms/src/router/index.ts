@@ -56,43 +56,39 @@ const removeUser = () => {
 const isLoggedIn = async () => {
   try {
     const userStore = useUserStore();
-    const user = userStore.userData
-    const access = cookies.get('access')
+    const access = cookies.get('access');
 
     if (!access) return false;
 
     const verifyResponse = await verifyToken();
     if (verifyResponse.status > 300) {
-      console.log(verifyResponse.status === 401)
       if (verifyResponse.status === 401) {
         const refreshResponse = await refresh();
         if (refreshResponse.status > 300) {
-          
-          removeUser()
+          removeUser();
           return false;
         } else {
           const newUser = {
-            user: user,
+            user: userStore.userData, // Assurez-vous que cela contient les données actuelles
             refresh: refreshResponse.refresh,
             access: refreshResponse.access,
           };
-          userStore.setUser(newUser)
+          userStore.setUser(newUser);
           return true;
         }
       } else {
-        removeUser()
+        removeUser();
         return false;
       }
     } else {
       const userResponse = await get("/users/me/", { body: {} }, true);
-      userStore.setUser(userResponse)
+      userStore.setUser(userResponse);
       return true;
     }
   } catch (error) {
+    console.error('Erreur lors de la vérification de la connexion:', error);
     return false;
   }
-  return true;
-
 };
 
 

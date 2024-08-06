@@ -33,7 +33,20 @@
     <div class="recordList">
       <h3>Les records du sport :</h3>
       <div v-for="(items, category) in record" :key="category">
-        <h3>{{ category }}</h3>
+        <div style="display:  flex; justify-content: space-between;">
+          <h3 style="margin-top: 0px">{{ showCategoryName(category).name }}</h3>
+          {{  console.log (showCategoryName(category)) }}
+          <DeleteModalComponent
+          v-if="showCategoryName(category).show == true"
+                  :item="showCategoryName(category).name"
+                  url="/record_group"
+                  :id="showCategoryName(category).id"
+                  :list="''"
+                  isIcon="oui"
+                  @dialogClosed="handleDialogClosed"
+                />
+          </div>
+          <v-divider style="margin-bottom: 10px;"></v-divider>
         <draggable :list="items" item-key="id" @end="() => updateOrder(category)">
           <template #item="{ element, index }">
             <div id="record" class="record-item">
@@ -61,7 +74,29 @@
                           label="Nom du record"
                           v-model="recordEdit.name"
                         ></v-text-field>
+                        <v-switch
+                        v-model="addToGroup"
+                        color="primary"
+                        label="Ajouter à un groupe ?"
+                        value="yes"
+                        hide-details
+                      ></v-switch>
+                      <div v-if="addToGroup">
+                        <div class="inputFormDiv addView">
+                          <div style="display: flex; align-items : center; width: 100%">
+                            <v-select
+                              v-model="group_selected"
+                              :items="groups"
+                              hint="Sélectionnez le groupe à utiliser"
+                              item-title="name"
+                              item-value="id"
+                              label="Groupe"
+                            />
+                          </div>
+                        </div>
                       </div>
+                      </div>
+                      
                       <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn
@@ -145,6 +180,9 @@ const recordEdit = ref({
 const alertErr = ref(false)
 const error_message = ref('')
 const error_title = ref('')
+const groups = ref('') as any
+const group_selected = ref(null)
+const addToGroup = ref(false)
 
 // Fonction pour définir l'état d'alerte
 const setAlertValue = (type: string) => {
@@ -156,6 +194,23 @@ const setAlertValue = (type: string) => {
 // Fonction pour gérer la fermeture du dialogue de suppression
 const handleDialogClosed = () => {
   getSport()
+}
+
+const getGroups = async () => {
+  await get('/record_group/by-sport/?sport_id=' + sport.value.id).then((res) => {
+    if (res.status > 300) {
+      error_title.value = 'Erreur à la récupération des groupes'
+      error_message.value = res.data.detail
+      alertErr.value = true
+    } else {
+      groups.value = res
+      console.log(res)
+      console.log(group_selected.value)
+      if(group_selected.value == null && res.length > 0){
+        group_selected.value = res[0].id
+      }
+    }
+  })
 }
 
 // Fonction pour mettre à jour l'ordre des éléments après drag-and-drop
@@ -181,14 +236,27 @@ const updateOrder = (category: string | number) => {
   })
 }
 
+const showCategoryName = (category : any) => {
+  let cat = category as string;
+  let catSplit = cat.split('_');
+  return (catSplit.length > 1 ? {name : catSplit[0], show: true, id: Number(catSplit[1])} : {name : cat, show :false})
+} 
+
 // Nouvelle fonction pour mettre à jour un enregistrement spécifique
 const updateRecord = async (record: RecordItem ) => {
+  const option = {
+    name: record.name
+  } as any
+  if(addToGroup.value){
+    option['groups'] = group_selected.value;
+  }
   try {
-    patch(`/admin/records/${record.id}/`, { body: { name: record.name } }, true).then((res)=> {
+    patch(`/admin/records/${record.id}/`, { body: option}, true).then((res)=> {
       console.log(res)
       if (!res.status) {
         console.log('Record updated successfully:', res)
         showEditName.value = false;
+        getSport()
       } else {
         console.error('Failed to update record:', res)
       }
@@ -242,6 +310,7 @@ const getSport = async () => {
     } else {
       record.value = res_record || {}
       recordConst.value = JSON.parse(JSON.stringify(res_record || {}))
+      getGroups();
     }
   } catch (error) {
     console.error('Erreur lors de la récupération des données:', error)
