@@ -89,7 +89,7 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
             # Envoi de l'e-mail avec le mot de passe
             subject = 'Welcome to Our Platform'
             recipient_list = [user.email]
-            logo_url = settings.DOMAIN + '/media/images/perform_logo-blanc.png'
+            logo_url = 'https://grizzlyperform.app/assets/logo_perform-CwS3zzue.png'
 
             message = Mail(
                 from_email='contact@grizzlyperform.app',
@@ -103,18 +103,17 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <style>
                         body {{
-                            background-color: #f0f0f0;
+                            background-color: #203864;
                             margin: 0;
                             padding: 0;
                             font-family: Arial, sans-serif;
                         }}
                         .email-container {{
                             max-width: 600px;
-                            margin: 40px auto;
-                            background-color: #203864;
+                            margin: 40px;
+                            background-color: white;
                             padding: 20px;
                             border-radius: 8px;
-                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                             text-align: center;
                         }}
                         .email-header {{
@@ -127,16 +126,16 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
                             text-align: left;
                             font-size: 16px;
                             line-height: 1.6;
-                            color: white;
+                            color: #203864;
                         }}
                         .email-body p {{
                             margin: 0 0 10px;
                         }}
                         .email-body .ii a[href] {{
-                            color: white;
+                            color: #203864;
                         }}
                         .im {{
-                            color: white !important;
+                            color: #203864 !important;
                         }}
                     </style>
                 </head>
