@@ -138,7 +138,7 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
                 <body>
                     <div class="email-container">
                         <div class="email-header">
-                            <img src="https://api.grizzlyperform.app/media/perform_logo-blanc.png" alt="Logo">
+                            <img src="https://grizzlyperform.app/assets/perform_logo-blanc.png" alt="Logo">
                         </div>
                         <div class="email-body">
                             <p>Hello,</p>
