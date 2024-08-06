@@ -26,6 +26,7 @@ from datetime import datetime, timedelta
 import jwt
 from backend.settings import SIMPLE_JWT
 from rest_framework import filters, mixins, status, viewsets, pagination
+from django.conf import settings
 
 from .serializers import (
     UserSerializer,     
@@ -87,11 +88,12 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
             # Envoi de l'e-mail avec le mot de passe
             subject = 'Welcome to Our Platform'
             recipient_list = [user.email]
+            logo_url = settings.DOMAIN + static('images/perform_logo-blanc.png')
+
             message = Mail(
                 from_email='contact@grizzlyperform.app',
                 to_emails=recipient_list,
                 subject='Perform App Registration',
-                # En-tête du courriel stylisé avec Python
                 html_content = f"""
                 <!DOCTYPE html>
                 <html lang="fr">
@@ -129,20 +131,22 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
                         .email-body p {{
                             margin: 0 0 10px;
                         }}
-
                         .email-body .ii a[href] {{
                             color: white;
+                        }}
+                        .im {{
+                            color: white !important;
                         }}
                     </style>
                 </head>
                 <body>
                     <div class="email-container">
                         <div class="email-header">
-                            <img src="https://grizzlyperform.app/assets/perform_logo-blanc.png" alt="Logo">
+                            <img src="{logo_url}" alt="Logo">
                         </div>
                         <div class="email-body">
                             <p>Hello,</p>
-                            <p>Votre compte pour la bêta de l'application Perform à été créé ! Voici cos informations de connexion:</p>
+                            <p>Votre compte pour la bêta de l'application Perform à été créé ! Voici vos informations de connexion:</p>
                             <p><strong>Email:</strong> {user.email}</p>
                             <p><strong>Mot de passe :</strong> {request.data.get("password")}</p>
                             <p>Merci de votre confiance !</p>
