@@ -27,6 +27,7 @@ import jwt
 from backend.settings import SIMPLE_JWT
 from rest_framework import filters, mixins, status, viewsets, pagination
 from django.conf import settings
+from django.templatetags.static import static
 
 from .serializers import (
     UserSerializer,     
