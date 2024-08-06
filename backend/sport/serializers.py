@@ -10,10 +10,15 @@ class SportSerializer(serializers.ModelSerializer):
 
 class SportSerializer(serializers.ModelSerializer):
     permission_classes = [UserViewSetPermissions]
+    units_display = serializers.SerializerMethodField()
     class Meta:
         model = Sport
-        fields = ['id', 'name', 'isTheme']
-
+        fields = ['id', 'name', 'isTheme', 'units_display']
+    
+    def get_units_display(self, obj):
+        # Récupérer toutes les unités possibles avec leurs clés et valeurs lisibles
+        return [{'value': key, 'name': value} for key, value in RecordsSport.UNITS_CHOICE]
+    
 class SportsUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = SportsUser
@@ -44,7 +49,7 @@ class RecordsSportUserSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         if instance.record.units == 'time':
             representation.pop('record_value')
-        elif instance.record.units == 'weight' or instance.record.units == 'points' or instance.record.units == 'distance_m' or instance.record.units == 'distance_km':
+        elif instance.record.units == 'weight' or instance.record.units == 'points' or instance.record.units == 'distance_m' or instance.record.units == 'distance_km' or instance.record.units == 'reps':
             representation.pop('time_value')
         elif instance.record.units == 'free':
             representation.pop('time_value')

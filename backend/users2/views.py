@@ -108,7 +108,7 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
                         .email-container {{
                             max-width: 600px;
                             margin: 40px auto;
-                            background-color: #ffffff;
+                            background-color: #203864;
                             padding: 20px;
                             border-radius: 8px;
                             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -124,24 +124,28 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
                             text-align: left;
                             font-size: 16px;
                             line-height: 1.6;
-                            color: #333333;
+                            color: white;
                         }}
                         .email-body p {{
                             margin: 0 0 10px;
+                        }}
+
+                        .email-body .ii a[href] {{
+                            color: white;
                         }}
                     </style>
                 </head>
                 <body>
                     <div class="email-container">
                         <div class="email-header">
-                            <img src="https://example.com/logo.png" alt="Logo">
+                            <img src="https://api.grizzlyperform.app/media/perform_logo-blanc.png" alt="Logo">
                         </div>
                         <div class="email-body">
                             <p>Hello,</p>
-                            <p>Your account has been created successfully. Here are your credentials:</p>
+                            <p>Votre compte pour la bêta de l'application Perform à été créé ! Voici cos informations de connexion:</p>
                             <p><strong>Email:</strong> {user.email}</p>
-                            <p><strong>Password:</strong> {request.data.get("password")}</p>
-                            <p>Thank you for registering!</p>
+                            <p><strong>Mot de passe :</strong> {request.data.get("password")}</p>
+                            <p>Merci de votre confiance !</p>
                         </div>
                     </div>
                 </body>

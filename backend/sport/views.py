@@ -5,8 +5,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from users2.permissions import IsUserOrAdmin
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
-from rest_framework import filters, mixins, status, viewsets, pagination
+from rest_framework import filters, mixins, status, pagination
 from rest_framework.exceptions import ValidationError
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 # Create your views here.
 from utils.utils import get_ordered_queryset
 
@@ -435,7 +438,7 @@ class RecordsSportUserViewSet(viewsets.ModelViewSet):
                 record_data['formatted_record'] = formatted_time if formatted_time else ''
             elif record.units == 'weight':
                 record_data['formatted_record'] = f"{user_record.formatted_record_value()} kg" if user_record.formatted_record_value() else ''
-            elif record.units == 'points':
+            elif record.units == 'points' or record.units =='reps':
                 record_data['formatted_record'] = f"{user_record.formatted_record_value()}" if user_record.formatted_record_value() else ''
             elif record.units == 'distance_m':
                 record_data['formatted_record'] = f"{user_record.formatted_record_value()} m" if user_record.formatted_record_value() else ''
@@ -458,7 +461,7 @@ def format_record(record):
         return record.formatted_time_value() or ''
     elif record.record.units == 'weight':
         return f"{record.formatted_record_value()} kg" if record.formatted_record_value() else ''
-    elif record.record.units == 'points':
+    elif record.record.units == 'points' or record.record.units == 'reps' :
         return f"{record.formatted_record_value()}" if record.formatted_record_value() else ''
     elif record.record.units == 'distance_m':
         return f"{record.formatted_record_value()} m" if record.formatted_record_value() else ''

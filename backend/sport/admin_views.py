@@ -342,7 +342,7 @@ class AdminRecordsSportViewSet(viewsets.ModelViewSet):
         # Organiser les enregistrements par groupes
         records_by_group = {}
         for record in queryset:
-            group_name = record.groups.name if record.groups else "General"
+            group_name = f"{record.groups.name}_{record.groups.id}" if record.groups else "General"
 
             if group_name not in records_by_group:
                 records_by_group[group_name] = []

@@ -1,5 +1,5 @@
 from django.db import models
-
+from rest_framework import serializers
 
 class Sport(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -26,6 +26,7 @@ class RecordsSport(models.Model):
         ('distance_km', 'Distance en Km'),
         ('distance_m', 'Distance en Mètre'),
         ('points', 'Points'),
+        ('reps', 'Répétitions'),
         ('free', 'Personnalisé')
     ]
     sport = models.ForeignKey(Sport, on_delete=models.CASCADE)
@@ -52,7 +53,6 @@ class RecordsSport(models.Model):
             self.order = existing_records_in_group + 1
 
         super().save(*args, **kwargs)
-
 
 class RecordsSportUser(models.Model):
     record = models.ForeignKey(RecordsSport, on_delete=models.CASCADE)

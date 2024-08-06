@@ -60,7 +60,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(_('email address'), unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
     size = models.IntegerField(null=True, blank=True)
-    weight = models.IntegerField(null=True, blank=True)
+    weight = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
     last_name = models.CharField(max_length=100, null=True, blank=True)
     first_name = models.CharField(max_length=100, null=True, blank=True)
