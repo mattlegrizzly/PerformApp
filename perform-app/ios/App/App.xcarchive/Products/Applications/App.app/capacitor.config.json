@@ -1,0 +1,18 @@
+{
+	"appId": "perform.app",
+	"appName": "Perform",
+	"webDir": "dist",
+	"cordova": {
+		"preferences": {
+			"Orientation": "portrait"
+		}
+	},
+	"packageClassList": [
+		"AppPlugin",
+		"DevicePlugin",
+		"HapticsPlugin",
+		"KeyboardPlugin",
+		"ScreenOrientationPlugin",
+		"StatusBarPlugin"
+	]
+}

@@ -136,7 +136,7 @@ ion-modal {
                 <ion-icon
                   :icon="close"
                   @click="
-                    (event) => {
+                    () => {
                       addMaterialFilter(
                         muscle.zone.code,
                         muscle_selected,
@@ -672,15 +672,14 @@ const addMaterialFilter = async (id: any, array: any, constArray: any, remove : 
         return Number(element.material.code) === id;
       } else if (element.sport) {
         return Number(element.sport.code) === id;
-      } else {
-      }
+      } 
       return Number(element.material.id) === id;
     }).length == 0;
   if (findKey && remove == "add") {
-    const materialFind = constArray.find((el) => el.id == id) as any;
+    const materialFind = constArray.find((el : any) => el.id == id) as any;
     array.push({ material: materialFind });
   } else {
-    array.map((elem, index) => {
+    array.map((elem : any, index : any) => {
       if (elem.zone) {
         if (elem.zone.code == id) {
           array.splice(index, 1);

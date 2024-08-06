@@ -1,0 +1,1 @@
+.splash-screen[data-v-5594f556]{display:flex;justify-content:center;align-items:center;height:100vh;background:#fff}.logo[data-v-5594f556]{width:var(--logoWidth);animation:fadeInSlideUp-5594f556 2s ease-in-out;position:absolute;top:50vh}@keyframes fadeInSlideUp-5594f556{0%{opacity:0;top:50vh}to{opacity:1;top:var(--topCss)}}

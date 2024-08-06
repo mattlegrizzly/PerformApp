@@ -555,7 +555,7 @@ const postWellness = async () => {
         if (homeChart.value) {
           homeChart.value.destroy();
         }
-        getWellness().then((res) => {
+        getWellness().then(() => {
           createChart(weekWellnessTemp.value, "home-chart", homeChart);
         });
       }, 200);

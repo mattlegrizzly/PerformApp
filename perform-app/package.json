@@ -8,6 +8,7 @@
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "ionic:build": "npm run build",
+    "prod": "npm run build --prod",
     "ionic:serve": "vite dev --host"
   },
   "dependencies": {
@@ -31,6 +32,7 @@
     "chart.js": "^4.4.3",
     "chartjs-adapter-date-fns": "^3.0.0",
     "cropperjs": "^1.6.2",
+    "ionic": "^5.4.16",
     "perform-body-component-lib": "^1.7.3",
     "pinia": "^2.1.7",
     "plyr": "^3.7.8",
