@@ -163,6 +163,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "users2.User"
 
+DOMAIN="grizzylyperform.app"
+
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
         "JWT [Bearer {JWT}]": {
