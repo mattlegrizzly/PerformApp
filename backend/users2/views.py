@@ -89,7 +89,7 @@ class RegisterViewset(mixins.CreateModelMixin, GenericViewSet):
             # Envoi de l'e-mail avec le mot de passe
             subject = 'Welcome to Our Platform'
             recipient_list = [user.email]
-            logo_url = settings.DOMAIN + static('images/perform_logo-blanc.png')
+            logo_url = settings.DOMAIN + '/media/images/perform_logo-blanc.png'
 
             message = Mail(
                 from_email='contact@grizzlyperform.app',
