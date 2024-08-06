@@ -163,7 +163,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "users2.User"
 
-DOMAIN="grizzylyperform.app"
+DOMAIN="grizzlyperform.app"
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
