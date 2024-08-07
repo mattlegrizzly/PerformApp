@@ -88,6 +88,9 @@
 </style>
 
 <style>
+ion-range::part(knob) {
+  box-shadow: 0px 0px 10px rgb(179, 179, 179);
+}
 .time_input.input-label-placement-start.sc-ion-input-md-h .input-wrapper.sc-ion-input-md {
   padding-inline-start: 0px !important;
   padding-inline-end: 0px !important;
@@ -150,7 +153,7 @@
           <ion-label
             position="stacked"
             :class="errorAdd && !isTimeIsEmpty() ? 'required_text' : ''"
-            >Temps (en hh:mm:ss)</ion-label
+            >Durée de la séance</ion-label
           >
 
           <div class="time-input">

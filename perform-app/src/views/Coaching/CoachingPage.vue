@@ -1,58 +1,62 @@
 <template>
   <ion-page data-page="Coaching">
     <ion-content :fullscreen="true">
-      <div style="box-shadow: 0px 4px 8px #d4d4d4;">
-      <div class="perform-page">
-        <div>
-          <div style="display: flex; justify-content: space-between">
-            <h1
-              style="
-                    margin-top: 0px !important;
-                    margin-bottom: 0px !important;
-                    height: auto;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-              "
-            >
-              Entrainements
-            </h1>
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-around;
-              "
-            >
-              
-              <ion-button
+      <div style="box-shadow: 0px 4px 8px #d4d4d4">
+        <div class="perform-page">
+          <div>
+            <div style="display: flex; justify-content: space-between">
+              <h1
                 style="
-                  color: var(--primary-blue);
-                  --background: white;
-                  border: 1px solid var(--primary-blue);
-                  border-radius: 15px;
-                  margin-right: 5px;
+                  margin-top: 0px !important;
+                  margin-bottom: 0px !important;
+                  height: auto;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
                 "
-                @click="resetToToday"
               >
-                <ion-icon :icon="todayOutline"></ion-icon>
-              </ion-button>
-              <ion-button @click="openCalendarModal">
-                <ion-icon :icon="calendarOutline"></ion-icon>
-              </ion-button>
+                Entrainements
+              </h1>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-around;
+                "
+              >
+                <ion-button
+                  id="return_today"
+                  style="
+                    --background: white;
+                    border-radius: 15px;
+                    margin-right: 5px;
+                  "
+                  @click="resetToToday"
+                >
+                  <ion-icon :icon="todayOutline" />
+                </ion-button>
+                <ion-button @click="openCalendarModal">
+                  <ion-icon :icon="calendarOutline" />
+                </ion-button>
+              </div>
             </div>
-          </div>
-          <!-- Slider pour les jours de la semaine -->
-          <!-- Affichage du mois en cours -->
-          <div style="text-align: center; margin-bottom: 0px">
-            <h2 style="margin-bottom: 0px; margin-top: 10px; text-transform :capitalize">
-              {{ currentMonth }}
-            </h2>
+            <!-- Slider pour les jours de la semaine -->
+            <!-- Affichage du mois en cours -->
+            <div style="text-align: center; margin-bottom: 0px">
+              <h2
+                style="
+                  margin-bottom: 0px;
+                  margin-top: 10px;
+                  font-size: 20px !important;
+                  text-transform: capitalize;
+                "
+              >
+                {{ currentMonth }}
+              </h2>
+            </div>
           </div>
         </div>
 
-      </div>
-      
         <swiper
           v-if="weeks.length"
           :key="swiperKey"
@@ -91,64 +95,74 @@
         </swiper>
       </div>
 
-        <!-- Affichage du texte précis du jour sélectionné -->
-        <div v-if="selectedDay" class="perform-page">
-          <div>
-            <div v-for="workout of selectedWorkout">
+      <!-- Affichage du texte précis du jour sélectionné -->
+      <div v-if="selectedDay" class="perform-page" style="height: calc(100vh - 242px - var(--pd-t))">
+          <div v-for="workout of selectedWorkout">
+            <div
+              @click="router.push('/workout_show/' + workout.id)"
+              class="workout_elem"
+            >
               <div
-                @click="router.push('/workout_show/' + workout.id)"
-                class="workout_elem"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                "
               >
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <h5 style="margin: 0px">{{ workout.name }}</h5>
-                  <p style="margin: 0px">{{ workout.time_value }}</p>
-
+                <h5 style="margin: 0px">{{ workout.name }}</h5>
+                <p style="margin: 0px">{{ workout.time_value }}</p>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <div style="width: 40%">
+                  <ion-label position="stacked" style="padding-bottom: 10px">
+                    RPE Physique :
+                  </ion-label>
+                  <Jauge :value="workout.physical_rpe" />
                 </div>
-                <div style="display: flex; justify-content: space-between;">
-                  <div style="width: 40%">
-                    <ion-label position="stacked" style="padding-bottom: 10px">
-                      RPE Physique :
-                    </ion-label>
-                    <Jauge :value="workout.physical_rpe" />
-                  </div>
-                  <div style="width: 40%; margin-right: 20px">
-                    <ion-label position="stacked" style="padding-bottom: 10px">
-                      RPE Cognitif :
-                    </ion-label>
-                    <Jauge :value="workout.cognitive_rpe" />
-                  </div>
-                  
+                <div style="width: 40%; margin-right: 20px">
+                  <ion-label position="stacked" style="padding-bottom: 10px">
+                    RPE Cognitif :
+                  </ion-label>
+                  <Jauge :value="workout.cognitive_rpe" />
                 </div>
               </div>
             </div>
           </div>
-          <ion-button style="margin-right: 5px" @click="getUrlDate()">
-                <ion-icon :icon="addOutline"></ion-icon>
-              </ion-button>
+          <div v-if="selectedWorkout.length == 0" style="display: flex; align-items: center; height: 30%;">
+            <h4 style="font-size: 16px; text-align: center; font-style: italic; font-weight: 400; color: gray;">
+              Pas d'entraînements aujourd'hui ! <br>
+              Saisissez votre premier entrainement de la journée !
+            </h4>
         </div>
+        <ion-button
+          style="
+            position: absolute;
+            right: var(--pd-r);
+            bottom: 80px;
+          "
+          @click="getUrlDate()"
+        >
+          <ion-icon :icon="addOutline"></ion-icon>
+        </ion-button>
+      </div>
 
-        <!-- Modal pour le calendrier -->
-        <ion-modal id="calendarModal" ref="calendarModal">
-          <ion-content class="calendar-content">
-            <div class="modal-header">
-              <ion-button fill="clear" @click="closeCalendarModal">
-                <ion-icon :icon="close"></ion-icon>
-              </ion-button>
-            </div>
-            <vue-cal
-              class="vue-cal"
-              default-view="month"
-              :disable-views="['years', 'year', 'week', 'day']"
-              @cell-click="onDateSelected"
-              @view-change="onViewChange"
-              locale="fr"
-              :selected-date="selectedDay ? selectedDay.fullDate : null"
-              :start-date="selectedDay ? selectedDay.fullDate : null"
-              :events="workoutEvents"
-            >
-            </vue-cal>
-          </ion-content>
-        </ion-modal>
+      <!-- Modal pour le calendrier -->
+      <ion-modal id="calendarModal" ref="calendarModal">
+        <ion-content class="calendar-content">
+          <vue-cal
+            class="vue-cal"
+            default-view="month"
+            :disable-views="['years', 'year', 'week', 'day']"
+            @cell-click="onDateSelected"
+            @view-change="onViewChange"
+            locale="fr"
+            :selected-date="selectedDay ? selectedDay.fullDate : null"
+            :start-date="selectedDay ? selectedDay.fullDate : null"
+            :events="workoutEvents"
+          >
+          </vue-cal>
+        </ion-content>
+      </ion-modal>
     </ion-content>
   </ion-page>
 </template>
@@ -243,7 +257,6 @@ const updateCurrentMonth = () => {
   }
 };
 
-
 const selectToday = () => {
   const today = new Date();
   selectedDay.value = weeks.value.find(
@@ -283,18 +296,18 @@ const loadWorkoutForDay = () => {
 
 const updateWorkoutEvents = () => {
   workoutEvents.value = weeks.value
-    .filter(day => day.isWorkout)
-    .map(day => ({
+    .filter((day) => day.isWorkout)
+    .map((day) => ({
       start: day.fullDate,
       end: day.fullDate,
-      title: 'Workout',
-      class: 'workout-event'
+      title: "Workout",
+      class: "workout-event",
     }));
-    console.log(workoutEvents)
+  console.log(workoutEvents);
 };
 
 const onViewChange = (view) => {
-  console.log('viewChange', view)
+  console.log("viewChange", view);
   if (view && view.startDate) {
     loadMonthlyWorkouts();
   }
@@ -497,27 +510,25 @@ const loadWeeklyWorkouts = async (startDate) => {
       .join("-");
     day.isWorkout = weekWorkouts[dayStr] || false;
   });
-
-  
 };
 
 const loadMonthlyWorkouts = async () => {
   const year = selectedDay.value.fullDate.getFullYear();
   const month = selectedDay.value.fullDate.getMonth() + 1; // Mois actuel
-  
+
   const monthWorkouts = await fetchWorkoutsForMonth(year, month);
-  
+
   // Mise à jour des semaines
   weeks.value.forEach((day) => {
     const dayStr = day.fullDate
-    .toLocaleDateString("fr-FR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
-    .split("/")
-    .reverse()
-    .join("-");
+      .toLocaleDateString("fr-FR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .split("/")
+      .reverse()
+      .join("-");
     day.isWorkout = monthWorkouts[dayStr] || false;
   });
   updateWorkoutEvents();
@@ -556,7 +567,7 @@ onIonViewWillEnter(async () => {
 
     isSwiperInitialized.value = true; // Marquer le Swiper comme initialisé
   }
-
+  loadMonthlyWorkouts();
   loadWorkoutForDay();
 });
 
@@ -642,7 +653,7 @@ onMounted(async () => {
   --min-height: 30%;
   --border-radius: 20px;
   --width: 80%;
-  --max-height: 55%;
+  --max-height: 50%;
   height: auto;
   --border-radius: 20px;
 }
@@ -662,7 +673,7 @@ onMounted(async () => {
 
 .vue-cal {
   flex: 1;
-  max-height: calc(100% - 55px); /* Ajuste la hauteur maximale du calendrier */
+  max-height: calc(100%); /* Ajuste la hauteur maximale du calendrier */
 }
 </style>
 
@@ -683,5 +694,16 @@ onMounted(async () => {
   background-color: var(--primary-blue);
   border-radius: 50%;
   margin: auto;
+}
+
+.vuecal__flex .vuecal__menu {
+  display: none;
+}
+</style>
+
+<style>
+#return_today::part(native) {
+  color: var(--primary-blue) !important;
+  border: 1px solid var(--primary-blue) !important;
 }
 </style>

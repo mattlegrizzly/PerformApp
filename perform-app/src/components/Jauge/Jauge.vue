@@ -49,8 +49,8 @@ const max = 10;
   position: absolute;
   top: -3px; /* Légèrement au-dessus de la jauge */
   bottom: -3px; /* Légèrement en dessous de la jauge */
-  width: 8px;
-  border: solid 1px rgb(228, 228, 228);
+  width: 11px;
+  box-shadow: 0px 0px 10px rgb(179, 179, 179);
   background-color: white;
   border-radius: 50%;
   transform: translateX(-50%);

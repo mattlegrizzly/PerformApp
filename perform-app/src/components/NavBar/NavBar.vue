@@ -17,7 +17,7 @@
         </ion-tab-button>
         <ion-tab-button tab="coaching" @click="navigateTo('/coaching')">
           <ion-icon style="color: white" :icon="isRouteActive(['Coaching', 'AddWorkout', 'ShowWorkout']) ? 'trainer-selected' : 'trainer'" />
-          <ion-label>Coaching</ion-label>
+          <ion-label>Entraînements</ion-label>
 
         </ion-tab-button>
         <ion-tab-button @click="navigateTo('/profile')" tab="profile">

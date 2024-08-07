@@ -75,7 +75,7 @@
   --knob-background: white; /* Couleur du bouton du slider */
   --knob-background-pressed: white; /* Couleur du bouton quand il est pressé */
   --knob-size: 16px; /* Taille du bouton */
-
+  --pin-background: #ffafcc;
   --ticks-background: rgba(0, 0, 0, 0.5); /* Garde les ticks visibles */
   --ticks-background-active: rgba(
     0,
@@ -87,6 +87,9 @@
 }
 </style>
 <style>
+ion-range::part(knob) {
+  box-shadow: 0px 0px 10px rgb(179, 179, 179);
+}
 .time_input.input-label-placement-start.sc-ion-input-md-h .input-wrapper.sc-ion-input-md {
   padding-inline-start: 0px !important;
   padding-inline-end: 0px !important;
@@ -151,8 +154,8 @@
           <ion-label
             position="stacked"
             :class="errorAdd && !isTimeIsEmpty() ? 'required_text' : ''"
-            >Temps (en hh:mm:ss)</ion-label
-          >
+            >Durée de la séance</ion-label
+            >
 
           <div class="time-input">
             <ion-input

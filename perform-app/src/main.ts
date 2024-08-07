@@ -194,7 +194,11 @@ const pageTransitions = {
     'Records|ShowRecords': slideRightAnimation,
     'ShowRecords|Records': slideLeftAnimation,
     'Coaching|AddWorkout': slideRightAnimation,
-    'AddWorkout|Coaching': slideLeftAnimation
+    'AddWorkout|Coaching': slideLeftAnimation,
+    'Coaching|ShowWorkout': slideRightAnimation,
+    'ShowWorkout|Coaching': slideLeftAnimation,
+    'ShowWorkout|EditWorkout': slideRightAnimation,
+    'EditWorkout|ShowWorkout': slideLeftAnimation
 };
 
 
