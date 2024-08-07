@@ -3,7 +3,7 @@
     <div class="modal-content">
       <h2>Recadrer votre photo</h2>
         <img v-if="imageSrc" :src="imageSrc" ref="image" class="cropper-image" />
-      <ion-button style="margin-top: 20px" @click="cropAndCompressImage">Recadrer et Compresser</ion-button>
+      <ion-button style="margin-top: 20px" @click="cropAndCompressImage">Recadrer</ion-button>
     </div>
   </ion-modal>
 </template>

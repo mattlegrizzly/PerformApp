@@ -2,41 +2,48 @@
 import type IERequestOptions from "../types/requet";
 
 const sendRequest = async (originalRequest: Request, originalBody: any = null, retry: boolean = true): Promise<any> => {
-  const response = await fetch(originalRequest);
-  if (response.status === 401 && retry && !response.url.includes('login')) {
-    const refreshResponse = await refresh();
-
-    if (refreshResponse && refreshResponse.access) {
-      const user = await store.get("user");
-      const updatedUser = {
-        ...JSON.parse(user),
-        access: refreshResponse.access,
-      };
-      await store.set("user", JSON.stringify(updatedUser));
-
-      // Clone headers
-      const newHeaders = new Headers(originalRequest.headers);
-      newHeaders.set("Authorization", `Bearer ${refreshResponse.access}`);
-
-      // Recreate the request with the new headers and the same body
-      const newRequest = new Request(originalRequest.url, {
-        method: originalRequest.method,
-        headers: newHeaders,
-        body: originalBody,
-        mode: originalRequest.mode,
-        credentials: originalRequest.credentials,
-        cache: originalRequest.cache,
-        redirect: originalRequest.redirect,
-        referrer: originalRequest.referrer,
-        referrerPolicy: originalRequest.referrerPolicy,
-        integrity: originalRequest.integrity,
-      });
-      return sendRequest(newRequest, originalBody, false); // Disable retry to prevent infinite loop
-    } else {
-      throw new Error("Unable to refresh token");
+  try {
+    const response = await fetch(originalRequest);
+    if (response.status === 401 && retry && !response.url.includes('login')) {
+      const refreshResponse = await refresh();
+  
+      if (refreshResponse && refreshResponse.access) {
+        const user = await store.get("user");
+        const updatedUser = {
+          ...JSON.parse(user),
+          access: refreshResponse.access,
+        };
+        await store.set("user", JSON.stringify(updatedUser));
+  
+        // Clone headers
+        const newHeaders = new Headers(originalRequest.headers);
+        newHeaders.set("Authorization", `Bearer ${refreshResponse.access}`);
+  
+        // Recreate the request with the new headers and the same body
+        const newRequest = new Request(originalRequest.url, {
+          method: originalRequest.method,
+          headers: newHeaders,
+          body: originalBody,
+          mode: originalRequest.mode,
+          credentials: originalRequest.credentials,
+          cache: originalRequest.cache,
+          redirect: originalRequest.redirect,
+          referrer: originalRequest.referrer,
+          referrerPolicy: originalRequest.referrerPolicy,
+          integrity: originalRequest.integrity,
+        });
+        return sendRequest(newRequest, originalBody, false); // Disable retry to prevent infinite loop
+      } else {
+        throw new Error("Unable to refresh token");
+      }
     }
+    return handleResponse(response);
+  } catch (error : Error | any) {
+    return({
+      status : 503,
+      data: error.message
+    })
   }
-  return handleResponse(response);
 };
 
 import { store } from "../store/store";

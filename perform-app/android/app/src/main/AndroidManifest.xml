@@ -35,5 +35,9 @@
       />
         </provider>
     </application>
+        <!-- Permissions pour l'accès à la caméra et au stockage -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

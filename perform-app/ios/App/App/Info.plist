@@ -27,6 +27,15 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string
+    >Nous avons besoin d'accéder à votre photothèque pour vous permettre de sélectionner des images à utiliser dans votre profil.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string
+    >Nous avons besoin d'accéder à votre photothèque pour vous permettre de sélectionner des images à utiliser dans votre profil.</string>
+	<key>NSCameraUsageDescription</key>
+	<string
+    >Nous avons besoin d'accéder à votre caméra pour que vous puissiez prendre des photos pour votre profil.</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

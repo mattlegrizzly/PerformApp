@@ -1,15 +1,18 @@
 <template>
   <ion-page data-page="Coaching">
     <ion-content :fullscreen="true">
+      <div style="box-shadow: 0px 4px 8px #d4d4d4;">
       <div class="perform-page">
         <div>
           <div style="display: flex; justify-content: space-between">
             <h1
               style="
-                color: black;
-                font-size: 20px;
-                margin-top: 5px;
-                margin-bottom: 10px;
+                    margin-top: 0px !important;
+                    margin-bottom: 0px !important;
+                    height: auto;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
               "
             >
               Entrainements
@@ -21,9 +24,7 @@
                 justify-content: space-around;
               "
             >
-              <ion-button style="margin-right: 5px" @click="getUrlDate()">
-                <ion-icon :icon="addOutline"></ion-icon>
-              </ion-button>
+              
               <ion-button
                 style="
                   color: var(--primary-blue);
@@ -44,78 +45,86 @@
           <!-- Slider pour les jours de la semaine -->
           <!-- Affichage du mois en cours -->
           <div style="text-align: center; margin-bottom: 0px">
-            <h2 style="margin-bottom: 0px; margin-top: 10px">
+            <h2 style="margin-bottom: 0px; margin-top: 10px; text-transform :capitalize">
               {{ currentMonth }}
             </h2>
           </div>
-
-          <swiper
-            v-if="weeks.length"
-            :key="swiperKey"
-            :initial-slide="3"
-            :slides-per-view="7"
-            :slides-per-group="7"
-            :space-between="0"
-            @slideChangeTransitionStart="beforeSlideChange"
-            @slideChangeTransitionEnd="onSlideChange"
-            :loop="true"
-            class="swiper-container day_swiper"
-          >
-            <swiper-slide
-              v-for="(day, index) in weeks"
-              :key="index"
-              @click="() => selectDay(day)"
-            >
-              <div
-                class="day-card"
-                :class="{ 'selected-day': isSelected(day) }"
-                style="position: relative"
-              >
-                <div>{{ day.shortLabel }}</div>
-                <div>{{ day.dayNumber }}</div>
-                <div
-                  v-if="day.isWorkout"
-                  :style="{
-                    color: isSelected(day) ? 'var(--primary-blue)' : 'white',
-                  }"
-                  style="position: absolute; top: -26px; font-size: 40px"
-                >
-                  •
-                </div>
-              </div>
-            </swiper-slide>
-          </swiper>
         </div>
 
+      </div>
+      
+        <swiper
+          v-if="weeks.length"
+          :key="swiperKey"
+          :initial-slide="3"
+          :slides-per-view="7"
+          :slides-per-group="7"
+          :space-between="0"
+          @slideChangeTransitionStart="beforeSlideChange"
+          @slideChangeTransitionEnd="onSlideChange"
+          :loop="true"
+          class="swiper-container day_swiper"
+        >
+          <swiper-slide
+            v-for="(day, index) in weeks"
+            :key="index"
+            @click="() => selectDay(day)"
+          >
+            <div
+              class="day-card"
+              :class="{ 'selected-day': isSelected(day) }"
+              style="position: relative"
+            >
+              <div>{{ day.shortLabel }}</div>
+              <div>{{ day.dayNumber }}</div>
+              <div
+                v-if="day.isWorkout"
+                :style="{
+                  color: isSelected(day) ? 'var(--primary-blue)' : 'white',
+                }"
+                style="position: absolute; top: -26px; font-size: 40px"
+              >
+                •
+              </div>
+            </div>
+          </swiper-slide>
+        </swiper>
+      </div>
+
         <!-- Affichage du texte précis du jour sélectionné -->
-        <div v-if="selectedDay">
+        <div v-if="selectedDay" class="perform-page">
           <div>
-            <h2>{{ selectedDay.label }} {{ selectedDay.dayNumber }}</h2>
             <div v-for="workout of selectedWorkout">
               <div
                 @click="router.push('/workout_show/' + workout.id)"
                 class="workout_elem"
               >
-                <h5 style="margin: 0px">{{ workout.name }}</h5>
-                <p>{{ new Date(workout.date).toLocaleDateString("fr") }}</p>
-                <p>{{ workout.workout_description }}</p>
-                <div style="display: flex">
-                  <div style="width: 40%; margin-right: 20px">
-                    <ion-label position="stacked" style="padding-bottom: 10px">
-                      RPE Cognitif :
-                    </ion-label>
-                    <Jauge :value="workout.cognitive_rpe" />
-                  </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <h5 style="margin: 0px">{{ workout.name }}</h5>
+                  <p style="margin: 0px">{{ workout.time_value }}</p>
+
+                </div>
+                <div style="display: flex; justify-content: space-between;">
                   <div style="width: 40%">
                     <ion-label position="stacked" style="padding-bottom: 10px">
                       RPE Physique :
                     </ion-label>
                     <Jauge :value="workout.physical_rpe" />
                   </div>
+                  <div style="width: 40%; margin-right: 20px">
+                    <ion-label position="stacked" style="padding-bottom: 10px">
+                      RPE Cognitif :
+                    </ion-label>
+                    <Jauge :value="workout.cognitive_rpe" />
+                  </div>
+                  
                 </div>
               </div>
             </div>
           </div>
+          <ion-button style="margin-right: 5px" @click="getUrlDate()">
+                <ion-icon :icon="addOutline"></ion-icon>
+              </ion-button>
         </div>
 
         <!-- Modal pour le calendrier -->
@@ -140,7 +149,6 @@
             </vue-cal>
           </ion-content>
         </ion-modal>
-      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -172,6 +180,8 @@ import Jauge from "../../components/Jauge/Jauge.vue";
 import { useRouter } from "vue-router";
 import VueCal from "vue-cal";
 import "vue-cal/dist/vuecal.css";
+import "@/assets/base.css";
+import "@/assets/main.css";
 
 const router = useRouter();
 const { triggerError } = useErrorHandler();

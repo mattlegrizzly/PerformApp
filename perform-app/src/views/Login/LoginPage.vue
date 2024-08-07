@@ -72,7 +72,12 @@
               class="input-div"
               style="display: flex; justify-content: center"
             >
-              <ion-button :disabled="loading" style="margin-top: 10px;" size="small" @click="connect">
+              <ion-button
+                :disabled="loading"
+                style="margin-top: 10px"
+                size="small"
+                @click="connect"
+              >
                 {{ loading ? "Connexion ... " : "Se connecter" }}
               </ion-button>
             </div>
@@ -111,16 +116,13 @@ const email = ref("");
 const loading = ref(false);
 const showPassword = ref(false);
 
-onIonViewWillEnter(async () => {
-  
-});
+onIonViewWillEnter(async () => {});
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value;
 };
 
 const onFocus = () => {
-  
   if (isMobileDevice()) {
     document.body.classList.add("keyboard-open");
   }
@@ -144,12 +146,15 @@ const connect = () => {
   };
   try {
     post("/login/", options, false).then((res) => {
-      
+      console.log("res ", res);
       error.value = false;
-      if (res.status > 301) {
+      if (res.status > 301 && res.status != 503) {
         triggerError("Erreur de connexion");
         error.value = true;
         loading.value = false;
+      } else if (res.status == 503) {
+        loading.value = false;
+        triggerError(res.data);
       } else {
         store.set("user", JSON.stringify(res)).then(() => {
           email.value = "";
@@ -160,7 +165,7 @@ const connect = () => {
       }
     });
   } catch (error) {
-    
+    loading.value = false;
     triggerError(error);
   }
 };
@@ -191,5 +196,14 @@ ion-content .scroll-y {
   display: flex;
   justify-content: center;
   align-content: center;
+}
+</style>
+
+<style>
+.input-wrapper.sc-ion-input-md {
+  padding-inline-start: 0px !important;
+  padding-inline-end: 0px !important;
+  -webkit-padding-start: 10px !important;
+  -webkit-padding-end: 10px !important;
 }
 </style>

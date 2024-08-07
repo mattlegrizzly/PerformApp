@@ -1,16 +1,13 @@
 <style scoped>
 ion-modal {
   --width: 80%;
-  --height: 35%;
+  --height: 265px;
   --border-radius: 16px;
   --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
     0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-.time-input::v-deep .input-wrapper.sc-ion-input-ios {
-  padding-inline-start: 0px !important;
-  padding-inline-end: 0px !important;
-}
+
 
 .custom-ion-item {
   --padding-start: 0;
@@ -54,6 +51,13 @@ ion-modal {
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+</style>
+
+<style>
+.time_input.input-label-placement-start.sc-ion-input-md-h .input-wrapper.sc-ion-input-md {
+  padding-inline-start: 0px !important;
+  padding-inline-end: 0px !important;
 }
 </style>
 
@@ -339,12 +343,12 @@ ion-modal {
           box-shadow: silver 0px 10px 20px 0px;
           flex: 1;
           overflow: scroll;
-          height: calc(100vh - 520px);
+          height: calc(100vh - 540px);
           display: flex;
           flex-direction: column;
         "
       >
-        <h3>Mes records passés</h3>
+        <h3 style="margin-top: 0px">Mes records passés</h3>
         <div
           style="
             display: flex;
@@ -561,15 +565,15 @@ const getRecords = () => {
           }
         }
       }, 200);
-      console.log(chartInstance.value)
+      console.log(chartInstance.value);
       if (chartInstance.value) {
         chartInstance.value.destroy();
       }
 
       if (res.performances.length > 0 && res.units !== "free") {
         if (chartInstance.value) {
-        chartInstance.value.destroy();
-      }
+          chartInstance.value.destroy();
+        }
         setTimeout(() => {
           createChart();
         }, 400);
@@ -585,7 +589,8 @@ const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
+  const year = date.getFullYear().toString().slice(2, 4);
+  console.log(year);
   return `${day}/${month}/${year}`;
 };
 
@@ -641,11 +646,14 @@ const createChart = () => {
             title: {
               display: true,
               text: "Date",
+              font: {
+                weight: "bold",
+              },
             },
           },
           y: {
             ticks: {
-              callback: (value : any) => {
+              callback: (value: any) => {
                 // Récupérer l'unité de l'enregistrement
                 const unit = record.value.units;
 
@@ -670,6 +678,9 @@ const createChart = () => {
             title: {
               display: true,
               text: "Performance",
+              font: {
+                weight: "bold",
+              },
             },
           },
         },

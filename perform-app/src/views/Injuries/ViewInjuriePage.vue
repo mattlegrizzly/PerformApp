@@ -6,7 +6,7 @@
       <div class="perform-page">
         <div style="display: flex; justify-content: space-between">
           <NavButton url="/list_injuries" text="Retour" back="" />
-          <NavButton :disabled='injury.state == "TR"' @click="router.push('/edit_injurie/' + routerNav.params.id)"
+          <NavButton @click="router.push('/edit_injurie/' + routerNav.params.id)"
             text="Editer" :noIcon="true" />
         </div>
         <h1 style="color: black; margin-top: 10px; margin-bottom: 5px">

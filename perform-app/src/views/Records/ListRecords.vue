@@ -14,8 +14,19 @@
 .records-list {
   margin-top: 15px;
 }
+
 </style>
 
+<style>
+.records-list ion-list {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+.records-list ion-item::native {
+  height: 30px !important;
+  min-height: 0px !important;
+}</style>
 <template>
   <ion-page data-page="Records">
     <ion-content>
@@ -62,7 +73,8 @@
                     font-weight: 500;
                     font-style: italic;
                   "
-                  >Thème : {{ key }}</ion-label
+                  v-if="key.toString() !== 'General'"
+                  >{{ key }}</ion-label
                 >
                 <ion-list v-for="rec of item">
                   <ion-item
@@ -100,14 +112,15 @@
                 :key="item.id"
                 class="records-list"
               >
-                <ion-label
+              <ion-label
                   position="stacked"
                   style="
                     margin-left: 10px;
                     font-weight: 500;
                     font-style: italic;
                   "
-                  >Thème : {{ key }}</ion-label
+                  v-if="key.toString() !== 'General'"
+                  >{{ key }}</ion-label
                 >
                 <ion-list v-for="rec of item">
                   <ion-item

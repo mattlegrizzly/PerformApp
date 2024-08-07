@@ -33,7 +33,7 @@
   <ion-page data-page="Program">
     <ion-content>
       <div class="perform-page">
-        <h1 style="color: black; margin-top: 5px; margin-bottom: 10px">
+        <h1 style="margin-top: 5px; margin-bottom: 10px">
          Nos programmes
         </h1>
       </div>
@@ -47,7 +47,7 @@
         
         <SliderComponents :programs="programs" />
         <div class="program_page">
-        <h2>Les programmes recommandés pour vous</h2>
+        <h2>Recommandés pour vous</h2>
       </div>
 
         <SliderComponents :programs="programs2" />

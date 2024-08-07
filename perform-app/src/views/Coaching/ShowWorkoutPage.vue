@@ -1,7 +1,7 @@
 <style scoped>
 ion-modal {
   --width: 80%;
-  --height: 120px;
+  --height: 120px !important;
   --border-radius: 16px;
   --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
@@ -42,13 +42,13 @@ ion-modal {
         </div>
         <div style="display: flex; justify-content: space-between">
           <div style="width: 40%;">
-            <ion-label position="stacked">RPE Cognitif</ion-label>
-            <Jauge :value="workout.cognitive_rpe"/>
-          </div>
-          <div style="width: 40%;">
             <ion-label position="stacked">RPE Physique</ion-label>
 
             <Jauge :value="workout.physical_rpe"/>
+          </div>
+          <div style="width: 40%;">
+            <ion-label position="stacked">RPE Cognitif</ion-label>
+            <Jauge :value="workout.cognitive_rpe"/>
           </div>
         </div>
         <div style="position: absolute; bottom : 10px; width: calc(100% - var(--pd-r) - var(--pd-l)); display: flex; justify-content: center;">

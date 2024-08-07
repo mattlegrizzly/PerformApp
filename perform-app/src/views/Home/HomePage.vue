@@ -275,7 +275,6 @@
                     @click="showInfoWellness"
                     class="infoIcon"
                   />
-                  <h6>Choisissez votre vision</h6>
                   <ion-list>
                     <ion-item>
                       <ion-select

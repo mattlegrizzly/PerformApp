@@ -86,7 +86,12 @@
   --ticks-width: 2px;
 }
 </style>
-
+<style>
+.time_input.input-label-placement-start.sc-ion-input-md-h .input-wrapper.sc-ion-input-md {
+  padding-inline-start: 0px !important;
+  padding-inline-end: 0px !important;
+}
+</style>
 <template>
   <ion-page data-page="EditWorkout">
     <ion-content>
@@ -194,30 +199,6 @@
         </div>
         <div>
           <div class="input_injurie">
-            <ion-label position="stacked">RPE Cognitif</ion-label>
-            <!-- Labels des crans -->
-            <div class="range-labels">
-              <div v-for="num in 10" :key="num" class="range-label">
-                {{ num }}
-              </div>
-            </div>
-
-            <!-- Slider pour la difficulté de 1 à 10 -->
-            <div class="range_inner">
-              <ion-range
-                v-model="workout.cognitive_rpe"
-                aria-label="Difficulté"
-                :ticks="true"
-                :snaps="true"
-                :min="1"
-                :max="10"
-                class="difficulty-slider"
-                @ion-change="handleRange"
-                id="cognitive"
-              ></ion-range>
-            </div>
-          </div>
-          <div class="input_injurie">
             <ion-label position="stacked">RPE Physique</ion-label>
             <!-- Labels des crans -->
             <div class="range-labels">
@@ -238,6 +219,30 @@
                 :max="10"
                 @ion-change="handleRange"
                 class="difficulty-slider"
+              ></ion-range>
+            </div>
+          </div>
+          <div class="input_injurie">
+            <ion-label position="stacked">RPE Cognitif</ion-label>
+            <!-- Labels des crans -->
+            <div class="range-labels">
+              <div v-for="num in 10" :key="num" class="range-label">
+                {{ num }}
+              </div>
+            </div>
+
+            <!-- Slider pour la difficulté de 1 à 10 -->
+            <div class="range_inner">
+              <ion-range
+                v-model="workout.cognitive_rpe"
+                aria-label="Difficulté"
+                :ticks="true"
+                :snaps="true"
+                :min="1"
+                :max="10"
+                class="difficulty-slider"
+                @ion-change="handleRange"
+                id="cognitive"
               ></ion-range>
             </div>
           </div>
